@@ -6308,21 +6308,23 @@ cchar* humanoid::GetRunDescriptionLine(int I) const
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
 
   if(IsFlying())
-    return !I ? "Flying" : "very fast";
+    return !I ? "Flying" : "fast";
 
   if(IsSwimming())
   {
-    if(!GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
+    if(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat())
+      return !I ? "Sailing" : "fast";
+    else if(!GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
       return !I ? "Floating" : "ahead fast";
     else
-      return !I ? "Swimming" : "very fast";
+      return !I ? "Swimming" : "fast";
   }
 
   if(!GetRightLeg() && !GetLeftLeg())
-    return !I ? "Rolling" : "very fast";
+    return !I ? "Rolling" : "fast";
 
   if(!GetRightLeg() || !GetLeftLeg())
-    return !I ? "Hopping" : "very fast";
+    return !I ? "Hopping" : "fast";
 
   return !I ? "Running" : "";
 }
@@ -6536,16 +6538,25 @@ void guard::BeTalkedTo()
 {
   if(GetPos().IsAdjacent(PLAYER->GetPos()))
   {
-    itemvector Item;
-
-    if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
-       || Item.empty())
-
-
-    for(size_t c = 0; c < Item.size(); ++c)
+    if(GetConfig() == EMISSARY)
     {
-      Item[c]->RemoveFromSlot();
-      GetStack()->AddItem(Item[c]);
+      // TODO
+      ADD_MESSAGE("\"Have a boat, why don't you?\"");
+      game::GivePlayerBoat();
+    }
+    else
+    {
+      itemvector Item;
+
+      if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
+         || Item.empty())
+
+
+      for(size_t c = 0; c < Item.size(); ++c)
+      {
+        Item[c]->RemoveFromSlot();
+        GetStack()->AddItem(Item[c]);
+      }
     }
   }
 

@@ -351,6 +351,8 @@ class game
   static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
   static truth PlayerIsGodChampion() { return PlayerIsChampion; }
   static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
+  static truth PlayerHasBoat() { return HasBoat; }
+  static void GivePlayerBoat() { HasBoat = true; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
@@ -584,6 +586,7 @@ class game
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
   static truth PlayerIsChampion; // This marks the player as a champion of some god.
+  static truth HasBoat; // Whether the player can sail the oceans of world map.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

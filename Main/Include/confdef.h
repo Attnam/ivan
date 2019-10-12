@@ -579,10 +579,23 @@
 #define VETERAN 2
 #define EUNUCH 3
 #define PATROL 4
+#define TEMPLAR 4
 #define SHOP 5
+#define GRAVE_KEEPER 5
 #define ELITE 6
 #define MASTER 7
 #define GRAND_MASTER 8
+#define TOMB_ENTRY 9
+#define TOMB_ENTRY_MASTER 10
+#define HONOR 11
+#define EMISSARY 12
+#define TRAINEE 13
+#define ROOKIE_FEMALE 14
+#define VETERAN_FEMALE 15
+#define ELITE_FEMALE 16
+#define CASTLE 17
+#define ROYAL 18
+#define GUARD_CAPTAIN 19
 
 #define DARK 1
 #define GREATER_DARK 2

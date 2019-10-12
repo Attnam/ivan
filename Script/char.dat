@@ -6223,7 +6223,7 @@ snake
   AttachedGod = MELLIS;
   AutomaticallySeen = true;
   RunDescriptionLineOne = "Slithering";
-  RunDescriptionLineTwo = "very fast";
+  RunDescriptionLineTwo = "fast";
 }
 
 orc

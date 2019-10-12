@@ -102,6 +102,7 @@ int game::StoryState;
 int game::XinrochTombStoryState;
 int game::FreedomStoryState;
 truth game::PlayerIsChampion;
+truth game::HasBoat;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -853,6 +854,7 @@ truth game::Init(cfestring& loadBaseName)
       XinrochTombStoryState = 0;
       FreedomStoryState = 0;
       PlayerIsChampion = false;
+      HasBoat = false;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -3356,7 +3358,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
   SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
-  SaveFile << FreedomStoryState << PlayerIsChampion;
+  SaveFile << FreedomStoryState << PlayerIsChampion << HasBoat;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3434,7 +3436,7 @@ int game::Load(cfestring& saveName)
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
   SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
-  SaveFile >> FreedomStoryState >> PlayerIsChampion;
+  SaveFile >> FreedomStoryState >> PlayerIsChampion >> HasBoat;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);

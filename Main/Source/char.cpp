@@ -465,9 +465,11 @@ int character::GetMoveType() const
           (!StateIsActivated(ETHEREAL_MOVING)
           ? DataBase->MoveType
           : DataBase->MoveType | ETHEREAL) |
-          (!StateIsActivated(SWIMMING)
+          ((!StateIsActivated(SWIMMING) &&
+            !(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat()))
           ? DataBase->MoveType
-          : DataBase->MoveType | WALK|SWIM)); }
+          : DataBase->MoveType | SWIM) );
+}
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -5995,6 +5997,11 @@ void character::DrawPanel(truth AnimationDraw) const
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  TirednessStateColors[TirednessState], TirednessStateStrings[TirednessState]);
 
+  if(game::IsInWilderness() && game::PlayerHasBoat() && IsSwimming())
+  {
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "On Boat");
+  }
+
   if(game::PlayerIsRunning())
   {
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, GetRunDescriptionLine(0));
@@ -7332,6 +7339,9 @@ void character::DisplayStethoscopeInfo(character*) const
     Info.AddEntry("Exhausted", LIGHT_GRAY);
     break;
   }
+
+  if(IsPlayer() && game::PlayerHasBoat())
+    Info.AddEntry("Has Boat", LIGHT_GRAY);
 
   game::SetStandardListAttributes(Info);
   Info.Draw();
@@ -12026,10 +12036,15 @@ cchar* character::GetRunDescriptionLine(int I) const
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
 
   if(IsFlying())
-    return !I ? "Flying" : "very fast";
+    return !I ? "Flying" : "fast";
 
   if(IsSwimming())
-    return !I ? "Swimming" : "very fast";
+  {
+    if(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat())
+      return !I ? "Sailing" : "fast";
+    else
+      return !I ? "Swimming" : "fast"; 
+  }
 
   return !I ? "Running" : "";
 }
