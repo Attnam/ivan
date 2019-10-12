@@ -23,7 +23,7 @@ Dungeon REBEL_CAMP;
 {
   Levels = 1;
   Description = "rebel camp";
-  ShortDescription = "Rebel Camp";
+  ShortDescription = "RC";
 
   Level 0;
   {
@@ -38,11 +38,11 @@ Dungeon REBEL_CAMP;
     TeamDefault = REBEL_TEAM;
     LOSModifier = 48;
     IgnoreDefaultSpecialSquares = false;
-    AutoReveal = true;
+    AutoReveal = false;
     CanGenerateBone = false;
     DifficultyBase = 50;
     DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = -15;
+    EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 5;
     EnchantmentPlusChanceDelta = 0;
@@ -82,6 +82,7 @@ Dungeon REBEL_CAMP;
       EntryIndex = STAIRS_UP;
     }
 
+    /* Forest trees & Decorations */
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = boulder(1);
@@ -112,7 +113,31 @@ Dungeon REBEL_CAMP;
       Times = 10;
     }
 
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(CHEAP_BED);
+      Times = 10:20;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(TABLE);
+      Times = 0:2;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(WORK_BENCH);
+      Times = 0:2;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(CHAIR);
+      Times = 1:5;
+    }
+
+    Square, BoundedRandom XSize/3, YSize/3, 4*XSize/3, 4*YSize/3, NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(WELL);
     }

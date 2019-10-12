@@ -3207,7 +3207,7 @@ canine
   }
 }
 
-wolf
+wolf /* canine-> */
 {
   DefaultArmStrength = 10;
   DefaultAgility = 25;
@@ -3243,7 +3243,7 @@ wolf
   }
 }
 
-dog
+dog /* canine-> */
 {
   DefaultArmStrength = 5;
   DefaultAgility = 15;
@@ -3409,7 +3409,7 @@ spider
   }
 }
 
-jackal
+jackal /* canine-> */
 {
   DefaultArmStrength = 3;
   DefaultAgility = 12;
@@ -4936,10 +4936,14 @@ vampirebat /* bat-> */
 nerfbat /* bat-> */
 {
   DefaultArmStrength = 3;
+  DefaultIntelligence = 12;
+  DefaultMana = 20;
   TorsoSpecialColor = rgb16(128, 0, 128); /* EyeColor */
   SkinColor = rgb16(175, 150, 175);
-  DefaultIntelligence = 12;
+  Frequency = 500;
   Adjective = "nurphe";
+  IsCatacombCreature = false;
+  IgnoreDanger = true;
   AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
 }
 
@@ -5394,6 +5398,7 @@ kobold
   NameSingular = "kobold";
   CanBeGenerated = true;
   Sex = UNDEFINED;
+  ClassStates = SEARCHING;
   RightWielded = BALSA_WOOD BALSA_WOOD meleeweapon(SPEAR);
   KnownCWeaponSkills == POLE_ARMS;
   CWeaponSkillHits == 5;
@@ -5678,7 +5683,7 @@ feline
   }
 }
 
-largecat
+largecat /* feline-> */
 {
   DefaultArmStrength = 4;
   DefaultAgility = 35;
@@ -6057,7 +6062,7 @@ genie
   UndeadVersions = false;
 }
 
-lion
+lion /* feline-> */
 {
   DefaultArmStrength = 20;
   DefaultAgility = 25;
@@ -6709,6 +6714,7 @@ imperialist
   ScienceTalkWisdomRequirement = 0;
   ScienceTalkCharismaRequirement = 15;
   IsSadist = true;
+  IsAbstract = true;
   UndeadVersions = false;
 
   Config VICE_ROY;
@@ -6899,6 +6905,7 @@ smith
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
+  IsAbstract = true;
   IsNameable = false;
   CanBeCloned = false;
   TamingDifficulty = NO_TAMING;
@@ -8573,6 +8580,7 @@ tailor
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
+  IsAbstract = true;
   IsNameable = false;
   CanBeCloned = false;
   TamingDifficulty = NO_TAMING;
@@ -9212,7 +9220,7 @@ bum
   PanicLevel = 0; /* too drunk */
   FriendlyReplies =
   {
-    151, /* rumors, more to come */
+    153, /* rumors, more to come */
     "\"There was this guy I used to adventure with, who nearly got killed by a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
     "\"You shouldn't leave your weapons filthy! I once had this nice adamantine sword, but some blood got on it and before I knew it, the sword was completely covered in rust.\"",
     "\"I've heard about a belt that can make you float in the air! Now that would have been useful that one time in the caves I stepped on a mine and nearly got my leg blown off.\"",
@@ -9323,6 +9331,8 @@ bum
     "\"I've heard you can fetch a nice iron arm from the dwarves of Kharaz-arad.\"",
     "\"I once tried to pet a hedgehog and got my hand all screwed up. Tried it next time with a gauntlet, and let me tell ya, it takes the sting from their spines!\"",
     "\"You ever thrown a bone to a doggie? I love the way it makes them happy.\"",
+    "\"You ever thrown a fish to a kitty? I love the way it makes them happy.\"",
+    "\"You ever thrown a carrot to a bunny? I love the way it makes them happy.\"",
     "\"You know what I've heard? That intellectuals can get harder. Har har har.\"",
     "\"All those priests can say so many weird and foreign words... I betcha gods love listening to wise words!\"",
     "\"You know how to best get a discount in a shop, eh? Use your charms, dummy! Har har!\"",

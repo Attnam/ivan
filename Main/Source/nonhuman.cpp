@@ -1000,10 +1000,28 @@ int nerfbat::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2
 
   if(Return != HAS_DIED)
   {
-    if(Weapon)
-      Weapon->Polymorph(this, Enemy);
-    else if(EnemyBodyPart)
-      Enemy->PolymorphRandomly(1, 999999, (int)(Damage * 100 + RAND() % 100));
+    // Compare Mana against enemy Willpower to see if they resist polymorph.
+    if(RAND_N(GetAttribute(MANA)) > RAND_N(Enemy->GetAttribute(WILL_POWER)))
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You are engulfed in a malignant aura!.");
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s is engulfed in a malignant aura!", CHAR_DESCRIPTION(DEFINITE));
+
+      if(Weapon)
+        Weapon->Polymorph(this, Enemy);
+      else if(EnemyBodyPart)
+        Enemy->PolymorphRandomly(1, 999999, (int)(Damage * 300 + RAND() % 500));
+    }
+    else
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You are engulfed in a malignant aura, but nothing seems to happen.");
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s is engulfed in a malignant aura, but nothing seems to happen.", CHAR_DESCRIPTION(DEFINITE));
+
+      Enemy->EditExperience(WILL_POWER, 100, 1 << 12);
+    }
   }
 
   return Return;

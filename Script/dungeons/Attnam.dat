@@ -39,7 +39,7 @@ Dungeon ATTNAM;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
+    EnchantmentPlusChanceDelta = 5;
     BackGroundType = GRAY_FRACTAL;
     FillSquare = GRANITE solidterrain(GROUND), BLACK_GRANITE earth;
     TunnelSquare = GRANITE solidterrain(GROUND), 0;
