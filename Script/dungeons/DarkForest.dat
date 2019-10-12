@@ -29,7 +29,7 @@ Dungeon DARK_FOREST;
   {
     FillSquare = solidterrain(GRASS_TERRAIN), 0;
     Size = 42, 26;
-    GenerateMonsters = false;
+    GenerateMonsters = true;
     Rooms = 0;
     Items = 0;
     IsOnGround = true;

@@ -3324,7 +3324,7 @@ dog /* canine-> */
     Adjective = "skeleton";
     BaseBiteStrength = 800;
     CWeaponSkillHits == 80;
-    AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+    AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, PYRAMID; }
     Frequency = 2000;
   }
 }
@@ -4942,7 +4942,6 @@ nerfbat /* bat-> */
   SkinColor = rgb16(175, 150, 175);
   Frequency = 500;
   Adjective = "nurphe";
-  IsCatacombCreature = false;
   IgnoreDanger = true;
   AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
 }
@@ -9631,4 +9630,5 @@ gasghoul /* zombie-> */
   }
   DeathMessage = "@Dd is put to rest.";
   Inventory == gasgrenade { Chance = 10; }
+  AllowedDungeons == PYRAMID;
 }

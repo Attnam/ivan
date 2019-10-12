@@ -81,19 +81,19 @@ Dungeon GOBLIN_FORT;
     }
 
     /* Traps & Stairs */
-    Square, Random;
+    Square, Random HAS_NO_OTERRAIN;
     {
       Items == mine { Team = MONSTER_TEAM; IsActive = true; }
       Times = 0:3;
     }
 
-    Square, Random;
+    Square, Random HAS_NO_OTERRAIN;
     {
       Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 0:3;
     }
 
-    Square, Random;
+    Square, Random HAS_NO_OTERRAIN;
     {
       Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 0:3;
@@ -279,44 +279,6 @@ Dungeon GOBLIN_FORT;
         iIIi
         iXIi
         .ii.
-      }
-    }
-  }
-
-  /* Sepulcher */
-  RandomLevel 0:3;
-  {
-    Room
-    {
-      GenerateLanterns = false;
-      GenerateFountains = false;
-      GenerateDoor = false;
-      GenerateTunnel = false;
-      AltarPossible = false;
-      Size = 5,5;
-      UseFillSquareWalls = true;
-      FloorSquare = SLADE solidterrain(PARQUET), 0;
-      Flags = NO_MONSTER_GENERATION;
-
-      OTerrainMap
-      {
-        Pos = 1,1;
-        Size = 3,3;
-        Types
-        {
-          # = SLADE wall(BRICK_OLD);
-        }
-      }
-      {
-        ###
-        #.#
-        ###
-      }
-
-      Square, Pos 2,2;
-      {
-        Character = genie { Inventory == oillamp; }
-        Items == ARCANITE ARCANITE meleeweapon(TWO_HANDED_SCIMITAR);
       }
     }
   }
@@ -715,6 +677,7 @@ Dungeon GOBLIN_FORT;
     Size = 36, 64;
     Items = 40:90;
     IgnoreDefaultSpecialSquares = true;
+    CanGenerateBone = false;
     MonsterAmountBase = 30;
     MonsterAmountDelta = 30;
     LevelMessage = "You hear the squabbling of many voices.";

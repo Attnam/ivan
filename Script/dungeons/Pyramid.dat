@@ -21,82 +21,511 @@
 
 Dungeon PYRAMID;
 {
-  Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Levels = 5;
+  Description = "pyramid";
+  ShortDescription = "Py";
 
-  Level 0;
+  LevelDefault
   {
-    FillSquare = solidterrain(GRASS_TERRAIN), 0;
-    Size = 42, 26;
-    GenerateMonsters = false;
-    Rooms = 0;
-    Items = 0;
-    IsOnGround = true;
+    FillSquare = solidterrain(SAND_TERRAIN), SAND_STONE wall(BRICK_OLD);
+    TunnelSquare = solidterrain(SAND_TERRAIN), 0;
+    Size = 64, 36;
+    Rooms = 15:30;
+    Items = 10:50;
+    GenerateMonsters = true;
+    IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
-    LOSModifier = 48;
+    LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
-    AutoReveal = true;
-    CanGenerateBone = false;
-    DifficultyBase = 50;
-    DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = -15;
+    DifficultyBase = 120;
+    DifficultyDelta = 30;
+    MonsterAmountBase = 25;
+    MonsterAmountDelta = 5;
+    MonsterGenerationIntervalBase = 100;
+    MonsterGenerationIntervalDelta = -10;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 80;
+    ItemMinPriceDelta = 10;
+    EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
-    EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
-    BackGroundType = GREEN_FRACTAL;
+    EnchantmentPlusChanceBase = 15;
+    EnchantmentPlusChanceDelta = 5;
+    BackGroundType = YELLOW_FRACTAL;
+    IsCatacomb = true;
     EarthquakesAffectTunnels = true;
     AudioPlayList =
     {
-      1,
-      "Empty.mid";
+      3,
+      "Dungeon.mid",
+      "Dungeon2.mid",
+      "Dungeon3.mid";
     }
 
-    Square, Random;
+    /* Decorations */
+    Square, Random HAS_NO_OTERRAIN;
     {
-      Items == beartrap { Team = MONSTER_TEAM; IsActive = false; }
+      Items == bone;
+      Times = 12:24;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == skull;
+      Times = 4:8;
+    }
+
+    Square, Random HAS_NO_OTERRAIN|IN_ROOM;
+    {
+      OTerrain = RED_SAND_STONE coffin;
+      Times = 2:6;
+    }
+
+    /* Traps & Monsters */
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 3:9;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = necromancer(APPRENTICE_NECROMANCER);
       Times = 0:3;
-    }
-
-    Square, Random;
-    {
-      Items == Random { Category = FOOD; }
-      Times = 1:2;
-    }
-
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = boulder(1);
-      Times = 10;
-    }
-
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = boulder(2);
-      Times = 10;
     }
 
     RoomDefault
     {
-      Pos = 2:40,2:24;
-      Size = 4:6,4:6;
-      AltarPossible = false;
-      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
-      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
-      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 5:9,5:9;
+      AltarPossible = true;
+      FloorSquare = SAND_STONE solidterrain(PARQUET), 0;
+      DoorSquare = SAND_STONE solidterrain(PARQUET), IRON door(BARDOOR);
       GenerateDoor = true;
       DivineMaster = 0;
-      GenerateTunnel = false;
-      GenerateLanterns = false;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
       Type = ROOM_NORMAL;
-      GenerateFountains = false;
-      AllowLockedDoors = false;
-      AllowBoobyTrappedDoors = false;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
       Shape = ROUND_CORNERS;
       IsInside = true;
-      GenerateWindows = true;
-      UseFillSquareWalls = false;
+      GenerateWindows = false;
+      UseFillSquareWalls = true;
       Flags = 0;
+    }
+  }
+
+  Level 0;
+  {
+    Rooms = 2:3;
+    Size = 42, 26;
+
+    Room
+    {
+      Size = 21,21;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      /* Traps & Stairs */
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+        Times = 2:5;
+      }
+
+      /* Monsters */
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = zombie;
+        Times = 5:10;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = skeleton;
+        Times = 5:10;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = skeleton(WARRIOR);
+        Times = 2:4;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = spider(GIANT);
+        Times = 2:4;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+  }
+
+  Level 1;
+  {
+    Size = 20, 100;
+
+    /* Stairs & Traps */
+    Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom 1, 81, 18, 98, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:4;
+    }
+
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = vampire;
+        Times = 2;
+      }
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Character = gasghoul;
+      Times = 2:5;
+    }
+  }
+
+  Level 2;
+  {
+    Size = 100, 20;
+    FillSquare = CONCRETE solidterrain(GROUND), CONCRETE wall(BRICK_OLD);
+    TunnelSquare = CONCRETE solidterrain(GROUND), 0;
+
+    RoomDefault
+    {
+      FloorSquare = CONCRETE solidterrain(PARQUET), 0;
+      DoorSquare = CONCRETE solidterrain(PARQUET), STEEL door(BARDOOR);
+    }
+
+    /* Stairs & Traps */
+    Square, BoundedRandom 81, 1, 98, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:4;
+    }
+
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(APPRENTICE_NECROMANCER);
+        Times = 2;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(MASTER_NECROMANCER);
+      }
+    }
+  }
+
+  Level 3;
+  {
+    Size = 20, 100;
+    FillSquare = HARDENED_CONCRETE solidterrain(GROUND), HARDENED_CONCRETE wall(BRICK_FINE);
+    TunnelSquare = HARDENED_CONCRETE solidterrain(GROUND), 0;
+
+    RoomDefault
+    {
+      FloorSquare = HARDENED_CONCRETE solidterrain(PARQUET), 0;
+      DoorSquare = HARDENED_CONCRETE solidterrain(PARQUET), STEEL door(BARDOOR);
+    }
+
+    /* Stairs & Traps */
+    Square, BoundedRandom 1, 81, 18, 98, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:3;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:4;
+    }
+
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = mysticfrog(DARK);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = frog(GREATER_DARK);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = frog(DARK);
+        Times = 2:4;
+      }
+    }
+  }
+
+  Level 4;
+  {
+    Description = "ancient bunker";
+    ShortDescription = "Bunker";
+    CanGenerateBone = false;
+    FillSquare = SUPER_CONCRETE solidterrain(GROUND), SUPER_CONCRETE wall(BRICK_FINE);
+    TunnelSquare = SUPER_CONCRETE solidterrain(GROUND), 0;
+    BackGroundType = GRAY_FRACTAL;
+
+    RoomDefault
+    {
+      FloorSquare = SUPER_CONCRETE solidterrain(PARQUET), 0;
+      DoorSquare = SUPER_CONCRETE solidterrain(PARQUET), STAINLESS_STEEL door(BARDOOR);
+    }
+
+    /* TODO: boss? */
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 11,11;
+      GenerateLanterns = true;
+      GenerateFountains = false;
+      AltarPossible = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      UseFillSquareWalls = false;
+      WallSquare = LEAD solidterrain(PARQUET), LEAD wall(BRICK_FINE);
+      FloorSquare = LEAD solidterrain(PARQUET), 0;
+      Shape = RECTANGLE;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 0,1;
+      {
+        GTerrain = LEAD solidterrain(PARQUET);
+        OTerrain = LEAD door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Pos 10,9;
+      {
+        GTerrain = LEAD solidterrain(PARQUET);
+        OTerrain = LEAD door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      OTerrainMap
+      {
+        Size = 5,5;
+        Pos = 3,3;
+        Types
+        {
+          # = GLASS wall(BRICK_FINE);
+        }
+      }
+      {
+        #####
+        #...#
+        #...#
+        #...#
+        #####
+      }
+    }
+  }
+
+  /* Decorations */
+  RandomLevel 0:3;
+  {
+    Square, Random HAS_NO_OTERRAIN|IN_ROOM;
+    {
+      OTerrain = fountain { SecondaryMaterial = LIQUID_DARKNESS; }
+    }
+  }
+
+  RandomLevel 0:3;
+  {
+    Square, Random HAS_NO_OTERRAIN|IN_ROOM;
+    {
+      OTerrain = fountain { SecondaryMaterial = POISON_LIQUID; }
+    }
+  }
+
+  RandomLevel 0:3;
+  {
+    Square, Random HAS_NO_OTERRAIN|IN_ROOM;
+    {
+      OTerrain = fountain { SecondaryMaterial = SICK_BLOOD; }
+    }
+  }
+
+  /* Quicksand Pool */
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      AltarPossible = false;
+      FloorSquare = QUICK_SAND liquidterrain(UNDERGROUND_LAKE), 0;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  /* Cactus Room */
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      FloorSquare = RED_SAND solidterrain(SAND_TERRAIN), 0;
+      Shape = RECTANGLE;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CACTUS);
+        Times = 4:8;
+      }
+    }
+  }
+
+  /* Sepulcher */
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 5,5;
+      UseFillSquareWalls = true;
+      FloorSquare = IRON solidterrain(PARQUET), 0;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+        Types
+        {
+          # = IRON wall(BRICK_OLD);
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 2,2;
+      {
+        Character = genie { Inventory == oillamp; }
+        Items == ARCANITE ARCANITE meleeweapon(TWO_HANDED_SCIMITAR);
+      }
     }
   }
 }
