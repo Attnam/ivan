@@ -1437,9 +1437,9 @@ truth nonhumanoid::EditAllAttributes(int Amount)
 
 void nonhumanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(45);
+  Entry.Resize(42);
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.Resize(48);
+  Entry.Resize(45);
   Entry << "-  -  " << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }

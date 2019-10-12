@@ -4296,13 +4296,13 @@ void golem::BeTalkedTo()
 
 void humanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(45);
+  Entry.Resize(42);
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.Resize(48);
+  Entry.Resize(45);
   Entry << GetAttribute(LEG_STRENGTH);
-  Entry.Resize(51);
+  Entry.Resize(48);
   Entry << GetAttribute(DEXTERITY);
-  Entry.Resize(54);
+  Entry.Resize(51);
   Entry << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }

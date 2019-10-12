@@ -9146,19 +9146,19 @@ truth character::EditAllAttributes(int Amount)
 
 void character::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(57);
+  Entry.Resize(54);
   Entry << GetAttribute(ENDURANCE);
-  Entry.Resize(60);
+  Entry.Resize(57);
   Entry << GetAttribute(PERCEPTION);
-  Entry.Resize(63);
+  Entry.Resize(60);
   Entry << GetAttribute(INTELLIGENCE);
-  Entry.Resize(66);
+  Entry.Resize(63);
   Entry << GetAttribute(WISDOM);
-  Entry.Resize(69);
+  Entry.Resize(66);
   Entry << GetAttribute(WILL_POWER);
-  Entry.Resize(72);
+  Entry.Resize(69);
   Entry << GetAttribute(CHARISMA);
-  Entry.Resize(75);
+  Entry.Resize(72);
   Entry << GetAttribute(MANA);
 }
 

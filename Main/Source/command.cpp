@@ -2046,7 +2046,7 @@ truth commandsystem::SecretKnowledge(character* Char)
     switch(Chosen)
     {
      case 0:
-      List.AddDescription(CONST_S("                                                AS LS DX AG EN PE IN WS WL CH MA"));
+      List.AddDescription(CONST_S("                                             AS LS DX AG EN PE IN WS WL CH MA"));
 
       for(c = 0; c < Character.size(); ++c)
       {
