@@ -30,8 +30,8 @@ Dungeon PYRAMID;
     FillSquare = solidterrain(SAND_TERRAIN), SAND_STONE wall(BRICK_OLD);
     TunnelSquare = solidterrain(SAND_TERRAIN), 0;
     Size = 64, 36;
-    Rooms = 15:30;
-    Items = 10:50;
+    Rooms = 10:30;
+    Items = 25:50;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -91,6 +91,12 @@ Dungeon PYRAMID;
     {
       Character = necromancer(APPRENTICE_NECROMANCER);
       Times = 0:3;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = skeleton(WARRIOR);
+      Times = 2:4;
     }
 
     RoomDefault
@@ -157,12 +163,6 @@ Dungeon PYRAMID;
 
       Square, Random HAS_NO_OTERRAIN;
       {
-        Character = skeleton(WARRIOR);
-        Times = 2:4;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
         Character = spider(GIANT);
         Times = 2:4;
       }
@@ -179,6 +179,11 @@ Dungeon PYRAMID;
   Level 1;
   {
     Size = 20, 100;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+    }
 
     /* Stairs & Traps */
     Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
@@ -206,27 +211,6 @@ Dungeon PYRAMID;
       Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 1:4;
     }
-
-    Room
-    {
-      Size = 9,9;
-      AltarPossible = false;
-      GenerateFountains = false;
-      GenerateLanterns = false;
-      Shape = MAZE_ROOM;
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = vampire;
-        Times = 2;
-      }
-    }
-
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      Character = gasghoul;
-      Times = 2:5;
-    }
   }
 
   Level 2;
@@ -237,6 +221,7 @@ Dungeon PYRAMID;
 
     RoomDefault
     {
+      Pos = 2:XSize-5,2:YSize-5;
       FloorSquare = CONCRETE solidterrain(PARQUET), 0;
       DoorSquare = CONCRETE solidterrain(PARQUET), STEEL door(BARDOOR);
     }
@@ -273,26 +258,6 @@ Dungeon PYRAMID;
       Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 1:4;
     }
-
-    Room
-    {
-      Size = 9,9;
-      AltarPossible = false;
-      GenerateFountains = false;
-      GenerateLanterns = false;
-      Shape = MAZE_ROOM;
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = necromancer(APPRENTICE_NECROMANCER);
-        Times = 2;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = necromancer(MASTER_NECROMANCER);
-      }
-    }
   }
 
   Level 3;
@@ -303,6 +268,7 @@ Dungeon PYRAMID;
 
     RoomDefault
     {
+      Pos = 2:XSize-5,2:YSize-5;
       FloorSquare = HARDENED_CONCRETE solidterrain(PARQUET), 0;
       DoorSquare = HARDENED_CONCRETE solidterrain(PARQUET), STEEL door(BARDOOR);
     }
@@ -390,6 +356,7 @@ Dungeon PYRAMID;
       AttachRequired = true;
     }
 
+    /* the Nuke */
     Room
     {
       Size = 11,11;
@@ -433,6 +400,88 @@ Dungeon PYRAMID;
         #...#
         #...#
         #####
+      }
+    }
+
+    /* Mind Worms */
+    Room
+    {
+      Size = 7,7;
+      Shape = RECTANGLE;
+
+      OTerrainMap
+      {
+        Pos = 2,2;
+        Size = 3,3;
+
+        Types
+        {
+          # = STAINLESS_STEEL barwall;
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 3,3;
+      {
+        Character = mindworm(BOIL);
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      Shape = RECTANGLE;
+
+      OTerrainMap
+      {
+        Pos = 2,2;
+        Size = 3,3;
+
+        Types
+        {
+          # = STAINLESS_STEEL barwall;
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 3,3;
+      {
+        Character = mindworm(BOIL);
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      Shape = RECTANGLE;
+
+      OTerrainMap
+      {
+        Pos = 2,2;
+        Size = 3,3;
+
+        Types
+        {
+          # = STAINLESS_STEEL barwall;
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 3,3;
+      {
+        Character = mindworm(BOIL);
       }
     }
   }
@@ -523,8 +572,91 @@ Dungeon PYRAMID;
 
       Square, Pos 2,2;
       {
-        Character = genie { Inventory == oillamp; }
+        Character = genie { Inventory = { 2,  oillamp, Random { MinPrice = 2000; } } }
         Items == ARCANITE ARCANITE meleeweapon(TWO_HANDED_SCIMITAR);
+      }
+    }
+  }
+
+  /* Minibosses */
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(APPRENTICE_NECROMANCER);
+        Times = 2;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(MASTER_NECROMANCER);
+      }
+    }
+  }
+
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = vampire;
+        Times = 3;
+      }
+    }
+  }
+
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = gasghoul;
+        Times = 2:5;
+      }
+    }
+  }
+
+  RandomLevel 1:3;
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem(WRAITH_BONE);
+        Times = 2:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem(ACIDOUS_BLOOD);
       }
     }
   }

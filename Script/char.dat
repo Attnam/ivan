@@ -3144,6 +3144,49 @@ golem
     AttachedGod = CRUENTUS;
   }
 
+  /* Catacomb golems */
+  Config HUMAN_NAIL;
+  {
+    Adjective = "human nail";
+    IsCatacombCreature = true;
+    AttachedGod = SCABIES;
+  }
+
+  Config BONE;
+  {
+    Adjective = "bone";
+    IsCatacombCreature = true;
+    AttachedGod = INFUSCOR;
+  }
+
+  Config WRAITH_BONE;
+  {
+    Adjective = "wraith bone";
+    IsCatacombCreature = true;
+    AttachedGod = INFUSCOR;
+  }
+
+  Config HUMAN_SKIN;
+  {
+    Adjective = "human skin";
+    IsCatacombCreature = true;
+    AttachedGod = SCABIES;
+  }
+
+  Config PETRIFIED_DARK;
+  {
+    Adjective = "petrified darkness";
+    IsCatacombCreature = true;
+    AttachedGod = MORTIFER;
+  }
+
+  Config BLOOD;
+  {
+    Adjective = "blood";
+    IsCatacombCreature = true;
+    AttachedGod = CRUENTUS;
+  }
+
   /* The following golems are only summoned by wizards. */
 
   Config EVIL_WONDER_STAFF_VAPOUR;
@@ -4946,6 +4989,18 @@ nerfbat /* bat-> */
   AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
 }
 
+fruitbat /* bat-> */
+{
+  DefaultEndurance = 10;
+  TorsoSpecialColor = rgb16(180, 180, 180); /* EyeColor */
+  SkinColor = rgb16(190, 130, 64);
+  Frequency = 500;
+  Adjective = "fruit";
+  IgnoreDanger = true;
+  IsCatacombCreature = false;
+  AllowedDungeons = { 3, GOBLIN_FORT, FUNGAL_CAVE, DARK_FOREST; }
+}
+
 mistress
 {
   DefaultArmStrength = 20;
@@ -6222,7 +6277,7 @@ snake
   AttachedGod = MELLIS;
   AutomaticallySeen = true;
   RunDescriptionLineOne = "Slithering";
-  RunDescriptionLineTwo = "fast";
+  RunDescriptionLineTwo = " very fast";
 }
 
 orc
@@ -9612,6 +9667,8 @@ gasghoul /* zombie-> */
   HairColor = rgb16(144, 95, 32);
   CapColor = rgb16(144, 95, 32);
   EyeColor = rgb16(255, 0, 0);
+  SkinColor = rgb16(125, 125, 125);
+  ClothColor = rgb16(95, 95, 95);
   HeadBitmapPos = 112, 512; /* broken gas mask */
   NameSingular = "gas-ghoul";
   DangerModifier = 150;

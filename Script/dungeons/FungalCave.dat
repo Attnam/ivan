@@ -21,82 +21,764 @@
 
 Dungeon FUNGAL_CAVE;
 {
-  Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Levels = 5;
+  Description = "fungal cave";
+  ShortDescription = "FC";
 
-  Level 0;
+  LevelDefault
   {
-    FillSquare = solidterrain(GRASS_TERRAIN), 0;
-    Size = 42, 26;
-    GenerateMonsters = false;
-    Rooms = 0;
-    Items = 0;
-    IsOnGround = true;
+    FillSquare = CLAY solidterrain(SAND_TERRAIN), CLAY earth;
+    TunnelSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+    Size = 32, 64;
+    Rooms = 10:20;
+    Items = 15:30;
+    GenerateMonsters = true;
+    IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
-    LOSModifier = 48;
+    LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
-    AutoReveal = true;
-    CanGenerateBone = false;
-    DifficultyBase = 50;
-    DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = -15;
+    DifficultyBase = 70;
+    DifficultyDelta = 10;
+    MonsterAmountBase = 15;
+    MonsterAmountDelta = 5;
+    MonsterGenerationIntervalBase = 120;
+    MonsterGenerationIntervalDelta = -15;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 15;
+    ItemMinPriceDelta = 15;
+    EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
-    EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 10;
+    EnchantmentPlusChanceDelta = 5;
     BackGroundType = GREEN_FRACTAL;
+    IsCatacomb = false;
     EarthquakesAffectTunnels = true;
     AudioPlayList =
     {
-      1,
-      "Empty.mid";
+      3,
+      "Dungeon.mid",
+      "Dungeon2.mid",
+      "Dungeon3.mid";
     }
 
-    Square, Random;
+    /* Decorations */
+    Square, Random HAS_NO_OTERRAIN;
     {
-      Items == beartrap { Team = MONSTER_TEAM; IsActive = false; }
+      Items == CLAY stone;
+      Times = 5:10;
+    }
+
+    /* Stairs & Traps */
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
       Times = 0:3;
     }
 
-    Square, Random;
+    Square, Random HAS_NO_OTERRAIN;
     {
-      Items == Random { Category = FOOD; }
-      Times = 1:2;
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
     }
 
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    Square, Random HAS_NO_OTERRAIN;
     {
-      OTerrain = boulder(1);
-      Times = 10;
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
     }
 
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    /* Monsters */
+    Square, Random HAS_NO_OTERRAIN;
     {
-      OTerrain = boulder(2);
+      Character = mushroom;
+      Times = 2:4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = magicmushroom;
+      Times = 0:3;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:11,4:11;
+      AltarPossible = true;
+      WallSquare = CLAY solidterrain(SAND_TERRAIN), FUNGI_WOOD wall(BRICK_PRIMITIVE);
+      FloorSquare = FUNGI_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FUNGI_WOOD solidterrain(PARQUET), MYCELIUM door(CURTAIN);
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  Level 0;
+  {
+    TunnelSquare = CLAY solidterrain(SAND_TERRAIN), 0;
+
+    /* Cave Rooms */
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = CLAY solidterrain(SAND_TERRAIN), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = CLAY solidterrain(SAND_TERRAIN), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  /* Fusanga Level */
+  Level FUSANGA_LEVEL;
+  {
+    FillSquare = COAL solidterrain(GROUND), COAL earth;
+    Size = 64, 64;
+    Rooms = 100;
+    LOSModifier = 42;
+    IgnoreDefaultSpecialSquares = true;
+    MonsterAmountBase = 20;
+    MonsterAmountDelta = 7;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    /* Monsters */
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = magicmushroom;
       Times = 10;
     }
 
     RoomDefault
     {
-      Pos = 2:40,2:24;
-      Size = 4:6,4:6;
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 3:4,3:4;
       AltarPossible = false;
-      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
-      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
-      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
-      GenerateDoor = true;
-      DivineMaster = 0;
-      GenerateTunnel = false;
+      FloorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
       GenerateLanterns = false;
-      Type = ROOM_NORMAL;
       GenerateFountains = false;
-      AllowLockedDoors = false;
-      AllowBoobyTrappedDoors = false;
+      UseFillSquareWalls = true;
+    }
+
+    /* Fusanga Room */
+    Room
+    {
+      Size = 8,8;
       Shape = ROUND_CORNERS;
-      IsInside = true;
-      GenerateWindows = true;
+
+      CharacterMap
+      {
+        Pos = 2,2;
+        Size = 4,4;
+
+        Types
+        {
+          f = mushroom; /* TODO: fusanga */
+        }
+      }
+      {
+        ffff
+        f..f
+        f..f
+        ffff
+      }
+
+      Square, Pos 3,3;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
+    }
+  }
+
+  /* MacGuffin */
+  Level 4;
+  {
+    Size = 42, 26;
+    Description = "deep lake";
+    ShortDescription = "Deep Lake";
+    IgnoreDefaultSpecialSquares = true;
+    CanGenerateBone = false;
+    LOSModifier = 48;
+    FillSquare = COAL solidterrain(GROUND), COAL earth;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 5:7,5:7;
+      WallSquare = PETRIFIED_WOOD solidterrain(GROUND), PETRIFIED_WOOD wall(STONE_WALL);
+      FloorSquare = PETRIFIED_WOOD solidterrain(GROUND), 0;
+      DoorSquare = PETRIFIED_WOOD solidterrain(GROUND), 0;
+      AltarPossible = false;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random;
+    {
+      Character = kamikazedwarf(MORTIFER);
+      Times = 1:3;
+    }
+
+    Square, Random;
+    {
+      Character = veterankamikazedwarf(MORTIFER);
+    }
+
+    /* TODO: item in the middle of a lake */
+    Room
+    {
+      Size = 11,7;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  /* "I'm so EVIL!!1!" Room */
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      Size = 11,11;
+      GenerateLanterns = false;
       UseFillSquareWalls = false;
-      Flags = 0;
+      WallSquare = CLAY solidterrain(SAND_TERRAIN), HARDENED_CLAY wall(STONE_WALL);
+      DoorSquare = solidterrain(DARK_GRASS_TERRAIN), FUNGI_WOOD door;
+      FloorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
+
+      Square, Pos 5,5;
+      {
+        OTerrain = SUN_CRYSTAL decoration(SHARD);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(DWARF_BIRCH);
+        Times = 2:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TEAK);
+        Times = 3:6;
+      }
+
+      /* Treasure */
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == Random { ConfigFlags = NO_BROKEN; }
+        Times = 10:20;
+      }
+
+      /* Monsters to make the player really, really angry: */
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = magpie;
+        Times = 3:6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = fruitbat;
+        Times = 3:6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = nerfbat;
+        Times = 1:3;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = floatingeye;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(LIGHT_ASIAN_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(DARK_ASIAN_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(CAUCASIAN_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(DARK_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(GREEN_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(BLUE_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(RED_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(PINK_SIREN);
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = siren(HISPANIC_SIREN);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = carnivorousplant(GIANT) { Inventory == Random { Chance = 50; MinPrice = 250; Times = 3; } }
+      }
+    }
+  }
+
+  /* Poison Room */
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          A = spider(ARANEA) { Inventory == Random { Chance = 50; MinPrice = 250; Times = 3; } }
+          B = spider(GIANT);
+          L = spider(LARGE);
+          s = snake;
+          S = skunk;
+        }
+      }
+      {
+        .sSs.
+        sBLBs
+        sLALs
+        .sSs.
+      }
+    }
+  }
+
+  /* Mommo Room */
+  RandomLevel 2:4;
+  {
+    Room
+    {
+      Size = 9,7;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      AltarPossible = false;
+      UseFillSquareWalls = false;
+      WallSquare = CLAY solidterrain(SAND_TERRAIN), HARDENED_CLAY wall(STONE_WALL);
+      FloorSquare = CLAY solidterrain(SAND_TERRAIN), 0;
+      DoorSquare = CLAY solidterrain(SAND_TERRAIN), 0;
+      Shape = ROUND_CORNERS;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 7,5;
+
+        Types
+        {
+          # = HARDENED_CLAY wall(STONE_WALL);
+        }
+      }
+      {
+        ..#.#..
+        .#.#.#.
+        #.#.#.#
+        .#.#.#.
+        ..#.#..
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,5;
+
+        Types
+        {
+          c = mommo(CONICAL) { Inventory == Random { Chance = 50; MinPrice = 250; Times = 3; } }
+          f = mommo(FLAT);
+          b = mommo(BLOAT);
+        }
+      }
+      {
+        .b.b.b.
+        b.f.f.b
+        .f.c.f.
+        b.f.f.b
+        .b.b.b.
+      }
+    }
+  }
+
+  /* Vault */
+  RandomLevel 0:4;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      Type = ROOM_OWNED_AREA; /* Should prevent decay. */
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+
+        Types
+        {
+          = = olterraincontainer(SHELF) { ItemsInside = { 3, carrot { Times = 0:2; },
+                                                             Random { MinPrice = 100; Category = POTION; Times = 1:2; },
+                                                             Random { MinPrice = 200; Category = POTION; Chance = 50; } } }
+          x = BRONZE wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x=.=x
+        x=.=x
+        x=.=x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == cauldron;
+      }
+    }
+  }
+
+  /* Cave Rooms */
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+    }
+  }
+
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+    }
+  }
+
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        GTerrain = MYCELIUM solidterrain(DARK_GRASS_TERRAIN);
+        AttachRequired = true;
+      }
+
+      /* I'm Evil, Bwahaha */
+      Square, Pos 3,3;
+      {
+        Items = { 2, mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }, Random { MinPrice = 250; Category = SCROLL; } }
+      }
+    }
+  }
+
+  /* Pools */
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = true;
+      AltarPossible = false;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = true;
+      AltarPossible = false;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = true;
+      AltarPossible = false;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = true;
+      AltarPossible = false;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+    }
+  }
+
+  RandomLevel 0:2;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = true;
+      AltarPossible = false;
+      WallSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
     }
   }
 }

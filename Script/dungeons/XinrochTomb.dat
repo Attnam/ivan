@@ -671,7 +671,7 @@ Dungeon XINROCH_TOMB;
   {
     Square, Random;
     {
-      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000; Chance = 5; }
+      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000:10000; Chance = 5; }
     }
   }
 
@@ -968,7 +968,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Pos 3,3;
       {
-        Items == cauldron { SecondaryMaterial = TROLL_BLOOD; }
+        Items == cauldron;
       }
     }
   }

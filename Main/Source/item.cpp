@@ -54,6 +54,7 @@ truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslo
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 truth item::IsBroken() const { return GetConfig() & BROKEN; }
+truth item::IsFood() const { return DataBase->Category & FOOD; }
 cchar* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }

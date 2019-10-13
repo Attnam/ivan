@@ -1,33 +1,27 @@
-/* Cat room */
-
-RandomLevel 1:2;
-{
-  LevelMessage = "You hear distant purring.";
-
-  Room
+  /* Throne Room */
+  RandomLevel 0:4;
   {
-    Size = 7,7;
-    AltarPossible = false;
-    Shape = ROUND_CORNERS;
-
-    CharacterMap
+    Room
     {
-      Pos = 1,1;
-      Size = 5,5;
+      Size = 3,3;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
 
-      Types
+      Square, Pos 1,1;
       {
-        c = largecat;
-        l = lion;
-        F = /*Felicia*/ { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+        OTerrain = PORCELAIN throne;
+      }
+
+      Square, Pos 1,2;
+      {
+        OTerrain = BEECH_WOOD door(HEART_SHAPED_LOCK);
+        AttachRequired = true;
       }
     }
-    {
-      .ccc.
-      clllc
-      clFlc
-      clllc
-      .ccc.
-    }
   }
-}

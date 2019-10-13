@@ -2693,3 +2693,49 @@ void invisiblestalker::GetAICommand()
 
   nonhumanoid::GetAICommand();
 }
+
+truth fruitbat::IsRetreating() const
+{
+  if(nonhumanoid::IsRetreating())
+    return true;
+
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if((*i)->IsFood())
+      return true;
+
+  return false;
+}
+
+void fruitbat::GetAICommand()
+{
+  if(!IsRetreating())
+  {
+    character* Char = GetRandomNeighbour();
+
+    if(Char)
+    {
+      itemvector Fruits;
+
+      for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
+      {
+        if((*i)->IsFood() && !MakesBurdened((*i)->GetWeight()))
+          Fruits.push_back(*i);
+      }
+
+      if(!Fruits.empty())
+      {
+        item* ToSteal = Fruits[RAND() % Fruits.size()];
+        ToSteal->RemoveFromSlot();
+        GetStack()->AddItem(ToSteal);
+
+        if(Char->IsPlayer())
+          ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+
+        EditAP(-500);
+        return;
+      }
+    }
+  }
+
+  bat::GetAICommand();
+}

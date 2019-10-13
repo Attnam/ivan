@@ -150,5 +150,29 @@ Dungeon REBEL_CAMP;
         ItemsInside = { 3,  Random { Category = WEAPON; }, potion(VIAL) { SecondaryMaterial = HEALING_LIQUID; }, DARK_BREAD loaf; }
       }
     }
+
+    /* Kamikaze Room */
+    Room
+    {
+      Size = 6,6;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 4,4;
+
+        Types
+        {
+          k = kamikazedwarf(LEGIFER);
+          K = veterankamikazedwarf(LEGIFER);
+        }
+      }
+      {
+        .kk.
+        k..k
+        kK.k
+        .kk.
+      }
+    }
   }
 }

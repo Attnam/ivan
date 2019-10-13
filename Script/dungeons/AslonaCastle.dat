@@ -29,7 +29,7 @@ Dungeon ASLONA_CASTLE;
   {
     Size = 42, 26;
     GenerateMonsters = false;
-    Rooms = 5:15;
+    Rooms = 15;
     Items = 0;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -62,7 +62,7 @@ Dungeon ASLONA_CASTLE;
       FloorSquare = CALCITE solidterrain(GROUND), 0;
       DoorSquare = CALCITE solidterrain(GROUND), 0;
 
-      Size = 3:4,3:4;
+      Size = 3,3;
       AltarPossible = false;
       GenerateDoor = true;
       DivineMaster = 0;

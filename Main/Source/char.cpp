@@ -12036,14 +12036,14 @@ cchar* character::GetRunDescriptionLine(int I) const
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
 
   if(IsFlying())
-    return !I ? "Flying" : "fast";
+    return !I ? "Flying" : " very fast";
 
   if(IsSwimming())
   {
     if(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat())
-      return !I ? "Sailing" : "fast";
+      return !I ? "Sailing" : " very fast";
     else
-      return !I ? "Swimming" : "fast"; 
+      return !I ? "Swimming" : " very fast"; 
   }
 
   return !I ? "Running" : "";

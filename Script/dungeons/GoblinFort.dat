@@ -31,7 +31,7 @@ Dungeon GOBLIN_FORT;
     TunnelSquare = DIRT solidterrain(GROUND), 0;
     Size = 40, 40;
     Rooms = 10:30;
-    Items = 10:25;
+    Items = 15:25;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -219,119 +219,6 @@ Dungeon GOBLIN_FORT;
     }
   }
 
-  /* Cat Room  */
-  RandomLevel 1:3;
-  {
-    LevelMessage = "You hear distant purring.";
-
-    Room
-    {
-      Size = 6,6;
-      AltarPossible = false;
-      Shape = ROUND_CORNERS;
-
-      CharacterMap
-      {
-        Pos = 1,1;
-        Size = 4,4;
-
-        Types
-        {
-          c = largecat { Inventory == trinket(BONE_FISH) { Chance = 50; } }
-          L = lion { Inventory == trinket(DEAD_FISH) { Chance = 50; } }
-          X = lion { Inventory == scrollofenchantarmor; }
-        }
-      }
-      {
-        .cc.
-        cLXc
-        cLLc
-        .cc.
-      }
-    }
-  }
-
-  /* Invisible Room  */
-  RandomLevel 1:3;
-  {
-    LevelMessage = "The hair on the back of your neck stand up.";
-
-    Room
-    {
-      Size = 6,6;
-      AltarPossible = false;
-      Shape = ROUND_CORNERS;
-
-      CharacterMap
-      {
-        Pos = 1,1;
-        Size = 4,4;
-
-        Types
-        {
-          i = invisiblestalker;
-          I = invisiblestalker(SLAYER);
-          X = invisiblestalker(SLAYER) { Inventory == scrollofenchantweapon; }
-        }
-      }
-      {
-        .ii.
-        iIIi
-        iXIi
-        .ii.
-      }
-    }
-  }
-
-  /* Explosive Room */
-  RandomLevel 3:4;
-  {
-    Room
-    {
-      Size = 5,5;
-      AllowLockedDoors = true;
-      AllowBoobyTrappedDoors = true;
-      GenerateFountains = false;
-      AltarPossible = false;
-      Flags = NO_MONSTER_GENERATION;
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Items == mine;
-        Times = 1:5;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Items == mine(BIG_MINE);
-        Times = 1:5;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Items == gastrap;
-        Times = 1:5;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Items == backpack;
-        Times = 2:4;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Items == gasgrenade;
-        Times = 2:6;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = kamikazedwarf(CLEPTIA);
-      }
-    }
-  }
-
   Level 1;
   {
     /* Goblins */
@@ -344,7 +231,15 @@ Dungeon GOBLIN_FORT;
     Square, Random HAS_NO_OTERRAIN;
     {
       Character = goblin(BERSERKER);
-      Times = 1;
+    }
+  }
+
+  Level 2;
+  {
+    /* Goblins */
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = goblin(BUTCHER);
     }
   }
 
@@ -414,7 +309,7 @@ Dungeon GOBLIN_FORT;
     Square, Random HAS_NO_OTERRAIN;
     {
       Character = goblin(MONK);
-      Times = 2:8;
+      Times = 4:8;
     }
   }
 
@@ -474,8 +369,6 @@ Dungeon GOBLIN_FORT;
       Times = 2;
     }
 
-    /* TODO: some miniboss? */
-
     /* Decorations */
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {
@@ -528,11 +421,69 @@ Dungeon GOBLIN_FORT;
       AttachRequired = true;
     }
 
-    Square, BoundedRandom XSize-12, 2, XSize-2, 12, NOT_WALKABLE|ATTACHABLE;
+    Square, BoundedRandom XSize-20, 2, XSize-2, 20, NOT_WALKABLE|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 5; AttachedEntry = STAIRS_UP; }
       EntryIndex = STAIRS_DOWN;
       AttachRequired = true;
+    }
+
+    /* Some extra items far from the entrance. */
+    Square, BoundedRandom 1, YSize-40, 40, YSize-2, HAS_NO_OTERRAIN;
+    {
+      Items == Random { MinPrice = 500; Chance = 75; }
+      Times = 4;
+    }
+
+    /* Invisible Room */
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          i = invisiblestalker;
+          I = invisiblestalker(SLAYER);
+        }
+      }
+      {
+        .iii.
+        iIIIi
+        iIIIi
+        .iii.
+      }
+    }
+
+    /* Imp Room */
+    Room
+    {
+      Size = 6,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 4,4;
+
+        Types
+        {
+          i = imp; /* TODO: mirror imps */
+        }
+      }
+      {
+        .ii.
+        iiii
+        iiii
+        .ii.
+      }
     }
 
     /* Cave Rooms */
@@ -833,6 +784,224 @@ Dungeon GOBLIN_FORT;
         Character = goblin(WARLOCK) { Inventory = { 2, wand(WAND_OF_FIRE_BALLS), wand(WAND_OF_ACID_RAIN); } }
         Times = 2;
       }
+    }
+  }
+
+  /* Cat Room  */
+  RandomLevel 1:2;
+  {
+    LevelMessage = "You hear distant purring.";
+
+    Room
+    {
+      Size = 6,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 4,4;
+
+        Types
+        {
+          c = largecat { Inventory == trinket(BONE_FISH) { Chance = 50; } }
+          L = lion { Inventory == trinket(DEAD_FISH) { Chance = 50; } }
+          X = lion { Inventory == scrollofenchantarmor; }
+          Y = lion { Inventory == scrollofenchantweapon; }
+        }
+      }
+      {
+        .cc.
+        cLXc
+        cYLc
+        .cc.
+      }
+    }
+  }
+
+  /* Explosive Room */
+  RandomLevel 3:4;
+  {
+    Room
+    {
+      Size = 5,5;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine;
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine(BIG_MINE);
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gastrap;
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == backpack;
+        Times = 2:4;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gasgrenade;
+        Times = 2:6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == scrolloffireballs { Chance = 10; Times = 4; }
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = kamikazedwarf(CLEPTIA);
+      }
+    }
+  }
+
+  /* Vault */
+  RandomLevel 0:4;
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = IRON wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      }
+
+      Square, Random;
+      {
+        Items == UR_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 2;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == UR_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 2,  Random { MinPrice = 1250; },
+                              Random { MinPrice = 100; Chance = 75; Times = 3; } }
+        }
+      }
+    }
+  }
+
+  /* Living Quarters */
+  RandomLevel 0:3;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TABLE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
+      }
+    }
+  }
+
+  RandomLevel 0:3;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(ANVIL);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(FORGE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(WORK_BENCH);
+      }
+    }
+  }
+
+  RandomLevel 0:3;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHEAP_BED);
+        Times = 2:6;
+      }
+    }
+  }
+
+  RandomLevel 0:4;
+  {
+    Square, Random HAS_NO_OTERRAIN|IN_ROOM;
+    {
+      OTerrain = decoration(WELL);
     }
   }
 }

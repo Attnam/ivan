@@ -6308,23 +6308,23 @@ cchar* humanoid::GetRunDescriptionLine(int I) const
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
 
   if(IsFlying())
-    return !I ? "Flying" : "fast";
+    return !I ? "Flying" : " very fast";
 
   if(IsSwimming())
   {
     if(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat())
-      return !I ? "Sailing" : "fast";
+      return !I ? "Sailing" : " very fast";
     else if(!GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
-      return !I ? "Floating" : "ahead fast";
+      return !I ? "Floating" : " ahead fast";
     else
-      return !I ? "Swimming" : "fast";
+      return !I ? "Swimming" : " very fast";
   }
 
   if(!GetRightLeg() && !GetLeftLeg())
-    return !I ? "Rolling" : "fast";
+    return !I ? "Rolling" : " very fast";
 
   if(!GetRightLeg() || !GetLeftLeg())
-    return !I ? "Hopping" : "fast";
+    return !I ? "Hopping" : " very fast";
 
   return !I ? "Running" : "";
 }

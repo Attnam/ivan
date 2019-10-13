@@ -1161,7 +1161,6 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  // TODO: as champion grant green slime vomit
   if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your follwers.
   {
     for(int c = 0; c < game::GetTeams(); ++c)

@@ -165,9 +165,10 @@ CHARACTER(dolphin, nonhumanoid)
 
 CHARACTER(bat, nonhumanoid)
 {
+ public:
+  virtual void GetAICommand();
  protected:
   virtual bodypart* MakeBodyPart(int) const;
-  virtual void GetAICommand();
 };
 
 CHARACTER(vampirebat, bat)
@@ -180,6 +181,13 @@ CHARACTER(nerfbat, bat)
 {
  protected:
   virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
+};
+
+CHARACTER(fruitbat, bat)
+{
+ public:
+  virtual void GetAICommand();
+  virtual truth IsRetreating() const;
 };
 
 CHARACTER(largecat, feline)
@@ -331,7 +339,7 @@ CHARACTER(skunk, nonhumanoid)
 
 CHARACTER(invisiblestalker, nonhumanoid)
 {
- protected:
+ public:
   virtual void GetAICommand();
 };
 

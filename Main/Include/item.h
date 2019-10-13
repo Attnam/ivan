@@ -484,6 +484,7 @@ class item : public object
   virtual double GetDamageBonus() const { return 0.; }
   virtual void DrawContents(ccharacter*) { }
   virtual truth IsBroken() const;
+  virtual truth IsFood() const;
   virtual int GetEnchantment() const { return 0; }
   long GetEnchantedPrice(int) const;
   virtual item* Fix();

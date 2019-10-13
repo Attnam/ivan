@@ -574,6 +574,8 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define DUAL_ENNER_BEAST_LEVEL 5
 #define NECRO_CHAMBER_LEVEL 6
 
+#define FUSANGA_LEVEL 3
+
 /* stack::DrawContents flags */
 
 #define NO_SELECT 1           // only show items
