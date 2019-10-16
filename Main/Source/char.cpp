@@ -1585,41 +1585,75 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
     return false;
   }
 }
-  else
+  else // In wilderness:
   {
     /** No multitile support */
 
     if(CanMove()
        && GetArea()->IsValidPos(MoveTo)
        && (CanMoveOn(GetNearWSquare(MoveTo))
-           || game::GoThroughWallsCheatIsActive()))
+           || game::GoThroughWallsCheatIsActive())
+      )
     {
       if(!game::GoThroughWallsCheatIsActive())
       {
         charactervector& V = game::GetWorldMap()->GetPlayerGroup();
-        truth Discard = false;
 
-        for(uint c = 0; c < V.size(); ++c)
-          if(!V[c]->CanMoveOn(GetNearWSquare(MoveTo)))
+        if(IsPlayer() && game::PlayerHasBoat())
+        {
+          if((GetSquareUnder()->GetSquareWalkability() & WALK) && // land
+             !(GetNearWSquare(MoveTo)->GetWalkability() & WALK)) // ocean
           {
-            if(!Discard)
-            {
-              ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
+            if(!game::TruthQuestion("Board your ship? [y/N]"))
+              return false;
 
-              if(!game::TruthQuestion("Discard them? [y/N]"))
-                return false;
+            if(V.empty())
+              ADD_MESSAGE("You board your ship and prepare to sail.");
+            else
+              ADD_MESSAGE("Your team boards your ship and prepares to sail.");
 
-              Discard = true;
-            }
-
-            if(Discard)
-              delete V[c];
-
-            V.erase(V.begin() + c--);
+            EditStamina(-30000, false);
           }
+          else if(!(GetSquareUnder()->GetSquareWalkability() & WALK) &&
+                  (GetNearWSquare(MoveTo)->GetWalkability() & WALK))
+          {
+            if(!game::TruthQuestion("Disembark the ship? [y/N]"))
+              return false;
+
+            if(V.empty())
+              ADD_MESSAGE("You disembark your ship.");
+            else
+              ADD_MESSAGE("You and your team disembark your ship.");
+
+            EditStamina(-30000, false);
+          }
+        }
+        else // Cannot take some pets over ocean without a ship.
+        {
+          truth Discard = false;
+
+          for(uint c = 0; c < V.size(); ++c)
+            if(!V[c]->CanMoveOn(GetNearWSquare(MoveTo)))
+            {
+              if(!Discard)
+              {
+                ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
+
+                if(!game::TruthQuestion("Abandon them? [y/N]"))
+                  return false;
+
+                Discard = true;
+              }
+
+              if(Discard)
+                delete V[c];
+
+              V.erase(V.begin() + c--);
+            }
+        }
       }
 
-      Move(MoveTo, false);
+      Move(MoveTo, false, Run);
       return true;
     }
     else
@@ -5999,7 +6033,7 @@ void character::DrawPanel(truth AnimationDraw) const
 
   if(game::IsInWilderness() && game::PlayerHasBoat() && IsSwimming())
   {
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "On Boat");
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "On Ship");
   }
 
   if(game::PlayerIsRunning())
@@ -7341,7 +7375,7 @@ void character::DisplayStethoscopeInfo(character*) const
   }
 
   if(IsPlayer() && game::PlayerHasBoat())
-    Info.AddEntry("Has Boat", LIGHT_GRAY);
+    Info.AddEntry("Ship Owned", LIGHT_GRAY);
 
   game::SetStandardListAttributes(Info);
   Info.Draw();
@@ -12043,7 +12077,7 @@ cchar* character::GetRunDescriptionLine(int I) const
     if(IsPlayer() && game::IsInWilderness() && game::PlayerHasBoat())
       return !I ? "Sailing" : " very fast";
     else
-      return !I ? "Swimming" : " very fast"; 
+      return !I ? "Swimming" : " very fast";
   }
 
   return !I ? "Running" : "";

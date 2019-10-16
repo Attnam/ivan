@@ -329,12 +329,14 @@ void level::Generate(int Index)
   Map = reinterpret_cast<lsquare***>(area::Map);
   SquareStack = new lsquare*[XSizeTimesYSize];
 
-  if((Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
+  /*if((Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
      || (Index == 0 && GetDungeon()->GetIndex() == ATTNAM))
     NightAmbientLuminance = MakeRGB24(95, 95, 95);
-
+  */
   if((Index == 0) && (GetDungeon()->GetIndex() == XINROCH_TOMB))
     NightAmbientLuminance = MakeRGB24(105, 95, 95);
+  else if(IsOnGround())
+    NightAmbientLuminance = MakeRGB24(95, 95, 95);
 
   int x, y;
 
@@ -1512,7 +1514,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     Border.push_back(v2(Pos.X, y));
     Border.push_back(v2(Pos.X + Size.X - 1, y));
   }
-  // Maze rooms only: put in the doors, in the corners. 
+  // Maze rooms only: put in the doors, in the corners.
   if(Shape == MAZE_ROOM)
   {
     int MazeDoors = RAND() % 4;
@@ -2617,6 +2619,22 @@ void level::CheckSunLight()
       AmbientLuminance = NightAmbientLuminance;
     }
   }
+  else if(IsOnGround())
+  {
+    double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+    if(Cos > 0.31)
+    {
+      int E = int(100 + (Cos - 0.30) * 30);
+      SunLightEmitation = MakeRGB24(E, E, E);
+      AmbientLuminance = MakeRGB24(E - 8, E - 8, E - 8);
+    }
+    else
+    {
+      SunLightEmitation = 0;
+      AmbientLuminance = NightAmbientLuminance;
+    }
+  }
   else
     return;
 
@@ -3036,13 +3054,13 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 {
   if(!ivanconfig::IsEnhancedLights())
     return 0;
-  
+
   if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
    return 0;
 
   if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
     return 0;
-  
+
   cint XMin = Max(game::GetCamera().X, 0);
   cint YMin = Max(game::GetCamera().Y, 0);
   cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
@@ -3070,8 +3088,8 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
       }
 
       if(!bTryReveal){
-        // TODO the farer, less range around the emmiter should be seen        
-        
+        // TODO the farer, less range around the emmiter should be seen
+
 //        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
 //          continue;
 
@@ -3089,7 +3107,7 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
             fLBorder = fLBorderLanternLOSM16 + fLBStep*LOSMdelta;
           }
           if(!bTryReveal && hasLight(Square->Luminance,0xFF*fLBorder))
-            bTryReveal=true; 
+            bTryReveal=true;
         }
       }
 

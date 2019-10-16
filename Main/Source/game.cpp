@@ -4767,14 +4767,25 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     /* Gum solution! */
 
-    if(New && CurrentDungeonIndex == ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       (CurrentDungeonIndex == ATTNAM || CurrentDungeonIndex == BATTLE_FIELD))
     {
       GlobalRainLiquid = powder::Spawn(SNOW);
       GlobalRainSpeed = v2(-64, 128);
       CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
     }
 
-    if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() && CurrentDungeonIndex == XINROCH_TOMB)
+    {
+      GlobalRainLiquid = powder::Spawn(SOOT);
+      GlobalRainSpeed = v2(-64, 128);
+      CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+    }
+
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       (CurrentDungeonIndex == NEW_ATTNAM || CurrentDungeonIndex == ASLONA_CASTLE ||
+        CurrentDungeonIndex == REBEL_CAMP || CurrentDungeonIndex == MONDEDR ||
+        CurrentDungeonIndex == DARK_FOREST || CurrentDungeonIndex == IRINOX))
     {
       GlobalRainLiquid = liquid::Spawn(WATER);
       GlobalRainSpeed = v2(256, 512);

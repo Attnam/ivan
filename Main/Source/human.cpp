@@ -6543,6 +6543,7 @@ void guard::BeTalkedTo()
       // TODO
       ADD_MESSAGE("\"Have a boat, why don't you?\"");
       game::GivePlayerBoat();
+      return;
     }
     else
     {
