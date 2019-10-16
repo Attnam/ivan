@@ -21,16 +21,16 @@
 
 Dungeon BATTLE_FIELD;
 {
-  Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Levels = 2;
+  Description = "besieged stronghold";
+  ShortDescription = "Siege";
 
   Level 0;
   {
-    FillSquare = solidterrain(GRASS_TERRAIN), 0;
+    FillSquare = solidterrain(SNOW_TERRAIN), 0;
     Size = 42, 26;
     GenerateMonsters = false;
-    Rooms = 0;
+    Rooms = 1;
     Items = 0;
     IsOnGround = true;
     TeamDefault = MONSTER_TEAM;
@@ -52,18 +52,6 @@ Dungeon BATTLE_FIELD;
       "Empty.mid";
     }
 
-    Square, Random;
-    {
-      Items == beartrap { Team = MONSTER_TEAM; IsActive = false; }
-      Times = 0:3;
-    }
-
-    Square, Random;
-    {
-      Items == Random { Category = FOOD; }
-      Times = 1:2;
-    }
-
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = boulder(1);
@@ -74,6 +62,12 @@ Dungeon BATTLE_FIELD;
     {
       OTerrain = boulder(2);
       Times = 10;
+    }
+
+    Square, Random;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
     }
 
     RoomDefault
@@ -97,6 +91,15 @@ Dungeon BATTLE_FIELD;
       GenerateWindows = true;
       UseFillSquareWalls = false;
       Flags = 0;
+    }
+  }
+
+  Level 1;
+  {
+    Square, Random NOT_WALKABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
     }
   }
 }

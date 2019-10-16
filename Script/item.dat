@@ -7566,3 +7566,31 @@ locationmap /* scroll-> */
     PostFix = "of black market";
   }
 }
+
+alchemybook /* holybook-> */
+{
+  DefaultSize = 50;
+  Possibility = 0;
+  Category = BOOK;
+  DefaultMainVolume = 3500;
+  StrengthModifier = 150;
+  BitmapPos = 0, 144;
+  FormModifier = 20;
+  Adjective = "dwarven alchemical";
+  NameSingular = "handbook";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsQuestItem = true;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBePiled = false;
+  MainMaterialConfig == PAPYRUS;
+  Price = 500;
+  Roundness = 70;
+  IsTwoHanded = true;
+  CreateDivineConfigurations = false;
+  AttachedGod = LORICATUS;
+  WieldedBitmapPos = 176, 144;
+}

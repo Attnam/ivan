@@ -19,11 +19,13 @@
  * proceed at your own risk!
  */
 
+ /* Work in progress! */
+
 Dungeon MONDEDR;
 {
   Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Description = "Mondedr";
+  ShortDescription = "Mondedr";
 
   Level 0;
   {

@@ -22,8 +22,8 @@
 Dungeon ASLONA_CASTLE;
 {
   Levels = 4;
-  Description = "castle sewers";
-  ShortDescription = "CS";
+  Description = "castle dungeon";
+  ShortDescription = "CD";
 
   LevelDefault
   {
@@ -96,7 +96,7 @@ Dungeon ASLONA_CASTLE;
 
   Level 0;
   {
-    Description = "Aslona Castle";
+    Description = "Castle of Aslona";
     ShortDescription = "Castle";
     FillSquare = liquidterrain(SEA), 0;
     Size = 54, 54;
@@ -117,7 +117,6 @@ Dungeon ASLONA_CASTLE;
     }
 
     /* The Castle */
-
     Room
     {
       Pos = 2,2;
@@ -275,7 +274,7 @@ Dungeon ASLONA_CASTLE;
         ~~~,,#.473....a_#.......T.......#.hOh..hOh.o,,,~~
         ~~~,,#..........#.......|.......#..h....h..#,,8~~
         ~~~,,########L###.......|.......#####+###o##,,,~~
-        ~~,;,,,>#.s....s#.......|.......#......#,,,,8,,~~
+        ~~,;,,,,#.s....s#.......|.......#......#,,,,8,,~~
         ~~,,,,8,#.......#.......|.......#..PP..#,:,,,,&~~
         ~~8,,,,,#s......+.......|.......+..PP..#,,,,,,,~~
         ~~,,&,,,#....s..#.......|.......#......#,,8,,,,~~
@@ -290,7 +289,7 @@ Dungeon ASLONA_CASTLE;
         ~,8,,,,,#....#,,,,,,,.~~~~~........+...#8#X...X#~
         ~,,,,,,,##++##,9,,9,,..~~~..,,9,,9,##L##,#XX.XX#~
         ~,,8,,8,#....,,,,,,,##.....##,,,,,,o...#,###+###~
-        ~~,,,,,,#....,,,,,,,##,...,##,,,,,,#...#,,,,,,,~~
+        ~~,,,,,,#....,,,,,,,##,...,##,,,,,,#>..#,,,,,,,~~
         ~~&,,#####+##o##,,,,,,,...,,,,,,,###########,&,~~
         ~~~,,#b..#.#hw.+.................+.........#,,,~~
         ~~~,,oh..+.+...###+####%%%####+###.#--|--#.#,,,~~
@@ -487,7 +486,7 @@ Dungeon ASLONA_CASTLE;
         ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
       }
 
-      Square, Pos 7,17;
+      Square, Pos 36,32;
       {
         OTerrain = stairs(STAIRS_DOWN);
         EntryIndex = STAIRS_DOWN;
@@ -527,21 +526,101 @@ Dungeon ASLONA_CASTLE;
     }
   }
 
+  /* Throne Room */
+  RandomLevel 1:2;
+  {
+    Room
+    {
+      Size = 3,3;
+      WallSquare = CALCITE solidterrain(GROUND), BASALT wall(BRICK_FINE);
+      FloorSquare = MARBLE solidterrain(FLOOR), 0;
+      UseFillSquareWalls = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 1,1;
+      {
+        OTerrain = PORCELAIN throne;
+      }
+
+      Square, Pos 1,2;
+      {
+        GTerrain = MARBLE solidterrain(FLOOR);
+        OTerrain = CYPRESS_WOOD door(HEART_SHAPED_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+    }
+  }
+
+  /* Wine Cellar */
+  RandomLevel 1:2;
+  {
+    Room
+    {
+      Size = 9,9;
+      WallSquare = CALCITE solidterrain(GROUND), BASALT wall(BRICK_FINE);
+      DoorSquare = MARBLE solidterrain(FLOOR), CYPRESS_WOOD door;
+      FloorSquare = MARBLE solidterrain(FLOOR), 0;
+      GenerateLanterns = true;
+      UseFillSquareWalls = false;
+
+      OTerrainMap
+      {
+        Pos = 2,2;
+        Size = 5,5;
+
+        Types
+        {
+          = = olterraincontainer(SHELF) { ItemsInside = { 2, potion { SecondaryMaterial = WHITE_WINE; Times = 0:3; },
+                                                             potion { SecondaryMaterial = RED_WINE; Times = 0:3; } } }
+          X = olterraincontainer(SHELF) { ItemsInside == potion { SecondaryMaterial = VALDEMAR; } }
+          B = olterraincontainer(SHELF) { ItemsInside = { 4, potion { SecondaryMaterial = BEER; Times = 0:2; },
+                                                             potion { SecondaryMaterial = ELF_ALE; Times = 0:2; },
+                                                             potion { SecondaryMaterial = DWARF_BEER; Times = 0:2; },
+                                                             potion { SecondaryMaterial = CIDER; Times = 0:2; } } }
+        }
+      }
+      {
+        =.=.=
+        =.B.=
+        .....
+        =.=.=
+        =.=.X
+      }
+    }
+  }
+
   Level 2;
   {
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    IgnoreDefaultSpecialSquares = true;
+
+    Room
     {
-      OTerrain = CYPRESS_WOOD sign { Text = "Entry forbidden by royal decree."; }
+      Size = 7,7;
+      Shape = ROUND_CORNERS;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = CYPRESS_WOOD sign { Text = "Entry forbidden by royal decree."; }
+      }
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = CYPRESS_WOOD sign { Text = "Pity those who lost their way."; }
+      }
     }
 
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
     {
-      OTerrain = CYPRESS_WOOD sign { Text = "Beware the danger below!"; }
-    }
-
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = CYPRESS_WOOD sign { Text = "Pity those who lost their way."; }
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
     }
   }
 

@@ -165,6 +165,11 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
                 "Decos Bananas Co. if I wish to stay here.\"");
     return false;
   }
+  else if(GetMaster()->GetConfig() == ASLONA_CASTLE)
+  {
+    ADD_MESSAGE("\"I'm a quartermaster, not a merchant. Go sell your stuff somewhere else.\"");
+    return false;
+  }
 
   long Price = ForSale->GetTruePrice() * Amount
                * (100 + Customer->GetAttribute(CHARISMA)) / 400;

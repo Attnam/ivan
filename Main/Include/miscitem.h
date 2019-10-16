@@ -791,4 +791,13 @@ ITEM(locationmap, scroll)
   virtual void FinishReading(character*);
 };
 
+ITEM(alchemybook, holybook)
+{
+ public:
+   virtual truth Read(character*);
+   virtual truth IsAlchemyBook() const { return true; }
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
+};
+
 #endif

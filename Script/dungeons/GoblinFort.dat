@@ -31,7 +31,7 @@ Dungeon GOBLIN_FORT;
     TunnelSquare = DIRT solidterrain(GROUND), 0;
     Size = 40, 40;
     Rooms = 10:30;
-    Items = 15:25;
+    Items = 20:35;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -694,7 +694,7 @@ Dungeon GOBLIN_FORT;
 
       Square, Pos 4,4;
       {
-        Character = goblin(PRINCE); /* TODO: Inventory == MacGuffin */
+        Character = goblin(PRINCE) { Inventory == alchemybook; }
         OTerrain = throne;
       }
     }

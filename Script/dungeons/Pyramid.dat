@@ -553,6 +553,7 @@ Dungeon PYRAMID;
       Size = 5,5;
       UseFillSquareWalls = true;
       FloorSquare = IRON solidterrain(PARQUET), 0;
+      Shape = RECTANGLE;
       Flags = NO_MONSTER_GENERATION;
 
       OTerrainMap

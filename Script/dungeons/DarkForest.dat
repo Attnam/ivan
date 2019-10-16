@@ -19,11 +19,13 @@
  * proceed at your own risk!
  */
 
+ /* Work in progress! */
+
 Dungeon DARK_FOREST;
 {
   Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Description = "Dark Forest";
+  ShortDescription = "DF";
 
   Level 0;
   {

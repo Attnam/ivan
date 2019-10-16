@@ -911,7 +911,7 @@ Dungeon ATTNAM;
       DivineMaster = VALPURUS;
       GenerateTunnel = false;
       GenerateLanterns = false;
-      Type = ROOM_CATHEDRAL;
+      Type = ROOM_OWNED_AREA;
       GenerateFountains = false;
       AllowLockedDoors = false;
       AllowBoobyTrappedDoors = false;

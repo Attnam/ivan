@@ -4131,3 +4131,14 @@ void locationmap::FinishReading(character* Reader)
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
+
+truth alchemybook::Read(character*)
+{
+  ADD_MESSAGE("It's just scribbles to you.");
+  return false;
+}
+
+col16 alchemybook::GetMaterialColorA(int) const
+{
+  return MakeRGB16(111, 64, 37);
+}

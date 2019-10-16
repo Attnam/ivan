@@ -19,11 +19,13 @@
  * proceed at your own risk!
  */
 
+/* Work in progress! */
+
 Dungeon IRINOX;
 {
   Levels = 1;
-  Description = "Empty Area";
-  ShortDescription = "EA";
+  Description = "Irinox";
+  ShortDescription = "Irinox";
 
   Level 0;
   {
