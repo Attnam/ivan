@@ -14,6 +14,9 @@ Changes:
 * Add Aslona!
 * Add new ROOM_OWNED_AREA type for generic owned rooms. Uses code similar to
   the Cathedral or Decos' house.
+* Change structure of quests. Petrus now takes the encrypted scroll and gives
+  you some alone time. If you chat with him again, you will receive the GC quest,
+  or you can find other people to chat for other quests.
 * Add crysteel.
 * Add several new monsters.
 * Orcs have black blood.
@@ -27,6 +30,7 @@ Fixes:
 * Running in wilderness now correctly takes stamina.
 * Add day/night cycle to all above-ground locations.
 * Enable weather effects for more above-ground locations.
+* Fix some quest messages not being saved as already displayed.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

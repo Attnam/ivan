@@ -2121,6 +2121,111 @@ truth character::RemoveShadowVeil()
   return false;
 }
 
+truth character::HasAlchemyBook() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsAlchemyBook())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsAlchemyBook, 1);
+}
+
+truth character::RemoveAlchemyBook()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsAlchemyBook())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsAlchemyBook())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::HasNuke() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsNuke())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsNuke, 1);
+}
+
+truth character::RemoveNuke()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsNuke())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsNuke())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::HasWeepObsidian() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsWeepObsidian())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsWeepObsidian, 1);
+}
+
+truth character::RemoveWeepObsidian()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsWeepObsidian())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsWeepObsidian())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
 truth character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))

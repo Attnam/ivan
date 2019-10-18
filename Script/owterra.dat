@@ -95,7 +95,7 @@ aslonacastle
   UsesLongArticle = false;
   AttachedDungeon = ASLONA_CASTLE;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -106,7 +106,7 @@ rebelcamp
   UsesLongArticle = false;
   AttachedDungeon = REBEL_CAMP;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = STEPPE;
 }
 
@@ -117,7 +117,7 @@ goblinfort
   UsesLongArticle = true;
   AttachedDungeon = GOBLIN_FORT;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = EVERGREEN_FOREST;
 }
 
@@ -127,7 +127,7 @@ fungalcave
   NameStem = "damp and dank cave entrance";
   AttachedDungeon = FUNGAL_CAVE;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = JUNGLE;
 }
 
@@ -137,7 +137,7 @@ pyramid
   NameStem = "crumbling pyramid";
   AttachedDungeon = PYRAMID;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = DESERT;
 }
 
@@ -147,7 +147,7 @@ battlefield
   NameStem = "besieged stronghold";
   AttachedDungeon = BATTLE_FIELD;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = TUNDRA;
 }
 

@@ -664,6 +664,8 @@ CHARACTER(elder, humanoid)
 {
  public:
   elder() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void GetAICommand();
   virtual void CreateBodyParts(int);
@@ -785,6 +787,8 @@ CHARACTER(terra, priest)
 {
  public:
   terra() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void BeTalkedTo();
   truth HasBeenSpokenTo;
@@ -795,6 +799,40 @@ CHARACTER(wizard, humanoid)
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;
+};
+
+CHARACTER(aslonawizard, wizard)
+{
+ public:
+  aslonawizard() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void BeTalkedTo();
+  virtual void CreateCorpse(lsquare*);
+  truth HasBeenSpokenTo;
+};
+
+CHARACTER(aslonacaptain, guard)
+{
+ public:
+  aslonacaptain() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
+};
+
+CHARACTER(aslonapriest, priest)
+{
+ public:
+  aslonapriest() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
 };
 
 CHARACTER(gasghoul, zombie)

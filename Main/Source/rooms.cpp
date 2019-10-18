@@ -303,7 +303,7 @@ void cathedral::Enter(character* Visitor)
 
 truth cathedral::PickupItem(character* Visitor, item* Item, int)
 {
-  if(game::GetStoryState() == 2
+  if(game::GetGloomyCaveStoryState() == 2
      || game::GetTeam(ATTNAM_TEAM)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
 
@@ -332,7 +332,7 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
 truth cathedral::DropItem(character* Visitor, item* Item, int)
 {
-  if(game::GetStoryState() == 2
+  if(game::GetGloomyCaveStoryState() == 2
      || game::GetTeam(ATTNAM_TEAM)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
 
@@ -356,7 +356,7 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
 void cathedral::KickSquare(character* Kicker, lsquare* Square)
 {
   if(!AllowKick(Kicker, Square)
-     && Kicker->IsPlayer() && game::GetStoryState() != 2
+     && Kicker->IsPlayer() && game::GetGloomyCaveStoryState() != 2
      && game::GetTeam(ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) != HOSTILE)
   {
     ADD_MESSAGE("You have harmed the property of the Cathedral!");
@@ -366,7 +366,7 @@ void cathedral::KickSquare(character* Kicker, lsquare* Square)
 
 truth cathedral::ConsumeItem(character* HungryMan, item*, int)
 {
-  if(game::GetStoryState() == 2
+  if(game::GetGloomyCaveStoryState() == 2
      || (game::GetTeam(ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam())
          == HOSTILE))
     return true;
@@ -399,7 +399,7 @@ void cathedral::Load(inputfile& SaveFile)
 
 truth cathedral::Drink(character* Thirsty) const
 {
-  if(game::GetStoryState() == 2
+  if(game::GetGloomyCaveStoryState() == 2
      || game::GetTeam(ATTNAM_TEAM)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
     return game::TruthQuestion(CONST_S("Do you want to drink? [y/N]"));
 
@@ -431,7 +431,7 @@ void shop::TeleportSquare(character* Infidel, lsquare* Square)
 
 void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
 {
-  if(game::GetStoryState() == 2 || !Teleporter
+  if(game::GetGloomyCaveStoryState() == 2 || !Teleporter
      || (game::GetTeam(ATTNAM_TEAM)->GetRelation(Teleporter->GetTeam())
          == HOSTILE))
     return;
@@ -446,7 +446,7 @@ void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
 
 truth cathedral::Dip(character* Thirsty) const
 {
-  if(game::GetStoryState() == 2
+  if(game::GetGloomyCaveStoryState() == 2
      || game::GetTeam(ATTNAM_TEAM)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
     return true;
 
@@ -866,7 +866,7 @@ void shop::HostileAction(character* Guilty) const
 
 void cathedral::HostileAction(character* Guilty) const
 {
-  if(game::GetStoryState() != 2 && Guilty)
+  if(game::GetGloomyCaveStoryState() != 2 && Guilty)
     Guilty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 }
 

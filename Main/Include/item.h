@@ -507,6 +507,8 @@ class item : public object
   virtual truth IsMangoSeedling() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
   virtual truth IsAlchemyBook() const { return false; }
+  virtual truth IsNuke() const { return false; }
+  virtual truth IsWeepObsidian() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
   virtual truth IsRuneSword() const { return false; }

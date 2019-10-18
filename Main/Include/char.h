@@ -310,6 +310,12 @@ class character : public entity, public id
   truth HasShadowVeil() const;
   truth HasLostRubyFlamingSword() const;
   truth RemoveShadowVeil();
+  truth HasAlchemyBook() const;
+  truth RemoveAlchemyBook();
+  truth HasNuke() const;
+  truth RemoveNuke();
+  truth HasWeepObsidian() const;
+  truth RemoveWeepObsidian();
   truth IsPlayer() const { return Flags & C_PLAYER; }
   ulong GetFlags() const { return Flags; } //mainly for debugging
   truth Engrave(cfestring&);

@@ -4121,7 +4121,7 @@ void locationmap::FinishReading(character* Reader)
       /* Add new locations here. */
     }
 
-    game::GetWorldMap()->RevealEnvironment(NewPos, 1);
+    game::GetWorldMap()->RevealEnvironment(NewPos, 0);
     game::SaveWorldMap();
 
     ADD_MESSAGE("The map reveals to you a secret site. You quickly commit the location to memory as the map burns up.");

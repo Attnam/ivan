@@ -998,7 +998,7 @@ guard
     Helmet = 0;
     BodyArmor = HEPATIZON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
     RightWielded = OCTIRON EMERALD meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
-    LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
+    LeftWielded = OCTIRON shield { Enchantment = 2; }
     RightGauntlet = HEPATIZON gauntlet { Enchantment = 2; }
     RightBoot = HEPATIZON boot { Enchantment = 2; }
     DefaultName = "Sir Lancelyn"; /* Lancelot */
@@ -1113,59 +1113,6 @@ guard
       "\"I understand that the treasury is empty, but begging for help in Attnam seems like a bad idea.\"",
       "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
     }
-  }
-
-  Config GUARD_CAPTAIN;
-  {
-    AttributeBonus = 50;
-    TotalVolume = 120000;
-    Helmet = SEA_SERPENT_SCALE helmet(FULL_HELMET) { Enchantment = 3; }
-    Amulet = amulet(AMULET_OF_WARDING);
-    BodyArmor = SEA_SERPENT_SCALE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-    Cloak = MERMAID_HAIR cloak(CLOAK_OF_QUICKNESS) { Enchantment = 3; }
-    RightWielded = OCTIRON SAPPHIRE meleeweapon(BASTARD_SWORD) { Enchantment = 3; }
-    LeftWielded = EBONY_WOOD shield { Enchantment = 3; }
-    RightRing = ring(RING_OF_TELEPORT_CONTROL);
-    LeftRing = ring(RING_OF_INFRA_VISION);
-    RightGauntlet = SEA_SERPENT_SCALE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
-    RightBoot = SEA_SERPENT_SCALE boot(BOOT_OF_AGILITY) { Enchantment = 3; }
-    NameSingular = "guard captain";
-    CWeaponSkillHits = { 2, 2000, 2000; }
-    RightSWeaponSkillHits = 200;
-    LeftSWeaponSkillHits = 200;
-    PanicLevel = 5;
-    TamingDifficulty = NO_TAMING;
-    BloodMaterial = BLUE_BLOOD;
-    IsUnique = true;
-    DefaultName = "Lord Mittrars"; /* Tristram */
-    IsNameable = false;
-    CanBeCloned = false;
-    IsPolymorphable = false;
-    ClothColor = rgb16(0, 0, 139);
-    CanBeConfused = false;
-    /*Inventory == key(HEXAGONAL_LOCK);*/
-    FriendlyReplies =
-    {
-      5,
-      "@Dd says gravely: \"This is a placeholder dialogue.\"",
-      "@Dd snorts.",
-      "\"...\"",
-      "\"Hmph.\"",
-      "\"This is a placeholder dialogue.\"";
-    }
-    HostileReplies =
-    {
-      5,
-      "@Dd says gravely: \"This is a placeholder dialogue.\"",
-      "@Dd snorts.",
-      "\"...\"",
-      "\"Hmph.\"",
-      "\"This is a placeholder dialogue.\"";
-    }
-    IsImmuneToItemTeleport = true;
-    AllowUnconsciousness = false;
-    DisplacePriority = 4;
-    UndeadVersions = false;
   }
 }
 
@@ -1684,53 +1631,7 @@ priest
     }
   }
 
-  Config SEGES;
-  {
-    DefaultArmStrength = 8;
-    DefaultLegStrength = 12;
-    DefaultDexterity = 10;
-    DefaultAgility = 15;
-    DefaultEndurance = 18;
-    DefaultPerception = 14;
-    DefaultIntelligence = 20;
-    DefaultWisdom = 35;
-    DefaultCharisma = 20;
-    DefaultMana = 30;
-    HairColor = rgb16(204, 204, 204);
-    EyeColor = rgb16(0, 126, 178);
-    ClothColor = rgb16(39, 119, 20);
-    HeadBitmapPos = 96, 128;
-    TorsoBitmapPos = 32, 16;
-    ArmBitmapPos = 64, 16;
-    LegBitmapPos = 0, 32;
-    TotalVolume = 8000;
-    TotalSize = 175;
-    DefaultName = "Senex";
-    AttachedGod = SEGES;
-    PostFix = "of Seges";
-    Helmet = HEPATIZON helmet { Enchantment = 2; }
-    BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-    Cloak = ELF_CLOTH cloak { Enchantment = 2; }
-    Belt = ELF_CLOTH belt { Enchantment = 2; }
-    RightWielded = HEPATIZON meleeweapon(SICKLE) { Enchantment = 3; }
-    LeftWielded = holybook(SEGES);
-    RightGauntlet = ELF_CLOTH gauntlet { Enchantment = 2; }
-    RightBoot = ELF_CLOTH boot { Enchantment = 2; }
-    KnownCWeaponSkills == SMALL_SWORDS;
-    CWeaponSkillHits == 50;
-    RightSWeaponSkillHits = 20;
-    LeftSWeaponSkillHits = 20;
-    FriendlyReplies =
-    {
-      5,
-      "\"The people have faith in Seges, and I do my best to heal and comfort them in adversity.\"",
-      "\"No wonder everyone is so cranky these days. If you had to live year-round in a cold, drafty castle like this one, you'd be cranky, too.\"",
-      "\"Was it the Black-cloak or Lord Regent who caused the old king's death? I doubt we'll ever know for sure.\"",
-      "\"I've sometimes thought I'd like to make a pilgrimage to the Cathedral of Attnam, but my duties prevent me from such extensive and dangerous travel.\"",
-      "\"There's something strange about Lord Regent.\"";
-    }
-    Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
-  }
+  /* Config SEGES: see aslonapriest */
 }
 
 oree
@@ -4702,6 +4603,36 @@ zombie
     }
     DeathMessage = "@Dd is slain (finally).";
   }
+}
+
+gasghoul /* zombie-> */
+{
+  DefaultDexterity = 10;
+  DefaultAgility = 12;
+  HairColor = rgb16(144, 95, 32);
+  CapColor = rgb16(144, 95, 32);
+  EyeColor = rgb16(255, 0, 0);
+  SkinColor = rgb16(125, 125, 125);
+  ClothColor = rgb16(95, 95, 95);
+  HeadBitmapPos = 112, 512; /* broken gas mask */
+  NameSingular = "gas-ghoul";
+  DangerModifier = 150;
+  PanicLevel = 20;
+  HPRequirementForGeneration = 60;
+  DayRequirementForGeneration = 4;
+  IsExtraFragile = false;
+  CreateUndeadConfigurations = false;
+  UndeadVersions = false;
+  FriendlyReplies =
+  {
+    3,
+    "\"War... never... changes...\"",
+    "\"How sweet and honourable it is to die for one's country...\"",
+    "\"No more... Never more...\"";
+  }
+  DeathMessage = "@Dd is put to rest.";
+  Inventory == gasgrenade { Chance = 10; }
+  AllowedDungeons == PYRAMID;
 }
 
 ghost
@@ -9578,14 +9509,26 @@ terra
 
 wizard
 {
+  DefaultArmStrength = 8;
+  DefaultLegStrength = 8;
+  DefaultDexterity = 12;
+  DefaultAgility = 15;
+  DefaultEndurance = 12;
+  DefaultPerception = 15;
+  DefaultIntelligence = 15;
+  DefaultWisdom = 12;
+  DefaultWillPower = 15;
+  DefaultCharisma = 12;
+  DefaultMana = 20;
   HeadBitmapPos = 112, 304;
   TorsoBitmapPos = 48, 224;
   ArmBitmapPos = 80, 64;
   LegBitmapPos = 16, 160;
   ClothColor = rgb16(111, 74, 37);
   NameSingular = "wizard";
+  TotalVolume = 60000;
+  TotalSize = 175;
   CanRead = true;
-  CanBeGenerated = false;
   ClassStates = ESP;
   HostileReplies =
   {
@@ -9625,67 +9568,185 @@ wizard
     "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
     "abjuration", "invocation", "evocation", "incantations", "hexes";
   }
-
-  Config ASLONA_CASTLE;
-  {
-    DefaultArmStrength = 13;
-    DefaultLegStrength = 13;
-    DefaultDexterity = 20;
-    DefaultAgility = 18;
-    DefaultEndurance = 15;
-    DefaultPerception = 18;
-    DefaultIntelligence = 30;
-    DefaultWisdom = 15;
-    DefaultCharisma = 15;
-    DefaultMana = 30;
-    Adjective = "royal";
-    TotalVolume = 70000;
-    TotalSize = 170;
-    HairColor = rgb16(180, 40, 40);
-    CapColor = rgb16(111, 74, 37);
-    Cloak = FELT cloak { Enchantment = 3; }
-    RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
-    Frequency = 0;
-    PanicLevel = 25;
-    CWeaponSkillHits == 100;
-    RightSWeaponSkillHits = 50;
-    LeftSWeaponSkillHits = 50;
-    Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
-    DeathMessage = "@Dd dies laughing: \"You understand nothing! The Darkness will rise and nothing you can do will stop it.\"";
-    ScienceTalkPossibility = 50;
-    ScienceTalkIntelligenceModifier = 25;
-    ScienceTalkWisdomModifier = 10;
-    ScienceTalkIntelligenceRequirement = 20;
-    ScienceTalkWisdomRequirement = 10;
-  }
+  ScienceTalkPossibility = 25;
+  ScienceTalkIntelligenceModifier = 10;
+  ScienceTalkWisdomModifier = 5;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 5;
 }
 
-gasghoul /* zombie-> */
+aslonawizard /* wizard-> */
 {
-  DefaultDexterity = 10;
-  DefaultAgility = 12;
-  HairColor = rgb16(144, 95, 32);
-  CapColor = rgb16(144, 95, 32);
-  EyeColor = rgb16(255, 0, 0);
-  SkinColor = rgb16(125, 125, 125);
-  ClothColor = rgb16(95, 95, 95);
-  HeadBitmapPos = 112, 512; /* broken gas mask */
-  NameSingular = "gas-ghoul";
-  DangerModifier = 150;
-  PanicLevel = 20;
-  HPRequirementForGeneration = 60;
-  DayRequirementForGeneration = 4;
+  DefaultArmStrength = 13;
+  DefaultLegStrength = 13;
+  DefaultDexterity = 21;
+  DefaultAgility = 18;
+  DefaultEndurance = 15;
+  DefaultPerception = 8;
+  DefaultIntelligence = 35;
+  DefaultWillPower = 40;
+  DefaultWisdom = 25;
+  DefaultCharisma = 25;
+  DefaultMana = 60;
+  HairColor = rgb16(139, 69, 19);
+  EyeColor = rgb16(96, 96, 200);
+  CapColor = rgb16(112, 128, 144);
+  BeltColor = rgb16(80, 80, 80);
+  ClothColor = rgb16(128, 128, 128);
+  DefaultName = "Myrddin Wyllt";
+  Adjective = "royal";
+  PostFix = "of Aslona";
+  TotalVolume = 100000;
+  TotalSize = 175;
+  Helmet = SELKIE_SKIN helmet(HELM_OF_BRILLIANCE) { Enchantment = 5; }
+  Amulet = amulet(AMULET_OF_UNBREATHING);
+  BodyArmor = SELKIE_SKIN bodyarmor(PLATE_MAIL) { Enchantment = 5; }
+  Cloak = MERMAID_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+  RightWielded = MAHOGANY_WOOD SAPPHIRE meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+  RightRing = ring(RING_OF_MAGIC_RESISTANCE);
+  LeftRing = ring(RING_OF_SEARCHING);
+  RightGauntlet = MERMAID_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
+  RightBoot = SELKIE_SKIN boot { Enchantment = 5; }
+  Inventory == Random { MinPrice = 150; Category = WAND|SCROLL|POTION; Times = 5; }
+  CWeaponSkillHits == 200;
+  RightSWeaponSkillHits = 150;
+  LeftSWeaponSkillHits = 150;
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 5;
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeGenerated = false;
+  UndeadVersions = false;
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
   IsExtraFragile = false;
-  CreateUndeadConfigurations = false;
+  BodyPartsDisappearWhenSevered = true;
+  FriendlyReplies =
+  {
+    8,
+    "\"What exactly do you think I'm capable of?\"",
+    "\"Aslona isn't built on magic, but on people, on their faith.\"",
+    "\"Remember, there's always someone cleverer than yourself.\"",
+    "\"I've never studied magic or been taught... I was born like this.\"",
+    "\"Do you know how it feels, to be a monster? To be afraid of what you can do?\"",
+    "\"It is my responsibility to protect the people of this kingdom, whoever they may be.\"",
+    "\"The love that binds us is more important than the power we wield.\"",
+    "\"No young man, no matter how great, can know his destiny.\"";
+  }
+  DeathMessage = "@Dd discorporates in a puff of magic.";
+  AttachedGod = SOPHOS;
+}
+
+aslonacaptain
+{
+  AttributeBonus = 50;
+  TotalVolume = 120000;
+  Helmet = SEA_SERPENT_SCALE helmet(FULL_HELMET) { Enchantment = 3; }
+  Amulet = amulet(AMULET_OF_WARDING);
+  BodyArmor = SEA_SERPENT_SCALE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+  Cloak = MERMAID_HAIR cloak(CLOAK_OF_QUICKNESS) { Enchantment = 3; }
+  RightWielded = OCTIRON SAPPHIRE meleeweapon(BASTARD_SWORD) { Enchantment = 3; }
+  LeftWielded = OCTIRON shield { Enchantment = 3; }
+  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  LeftRing = ring(RING_OF_INFRA_VISION);
+  RightGauntlet = SEA_SERPENT_SCALE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+  RightBoot = SEA_SERPENT_SCALE boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+  CWeaponSkillHits = { 2, 2000, 2000; }
+  RightSWeaponSkillHits = 200;
+  LeftSWeaponSkillHits = 200;
+  PanicLevel = 5;
+  TamingDifficulty = NO_TAMING;
+  BloodMaterial = BLUE_BLOOD;
+  IsUnique = true;
+  DefaultName = "Lord Mittrars"; /* Tristram */
+  NameSingular = "field marshal";
+  PostFix = "of Aslona";
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  ClothColor = rgb16(0, 0, 139);
+  CanBeConfused = false;
+  /*Inventory == key(HEXAGONAL_LOCK);*/
+  FriendlyReplies =
+  {
+    5,
+    "@Dd says gravely: \"This is a placeholder dialogue.\"",
+    "@Dd snorts.",
+    "\"...\"",
+    "\"Hmph.\"",
+    "\"This is a placeholder dialogue.\"";
+  }
+  HostileReplies =
+  {
+    5,
+    "@Dd says gravely: \"This is a placeholder dialogue.\"",
+    "@Dd snorts.",
+    "\"...\"",
+    "\"Hmph.\"",
+    "\"This is a placeholder dialogue.\"";
+  }
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
+  DisplacePriority = 4;
+  UndeadVersions = false;
+}
+
+aslonapriest
+{
+  DefaultArmStrength = 8;
+  DefaultLegStrength = 12;
+  DefaultDexterity = 10;
+  DefaultAgility = 15;
+  DefaultEndurance = 18;
+  DefaultPerception = 14;
+  DefaultIntelligence = 20;
+  DefaultWisdom = 35;
+  DefaultCharisma = 20;
+  DefaultMana = 30;
+  HairColor = rgb16(204, 204, 204);
+  EyeColor = rgb16(0, 126, 178);
+  ClothColor = rgb16(39, 119, 20);
+  HeadBitmapPos = 96, 128;
+  TorsoBitmapPos = 32, 16;
+  ArmBitmapPos = 64, 16;
+  LegBitmapPos = 0, 32;
+  TotalVolume = 8000;
+  TotalSize = 175;
+  DefaultName = "Senex";
+  PostFix = "of Seges";
+  AttachedGod = SEGES;
+  BloodMaterial = BLUE_BLOOD;
+  Helmet = HEPATIZON helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
+  Amulet = amulet(AMULET_OF_DISEASE_IMMUNITY);
+  BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+  Cloak = ELF_CLOTH cloak { Enchantment = 2; }
+  Belt = ELF_CLOTH belt { Enchantment = 2; }
+  RightWielded = HEPATIZON bansheesickle { Enchantment = 3; }
+  LeftWielded = holybook(SEGES);
+  RightGauntlet = ELF_CLOTH gauntlet { Enchantment = 2; }
+  RightBoot = ELF_CLOTH boot { Enchantment = 2; }
+  KnownCWeaponSkills == SMALL_SWORDS;
+  CWeaponSkillHits == 50;
+  RightSWeaponSkillHits = 20;
+  LeftSWeaponSkillHits = 20;
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 50;
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeGenerated = false;
   UndeadVersions = false;
   FriendlyReplies =
   {
-    3,
-    "\"War... never... changes...\"",
-    "\"How sweet and honourable it is to die for one's country...\"",
-    "\"No more... Never more...\"";
+    5,
+    "\"The people have faith in Seges, and I do my best to heal and comfort them in adversity.\"",
+    "\"No wonder everyone is so cranky these days. If you had to live year-round in a cold, drafty castle like this one, you'd be cranky, too.\"",
+    "\"Was it the Black-cloak or Lord Regent who caused the old king's death? I doubt we'll ever know for sure.\"",
+    "\"I've sometimes thought I'd like to make a pilgrimage to the Cathedral of Attnam, but my duties prevent me from such extensive and dangerous travel.\"",
+    "\"There's something strange about Lord Regent.\"";
   }
-  DeathMessage = "@Dd is put to rest.";
-  Inventory == gasgrenade { Chance = 10; }
-  AllowedDungeons == PYRAMID;
+  Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
 }

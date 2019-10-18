@@ -1902,6 +1902,30 @@ truth commandsystem::WizardMode(character* Char)
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
 
+        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
+        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
+        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
+
+        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
+        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
+        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
+
+        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
+        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
+
+        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
+        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
+
+        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
+        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
+        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
+
+        v2 BattleFieldPos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
+        game::GetWorldMap()->GetWSquare(BattleFieldPos)->ChangeOWTerrain(battlefield::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BattleFieldPos, 1);
+
         v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
         game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
         game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
@@ -1918,6 +1942,30 @@ truth commandsystem::WizardMode(character* Char)
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+
+        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
+        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
+        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
+
+        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
+        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
+        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
+
+        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
+        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
+
+        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
+        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
+
+        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
+        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
+        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
+
+        v2 BattleFieldPos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
+        game::GetWorldMap()->GetWSquare(BattleFieldPos)->ChangeOWTerrain(battlefield::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BattleFieldPos, 1);
 
         v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
         game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());

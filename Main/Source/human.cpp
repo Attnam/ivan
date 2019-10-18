@@ -202,7 +202,7 @@ void skeleton::CreateCorpse(lsquare* Square)
 
 void petrus::CreateCorpse(lsquare* Square)
 {
-  if(game::GetStoryState() == 2)
+  if(game::GetGloomyCaveStoryState() == 2)
     game::GetTeam(ATTNAM_TEAM)->SetRelation(game::GetTeam(PLAYER_TEAM), FRIEND);
 
   Square->AddItem(leftnutofpetrus::Spawn());
@@ -683,7 +683,7 @@ void petrus::BeTalkedTo()
       SendNewDrawRequest();
       game::AskForKeyPress(CONST_S("You are attacked! [press any key to continue]"));
       PLAYER->GetTeam()->Hostility(GetTeam());
-      game::SetStoryState(2);
+      game::SetGloomyCaveStoryState(2);
       return;
     }
   }
@@ -703,69 +703,83 @@ void petrus::BeTalkedTo()
     AddScoreEntry(Msg, 2, false);
     game::End(Msg);
   }
-  else
+  else if(game::GetGloomyCaveStoryState() == 1)
   {
-    if(!game::GetStoryState())
-    {
-      if(PLAYER->RemoveEncryptedScroll())
-      {
-        game::TextScreen(CONST_S("You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
-                                 "Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
-                                 "readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
-                                 "Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
-                                 "Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
-                                 "are some sentences actually concerning your mission:\n\n"
-                                 "\"Alas, I fear dirty tongues have spread lies to my Lord's ears. I assure all tales\n"
-                                 "of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
-                                 "The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
-                                 "not question the wisdom of the government's decisions. I will contribute what I can:\n"
-                                 "the ostriches will deliver an extra 10000 bananas to the capital and additionally the\n"
-                                 "slave that brought the message will henceforth be at Your disposal. I am certain this\n"
-                                 "satisfies the crown's needs.\"\n\n"
-                                 "\"Yours sincerely,\n"
-                                 "Richel Decos, the viceroy of New Attnam\""));
-
-        game::TextScreen(CONST_S("You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
-                                 "wonder what shape your destiny is taking in his mind. Suddenly he seems to return\n"
-                                 "to this reality and talks to you.\n\n"
-                                 "\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
-                                 "We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
-                                 "medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
-                                 "vast riches seized from them. Our law says all such stolen valuables belong to \n"
-                                 "the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
-                                 "and even if such was provided, We couldn't send soldiers over the snow fields\n"
-                                 "ere spring.\""));
-
-        game::TextScreen(CONST_S("\"However, since thou now servest Us, We ought to find thee something to do. Sir\n"
-                                 "Galladon hath told Us his agents witnessed thou leaving the dreaded underwater tunnel.\n"
-                                 "This means thou most likely hast defeated genetrix vesana and art a talented warrior.\n"
-                                 "We happen to have a task perfect for such a person. An evil dark frog named Elpuri who\n"
-                                 "hates Valpurus and Attnam more than anything hath taken control over an abandoned mine\n"
-                                 "nearby. It is pestering our fine city in many ways and reconnaissance has reported an\n"
-                                 "army of monsters gathering in the cave. Our guards are not trained to fight underground\n"
-                                 "and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
-                                 "greatest armor in existence - the Shirt of the Golden Eagle. Elpuri cannot wear\n"
-                                 "it but he who can is now nearly immortal.\"\n\n"
-                                 "\"We have marked the location of the gloomy cave on thy world map. We want you to dive\n"
-                                 "into it and slay the vile frog. Bring Us its head and We reward thee with freedom.\n"
-                                 "Shouldst thou also find the Shirt, We'll knight thee. Good luck, and return when\n"
-                                 "thou hast succeeded.\""));
-
-        game::LoadWorldMap();
-        v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-        game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
-        game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-        game::SaveWorldMap();
-        GetArea()->SendNewDrawRequest();
-        ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
-        game::SetStoryState(1);
-      }
-      else
-        ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb Us without proper cause.\"");
-    }
-    else /* StoryState == 1 */
-      ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");
+    ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");
+    return;
   }
+
+  if(!game::GetStoryState())
+  {
+    if(PLAYER->RemoveEncryptedScroll())
+    {
+      game::TextScreen(CONST_S("You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
+                               "Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
+                               "readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
+                               "Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
+                               "Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
+                               "are some sentences actually concerning your mission:\n\n"
+                               "\"Alas, I fear dirty tongues have spread lies to my Lord's ears. I assure all tales\n"
+                               "of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
+                               "The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
+                               "not question the wisdom of the government's decisions. I will contribute what I can:\n"
+                               "the ostriches will deliver an extra 10000 bananas to the capital and additionally the\n"
+                               "slave that brought the message will henceforth be at Your disposal. I am certain this\n"
+                               "satisfies the crown's needs.\"\n\n"
+                               "\"Yours sincerely,\n"
+                               "Richel Decos, the viceroy of New Attnam\""));
+
+      game::TextScreen(CONST_S("You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
+                               "wonder what shape your destiny is taking in his mind. Suddenly he seems to return\n"
+                               "to this reality and talks to you.\n\n"
+                               "\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
+                               "We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
+                               "medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
+                               "vast riches seized from them. Our law says all such stolen valuables belong to \n"
+                               "the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
+                               "and even if such was provided, We couldn't send soldiers over the snow fields\n"
+                               "ere spring.\"\n\n"
+                               "\"However, since thou now servest Us, We ought to find thee something to do. In Our\n"
+                               "immesurable kindness and generosity, we giveth thee some time to see this majestic\n"
+                               "city of Ours and marvel at its glory. Return to Us once thou hast admired Our\n"
+                               "monumental Cathedral enough, and we shall have decided thy fate by then.\""));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"The patrol guard will watch out for you, so don't thee think of running away.\"");
+      game::SetStoryState(1);
+    }
+    else
+      ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb Us without proper cause.\"");
+  }
+  else if(game::GetStoryState() == 1)
+  {
+    game::TextScreen(CONST_S("\"Ah, here thou art, my brave warrior savage! Our agents hast informed Us that they\n"
+                             "witnessed thou leaving the dreaded underwater tunnel. This means thou most likely hast\n"
+                             "defeated Genetrix Vesana and art a talented monster slayer. We happen to have a task\n"
+                             "perfect for such a person.\"\n\n"
+                             "\"An evil dark frog named Elpuri who hates Valpurus and Attnam more than anything hath\n"
+                             "taken control over an abandoned mine nearby. It is pestering our fine city in many ways\n"
+                             "and reconnaissance has reported an army of monsters gathering in the cave. Our guards\n"
+                             "are not trained to fight underground and We dare not send them. To make things worse,\n"
+                             "someone hath recently stolen from Us the greatest armor in existence - the Shirt of the Golden Eagle.\n"
+                             "Elpuri cannot wear it but he who can is now nearly immortal.\"\n\n"
+                             "\"We have marked the location of the gloomy cave on thy map. We want you to dive\n"
+                             "into it and slay the vile frog. Bring Us its head and We reward thee with freedom.\n"
+                             "Shouldst thou also find the Shirt, We'll knight thee.\"\n\n"
+                             "\"Good luck, and return when thou hast succeeded.\""));
+
+    game::LoadWorldMap();
+    v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+    game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
+    game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+    game::SaveWorldMap();
+    GetArea()->SendNewDrawRequest();
+    ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
+    game::SetGloomyCaveStoryState(1);
+    game::SetStoryState(2);
+  }
+  else // StoryState == 2
+    ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb Us without proper cause.\"");
 }
 
 void priest::BeTalkedTo()
@@ -1277,13 +1291,15 @@ void librarian::BeTalkedTo()
   {
    case 0:
     if(game::GetPetrus() && !game::GetStoryState())
+      ADD_MESSAGE("\"Thou shouldst visit Petrus in his great Cathedral.\"");
+    else if(game::GetPetrus() && game::GetStoryState() == 1)
       ADD_MESSAGE("\"Thou shouldst visit Petrus if thou art in need of further adventures.\"");
     else
       ADD_MESSAGE("\"They say a wand of polymorph hath dozens of uses.\"");
 
     break;
    case 1:
-    if(game::GetPetrus() && game::GetStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
       ADD_MESSAGE("\"Thou art going to fight Elpuri? Beware! It is a powerful enemy. Other monsters "
                   "are very vulnerable if surrounded by thy party, but not that beast, for it may "
                   "slay a horde of thy friends at once with its horrendous tail attack.\"");
@@ -1292,14 +1308,14 @@ void librarian::BeTalkedTo()
 
     break;
    case 2:
-    if(game::GetPetrus() && game::GetStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
       ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");
     else
       ADD_MESSAGE("\"Shh! Thou shalt be silent in the library.\"");
 
     break;
    case 3:
-    if(game::GetPetrus() && game::GetStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
       ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thy precious items.\"");
     else
       ADD_MESSAGE("\"Dost thou not smell all the knowledge floating around here?\"");
@@ -1309,7 +1325,7 @@ void librarian::BeTalkedTo()
     ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can upgrade thy weapons' materials.\"");
     break;
    case 5:
-    if(game::GetPetrus() && game::GetStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
       ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
     else
       ADD_MESSAGE("\"In this book they talk about Mortifer, the great chaos god. He hates us "
@@ -1330,7 +1346,7 @@ void librarian::BeTalkedTo()
                 "Thou shouldst not engage it in melee but rather kill it from afar.\"");
     break;
    case 9:
-    if(game::GetPetrus() && game::GetStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
       ADD_MESSAGE("\"Thou art not alone in thy attempt to defeat Elpuri. A brave "
                   "adventurer called Ivan also diveth into its cave not long ago.\"");
     else
@@ -5022,120 +5038,117 @@ void necromancer::BeTalkedTo()
     return;
   }
 
-  if(PLAYER->HasShadowVeil() && (game::GetXinrochTombStoryState() == 1))
+  if(game::GetXinrochTombStoryState() == 1)
   {
-    if(PLAYER->RemoveShadowVeil())
+    if(PLAYER->HasShadowVeil() && PLAYER->RemoveShadowVeil())
     {
-      game::TextScreen(CONST_S("The Necromancer takes the Shadow Veil.\n"
-                               "\"At last I can make my escape from Petrus' wretched clutches!\"\n"
-                               "\n"
-                               "The necromancer looks up \n"
+      game::TextScreen(CONST_S("\"At last I can make my escape from Petrus' wretched clutches!\"\n\n"
+                               "Anmah takes the shadow veil from you and seems completely lost in\n"
+                               "thoughts for a while. Suddenly, he looks up:\n\n"
                                "\"Oh, you are still here. Good! Pray tell me, what did you find in the Tomb?\n"
-                               "A portal? Did you traverse it? Of course! You can't do so bodily,\n"
-                               "unless you were... ...changed in some way?\"\n"));
+                               "A portal? Did you traverse it? Of course not! You can't do so bodily,\n"
+                               "unless you were...\n\n...changed in some way.\"\n\n"
+                               "Before you can stop him, he reaches for your face."));
 
-      game::TextScreen(CONST_S("You feel a cold, tingling sensation in the middle of your forehead.\n"
-                               "\n\n"
+      game::TextScreen(CONST_S("You feel a cold, tingling sensation in the middle of your forehead.\n\n"
                                "\"Here, I give you the seal of the undead. You will be able to traverse\n"
-                               "the portal without the use of the shadow veil. Go forth!\""));
+                               "the portal without the use of the shadow veil. You can still retrieve\n"
+                               "the lost flaming ruby sword. If you go beyond the portal, you will find\n"
+                               "the one who carries this lost sword. But be warned, he is a terrible foe!\""));
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"You can still retrieve the lost flaming ruby sword. If you go beyond the portal, you will find the one who carries this lost sword. But be warned, he is a terrible foe!\"");
+      ADD_MESSAGE("\"May Infuscor guide you towards the darkest of secrets.\"");
       game::SetXinrochTombStoryState(2);
     }
-    return;
+    else
+    {
+      ADD_MESSAGE("%s says: \"Bring me the shadow veil and we'll talk.\"", CHAR_NAME(DEFINITE));
+      return;
+    }
   }
 
   if(PLAYER->HasLostRubyFlamingSword())
   {
-    ADD_MESSAGE("The necromancer exclaims: \"What are you still doing down here? That sword belongs to the Champion of Infuscor!\"");
+    ADD_MESSAGE("%s exclaims: \"What are you still doing down here? That sword belongs to the Champion of Infuscor!\"", CHAR_NAME(DEFINITE));
     return;
   }
   else if(game::GetXinrochTombStoryState() == 2)
-    ADD_MESSAGE("The necromancer says: \"I am just preparing to leave. Have you found that flaming ruby sword yet?\"");
+    ADD_MESSAGE("%s says: \"I am just preparing to leave. Have you found that flaming ruby sword yet?\"", CHAR_NAME(DEFINITE));
 
-  if(game::GetXinrochTombStoryState() == 1)
+  if(game::GetStoryState() == 1)
   {
-    ADD_MESSAGE("The necromancer says: \"Bring me the shadow veil and we'll talk.\"");
-    return;
-  }
+    ADD_MESSAGE("%s looks up: \"Would you mind helping me with a little problem?\"", CHAR_NAME(DEFINITE));
 
-  if(PLAYER->HasEncryptedScroll() && !game::GetXinrochTombStoryState())
-  {
-    ADD_MESSAGE("The necromancer looks up. \"Have you got the encrypted scroll?\"");
-
-    if(game::TruthQuestion(CONST_S("Will you give the encrypted scroll to the necromancer? [y/n]"), REQUIRES_ANSWER))
+    if(game::TruthQuestion(CONST_S("Do you accept the quest? [y/N]"), REQUIRES_ANSWER))
     {
-      if(PLAYER->RemoveEncryptedScroll())
-      {
-        game::TextScreen(CONST_S("The necromancer takes the scroll and mutters an incantation in a low voice.\n"
-                                 "To your surprise, the words rearrange themselves on the page,\n"
-                                 "revealing a previously inscrutable message.\n"
-                                 "The necromancer scans the page from left to right several times. His face contorts:\n"
-                                 "\"Bah! A canticle of Saint Petrus the Lion-Hearted!\"\n"
-                                 "He continues down the page. His eyes widen:\n"
-                                 "\"O ho! 10 000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
-                                 "\n"
-                                 "The necromancer allows the scroll to burn and the ashes wither away in his hands.\n"
-                                 "\"Alas, no news about my trial. But thank you for sharing.\"\n"
-                                 "\n"
-                                 "\"What am I doing here you ask? You could say I spent some time arranging things\n"
-                                 "in the catacombs below. I was the undertaker for the city of Attnam, you see.\n"
-                                 "Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
-                                 "223 years later, and I'm still down here, drinking blood, eating bones, and generally \n"
-                                 "trying all the old life-extension tricks. Finally I got caught out by that meddling Haedlac.\n"
-                                 "He's got nothing better to do these days. Sent me here to the Cellar, never too far away\n"
-                                 "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
-                                 "every now and again to check up on me.\"\n"));
+      /*game::TextScreen(CONST_S("The necromancer takes the scroll and mutters an incantation in a low voice.\n"
+                               "To your surprise, the words rearrange themselves on the page,\n"
+                               "revealing a previously inscrutable message.\n"
+                               "The necromancer scans the page from left to right several times. His face contorts:\n"
+                               "\"Bah! A canticle of Saint Petrus the Lion-Hearted!\"\n"
+                               "He continues down the page. His eyes widen:\n"
+                               "\"O ho! 10 000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
+                               "\n"
+                               "The necromancer allows the scroll to burn and the ashes wither away in his hands.\n"
+                               "\"Alas, no news about my trial. But thank you for sharing.\"\n\n"
+      */
+      game::TextScreen(CONST_S("\"You might be asking what am I doing down here? Lets just say I had spent some time\n"
+                               "arranging... things in the catacombs below. I was the undertaker for the city of Attnam,\n"
+                               "you see. Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
+                               "223 years later, and I was still down here, drinking blood, eating bones, and generally \n"
+                               "trying all the old life-extension tricks. Finally I got caught by that meddling Haedlac.\n"
+                               "He's got nothing better to do these days, I guess. He sent me here to the Cellar, agonizingly\n"
+                               "close to my minions, but still unable to escape. That stupid floating eye hovers by here\n"
+                               "every now and again to check up on me.\""));
 
-        game::TextScreen(CONST_S("\"Wait, don't go yet! It gets lonely here, with no one to talk to but the punishers.\n"
-                                 "Keep me company a little longer, please... Maybe I can tell you a story? I can relate\n"
-                                 "the history of dark knighthood to you.\n\n"
-                                 "Long ago, there lived a powerful warrior, Xinroch, who rose up the ranks\n"
-                                 "of the fearsome order of the dark knights, to become the grand master dark knight. \n\n"
-                                 "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
-                                 "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
-                                 "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
-                                 "of their legendary master, they may obstruct your entry to the tomb. Little do they know\n"
-                                 "that in order for their master to be reborn, his spirit must be freed from the place.\n"
-                                 "Of course, disturbing such a restless soul would be dangerous. You may need to subdue it\n"
-                                 "by force to gain what you need. Legend has it Xinroch's spirit is able to wield weapons,\n"
-                                 "and possesses a cloak of unimaginable usefulness: The Shadow Veil.\""));
+      game::TextScreen(CONST_S("\"Wait, don't go yet! It gets lonely here, with no one to talk to but the punishers.\n"
+                               "Keep me company a little longer, please... Maybe I can tell you a story? I can relate\n"
+                               "the history of dark knighthood to you.\"\n\n"
+                               "\"Long ago, there lived a powerful warrior, Xinroch, who rose up the ranks\n"
+                               "of the fearsome order of the dark knights, to become the grand master dark knight. \n\n"
+                               "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
+                               "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
+                               "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
+                               "of their legendary master, they may obstruct your entry to the tomb. Little do they know\n"
+                               "that in order for their master to be reborn, his spirit must be freed from the place.\n"
+                               "Of course, disturbing such a restless soul would be dangerous. You may need to subdue it\n"
+                               "by force to gain what you need. Legend has it Xinroch's spirit is able to wield weapons,\n"
+                               "and possesses a cloak of unimaginable usefulness: The Shadow Veil.\""));
 
-        game::TextScreen(CONST_S("The necromancer suddenly looks at you intently.\n"
-                                 "\"Tell you what, I think you can help me out. But first I'll need proof of your abilities.\n"
-                                 "It will take all your wits to survive the powers of the Tomb of Xinroch to the very end.\"\n\n"
-                                 "Bring me this shadow veil, and I might be able to help you in a lasting way. I need the\n"
-                                 "shadow veil to help make my escape from Attnam. It has certain properties conducive to\n"
-                                 "getting away unnoticed.\"\n\n"
-                                 "\"There is also the matter of Xinroch's lost sword. Its power lies in its symbolism.\n"
-                                 "If you were to gain it somehow, then I imagine most believers would be convinced that\n"
-                                 "you were Xinroch himself, returned to the flesh. Although you would need to prove this\n"
-                                 "with the help of our god, Infuscor... ...it might require some offering, or exchange?\n"
-                                 "I cannot say what trial would await you to retrieve the lost sword.\""));
+      game::TextScreen(CONST_S("The necromancer suddenly looks at you intently.\n\n"
+                               "\"Okay, we can talk now. The cardinals are not listening to our thoughts. I need you to\n"
+                               "bring me the shadow veil, it will surely allow me to escape from Attnam. It has certain\n"
+                               "properties conducive to getting away unnoticed.\"\n\n"
+                               "\"It will take all your wits to survive the powers of the Tomb of Xinroch, but I believe\n"
+                               "in you. You are my only hope. Oh, how I wish to taste fresh blood again!\"\n\n"
+                               "\"Lastly, there is the matter of Xinroch's lost sword. Its power lies in its symbolism.\n"
+                               "If you were to gain it somehow, then I imagine most believers would be convinced that\n"
+                               "you were Xinroch himself, returned to the flesh. Although you would need to prove this\n"
+                               "with the help of our god, Infuscor... ...it might require some offering, perhaps? I have\n"
+                               "a feeling that if you find anything belonging to Xinroch, it will help you greatly\n"
+                               "in your quest.\"\n\n"
+                               "\"I cannot say what trial would await you to retrieve the lost sword, but I'm sure\n"
+                               "a mighty adventurer like you would like to lead a whole order of dark knights?\""));
 
-        game::LoadWorldMap();
-        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
-        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
-        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-        game::SaveWorldMap();
-        GetArea()->SendNewDrawRequest();
-        ADD_MESSAGE("\"By the way, if you find anything belonging to Xinroch, then don't lose it! I have a feeling it will help you greatly in your quest.\"");
-        game::SetXinrochTombStoryState(1);
-        return;
-      }
+      game::LoadWorldMap();
+      v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+      game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
+      game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+      game::SaveWorldMap();
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"And don't worry about the patrol guard, he's not really paying attention to who leaves the Attnam or if they should be leaving.\"");
+      game::SetXinrochTombStoryState(1);
+      game::SetStoryState(2);
+      return;
     }
     else
     {
-      ADD_MESSAGE("The necromancer looks downcast. "
-                  "\"I see. I guess I shall have to wait for another adventurer then.\"");
+      ADD_MESSAGE("%s looks downcast. \"I see. I guess I shall have to wait for another adventurer then.\"", CHAR_NAME(DEFINITE));
       return;
     }
   }
-  else if(!game::GetXinrochTombStoryState()) /* XinrochTombStoryState == 0 */
-    ADD_MESSAGE("The necromancer says: \"Bring me the encrypted scroll and we'll talk.\"");
-
-  return;
+  else
+    ADD_MESSAGE("%s says: \"Come back when you are on no other quests.\"", CHAR_NAME(DEFINITE));
 }
 
 void humanoid::StayOn(liquid* Liquid)
@@ -6536,16 +6549,9 @@ void petrusswife::BeTalkedTo()
 
 void guard::BeTalkedTo()
 {
-  if(GetPos().IsAdjacent(PLAYER->GetPos()))
+  if(!GetConfig() == EMISSARY || GetRelation(PLAYER) == HOSTILE)
   {
-    if(GetConfig() == EMISSARY)
-    {
-      // TODO
-      ADD_MESSAGE("\"Have a boat, why don't you?\"");
-      game::GivePlayerBoat();
-      return;
-    }
-    else
+    if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
     {
       itemvector Item;
 
@@ -6559,9 +6565,52 @@ void guard::BeTalkedTo()
         GetStack()->AddItem(Item[c]);
       }
     }
+
+    humanoid::BeTalkedTo();
+    return;
   }
 
-  humanoid::BeTalkedTo();
+  /* We're talking to the emissary of Aslona from now on. */
+  if(game::GetStoryState() == 1)
+  {
+    ADD_MESSAGE("%s eyes you, calculating: \"I might have work for you and I can make it worth your while.\"", CHAR_NAME(DEFINITE));
+
+    if(game::TruthQuestion(CONST_S("Do you accept the quest? [y/N]"), REQUIRES_ANSWER))
+    {
+      game::TextScreen(CONST_S("\"You might be asking what am I doing down here? Lets just say I had spent some time\n"
+                               "arranging... things in the catacombs below. I was the undertaker for the city of Attnam,\n"
+                               "you see. Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
+                               "223 years later, and I was still down here, drinking blood, eating bones, and generally \n"
+                               "trying all the old life-extension tricks. Finally I got caught by that meddling Haedlac.\n"
+                               "He's got nothing better to do these days, I guess. He sent me here to the Cellar, agonizingly\n"
+                               "close to my minions, but still unable to escape. That stupid floating eye hovers by here\n"
+                               "every now and again to check up on me.\"")); // TODO
+
+      game::GivePlayerBoat();
+      game::LoadWorldMap();
+      v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
+      game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
+      game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
+      v2 RebelCampPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
+      game::GetWorldMap()->GetWSquare(RebelCampPos)->ChangeOWTerrain(rebelcamp::Spawn());
+      game::SaveWorldMap();
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"Hey macarena.\"");
+      game::SetAslonaStoryState(1);
+      game::SetStoryState(2);
+      return;
+    }
+    else
+    {
+      ADD_MESSAGE("%s narrows his eyes: \"I would think twice about brushing me aside, if I were you. Think about it.\"", CHAR_NAME(DEFINITE));
+      return;
+    }
+  }
+
+  if(game::GetAslonaStoryState() && !RAND_N(4)) // Isn't he charming?
+    ADD_MESSAGE("\"You should know that I'm counting on you. My whole country is counting on you. Don't screw it up!\"");
+  else
+    humanoid::BeTalkedTo();
 }
 
 void xinrochghost::GetAICommand()
@@ -6789,35 +6838,29 @@ void elder::BeTalkedTo()
                              "I knew there was something special in you, something even\n"
                              "the accursed hippos couldn't spoil. And now you have saved us\n"
                              "from valpurian clutches and given us a chance at freedom!\n"
-                             "Thank you so very, very much.\"\n"
-                             "\n"
+                             "Thank you so very, very much.\"\n\n"
                              "\"Alas, I'm afraid Tweraif is not yet out of the proverbial woods.\n"
                              "We are few and the Attnamese army is massive. Their battleships\n"
                              "will be ready once the winter ends and the ice thaws, and they will\n"
                              "not hesitate to bring their tyranny back. I still don't get why they\n"
-                             "love those bananas so much.\"\n"
-                             "\n"
-                             "\"We have no hope to defeat them in a fight, so fight them we shan't.\"\n"));
+                             "love those bananas so much.\"\n\n"
+                             "\"We have no hope to defeat them in a fight, so fight them we shan't.\""));
 
-    game::TextScreen(CONST_S("\"Let me tell you a story, or a myth if you will.\"\n"
-                             "\n"
+    game::TextScreen(CONST_S("\"Let me tell you a story, or a myth if you will.\"\n\n"
                              "\"Once upon a time, there was a town. No one could find the town\n"
                              "unless they already knew where it was, and on one could enter\n"
                              "uninvited. The town was called Mondedr and it was concealed\n"
-                             "from the world by the power of Cleptia. It was never conquered.\"\n"
-                             "\n"
+                             "from the world by the power of Cleptia. It was never conquered.\"\n\n"
                              "\"The thing is, I know for a fact that Mondedr exists, and that\n"
                              "their cloaking spell can be replicated. Attnam tried to take our\n"
                              "goddess away, but she is still strong in our hearts. I have faith\n"
                              "she will protect this island from valpurians, just as Cleptia did\n"
-                             "for Mondedr.\"\n"));
+                             "for Mondedr.\""));
 
     game::TextScreen(CONST_S("\"The prayers are simple, but no god can affect the world uninvited,\n"
                              "and a miracle of such strength requires more power than any priest\n"
-                             "could channel. We need a conduit, something close to Silva herself.\"\n"
-                             "\n"
-                             "\"We need a scion of the Holy Mango World-tree.\"\n"
-                             "\n"
+                             "could channel. We need a conduit, something close to Silva herself.\"\n\n"
+                             "\"We need a scion of the Holy Mango World-tree.\"\n\n"
                              "\"You have done so much for your village, yet I must ask for another\n"
                              "favour. You know that the late viceroy destroyed the altar of Silva\n"
                              "in our shrine, but you might not know that there is another shrine of Silva\n"
@@ -6826,13 +6869,13 @@ void elder::BeTalkedTo()
                              "buried the stairs to the crystal cave of Silva under a cave-in,\n"
                              "once it was obvious that we will be conquered. We couldn't let the Attnamese\n"
                              "desecrate that most holy place. There, in an ancient temple of Silva,\n"
-                             "grows a tree of wondrous power, a tiny sapling of the World-tree.\"\n"));
+                             "grows a tree of wondrous power, a tiny sapling of the World-tree.\""));
 
     game::TextScreen(CONST_S("\"Please, bring back a seedling of this tree. Once we plant it here,\n"
                              "in the village, I can cast the spell and no army will find us.\n"
                              "The first valpurian attack surprised us, caught us unaware, unprepared\n"
                              "and unable to defend our land. So let's not repeat history and\n"
-                             "get ready for them this time.\"\n"));
+                             "get ready for them this time.\""));
 
     game::SetFreedomStoryState(1);
     GetArea()->SendNewDrawRequest();
@@ -6853,36 +6896,32 @@ void terra::BeTalkedTo()
   if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE)
      && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
-    game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                             "\n"
+    game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n\n"
                              "\"I have volunteered all those years ago to be buried here in this cave\n"
                              "along with the shrine, to tend it and to protect the rites and traditions\n"
                              "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
                              "every day that a word would come about an end to the tyranny, that\n"
                              "I would be free to return home. I guess my hope dwindled over the years,\n"
-                             "but you are here now and my wishes came true. Thank you.\"\n"
-                             "\n"
+                             "but you are here now and my wishes came true. Thank you.\"\n\n"
                              "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
                              "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                             "I wish it was that simple, but I have no seeds to give you.\"\n"));
+                             "I wish it was that simple, but I have no seeds to give you.\""));
 
     game::TextScreen(CONST_S("\"You see, this shrine is built in a remote, lost cave for a reason.\n"
-                             "It is a guarding post, a bulwark, and a seal on a prison.\"\n"
-                             "\n"
+                             "It is a guarding post, a bulwark, and a seal on a prison.\"\n\n"
                              "\"One thousand years ago, Nefas, the goddess of forbidden pleasures,\n"
                              "came to Scabies, the goddess of diseases, mutations and deformity,\n"
                              "in the form of a handsome hero, and seduced her. Whether it was\n"
                              "for Nefas' own amusement, or the humiliation Scabies suffered\n"
                              "when she discovered who she laid with, no one knows, but Scabies got\n"
                              "pregnant and eventually delivered a divine baby - a monstrous spider\n"
-                             "the likes of which this world had never seen before.\"\n"
-                             "\n"
+                             "the likes of which this world had never seen before.\"\n\n"
                              "\"The spider was a behemoth of her kind, massive and terrifying\n"
                              "and truly detestable. Spurned and abandoned by both her mothers,\n"
                              "the spider rampaged through the world until she was defeated and\n"
                              "bound by a circle of druids and priests. Her name is Lobh-se and\n"
                              "she is imprisoned below this cave, trapped by the power of Silva\n"
-                             "channeled through the Holy Mango Tree.\"\n"));
+                             "channeled through the Holy Mango Tree.\""));
 
     game::TextScreen(CONST_S("\"Lobh-se is a terrible creature, an avatar of famine and consumption.\n"
                              "She breeds thousands of lesser spiders and immediately devours them\n"
@@ -6891,15 +6930,14 @@ void terra::BeTalkedTo()
                              "plants that scrape a living this deep underground. I can somewhat keep her\n"
                              "at bay, protecting myself and the tree, but the magic of the holy seedlings\n"
                              "is sweet to Lobh-se, and not strong enough to ward her off. She devoured\n"
-                             "the last seedling just a few days ago.\"\n"
-                             "\n"
+                             "the last seedling just a few days ago.\"\n\n"
                              "\"You are a hero already for liberating our village,\n"
                              "but if you really wish to ensure the safety of Tweraif, you have to venture\n"
                              "deeper, to the very lair of Lobh-se. She may be a godling, but her body\n"
                              "is still mortal. Cut the seedling from her gullet, and I will keep her spirit\n"
-                             "bound so that it cannot create a new body to harass this world.\"\n"));
+                             "bound so that it cannot create a new body to harass this world.\""));
 
-    game::TextScreen(CONST_S("\"May Silva bless you in your doings.\"\n"));
+    game::TextScreen(CONST_S("\"May Silva bless you in your doings.\""));
 
     GetArea()->SendNewDrawRequest();
     ADD_MESSAGE("\"Oh, and give my love to Kaethos, if he's still alive.\"");
@@ -7011,25 +7049,17 @@ void wizard::GetAICommand()
 
       EditAP(-GetSpellAPCost());
 
-      switch(RAND_N(9))
+      int MaterialConfig = MUSTARD_GAS;
+      switch (RAND_N(6))
       {
-       case 0:
-        ToBeCalled = mysticfrog::Spawn(LIGHT);
-        break;
-       default:
-        int MaterialConfig = MUSTARD_GAS;
-        switch (RAND_N(6))
-        {
-          case 0: MaterialConfig = MAGIC_VAPOUR; break;
-          case 1: MaterialConfig = SLEEPING_GAS; break;
-          case 2:
-          case 3: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
-          case 4: MaterialConfig = TELEPORT_GAS; break;
-        }
-
-        ToBeCalled = golem::Spawn(MaterialConfig);
-        break;
+        case 0: MaterialConfig = MAGIC_VAPOUR; break;
+        case 1: MaterialConfig = SLEEPING_GAS; break;
+        case 2:
+        case 3: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
+        case 4: MaterialConfig = TELEPORT_GAS; break;
       }
+
+      ToBeCalled = golem::Spawn(MaterialConfig);
 
       v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
 
@@ -7076,4 +7106,178 @@ void gasghoul::GetAICommand()
   }
 
   zombie::GetAICommand();
+}
+
+void elder::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << HasBeenSpokenTo;
+}
+
+void elder::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> HasBeenSpokenTo;
+}
+
+void terra::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << HasBeenSpokenTo;
+}
+
+void terra::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> HasBeenSpokenTo;
+}
+
+void aslonawizard::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << HasBeenSpokenTo;
+}
+
+void aslonawizard::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> HasBeenSpokenTo;
+}
+
+void aslonacaptain::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << HasBeenSpokenTo;
+}
+
+void aslonacaptain::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> HasBeenSpokenTo;
+}
+
+void aslonapriest::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << HasBeenSpokenTo;
+}
+
+void aslonapriest::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> HasBeenSpokenTo;
+}
+
+void aslonawizard::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
+    {
+      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                               "\n"
+                               "\"I have volunteered all those years ago to be buried here in this cave\n"
+                               "along with the shrine, to tend it and to protect the rites and traditions\n"
+                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                               "every day that a word would come about an end to the tyranny, that\n"
+                               "I would be free to return home. I guess my hope dwindled over the years,\n"
+                               "but you are here now and my wishes came true. Thank you.\"\n"
+                               "\n"
+                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      // bring alchemy book
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+
+      HasBeenSpokenTo = true;
+      return;
+    }
+    else if(PLAYER->RemoveAlchemyBook())
+    {
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+      return;
+    }
+  }
+
+  humanoid::BeTalkedTo();
+}
+
+void aslonawizard::CreateCorpse(lsquare* Square)
+{
+  game::GetCurrentLevel()->GasExplosion(gas::Spawn(MAGIC_VAPOUR, 100), Square, this);
+  SendToHell();
+}
+
+void aslonacaptain::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
+    {
+      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                               "\n"
+                               "\"I have volunteered all those years ago to be buried here in this cave\n"
+                               "along with the shrine, to tend it and to protect the rites and traditions\n"
+                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                               "every day that a word would come about an end to the tyranny, that\n"
+                               "I would be free to return home. I guess my hope dwindled over the years,\n"
+                               "but you are here now and my wishes came true. Thank you.\"\n"
+                               "\n"
+                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      // bring nuke
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+
+      HasBeenSpokenTo = true;
+      return;
+    }
+    else if(PLAYER->RemoveNuke())
+    {
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+      return;
+    }
+  }
+
+  humanoid::BeTalkedTo();
+}
+
+void aslonapriest::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
+    {
+      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                               "\n"
+                               "\"I have volunteered all those years ago to be buried here in this cave\n"
+                               "along with the shrine, to tend it and to protect the rites and traditions\n"
+                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                               "every day that a word would come about an end to the tyranny, that\n"
+                               "I would be free to return home. I guess my hope dwindled over the years,\n"
+                               "but you are here now and my wishes came true. Thank you.\"\n"
+                               "\n"
+                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      // bring weeping obsidian
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+
+      HasBeenSpokenTo = true;
+      return;
+    }
+    else if(PLAYER->RemoveWeepObsidian())
+    {
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+      return;
+    }
+  }
+
+  priest::BeTalkedTo();
 }

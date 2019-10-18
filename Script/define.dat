@@ -918,7 +918,6 @@
 #define ELITE_FEMALE 16
 #define CASTLE 17
 #define ROYAL 18
-#define GUARD_CAPTAIN 19
 
 #define DARK 1
 #define GREATER_DARK 2

@@ -345,10 +345,16 @@ class game
   static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
+  static int GetGloomyCaveStoryState() { return GloomyCaveStoryState; }
+  static void SetGloomyCaveStoryState(int What) { GloomyCaveStoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
   static int GetFreedomStoryState() { return FreedomStoryState; }
   static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
+  static int GetAslonaStoryState() { return AslonaStoryState; }
+  static void SetAslonaStoryState(int What) { AslonaStoryState = What; }
+  static int GetRebelStoryState() { return RebelStoryState; }
+  static void SetRebelStoryState(int What) { RebelStoryState = What; }
   static truth PlayerIsGodChampion() { return PlayerIsChampion; }
   static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
   static truth PlayerHasBoat() { return HasBoat; }
@@ -548,8 +554,11 @@ class game
   static int Teams;
   static int Dungeons;
   static int StoryState;
+  static int GloomyCaveStoryState;
   static int XinrochTombStoryState;
   static int FreedomStoryState;
+  static int AslonaStoryState;
+  static int RebelStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;
