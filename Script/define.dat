@@ -918,6 +918,7 @@
 #define ELITE_FEMALE 16
 #define CASTLE 17
 #define ROYAL 18
+#define REBEL 19
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -989,6 +990,9 @@
 #define GENERAL 4
 #define MARSHAL 5
 #define REPRESENTATIVE 6
+
+#define REBEL_SOLDIER 1
+#define REBEL_LIEUTENANT 2
 
 #define VICE_ROY 1
 #define MASTER_TORTURER 2

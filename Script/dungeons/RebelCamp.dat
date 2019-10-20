@@ -151,6 +151,147 @@ Dungeon REBEL_CAMP;
       }
     }
 
+    /* People */
+    Square, Pos 0, 0;
+    {
+      Character = guard(REBEL) { WayPoint = { 4, 0, 0, XSize - 1, 0, XSize - 1, YSize - 1, 0, YSize - 1; } }
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Character = cossack(REBEL_SOLDIER);
+      Times = 15;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Character = cossack(REBEL_LIEUTENANT);
+      Times = 3;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = farmer(REBEL_CAMP);
+      Times = 5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = housewife(REBEL_CAMP);
+      Times = 5;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = child(BOY);
+      Times = 1:3;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = child(GIRL);
+      Times = 1:3;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = guard(REBEL);
+      Times = 1:3;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = mysticfrog(LIGHT);
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Character = largerat;
+      Times = 1:4;
+    }
+
+    /* Leader Room */
+    Room
+    {
+      Size = 7,7;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      Type = ROOM_OWNED_AREA;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+
+        Types
+        {
+          a = decoration(ARM_CHAIR);
+          | = decoration(CARPET);
+          d = decoration(DESK);
+          b = decoration(EXPENSIVE_BED);
+          T = decoration(TABLE);
+          B = decoration(BENCH);
+          x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside == Random { MinPrice = 100; Times = 3; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } }
+        }
+      }
+      {
+        .da..
+        .....
+        ..T.b
+        x....
+        .B.B.
+      }
+
+      ItemMap
+      {
+        Pos = 0,0;
+        Size = 7,6;
+
+        Types
+        {
+          # == 0;
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+          c == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }
+          n == trinket(POTTED_PLANT);
+        }
+      }
+      {
+        .#2###.
+        ##...##
+        #.....#
+        3c....4
+        #....n#
+        ##...##
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+
+        Types
+        {
+          # = 0;
+          h = harvan { Flags = IS_MASTER; }
+          g = guard(REBEL);
+        }
+      }
+      {
+        #.h.#
+        g...g
+        .....
+        .....
+        #...#
+      }
+
+      Square, Pos 3,6;
+      {
+        OTerrain = door(CURTAIN);
+      }
+    }
+
     /* Kamikaze Room */
     Room
     {

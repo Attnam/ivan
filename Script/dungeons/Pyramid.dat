@@ -336,7 +336,9 @@ Dungeon PYRAMID;
   {
     Description = "ancient bunker";
     ShortDescription = "Bunker";
+    Items = 0;
     CanGenerateBone = false;
+    IgnoreDefaultSpecialSquares = true;
     FillSquare = SUPER_CONCRETE solidterrain(GROUND), SUPER_CONCRETE wall(BRICK_FINE);
     TunnelSquare = SUPER_CONCRETE solidterrain(GROUND), 0;
     BackGroundType = GRAY_FRACTAL;
@@ -482,6 +484,35 @@ Dungeon PYRAMID;
       Square, Pos 3,3;
       {
         Character = mindworm(BOIL);
+      }
+    }
+
+    /* Treasure */
+    Room
+    {
+      GenerateLanterns = true;
+      GenerateFountains = false;
+      AltarPossible = false;
+      Shape = RECTANGLE;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == Random { MinPrice = 150; ConfigFlags = NO_BROKEN; }
+        Times = 20;
+      }
+    }
+
+    Room
+    {
+      GenerateLanterns = true;
+      GenerateFountains = false;
+      AltarPossible = false;
+      Shape = RECTANGLE;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == Random { MinPrice = 150; ConfigFlags = NO_BROKEN; }
+        Times = 20;
       }
     }
   }

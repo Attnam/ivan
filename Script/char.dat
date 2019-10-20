@@ -32,6 +32,7 @@ character
   DefaultEndurance = 0;
   DefaultPerception = 0;
   DefaultIntelligence = 0;
+  DefaultWillPower = 10;
   DefaultWisdom = 0;
   DefaultCharisma = 0;
   DefaultMana = 0;
@@ -275,7 +276,6 @@ character
   RunDescriptionLineTwo = "";
   VomittingIsUnhealthy = true;
   AllowPlayerToChangeEquipment = true;
-  DefaultWillPower = 10;
   TamingDifficulty = 0;
   IsSadist = false;
   IsMasochist = false;
@@ -337,6 +337,7 @@ playerkind
   DefaultEndurance = 10;
   DefaultPerception = 10;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -362,6 +363,7 @@ petrus
   DefaultEndurance = 40;
   DefaultPerception = 40;
   DefaultIntelligence = 40;
+  DefaultWillPower = 40;
   DefaultWisdom = 40;
   DefaultCharisma = 40;
   DefaultMana = 40;
@@ -420,6 +422,7 @@ farmer
   DefaultEndurance = 20;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -584,6 +587,25 @@ farmer
     }
     Inventory == wand(WAND_OF_RESURRECTION);
   }
+
+  Config REBEL_CAMP;
+  {
+    NameSingular = "rebel";
+    FriendlyReplies =
+    {
+      9,
+      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"What?\"",
+      "@Dd boasts about @sp farmstead back home.";
+    }
+    ScienceTalkPossibility = 0;
+  }
 }
 
 guard
@@ -595,6 +617,7 @@ guard
   DefaultEndurance = 20;
   DefaultPerception = 25;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 10;
@@ -1114,6 +1137,42 @@ guard
       "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
     }
   }
+
+  Config REBEL;
+  {
+    Helmet = DEEP_BRONZE helmet(FULL_HELMET);
+    BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = DEEP_BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD);
+    LeftWielded = DEEP_BRONZE shield;
+    Adjective = "rebel";
+    CWeaponSkillHits = { 2, 200, 200; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    PanicLevel = 5;
+    ClothColor = rgb16(120, 80, 40);
+    FriendlyReplies =
+    {
+      18,
+      "@Dd says gravely: \"I think we're all in for some hard times.\"",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"Everyone wants to know what really happened to the old king.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"";
+    }
+  }
 }
 
 shopkeeper
@@ -1125,6 +1184,7 @@ shopkeeper
   DefaultEndurance = 20;
   DefaultPerception = 30;
   DefaultIntelligence = 25;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 30;
   DefaultMana = 10;
@@ -1377,6 +1437,7 @@ priest
     DefaultEndurance = 15;
     DefaultPerception = 24;
     DefaultIntelligence = 15;
+    DefaultWillPower = 20;
     DefaultWisdom = 25;
     DefaultCharisma = 20;
     DefaultMana = 20;
@@ -1439,6 +1500,7 @@ priest
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 20;
+    DefaultWillPower = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
     DefaultMana = 25;
@@ -1485,6 +1547,7 @@ priest
     DefaultEndurance = 14;
     DefaultPerception = 24;
     DefaultIntelligence = 25;
+    DefaultWillPower = 25;
     DefaultWisdom = 25;
     DefaultCharisma = 20;
     DefaultMana = 25;
@@ -1540,6 +1603,7 @@ priest
     DefaultEndurance = 30;
     DefaultPerception = 35;
     DefaultIntelligence = 25;
+    DefaultWillPower = 35;
     DefaultWisdom = 37;
     DefaultCharisma = 55;
     DefaultMana = 30;
@@ -1643,6 +1707,7 @@ oree
   DefaultEndurance = 25;
   DefaultPerception = 30;
   DefaultIntelligence = 30;
+  DefaultWillPower = 40;
   DefaultWisdom = 20;
   DefaultCharisma = 3;
   DefaultMana = 30;
@@ -1712,6 +1777,7 @@ darkknight
   DefaultEndurance = 22;
   DefaultPerception = 25;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -2054,6 +2120,7 @@ ennerbeast
   DefaultEndurance = 20;
   DefaultPerception = 12;
   DefaultIntelligence = 1;
+  DefaultWillPower = 12;
   DefaultWisdom = 1;
   DefaultCharisma = 1;
   DefaultMana = 0;
@@ -2120,6 +2187,7 @@ ennerchild
   DefaultEndurance = 14;
   DefaultPerception = 14;
   DefaultIntelligence = 1;
+  DefaultWillPower = 8;
   DefaultWisdom = 1;
   DefaultCharisma = 40;
   DefaultMana = 0;
@@ -2172,6 +2240,7 @@ ennerchild
     DefaultAgility = 15;
     DefaultEndurance = 15;
     DefaultPerception = 16;
+    DefaultWillPower = 14;
     Sex = FEMALE;
     NameSingular = "girl";
     FriendlyReplies =
@@ -2215,6 +2284,7 @@ frog
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 15;
+    DefaultWillPower = 15;
     DefaultWisdom = 20;
     DefaultCharisma = 5;
     DefaultMana = 20;
@@ -2244,6 +2314,7 @@ frog
     DefaultEndurance = 15;
     DefaultPerception = 30;
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     DefaultWisdom = 25;
     DefaultCharisma = 4;
     DefaultMana = 25;
@@ -2274,6 +2345,7 @@ frog
     DefaultEndurance = 20;
     DefaultPerception = 36;
     DefaultIntelligence = 25;
+    DefaultWillPower = 25;
     DefaultWisdom = 30;
     DefaultCharisma = 3;
     DefaultMana = 30;
@@ -2306,6 +2378,7 @@ frog
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 5;
+    DefaultWillPower = 20;
     DefaultWisdom = 30;
     DefaultCharisma = 15;
     DefaultMana = 20;
@@ -2331,6 +2404,7 @@ frog
     DefaultEndurance = 15;
     DefaultPerception = 36;
     DefaultIntelligence = 10;
+    DefaultWillPower = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 20;
     DefaultMana = 25;
@@ -2357,6 +2431,7 @@ frog
     DefaultEndurance = 20;
     DefaultPerception = 36;
     DefaultIntelligence = 15;
+    DefaultWillPower = 30;
     DefaultWisdom = 40;
     DefaultCharisma = 25;
     DefaultMana = 30;
@@ -2387,6 +2462,7 @@ billswill
   DefaultEndurance = 5;
   DefaultPerception = 27;
   DefaultIntelligence = 2;
+  DefaultWillPower = 20;
   DefaultWisdom = 2;
   DefaultCharisma = 5;
   DefaultMana = 10;
@@ -2581,6 +2657,7 @@ goblin
   DefaultEndurance = 12;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 5;
@@ -2877,6 +2954,7 @@ mommo
     DefaultAgility = 4;
     DefaultPerception = 9;
     DefaultIntelligence = 3;
+    DefaultWillPower = 3;
     DefaultWisdom = 3;
     DefaultCharisma = 4;
     TotalVolume = 150000;
@@ -2897,6 +2975,7 @@ mommo
     DefaultAgility = 2;
     DefaultPerception = 9;
     DefaultIntelligence = 2;
+    DefaultWillPower = 2;
     DefaultWisdom = 2;
     DefaultCharisma = 3;
     TotalVolume = 300000;
@@ -2917,9 +2996,10 @@ mommo
     DefaultArmStrength = 2;
     DefaultAgility = 2;
     DefaultPerception = 9;
-    DefaultIntelligence = 2;
-    DefaultWisdom = 2;
-    DefaultCharisma = 3;
+    DefaultIntelligence = 1;
+    DefaultWillPower = 1;
+    DefaultWisdom = 1;
+    DefaultCharisma = 2;
     TotalVolume = 100000;
     TorsoBitmapPos = 128, 16;
     TotalSize = 50;
@@ -2941,6 +3021,7 @@ golem
   DefaultEndurance = 0; /* has no effect */
   DefaultPerception = 12;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 5;
   DefaultMana = 5;
@@ -3158,6 +3239,7 @@ wolf /* canine-> */
   DefaultEndurance = 10;
   DefaultPerception = 24;
   DefaultIntelligence = 7;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -3194,6 +3276,7 @@ dog /* canine-> */
   DefaultEndurance = 8;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 15;
   DefaultMana = 0;
@@ -3301,6 +3384,7 @@ spider
     DefaultEndurance = 4;
     DefaultPerception = 9;
     DefaultIntelligence = 3;
+    DefaultWillPower = 3;
     DefaultWisdom = 3;
     DefaultCharisma = 4;
     Adjective = "large";
@@ -3320,6 +3404,7 @@ spider
     DefaultEndurance = 12;
     DefaultPerception = 15;
     DefaultIntelligence = 4;
+    DefaultWillPower = 4;
     DefaultWisdom = 4;
     DefaultCharisma = 5;
     Adjective = "giant";
@@ -3338,9 +3423,10 @@ spider
     DefaultAgility = 26;
     DefaultEndurance = 18;
     DefaultPerception = 26;
-    DefaultIntelligence = 4;
-    DefaultWisdom = 4;
-    DefaultCharisma = 5;
+    DefaultIntelligence = 14;
+    DefaultWillPower = 14;
+    DefaultWisdom = 8;
+    DefaultCharisma = 10;
     Adjective = "aranea";
     TorsoBitmapPos = 256, 0;
     BaseBiteStrength = 400;
@@ -3360,6 +3446,7 @@ jackal /* canine-> */
   DefaultEndurance = 6;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -3384,6 +3471,7 @@ ass
   DefaultEndurance = 15;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -3420,6 +3508,7 @@ communist /* Ivan */
   DefaultEndurance = 30;
   DefaultPerception = 18;
   DefaultIntelligence = 7;
+  DefaultWillPower = 18;
   DefaultWisdom = 6;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -3514,6 +3603,7 @@ hunter
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 5;
@@ -3631,6 +3721,7 @@ bear
   DefaultEndurance = 20;
   DefaultPerception = 15;
   DefaultIntelligence = 8;
+  DefaultWillPower = 8;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 0;
@@ -3728,6 +3819,7 @@ dolphin
   DefaultEndurance = 10;
   DefaultPerception = 30;
   DefaultIntelligence = 100;
+  DefaultWillPower = 30;
   DefaultWisdom = 100;
   DefaultCharisma = 30;
   DefaultMana = 0;
@@ -3800,6 +3892,7 @@ slave
   DefaultEndurance = 20;
   DefaultPerception = 15;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 20;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -3837,6 +3930,7 @@ petrusswife
   DefaultEndurance = 7;
   DefaultPerception = 21;
   DefaultIntelligence = 8;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 80;
   DefaultMana = 20;
@@ -3989,6 +4083,7 @@ petrusswife
     HairColor = rgb16(48, 40, 8);
     ClothColor = rgb16(119,136,153);
     HeadBitmapPos = 112, 0;
+    DefaultWillPower = 25;
     PostFix = "number 3";
     FriendlyReplies =
     {
@@ -4082,6 +4177,7 @@ petrusswife
     ClothColor = rgb16(119,136,153);
     BeltColor = rgb16(105,105,105);
     HeadBitmapPos = 112, 0;
+    DefaultWillPower = 5;
     Adjective = "re-educated";
     ArticleMode = 0;
     FriendlyReplies =
@@ -4124,6 +4220,7 @@ housewife
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 10;
@@ -4231,6 +4328,28 @@ housewife
     CanBeGenerated = true;
     AllowedDungeons == XINROCH_TOMB;
   }
+
+  Config REBEL_CAMP;
+  {
+    NameSingular = "rebel";
+    NamePlural = "rebels";
+    FriendlyReplies =
+    {
+      9,
+      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"What?\"",
+      "@Dd boasts about @sp farmstead back home.";
+    }
+    HostileReplies == "\"I will smack you down, young man!\"";
+    ScienceTalkPossibility = 0;
+    IsExtraCoward = false;
+  }
 }
 
 femaleslave
@@ -4242,6 +4361,7 @@ femaleslave
   DefaultEndurance = 10;
   DefaultPerception = 18;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 25;
   DefaultCharisma = 25;
   DefaultMana = 5;
@@ -4282,6 +4402,7 @@ femaleslave
     DefaultAgility = 15;
     DefaultEndurance = 15;
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     DefaultWisdom = 30;
     DefaultCharisma = 20;
     NameSingular = "servant";
@@ -4327,6 +4448,7 @@ femaleslave
     DefaultDexterity = 15;
     DefaultAgility = 20;
     DefaultIntelligence = 25;
+    DefaultWillPower = 15;
     DefaultWisdom = 30;
     HairColor = rgb16(51, 51, 255);
     TorsoMainColor = rgb16(255, 0, 0);
@@ -4393,6 +4515,7 @@ librarian
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 30;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 10;
   DefaultMana = 20;
@@ -4459,6 +4582,7 @@ zombie
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 3;
   DefaultMana = 0;
@@ -4509,6 +4633,7 @@ zombie
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 7;
+    DefaultWillPower = 20;
     DefaultWisdom = 15;
     DefaultCharisma = 5;
     HeadBitmapPos = 112, 160; /* all dwarves have beards, no exceptions */
@@ -4644,6 +4769,7 @@ ghost
   DefaultEndurance = 8;
   DefaultPerception = 24;
   DefaultIntelligence = 15;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 15;
@@ -4719,6 +4845,7 @@ xinrochghost
   DefaultEndurance = 30;
   DefaultPerception = 36;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 30;
@@ -4792,6 +4919,7 @@ imp
 {
   DefaultPerception = 15;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 5;
   DefaultMana = 10;
@@ -4856,6 +4984,7 @@ bat
   DefaultEndurance = 8;
   DefaultPerception = 24;
   DefaultIntelligence = 7;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -4941,6 +5070,7 @@ mistress
   DefaultEndurance = 20;
   DefaultPerception = 30;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 40;
   DefaultMana = 10;
@@ -5156,6 +5286,7 @@ werewolfhuman
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -5206,6 +5337,7 @@ werewolfwolf
   DefaultEndurance = 25;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -5296,6 +5428,7 @@ vampire
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -5366,6 +5499,7 @@ kobold
   DefaultEndurance = 9;
   DefaultPerception = 12;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -5538,6 +5672,7 @@ gibberling
   DefaultEndurance = 10;
   DefaultPerception = 15;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -5675,6 +5810,7 @@ largecat /* feline-> */
   DefaultEndurance = 10;
   DefaultPerception = 21;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 10;
   DefaultCharisma = 20;
   DefaultMana = 0;
@@ -5700,6 +5836,7 @@ largerat
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -5745,6 +5882,7 @@ angel
   DefaultEndurance = 25;
   DefaultPerception = 35;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
@@ -5850,6 +5988,7 @@ kamikazedwarf
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 30;
   DefaultWisdom = 5;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -5907,6 +6046,7 @@ mammoth
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -5939,6 +6079,7 @@ unicorn
   DefaultEndurance = 10;
   DefaultPerception = 18;
   DefaultIntelligence = 25;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 30;
   DefaultMana = 25;
@@ -6001,6 +6142,7 @@ genie
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 20;
+  DefaultWillPower = 25;
   DefaultWisdom = 25;
   DefaultCharisma = 20;
   DefaultMana = 50;
@@ -6054,6 +6196,7 @@ lion /* feline-> */
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 7;
+  DefaultWillPower = 7;
   DefaultWisdom = 15;
   DefaultCharisma = 20;
   DefaultMana = 0;
@@ -6078,6 +6221,7 @@ carnivorousplant
   DefaultEndurance = 7;
   DefaultPerception = 6;
   DefaultIntelligence = 3;
+  DefaultWillPower = 1;
   DefaultWisdom = 2;
   DefaultCharisma = 3;
   DefaultMana = 0;
@@ -6143,6 +6287,7 @@ buffalo
   DefaultEndurance = 20;
   DefaultPerception = 24;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -6176,6 +6321,7 @@ snake
   DefaultEndurance = 10;
   DefaultPerception = 9;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -6220,6 +6366,7 @@ orc
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 7;
+  DefaultWillPower = 4;
   DefaultWisdom = 6;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -6450,6 +6597,7 @@ orc
   {
     AttributeBonus = 60;
     DefaultWisdom = 19;
+    DefaultWillPower = 15;
     HairColor = rgb16(224, 224, 0);
     ClothColor = rgb16(224, 224, 0);
     BeltColor = rgb16(176, 0, 0);
@@ -6511,6 +6659,7 @@ cossack
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 7;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -6534,7 +6683,7 @@ cossack
   RightGauntlet = WOLF_SKIN gauntlet;
   RightBoot = WOLF_SKIN boot;
   PanicLevel = 10;
-  DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
+  DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!\"";
   HostileReplies == "@Dd shouts wildly: \"For Tataria!\"";
   AttachedGod = SILVA;
   FriendlyReplies =
@@ -6545,6 +6694,75 @@ cossack
     "\"What, why have I no horse? Er, I lost it in poker.\"",
     "\"I followed Ivan through some weird portal and ended up in this land. At least no creditors can find me.\"",
     "\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"";
+  }
+
+  Config REBEL_SOLDIER;
+  {
+    ClothColor = rgb16(75, 83, 32);
+    CapColor = rgb16(220, 0, 0);
+    TotalVolume = 70000;
+    TotalSize = 170;
+    NameSingular = "rebel soldier";
+    Helmet = BRONZE helmet;
+    Cloak = ELF_CLOTH cloak;
+    BodyArmor = BRONZE bodyarmor(CHAIN_MAIL);
+    Belt = BLACK_LEATHER belt;
+    RightWielded = BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD);
+    RightGauntlet = BLACK_LEATHER gauntlet;
+    RightBoot = BLACK_LEATHER boot;
+    FriendlyReplies =
+    {
+      10,
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"Everyone wants to know what really happened to the old king.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"";
+    }
+    HostileReplies == "@Dd screams obscenities.";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!";
+    AttachedGod = SEGES;
+  }
+
+  Config REBEL_LIEUTENANT;
+  {
+    AttributeBonus = 20;
+    ClothColor = rgb16(75, 83, 32);
+    CapColor = rgb16(128, 0, 128);
+    TotalVolume = 80000;
+    TotalSize = 175;
+    NameSingular = "rebel lieutenant";
+    CWeaponSkillHits == 200;
+    RightSWeaponSkillHits = 150;
+    Helmet = DEEP_BRONZE helmet;
+    Cloak = ELF_CLOTH cloak { Enchantment = 2; }
+    BodyArmor = DEEP_BRONZE bodyarmor(CHAIN_MAIL);
+    Belt = BLACK_LEATHER belt;
+    RightWielded = DEEP_BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD) { Enchantment = 1; }
+    RightGauntlet = BLACK_LEATHER gauntlet { Enchantment = 2; }
+    RightBoot = BLACK_LEATHER boot { Enchantment = 2; }
+    FriendlyReplies =
+    {
+      10,
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"We all believe Harvan will lead us to victory. But we can't let it go to his head, right? Heh heh.\"";
+    }
+    HostileReplies == "@Dd screams obscenities.";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!";
+    AttachedGod = SEGES;
   }
 }
 
@@ -6557,6 +6775,7 @@ bananagrower
   DefaultEndurance = 15;
   DefaultPerception = 15;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 30;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -6607,6 +6826,7 @@ imperialist
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 35;
+  DefaultWillPower = 20;
   DefaultWisdom = 10;
   DefaultCharisma = 25;
   DefaultMana = 10;
@@ -6872,6 +7092,7 @@ smith
   DefaultEndurance = 30;
   DefaultPerception = 15;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 15;
   DefaultMana = 10;
@@ -6936,6 +7157,7 @@ ostrich
   DefaultEndurance = 10;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -6972,6 +7194,7 @@ elder
   DefaultEndurance = 7;
   DefaultPerception = 21;
   DefaultIntelligence = 25;
+  DefaultWillPower = 30;
   DefaultWisdom = 40;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -7030,6 +7253,7 @@ encourager
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 7;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -7072,6 +7296,7 @@ chameleon
   DefaultEndurance = 12;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 8;
   DefaultWisdom = 5;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -7104,6 +7329,7 @@ floatingeye
   DefaultEndurance = 6;
   DefaultPerception = 50;
   DefaultIntelligence = 2;
+  DefaultWillPower = 2;
   DefaultWisdom = 2;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -7153,6 +7379,7 @@ eddy
   DefaultEndurance = 3;
   DefaultPerception = 12;
   DefaultIntelligence = 1;
+  DefaultWillPower = 1;
   DefaultWisdom = 1;
   DefaultCharisma = 1;
   DefaultMana = 10;
@@ -7202,6 +7429,7 @@ mushroom
   DefaultEndurance = 10;
   DefaultPerception = 5;
   DefaultIntelligence = 2;
+  DefaultWillPower = 2;
   DefaultWisdom = 2;
   DefaultCharisma = 8;
   DefaultMana = 4;
@@ -7239,6 +7467,7 @@ magicmushroom
   DefaultEndurance = 20;
   DefaultPerception = 7;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 10;
   DefaultMana = 7;
@@ -7323,6 +7552,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 21;
     DefaultIntelligence = 15;
+    DefaultWillPower = 10;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     DefaultMana = 20;
@@ -7362,6 +7592,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 30;
+    DefaultWillPower = 15;
     DefaultWisdom = 15;
     DefaultCharisma = 15;
     DefaultMana = 30;
@@ -7399,6 +7630,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 15;
     DefaultIntelligence = 45;
+    DefaultWillPower = 20;
     DefaultWisdom = 20;
     DefaultCharisma = 20;
     DefaultMana = 40;
@@ -7438,6 +7670,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 12;
     DefaultIntelligence = 60;
+    DefaultWillPower = 30;
     DefaultWisdom = 25;
     DefaultCharisma = 25;
     DefaultMana = 50;
@@ -7508,6 +7741,7 @@ twoheadedmoose
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 3;
   DefaultMana = 0;
@@ -7540,6 +7774,7 @@ magpie
   DefaultEndurance = 8;
   DefaultPerception = 20;
   DefaultIntelligence = 6;
+  DefaultWillPower = 4;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7574,6 +7809,7 @@ skunk
   DefaultEndurance = 9;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -7606,6 +7842,7 @@ invisiblestalker
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 8;
+  DefaultWillPower = 7;
   DefaultWisdom = 6;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -7670,6 +7907,7 @@ elpuri
   DefaultEndurance = 20;
   DefaultPerception = 42;
   DefaultIntelligence = 45;
+  DefaultWillPower = 35;
   DefaultWisdom = 35;
   DefaultCharisma = 2;
   DefaultMana = 35;
@@ -7720,6 +7958,7 @@ genetrixvesana
   DefaultEndurance = 30;
   DefaultPerception = 24;
   DefaultIntelligence = 12;
+  DefaultWillPower = 8;
   DefaultWisdom = 8;
   DefaultCharisma = 20;
   DefaultMana = 0;
@@ -7766,6 +8005,7 @@ hedgehog
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7793,6 +8033,7 @@ bunny
   DefaultEndurance = 16;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 6;
   DefaultWisdom = 6;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -7863,6 +8104,7 @@ vladimir
   DefaultEndurance = 25;
   DefaultPerception = 30;
   DefaultIntelligence = 8;
+  DefaultWillPower = 12;
   DefaultWisdom = 7;
   DefaultCharisma = 15;
   DefaultMana = 0;
@@ -7900,6 +8142,7 @@ hattifattener
   DefaultEndurance = 10;
   DefaultPerception = 9;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7966,6 +8209,7 @@ necromancer
     DefaultEndurance = 15;
     DefaultPerception = 21;
     DefaultIntelligence = 15;
+    DefaultWillPower = 15;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     DefaultMana = 20;
@@ -8015,6 +8259,7 @@ necromancer
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 30;
+    DefaultWillPower = 30;
     DefaultWisdom = 15;
     DefaultCharisma = 15;
     DefaultMana = 30;
@@ -8076,6 +8321,7 @@ necromancer
     DefaultEndurance = 18;
     DefaultPerception = 22;
     DefaultIntelligence = 36;
+    DefaultWillPower = 35;
     DefaultWisdom = 20;
     DefaultCharisma = 9;
     DefaultMana = 50;
@@ -8119,6 +8365,7 @@ sumowrestler
   DefaultEndurance = 12;
   DefaultPerception = 15;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -8184,6 +8431,7 @@ tourist
     DefaultEndurance = 10;
     DefaultPerception = 15;
     DefaultIntelligence = 10;
+    DefaultWillPower = 10;
     DefaultWisdom = 7;
     DefaultCharisma = 8;
     TotalVolume = 90000;
@@ -8220,6 +8468,7 @@ tourist
     DefaultEndurance = 8;
     DefaultPerception = 21;
     DefaultIntelligence = 7;
+    DefaultWillPower = 15;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     TotalVolume = 70000;
@@ -8257,6 +8506,7 @@ tourist
     DefaultEndurance = 10;
     DefaultPerception = 18;
     DefaultIntelligence = 12;
+    DefaultWillPower = 5;
     DefaultWisdom = 5;
     DefaultCharisma = 6;
     TotalVolume = 50000;
@@ -8289,6 +8539,7 @@ blinkdog
   DefaultEndurance = 8;
   DefaultPerception = 21;
   DefaultIntelligence = 10;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -8554,6 +8805,7 @@ tailor
   DefaultEndurance = 20;
   DefaultPerception = 27;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 15;
   DefaultMana = 10;
@@ -8632,6 +8884,7 @@ mysticfrog
   Config DARK;
   {
     DefaultIntelligence = 35;
+    DefaultWillPower = 35;
     DefaultWisdom = 25;
     DefaultCharisma = 6;
     BloodMaterial = DARK_FROG_BLOOD;
@@ -8656,6 +8909,7 @@ mysticfrog
   Config LIGHT;
   {
     DefaultIntelligence = 25;
+    DefaultWillPower = 30;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
     BloodMaterial = LIGHT_FROG_BLOOD;
@@ -8678,6 +8932,7 @@ lobhse
   DefaultEndurance = 40;
   DefaultPerception = 21;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -8748,6 +9003,7 @@ siren
   DefaultEndurance = 12;
   DefaultPerception = 25;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 15;
   DefaultCharisma = 50;
   DefaultMana = 5;
@@ -8857,6 +9113,7 @@ siren
   Config AMBASSADOR_SIREN;
   {
     DefaultIntelligence = 30;
+    DefaultWillPower = 30;
     DefaultWisdom = 35;
     DefaultCharisma = 75;
     HeadBitmapPos = 112, 400;
@@ -8944,6 +9201,7 @@ mindworm
   Config HATCHLING;
   {
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     NameSingular = "mind worm hatchling";
     Frequency = 500;
     ScienceTalkPossibility = 25;
@@ -8956,6 +9214,7 @@ mindworm
   Config BOIL;
   {
     DefaultIntelligence = 35;
+    DefaultWillPower = 35;
     NameSingular = "mind worm boil";
     Frequency = 1500;
     ScienceTalkPossibility = 25;
@@ -8975,6 +9234,7 @@ punisher
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 15;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -9015,6 +9275,7 @@ punisher
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 28;
+    DefaultWillPower = 10;
     DefaultWisdom = 25;
     DefaultCharisma = 30;
     Sex = FEMALE;
@@ -9076,6 +9337,7 @@ child
   DefaultEndurance = 10;
   DefaultPerception = 14;
   DefaultIntelligence = 9;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -9125,7 +9387,7 @@ child
     {
       3,
       "\"My sister was eaten by a wolf yesterday.\"",
-      "\"I hope I will get a doll of the high priest on Atavus day.\"",
+      "\"I hope I will get a doll on Atavus day.\"",
       "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
     }
   }
@@ -9183,6 +9445,7 @@ bum
   DefaultEndurance = 25;
   DefaultPerception = 10;
   DefaultIntelligence = 6;
+  DefaultWillPower = 18;
   DefaultWisdom = 6;
   DefaultCharisma = 2;
   DefaultMana = 5;
@@ -9461,6 +9724,7 @@ terra
   DefaultEndurance = 15;
   DefaultPerception = 28;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 42;
   DefaultCharisma = 35;
   DefaultMana = 55;
@@ -9507,75 +9771,7 @@ terra
   DeathMessage = "@Dd dies, whispering: \"I'm sorry! I failed you, Silva.\"";
 }
 
-wizard
-{
-  DefaultArmStrength = 8;
-  DefaultLegStrength = 8;
-  DefaultDexterity = 12;
-  DefaultAgility = 15;
-  DefaultEndurance = 12;
-  DefaultPerception = 15;
-  DefaultIntelligence = 15;
-  DefaultWisdom = 12;
-  DefaultWillPower = 15;
-  DefaultCharisma = 12;
-  DefaultMana = 20;
-  HeadBitmapPos = 112, 304;
-  TorsoBitmapPos = 48, 224;
-  ArmBitmapPos = 80, 64;
-  LegBitmapPos = 16, 160;
-  ClothColor = rgb16(111, 74, 37);
-  NameSingular = "wizard";
-  TotalVolume = 60000;
-  TotalSize = 175;
-  CanRead = true;
-  ClassStates = ESP;
-  HostileReplies =
-  {
-    6,
-    "\"Abracadabra!\"",
-    "\"Hocus pocus!\"",
-    "\"Alakazam.\"",
-    "\"Sim sala bim!\"",
-    "@Dd screams: \"I shall blow thee to smithereens!\"",
-    "@Dd yells: \"Prepare to meet your maker!\"";
-  }
-  FriendlyReplies =
-  {
-    10,
-    "\"This is a placeholder message, my friend.\"",
-    "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
-    "\"Everything looks better when it's dead and on fire!\"",
-    "\"My motto? If it's not on fire now, it will be soon.\"",
-    "\"What hurts you, blesses you. Darkness is your candle.\"",
-    "@Dd seems not to notice you.",
-    "@Dd seems to mutter a cantrip.",
-    "@Dd complains about unpleasant dungeon conditions.",
-    "@Dd cackles madly: \"Build a man a fire, and he'll be warm for a day. Set a man on fire, and he'll be warm for the rest of his life.\"",
-    "\"Death awaits our foes.\"";
-  }
-  IgnoreDanger = true;
-  AttachedGod = SOPHOS;
-  IsAbstract = true;
-  KnownCWeaponSkills == BLUNT_WEAPONS;
-  IsExtraFragile = true;
-  ScienceTalkName =
-  {
-    25,
-    "spellcraft", "druidcraft", "illusioncraft", "witchcraft", "conjuration",
-    "charms", "enchantments", "summoning", "necromancy", "pyromancy",
-    "oneiromancy", "transmutation", "transformation", "transmogrification", "alchemy",
-    "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
-    "abjuration", "invocation", "evocation", "incantations", "hexes";
-  }
-  ScienceTalkPossibility = 25;
-  ScienceTalkIntelligenceModifier = 10;
-  ScienceTalkWisdomModifier = 5;
-  ScienceTalkIntelligenceRequirement = 10;
-  ScienceTalkWisdomRequirement = 5;
-}
-
-aslonawizard /* wizard-> */
+aslonawizard
 {
   DefaultArmStrength = 13;
   DefaultLegStrength = 13;
@@ -9588,6 +9784,10 @@ aslonawizard /* wizard-> */
   DefaultWisdom = 25;
   DefaultCharisma = 25;
   DefaultMana = 60;
+  HeadBitmapPos = 112, 304;
+  TorsoBitmapPos = 48, 224;
+  ArmBitmapPos = 80, 64;
+  LegBitmapPos = 16, 160;
   HairColor = rgb16(139, 69, 19);
   EyeColor = rgb16(96, 96, 200);
   CapColor = rgb16(112, 128, 144);
@@ -9595,6 +9795,7 @@ aslonawizard /* wizard-> */
   ClothColor = rgb16(128, 128, 128);
   DefaultName = "Myrddin Wyllt";
   Adjective = "royal";
+  NameSingular = "wizard";
   PostFix = "of Aslona";
   TotalVolume = 100000;
   TotalSize = 175;
@@ -9605,12 +9806,15 @@ aslonawizard /* wizard-> */
   RightWielded = MAHOGANY_WOOD SAPPHIRE meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
   RightRing = ring(RING_OF_MAGIC_RESISTANCE);
   LeftRing = ring(RING_OF_SEARCHING);
-  RightGauntlet = MERMAID_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
   RightBoot = SELKIE_SKIN boot { Enchantment = 5; }
   Inventory == Random { MinPrice = 150; Category = WAND|SCROLL|POTION; Times = 5; }
+  KnownCWeaponSkills == BLUNT_WEAPONS;
   CWeaponSkillHits == 200;
   RightSWeaponSkillHits = 150;
   LeftSWeaponSkillHits = 150;
+  BloodMaterial = MAGIC_LIQUID;
+  AttachedGod = SOPHOS;
+  ClassStates = ESP;
   TamingDifficulty = NO_TAMING;
   PanicLevel = 5;
   IsUnique = true;
@@ -9623,6 +9827,17 @@ aslonawizard /* wizard-> */
   AllowUnconsciousness = false;
   IsExtraFragile = false;
   BodyPartsDisappearWhenSevered = true;
+  CanRead = true;
+  HostileReplies =
+  {
+    6,
+    "\"Abracadabra!\"",
+    "\"Hocus pocus!\"",
+    "\"Alakazam.\"",
+    "\"Sim sala bim!\"",
+    "@Dd screams: \"I shall blow thee to smithereens!\"",
+    "@Dd yells: \"Prepare to meet your maker!\"";
+  }
   FriendlyReplies =
   {
     8,
@@ -9636,10 +9851,9 @@ aslonawizard /* wizard-> */
     "\"No young man, no matter how great, can know his destiny.\"";
   }
   DeathMessage = "@Dd discorporates in a puff of magic.";
-  AttachedGod = SOPHOS;
 }
 
-aslonacaptain
+aslonacaptain /* guard-> */
 {
   AttributeBonus = 50;
   TotalVolume = 120000;
@@ -9668,7 +9882,6 @@ aslonacaptain
   IsPolymorphable = false;
   ClothColor = rgb16(0, 0, 139);
   CanBeConfused = false;
-  /*Inventory == key(HEXAGONAL_LOCK);*/
   FriendlyReplies =
   {
     5,
@@ -9680,20 +9893,19 @@ aslonacaptain
   }
   HostileReplies =
   {
-    5,
-    "@Dd says gravely: \"This is a placeholder dialogue.\"",
-    "@Dd snorts.",
-    "\"...\"",
-    "\"Hmph.\"",
-    "\"This is a placeholder dialogue.\"";
+    3,
+    "\"Die, you treacherous bastard!\"",
+    "\"I will crush you like a grape!\"",
+    "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
   }
+  DeathMessage = "@Dd falls screaming: \"For Aslona!\"";
   IsImmuneToItemTeleport = true;
   AllowUnconsciousness = false;
   DisplacePriority = 4;
   UndeadVersions = false;
 }
 
-aslonapriest
+aslonapriest /* priest-> */
 {
   DefaultArmStrength = 8;
   DefaultLegStrength = 12;
@@ -9702,6 +9914,7 @@ aslonapriest
   DefaultEndurance = 18;
   DefaultPerception = 14;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 35;
   DefaultCharisma = 20;
   DefaultMana = 30;
@@ -9749,4 +9962,156 @@ aslonapriest
     "\"There's something strange about Lord Regent.\"";
   }
   Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
+}
+
+harvan
+{
+  DefaultArmStrength = 30;
+  DefaultLegStrength = 25;
+  DefaultDexterity = 30;
+  DefaultAgility = 25;
+  DefaultEndurance = 30;
+  DefaultPerception = 30;
+  DefaultIntelligence = 20;
+  DefaultWillPower = 35;
+  DefaultWisdom = 20;
+  DefaultCharisma = 35;
+  DefaultMana = 13;
+  FireResistance = 10;
+  ElectricityResistance = 10;
+  HeadBitmapPos = 96, 112;
+  TorsoBitmapPos = 48, 0;
+  ArmBitmapPos = 80, 32;
+  LegBitmapPos = 0, 240;
+  HairColor = rgb16(6, 6, 6); /* horns */
+  SkinColor = rgb16(48, 48, 48); /* arms */
+  ClothColor = rgb16(96, 96, 96);
+  LegMainColor = rgb16(72, 72, 72);
+  LegSpecialColor = rgb16(112, 80, 48);
+  WieldedPosition = -1, -1;
+  DefaultName = "Harvan Black-cloak";
+  NameSingular = "rebel leader";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  CanRead = true;
+  UndeadVersions = false;
+  Helmet = SOUL_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+  Amulet = amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = SOUL_STEEL bodyarmor(CHAIN_MAIL);
+  Cloak = SOUL_STEEL cloak(CLOAK_OF_PROTECTION) { Enchantment = 10; }
+  Belt = SOUL_STEEL belt(BELT_OF_CARRYING) { Enchantment = 4; }
+  RightWielded = SOUL_STEEL SOUL_STEEL meleeweapon(LONG_SWORD) { Enchantment = 2; } /* TODO: Muramasa */
+  LeftWielded = SOUL_STEEL shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 4; }
+  RightRing = ring(RING_OF_INFRA_VISION);
+  LeftRing = ring(RING_OF_POISON_RESISTANCE);
+  RightGauntlet = SHADOW_CLOTH gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  RightBoot = SHADOW_CLOTH boot(BOOT_OF_AGILITY) { Enchantment = 4; }
+  KnownCWeaponSkills = { 5, LARGE_SWORDS, SHIELDS, UNARMED, KICK, BITE; }
+  CWeaponSkillHits = { 5, 2000, 2000, 2000, 1500, 1500; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 200;
+  PanicLevel = 0;
+  TamingDifficulty = NO_TAMING;
+  TotalVolume = 120000;
+  TotalSize = 195;
+  Sex = MALE;
+  AttachedGod = LEGIFER;
+  NaturalSparkleFlags = CLOTH_COLOR;
+  BloodMaterial = BLUE_BLOOD;
+  DeathMessage = "@Dd dies and the rebellion will soon follow.";
+  FriendlyReplies =
+  {
+    2,
+    "\"TODO\"",
+    "\"The point is there's no point.\"";
+  }
+  HostileReplies =
+  {
+    2,
+    "\"TODO\"",
+    "\"The point is there's no point.\"";
+  }
+  /*Inventory = { 2, Random, horn(HEALING); }*/
+}
+
+lordregent
+{
+  DefaultArmStrength = 24;
+  DefaultLegStrength = 24;
+  DefaultDexterity = 56;
+  DefaultAgility = 56;
+  DefaultEndurance = 24;
+  DefaultPerception = 36;
+  DefaultIntelligence = 56;
+  DefaultWillPower = 24;
+  DefaultWisdom = 36;
+  DefaultCharisma = 36;
+  DefaultMana = 7;
+  AcidResistance = 10;
+  PoisonResistance = 10;
+  HeadBitmapPos = 96, 368;
+  TorsoBitmapPos = 32, 144;
+  ArmBitmapPos = 80, 176;
+  LegBitmapPos = 0, 0;
+  HairColor = rgb16(200, 0, 0); /* beard */
+  ClothColor = rgb16(0, 35, 102);
+  BeltColor = rgb16(224, 224, 0);
+  LegSpecialColor = rgb16(6, 6, 6);
+  DefaultName = "His Excellency Efra Peredivall"; /* Percival */
+  NameSingular = "Lord Regent";
+  PostFix = "of Aslona";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  CanRead = true;
+  UndeadVersions = false;
+  Helmet = HEPATIZON helmet(HELM_OF_TELEPATHY) { Enchantment = 3; }
+  Amulet = amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = SPIDER_SILK bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; }
+  Cloak = SPIDER_SILK cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+  Belt = GOLD belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 6; }
+  RightWielded = HEPATIZON SAPPHIRE meleeweapon(LONG_SWORD) { Enchantment = 2; } /* TODO: Masamune */
+  LeftWielded = OCTIRON GOLD daggerofvenom { Enchantment = 6; }
+  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  LeftRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
+  RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+  RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+  KnownCWeaponSkills = { 5, LARGE_SWORDS, SMALL_SWORDS, UNARMED, KICK, BITE; }
+  CWeaponSkillHits = { 5, 2000, 2000, 2000, 1500, 1500; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 500;
+  PanicLevel = 0;
+  TamingDifficulty = NO_TAMING;
+  TotalVolume = 60000;
+  TotalSize = 155;
+  Sex = MALE;
+  AttachedGod = SEGES;
+  BloodMaterial = BLUE_BLOOD;
+  DeathMessage = "@Dd dies and TODO.";
+  FriendlyReplies =
+  {
+    2,
+    "\"TODO\"",
+    "\"The point is there's no point.\"";
+  }
+  HostileReplies =
+  {
+    2,
+    "\"TODO\"",
+    "\"The point is there's no point.\"";
+  }
+  /*Inventory = { 2, Random, horn(HEALING); }*/
 }

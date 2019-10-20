@@ -794,20 +794,15 @@ CHARACTER(terra, priest)
   truth HasBeenSpokenTo;
 };
 
-CHARACTER(wizard, humanoid)
-{
- protected:
-  virtual void GetAICommand();
-  int GetSpellAPCost() const;
-};
-
-CHARACTER(aslonawizard, wizard)
+CHARACTER(aslonawizard, humanoid)
 {
  public:
   aslonawizard() : HasBeenSpokenTo(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
+  virtual void GetAICommand();
+  int GetSpellAPCost() const;
   virtual void BeTalkedTo();
   virtual void CreateCorpse(lsquare*);
   truth HasBeenSpokenTo;
@@ -841,6 +836,20 @@ CHARACTER(gasghoul, zombie)
   virtual truth AllowSpoil() const { return false; }
  protected:
   virtual void GetAICommand();
+};
+
+CHARACTER(harvan, humanoid)
+{
+ public:
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
+};
+
+CHARACTER(lordregent, humanoid)
+{
+ public:
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
 };
 
 #endif

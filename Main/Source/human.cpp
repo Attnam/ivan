@@ -5841,7 +5841,7 @@ int darkmage::GetSpellAPCost() const
   return 4000;
 }
 
-int wizard::GetSpellAPCost() const
+int aslonawizard::GetSpellAPCost() const
 {
   /*switch(GetConfig())
   {
@@ -6952,7 +6952,7 @@ void terra::BeTalkedTo()
     priest::BeTalkedTo();
 }
 
-void wizard::GetAICommand()
+void aslonawizard::GetAICommand()
 {
   SeekLeader(GetLeader());
 
@@ -7193,11 +7193,15 @@ void aslonawizard::BeTalkedTo()
       HasBeenSpokenTo = true;
       return;
     }
-    else if(PLAYER->RemoveAlchemyBook())
+    else if(PLAYER->HasAlchemyBook())
     {
-      ADD_MESSAGE("\"This is a placeholder message.\"");
-      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the alchemical notebook? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveAlchemyBook();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+        return;
+      }
     }
   }
 
@@ -7235,11 +7239,15 @@ void aslonacaptain::BeTalkedTo()
       HasBeenSpokenTo = true;
       return;
     }
-    else if(PLAYER->RemoveNuke())
+    else if(PLAYER->HasNuke())
     {
-      ADD_MESSAGE("\"This is a placeholder message.\"");
-      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveNuke();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+        return;
+      }
     }
   }
 
@@ -7271,13 +7279,96 @@ void aslonapriest::BeTalkedTo()
       HasBeenSpokenTo = true;
       return;
     }
-    else if(PLAYER->RemoveWeepObsidian())
+    else if(PLAYER->HasWeepObsidian())
     {
-      ADD_MESSAGE("\"This is a placeholder message.\"");
-      game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveWeepObsidian();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+        return;
+      }
     }
   }
 
   priest::BeTalkedTo();
+}
+
+void harvan::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if(!game::GetRebelStoryState())
+    {
+      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                               "\n"
+                               "\"I have volunteered all those years ago to be buried here in this cave\n"
+                               "along with the shrine, to tend it and to protect the rites and traditions\n"
+                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                               "every day that a word would come about an end to the tyranny, that\n"
+                               "I would be free to return home. I guess my hope dwindled over the years,\n"
+                               "but you are here now and my wishes came true. Thank you.\"\n"
+                               "\n"
+                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetRebelStoryState(2); // To have same StoryState values as Aslona.
+      return;
+    }
+    else if(game::GetRebelStoryState() == 5)
+    {
+      // TODO
+      return;
+    }
+    else if(PLAYER->HasAlchemyBook() || PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
+    {
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+      return;
+    }
+  }
+
+  humanoid::BeTalkedTo();
+}
+
+void lordregent::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if(game::GetAslonaStoryState() == 1)
+    {
+      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                               "\n"
+                               "\"I have volunteered all those years ago to be buried here in this cave\n"
+                               "along with the shrine, to tend it and to protect the rites and traditions\n"
+                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                               "every day that a word would come about an end to the tyranny, that\n"
+                               "I would be free to return home. I guess my hope dwindled over the years,\n"
+                               "but you are here now and my wishes came true. Thank you.\"\n"
+                               "\n"
+                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+      game::SetAslonaStoryState(2);
+      return;
+    }
+    else if(game::GetAslonaStoryState() == 5)
+    {
+      // TODO final quest
+      return;
+    }
+    else if(PLAYER->HasAlchemyBook() || PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
+    {
+      ADD_MESSAGE("\"Ah, seems like you were not idle. I'm sure my advisors will be thrilled.\"");
+      return;
+    }
+  }
+
+  humanoid::BeTalkedTo();
 }
