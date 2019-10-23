@@ -407,11 +407,23 @@ ITEM(headofelpuri, item) // can't wear equipment, so not "head"
   virtual void Be() { }
 };
 
-ITEM(whistle, item)
+ITEM(magicalinstrument, item)
+{
+ public:
+  magicalinstrument() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
+ protected:
+  ulong LastUsed;
+};
+
+ITEM(whistle, magicalinstrument)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual void BlowEffect(character*);
  protected:
   virtual col16 GetMaterialColorB(int) const;
@@ -420,13 +432,7 @@ ITEM(whistle, item)
 ITEM(magicalwhistle, whistle)
 {
  public:
-  magicalwhistle() : LastUsed(0) { }
   virtual void BlowEffect(character*);
-  virtual void Load(inputfile&);
-  virtual void Save(outputfile&) const;
-  virtual void FinalProcessForBone();
- protected:
-  ulong LastUsed;
 };
 
 ITEM(itemcontainer, lockableitem)
@@ -557,17 +563,10 @@ ITEM(encryptedscroll, scroll)
   virtual truth IsEncryptedScroll() const { return true; }
 };
 
-ITEM(horn, item)
+ITEM(horn, magicalinstrument)
 {
  public:
-  horn() : LastUsed(0) { }
-  virtual void Load(inputfile&);
-  virtual void Save(outputfile&) const;
   virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; }
-  virtual void FinalProcessForBone();
- protected:
-  ulong LastUsed;
 };
 
 ITEM(carrot, item)
@@ -578,18 +577,12 @@ ITEM(carrot, item)
   virtual col16 GetMaterialColorB(int) const;
 };
 
-ITEM(charmlyre, item)
+ITEM(charmlyre, magicalinstrument)
 {
  public:
-  charmlyre();
   virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; }
-  virtual void Load(inputfile&);
-  virtual void Save(outputfile&) const;
-  virtual void FinalProcessForBone();
  protected:
   virtual col16 GetMaterialColorB(int) const;
-  ulong LastUsed;
 };
 
 ITEM(scrollofdetectmaterial, scroll)

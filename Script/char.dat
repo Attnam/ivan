@@ -4734,11 +4734,9 @@ gasghoul /* zombie-> */
 {
   DefaultDexterity = 10;
   DefaultAgility = 12;
-  HairColor = rgb16(144, 95, 32);
-  CapColor = rgb16(144, 95, 32);
-  EyeColor = rgb16(255, 0, 0);
-  SkinColor = rgb16(125, 125, 125);
-  ClothColor = rgb16(95, 95, 95);
+  CapColor = rgb16(27, 226, 21); /* eyes */
+  SkinColor = rgb16(120, 70, 40);
+  ClothColor = rgb16(125, 125, 125);
   HeadBitmapPos = 112, 512; /* broken gas mask */
   NameSingular = "gas-ghoul";
   DangerModifier = 150;

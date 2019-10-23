@@ -4783,6 +4783,7 @@ gas
     Alpha = 150;
     AttachedGod = SILVA;
     BreatheMessage = "Ugh. It smells horrible here.";
+    HardenedMaterial = MUSTARD_GAS;
     CategoryFlags = Base|IS_SCARY;
     InteractionFlags = Base|CAN_EXPLODE;
   }

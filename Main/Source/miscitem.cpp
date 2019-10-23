@@ -1211,18 +1211,34 @@ truth whistle::Apply(character* Whistler)
 
 void whistle::BlowEffect(character* Whistler)
 {
+  cchar* SoundDescription;
+  if(LastUsed && (game::GetTick() - LastUsed < GetCooldown(2000, Whistler)))
+    SoundDescription = "an interesting";
+  else
+  {
+    LastUsed = game::GetTick();
+
+    switch (RAND() % 4)
+    {
+      case 0: SoundDescription = "a shrill"; break;
+      case 1: SoundDescription = "a piercing"; break;
+      case 2: SoundDescription = "a loud"; break;
+      case 3: SoundDescription = "a strange"; break;
+    }
+  }
+
   if(Whistler->IsPlayer())
   {
     if(Whistler->CanHear())
-      ADD_MESSAGE("You produce an interesting sound.");
+      ADD_MESSAGE("You produce %s sound.", SoundDescription);
     else
       ADD_MESSAGE("You blow %s", CHAR_NAME(DEFINITE));
   }
   else if(Whistler->CanBeSeenByPlayer())
   {
     if(PLAYER->CanHear())
-      ADD_MESSAGE("%s blows %s and produces an interesting sound.",
-                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s blows %s and produces %s sound.",
+                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
     else
       ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   }
@@ -1242,7 +1258,7 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && ((game::GetTick() - LastUsed) < Whistler->GetMagicItemCooldown(2000)))
+  if(LastUsed && ((game::GetTick() - LastUsed) < GetCooldown(2000, Whistler)))
   {
     whistle::BlowEffect(Whistler);
     return;
@@ -2100,18 +2116,6 @@ void itemcontainer::DrawContents(ccharacter* Char)
     i->DrawContents(Char);
 }
 
-void magicalwhistle::Save(outputfile& SaveFile) const
-{
-  whistle::Save(SaveFile);
-  SaveFile << LastUsed;
-}
-
-void magicalwhistle::Load(inputfile& SaveFile)
-{
-  whistle::Load(SaveFile);
-  SaveFile >> LastUsed;
-}
-
 int materialcontainer::GetSpoilLevel() const
 {
   return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
@@ -2239,7 +2243,7 @@ truth horn::Apply(character* Blower)
     return false;
   }
 
-  if(!LastUsed || game::GetTick() - LastUsed >= Blower->GetMagicItemCooldown(2500))
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(2500, Blower))
   {
     LastUsed = game::GetTick();
     Blower->EditExperience(MANA, 150, 1 << 12);
@@ -2384,13 +2388,13 @@ truth horn::Apply(character* Blower)
   return true;
 }
 
-void horn::Save(outputfile& SaveFile) const
+void magicalinstrument::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << LastUsed;
 }
 
-void horn::Load(inputfile& SaveFile)
+void magicalinstrument::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> LastUsed;
@@ -2767,21 +2771,27 @@ void itemcontainer::FinalProcessForBone()
   Contained->FinalProcessForBone();
 }
 
-void magicalwhistle::FinalProcessForBone()
-{
-  whistle::FinalProcessForBone();
-  LastUsed = 0;
-}
-
-void horn::FinalProcessForBone()
+void magicalinstrument::FinalProcessForBone()
 {
   item::FinalProcessForBone();
   LastUsed = 0;
 }
 
+int magicalinstrument::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
 truth charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed && game::GetTick() - LastUsed < Charmer->GetMagicItemCooldown(10000))
+  if(LastUsed && game::GetTick() - LastUsed < GetCooldown(10000, Charmer))
   {
     if(Charmer->IsPlayer())
     {
@@ -2857,29 +2867,6 @@ truth charmlyre::Apply(character* Charmer)
   Charmer->EditAP(-1000);
   game::CallForAttention(GetPos(), 100);
   return true;
-}
-
-void charmlyre::Save(outputfile& SaveFile) const
-{
-  item::Save(SaveFile);
-  SaveFile << LastUsed;
-}
-
-void charmlyre::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> LastUsed;
-}
-
-charmlyre::charmlyre()
-{
-  LastUsed = 0;
-}
-
-void charmlyre::FinalProcessForBone()
-{
-  item::FinalProcessForBone();
-  LastUsed = 0;
 }
 
 truth carrot::BunnyWillCatchAndConsume(ccharacter* Bunny) const

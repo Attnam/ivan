@@ -1631,9 +1631,21 @@ void unpick::FinalProcessForBone()
   LastUsed = 0;
 }
 
+int unpick::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
 truth unpick::Zap(character* Zapper, v2, int Direction)
 {
-  if(!LastUsed || game::GetTick() - LastUsed >= Zapper->GetMagicItemCooldown(1000))
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(1000, Zapper))
   {
     LastUsed = game::GetTick();
     ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));

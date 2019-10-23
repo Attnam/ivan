@@ -466,6 +466,7 @@
 #define CLAW 21
 #define MEAT_CLEAVER 22
 #define RUNE_SWORD 23
+#define KATANA 24
 
 #define PUPPY_SKULL 1
 

@@ -1176,7 +1176,6 @@ class character : public entity, public id
   truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
   int GetAdjustedStaminaCost(int, int);
-  int GetMagicItemCooldown(int);
   truth TryToStealFromShop(character*, item*);
   int GetMyVomitMaterial() { return MyVomitMaterial; }
   void SetNewVomitMaterial(int What) { MyVomitMaterial = What; }

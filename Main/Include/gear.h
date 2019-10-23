@@ -475,6 +475,7 @@ ITEM(unpick, pickaxe)
   virtual truth IsZappable(const character*) const { return true; }
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
  protected:
   ulong LastUsed;
   virtual int GetClassAnimationFrames() const { return 32; }
