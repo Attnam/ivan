@@ -483,4 +483,18 @@ ITEM(unpick, pickaxe)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(muramasa, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual truth IsMuramasa() const { return true; }
+};
+
+ITEM(masamune, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual truth IsMasamune() const { return true; }
+};
+
 #endif

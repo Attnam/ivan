@@ -1233,7 +1233,7 @@ truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 2))
+  if(!IsBroken() && Enemy->IsEnabled() && !Enemy->TemporaryStateIsActivated(PANIC) && !(RAND() % 2))
   {
     if(Hitter)
     {
@@ -1669,4 +1669,131 @@ truth unpick::Zap(character* Zapper, v2, int Direction)
     ADD_MESSAGE("Nothing happens.");
 
   return true;
+}
+
+truth muramasa::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                          int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled())
+  {
+    // Special effect against lawful and neutral creatures.
+    bool IsGoodly = false;
+
+    if(Enemy->IsPlayer() && game::GetPlayerAlignment() < 0)
+      IsGoodly = true;
+    else if(!Enemy->IsPlayer())
+    {
+      switch (Enemy->GetAttachedGod())
+      {
+        case VALPURUS:
+        case LEGIFER:
+        case ATAVUS:
+        case DULCIS:
+        case SEGES:
+        case SOPHOS:
+        case SILVA:
+        case LORICATUS: IsGoodly = true; break;
+      }
+    }
+
+    if(IsGoodly)
+    {
+      if(!RAND_N(10))
+      {
+        switch (RAND() % 7)
+        {
+          case 0: Enemy->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000)); break;
+          case 1: Enemy->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500)); break;
+          case 2: Enemy->BeginTemporaryState(PARASITE_TAPE_WORM, 6000 + RAND_N(3000)); break;
+          case 3: Enemy->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200)); break;
+          case 4: Enemy->BeginTemporaryState(HICCUPS, 1000 + RAND_N(2000)); break;
+          default: Enemy->GainIntrinsic(LEPROSY); break;
+        }
+      }
+      else
+      {
+        switch (RAND() % 3)
+        {
+          case 0: Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200)); break;
+          case 1: Enemy->BeginTemporaryState(POISONED, 80 + RAND() % 40); break;
+          case 2: Enemy->BeginTemporaryState(CONFUSED, 400 + RAND_N(1000)); break;
+        }
+      }
+
+      if(Hitter)
+      {
+        if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s %s defiles %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+      else
+      {
+        if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s defiles %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+    }
+    else if(!RAND_N(4)) // Striking a chaotic creature.
+      ADD_MESSAGE("%s seems reluctant to strike %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+  }
+
+  return BaseSuccess;
+}
+
+truth masamune::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                          int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled())
+  {
+    // Special effect against chaotic creatures.
+    bool IsEvil = false;
+
+    if(Enemy->IsPlayer() && game::GetPlayerAlignment() < 0)
+      IsEvil = true;
+    else if(!Enemy->IsPlayer())
+    {
+      switch (Enemy->GetAttachedGod())
+      {
+        case MELLIS:
+        case CLEPTIA:
+        case NEFAS:
+        case SCABIES:
+        case INFUSCOR:
+        case CRUENTUS:
+        case MORTIFER: IsEvil = true; break;
+      }
+    }
+
+    if(IsEvil)
+    {
+      for(int c = 0; c < STATES; ++c)
+        if(1 << c != PANIC)
+        {
+          Enemy->DeActivateTemporaryState(1 << c);
+
+          if(!IsEnabled())
+            break;
+        }
+
+      if(!Enemy->TemporaryStateIsActivated(PANIC))
+        Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
+
+      if(Hitter)
+      {
+        if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s %s rebukes %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+      else
+      {
+        if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s rebukes %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+    }
+    else if(!RAND_N(4)) // Striking a good creature.
+      ADD_MESSAGE("%s seems reluctant to strike %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+  }
+
+  return BaseSuccess;
 }

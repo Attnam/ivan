@@ -7675,3 +7675,75 @@ alchemybook /* holybook-> */
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 144;
 }
+
+muramasa /* meleeweapon-> */
+{
+  DefaultSize = 100;
+  Possibility = 0;
+  DefaultMainVolume = 110;
+  DefaultSecondaryVolume = 30;
+  WeaponCategory = LARGE_SWORDS;
+  BitmapPos = 112, 192;
+  FormModifier = 330;
+  StrengthModifier = 175;
+  Adjective = "wicked";
+  NameSingular = "katana";
+  PostFix = "named Asa'marum";
+  MainMaterialConfig == BLACK_JADE;
+  SecondaryMaterialConfig == WHITE_JADE;
+  BaseEnchantment = 9;
+  Roundness = 20;
+  Price = 1500;
+  WieldedBitmapPos = 176, 112;
+  AttachedGod = SCABIES;
+  ArticleMode = FORCE_THE;
+  DamageFlags = SLASH|PIERCE;
+  IsTwoHanded = true;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  IsQuestItem = true;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Alias == "Muramasa";
+}
+
+masamune /* meleeweapon-> */
+{
+  DefaultSize = 100;
+  Possibility = 0;
+  DefaultMainVolume = 110;
+  DefaultSecondaryVolume = 30;
+  WeaponCategory = LARGE_SWORDS;
+  BitmapPos = 112, 192;
+  FormModifier = 175;
+  StrengthModifier = 130;
+  Adjective = "noble";
+  NameSingular = "katana";
+  PostFix = "named E-numa sa-am";
+  MainMaterialConfig == WHITE_JADE;
+  SecondaryMaterialConfig == BLACK_JADE;
+  BaseEnchantment = 9;
+  Roundness = 20;
+  Price = 1500;
+  WieldedBitmapPos = 176, 112;
+  AttachedGod = SEGES;
+  ArticleMode = FORCE_THE;
+  DamageFlags = SLASH|PIERCE;
+  IsTwoHanded = true;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  IsQuestItem = true;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Alias == "Masamune";
+}

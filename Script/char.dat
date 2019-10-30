@@ -10005,7 +10005,7 @@ harvan
   BodyArmor = SOUL_STEEL bodyarmor(CHAIN_MAIL);
   Cloak = SOUL_STEEL cloak(CLOAK_OF_PROTECTION) { Enchantment = 10; }
   Belt = SOUL_STEEL belt(BELT_OF_CARRYING) { Enchantment = 4; }
-  RightWielded = SOUL_STEEL SOUL_STEEL meleeweapon(LONG_SWORD) { Enchantment = 2; } /* TODO: Muramasa */
+  RightWielded = muramasa;
   LeftWielded = SOUL_STEEL shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 4; }
   RightRing = ring(RING_OF_INFRA_VISION);
   LeftRing = ring(RING_OF_POISON_RESISTANCE);
@@ -10081,7 +10081,7 @@ lordregent
   BodyArmor = SPIDER_SILK bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; }
   Cloak = SPIDER_SILK cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 3; }
   Belt = GOLD belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 6; }
-  RightWielded = HEPATIZON SAPPHIRE meleeweapon(LONG_SWORD) { Enchantment = 2; } /* TODO: Masamune */
+  RightWielded = masamune;
   LeftWielded = OCTIRON GOLD daggerofvenom { Enchantment = 6; }
   RightRing = ring(RING_OF_TELEPORT_CONTROL);
   LeftRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
@@ -10093,7 +10093,7 @@ lordregent
   LeftSWeaponSkillHits = 500;
   PanicLevel = 0;
   TamingDifficulty = NO_TAMING;
-  TotalVolume = 60000;
+  TotalVolume = 75000;
   TotalSize = 155;
   Sex = MALE;
   AttachedGod = SEGES;
