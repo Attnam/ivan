@@ -4685,7 +4685,7 @@ amulet
   FormModifier = 10;
   UsesLongArticle = true;
   NameSingular = "amulet";
-  MainMaterialConfig == GOLD;
+  MainMaterialConfig == SILVER;
   Roundness = 10; /* it is considered here opened */
   IsAbstract = true;
   WieldedBitmapPos = 160, 112;
@@ -4708,7 +4708,7 @@ amulet
   {
     Possibility = 7;
     PostFix = "of ESP";
-    MainMaterialConfig == ILLITHIUM;
+    MainMaterialConfig == DARK_MATTER;
     GearStates = ESP;
     Price = 1000;
     AttachedGod = INFUSCOR;
@@ -4734,7 +4734,7 @@ amulet
   {
     Possibility = 3;
     PostFix = "of magic breath";
-    MainMaterialConfig == ARCANITE;
+    MainMaterialConfig == CORAL;
     GearStates = GAS_IMMUNITY|SWIMMING;
     Price = 2000;
     AttachedGod = SCABIES;
@@ -4772,7 +4772,7 @@ amulet
   {
     Possibility = 3;
     PostFix = "of disease immunity";
-    MainMaterialConfig == UNICORN_HORN;
+    MainMaterialConfig == MALACHITE;
     GearStates = DISEASE_IMMUNITY;
     Price = 2000;
     AttachedGod = SEGES;
@@ -4783,7 +4783,7 @@ amulet
   {
     Possibility = 3;
     PostFix = "of dimensional protection";
-    MainMaterialConfig == SIDGURE_WOOD;
+    MainMaterialConfig == RED_SAND_STONE;
     GearStates = TELEPORT_LOCK;
     Price = 2000;
     AttachedGod = SOPHOS;
@@ -4794,7 +4794,7 @@ amulet
   {
     Possibility = 3;
     PostFix = "of fasting";
-    MainMaterialConfig == PEARL;
+    MainMaterialConfig == LAPIS_LAZULI;
     GearStates = FASTING;
     Price = 2000;
     AttachedGod = DULCIS;
