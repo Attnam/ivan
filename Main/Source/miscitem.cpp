@@ -3902,6 +3902,14 @@ void gastrap::StepOnEffect(character* Stepper)
     if(Stepper->IsPlayer())
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
+    // Reveal the trap when we step on it.
+    int ViewerTeam = Stepper->GetTeam()->GetID();
+    if(ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end())
+    {
+      DiscoveredByTeam.insert(ViewerTeam);
+      SendNewDrawAndMemorizedUpdateRequest();
+    }
+
     if(GetSecondaryMaterial())
     {
       if(CanBeSeenByPlayer())
