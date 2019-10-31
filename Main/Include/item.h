@@ -623,6 +623,7 @@ class item : public object
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
   virtual bool SpecialOfferEffect(int) { return false; }
+  virtual void BreakEffect(character*, cfestring&) { return; }
   void Haste();
   void Slow();
   void SendMemorizedUpdateRequest() const;

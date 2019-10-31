@@ -914,6 +914,8 @@ class character : public entity, public id
   character* GetRandomNeighbour(int = (HOSTILE|UNCARING|FRIEND)) const;
   virtual truth IsRetreating() const;
   virtual truth IsMushroom() const { return false; }
+  virtual truth IsMagicDrinker() const { return false; }
+  virtual truth DrinkMagic(const beamdata&) { return IsMagicDrinker(); }
   void ResetStates();
   virtual head* Behead() { return 0; }
   void PrintBeginGasImmunityMessage() const;

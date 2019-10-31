@@ -527,8 +527,21 @@ CHARACTER(xinrochghost, ghost)
 
 CHARACTER(imp, humanoid)
 {
+};
+
+CHARACTER(crimsonimp, imp)
+{
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+  virtual void CreateCorpse(lsquare*);
+};
+
+CHARACTER(mirrorimp, imp)
+{
+ public:
+  virtual truth IsMagicDrinker() const { return true; }
+  virtual truth DrinkMagic(const beamdata&);
+ protected:
   virtual void CreateCorpse(lsquare*);
 };
 

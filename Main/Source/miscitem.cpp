@@ -1769,7 +1769,8 @@ truth wand::Zap(character* Zapper, v2, int Direction)
       GetBeamEffect(),
       Direction,
       GetBeamRange(),
-      GetSpecialParameters()
+      GetSpecialParameters(),
+      this
     );
 
   (GetLevel()->*level::GetBeam(GetBeamStyle()))(Beam);
@@ -2551,8 +2552,13 @@ void wand::BreakEffect(character* Terrorist, cfestring& DeathMsg)
     (
       Terrorist,
       DeathMsg,
+      Pos,
+      GetBeamColor(),
+      GetBeamEffect(),
       YOURSELF,
-      GetSpecialParameters()
+      GetBeamRange(),
+      GetSpecialParameters(),
+      NULL // Must be NULL here, not this, or we'll get stuck in a loop.
     );
 
   for(c = 0; c < Stack.Size; ++c)
@@ -2675,7 +2681,8 @@ truth holybanana::Zap(character* Zapper, v2, int Direction)
         BEAM_FIRE_BALL,
         Direction,
         50,
-        0
+        0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -3768,7 +3775,8 @@ truth ullrbone::Zap(character* Zapper, v2, int Direction)
 	      BEAM_LIGHTNING,
 	      Direction,
 	      50,
-	      0
+	      0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);

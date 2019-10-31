@@ -4921,18 +4921,14 @@ imp
   DefaultWisdom = 10;
   DefaultCharisma = 5;
   DefaultMana = 10;
-  EyeColor = rgb16(200, 200, 0);
-  ClothColor = rgb16(111, 74, 37);
-  HairColor = rgb16(100, 0, 0);
   HeadBitmapPos = 96, 16;
   TorsoBitmapPos = 48, 112;
   ArmBitmapPos = 64, 32;
   LegBitmapPos = 16, 80;
   TotalVolume = 40000;
   TotalSize = 100;
-  Adjective = "crimson";
   NameSingular = "imp";
-  UsesLongArticle = true;
+  IsAbstract = true;
   CanBeGenerated = true;
   Sex = UNDEFINED;
   AttackStyle = USE_ARMS|USE_HEAD;
@@ -4941,11 +4937,8 @@ imp
   PanicLevel = 75;
   BaseUnarmedStrength = 300;
   BaseBiteStrength = 500;
-  FleshMaterial = SULFUR;
   UsesNutrition = false;
-  AttachedGod = MORTIFER;
   ClassStates = GAS_IMMUNITY;
-  FireResistance = 1000;
   CanChoke = false;
   UndeadVersions = false;
   FriendlyReplies =
@@ -4972,7 +4965,33 @@ imp
     "@Dd grins maniacally.",
     "@Dd grins sadistically.";
   }
+}
+
+crimsonimp /* imp-> */
+{
+  EyeColor = rgb16(200, 200, 0);
+  ClothColor = rgb16(111, 74, 37);
+  HairColor = rgb16(100, 0, 0);
+  Adjective = "crimson";
+  FleshMaterial = SULFUR;
+  AttachedGod = CRUENTUS;
+  FireResistance = 1000;
   DeathMessage = "@Dd dies in a gout of hellfire.";
+}
+
+mirrorimp /* imp-> */
+{
+  EyeColor = rgb16(160, 35, 160);
+  ClothColor = rgb16(0, 71, 171);
+  HairColor = rgb16(180, 180, 255);
+  Adjective = "mirror";
+  FleshMaterial = GLASS;
+  AttachedGod = INFUSCOR;
+  EnergyResistance = 100;
+  PoisonResistance = 100;
+  ElectricityResistance = 100;
+  AcidResistance = 100;
+  DeathMessage = "@Dd dies in a frozen explosion of glass.";
 }
 
 bat

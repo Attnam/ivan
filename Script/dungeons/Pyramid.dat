@@ -23,7 +23,7 @@ Dungeon PYRAMID;
 {
   Levels = 5;
   Description = "pyramid";
-  ShortDescription = "Py";
+  ShortDescription = "PY";
 
   LevelDefault
   {
@@ -49,7 +49,7 @@ Dungeon PYRAMID;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 15;
-    EnchantmentPlusChanceDelta = 5;
+    EnchantmentPlusChanceDelta = 10;
     BackGroundType = YELLOW_FRACTAL;
     IsCatacomb = true;
     EarthquakesAffectTunnels = true;
@@ -216,6 +216,7 @@ Dungeon PYRAMID;
   Level 2;
   {
     Size = 100, 20;
+    IsCatacomb = false;
     FillSquare = CONCRETE solidterrain(GROUND), CONCRETE wall(BRICK_OLD);
     TunnelSquare = CONCRETE solidterrain(GROUND), 0;
 
@@ -263,6 +264,7 @@ Dungeon PYRAMID;
   Level 3;
   {
     Size = 20, 100;
+    IsCatacomb = false;
     FillSquare = HARDENED_CONCRETE solidterrain(GROUND), HARDENED_CONCRETE wall(BRICK_FINE);
     TunnelSquare = HARDENED_CONCRETE solidterrain(GROUND), 0;
 
@@ -337,6 +339,7 @@ Dungeon PYRAMID;
     Description = "ancient bunker";
     ShortDescription = "Bunker";
     Items = 0;
+    IsCatacomb = false;
     CanGenerateBone = false;
     IgnoreDefaultSpecialSquares = true;
     FillSquare = SUPER_CONCRETE solidterrain(GROUND), SUPER_CONCRETE wall(BRICK_FINE);

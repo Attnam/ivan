@@ -1684,7 +1684,8 @@ void hattifattener::GetAICommand()
         BEAM_LIGHTNING,
         RAND() & 7,
         1 + (RAND() & 7),
-        0
+        0,
+        NULL
       );
 
     GetLevel()->LightningBeam(Beam);

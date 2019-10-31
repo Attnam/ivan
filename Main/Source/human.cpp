@@ -6804,7 +6804,8 @@ truth humanoid::CheckAIZapOpportunity()
     return character::CheckAIZapOpportunity();
 }
 
-truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+truth crimsonimp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction,
+                                    truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
 
@@ -6822,11 +6823,38 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
   return false;
 }
 
-void imp::CreateCorpse(lsquare* Square)
+void crimsonimp::CreateCorpse(lsquare* Square)
 {
   game::GetCurrentLevel()->Explosion(this, "consumed by the hellfire of "  + GetName(INDEFINITE),
                                      Square->GetPos(), 20 + RAND() % 5 - RAND() % 5);
-  humanoid::CreateCorpse(Square);
+}
+
+truth mirrorimp::DrinkMagic(const beamdata& Beam)
+{
+  if(!Beam.Wand)
+    return false;
+  if(!Beam.Wand->IsExplosive())
+    return false;
+
+  festring DeathMsg = CONST_S("killed by an explosion of ");
+  Beam.Wand->AddName(DeathMsg, INDEFINITE);
+  DeathMsg << " caused @bk";
+
+  if(IsPlayer())
+    ADD_MESSAGE("You grin as %s %s.", Beam.Wand->GetExtendedDescription().CStr(), Beam.Wand->GetBreakMsg().CStr());
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s cackles with glee as %s %s.", CHAR_NAME(DEFINITE), Beam.Wand->GetExtendedDescription().CStr(),
+                                                  Beam.Wand->GetBreakMsg().CStr());
+
+  Beam.Wand->BreakEffect(this, DeathMsg);
+  return true;
+}
+
+void mirrorimp::CreateCorpse(lsquare* Square)
+{
+  decoration* Shard = decoration::Spawn(SHARD);
+  Shard->InitMaterials(MAKE_MATERIAL(GLASS));
+  Square->ChangeOLTerrainAndUpdateLights(Shard);
 }
 
 void elder::BeTalkedTo()

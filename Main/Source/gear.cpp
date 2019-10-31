@@ -609,7 +609,8 @@ truth thunderhammer::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
         BEAM_LIGHTNING,
         Direction,
         4,
-        0
+        0,
+        this
       );
 
     GetLevel()->LightningBeam(Beam);
@@ -1391,7 +1392,8 @@ truth taiaha::Zap(character* Zapper, v2, int Direction)
       BEAM_STRIKE,
       Direction,
       15,
-      0
+      0,
+      this
     );
 
   (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -1660,7 +1662,8 @@ truth unpick::Zap(character* Zapper, v2, int Direction)
 	      BEAM_WALL_CREATION,
 	      Direction,
 	      1,
-	      0
+	      0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(SHIELD_BEAM))(Beam);

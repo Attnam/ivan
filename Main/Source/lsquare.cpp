@@ -1498,6 +1498,11 @@ truth lsquare::Polymorph(const beamdata& Beam)
 
   if(Character)
   {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
       Beam.Owner->Hostility(Character);
 
@@ -1532,6 +1537,12 @@ truth lsquare::Strike(const beamdata& Beam)
     else if(Char->CanBeSeenByPlayer())
       ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
 
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+
     if(Beam.Owner)
       Beam.Owner->Hostility(Char);
 
@@ -1547,8 +1558,16 @@ truth lsquare::Strike(const beamdata& Beam)
 
 truth lsquare::FireBall(const beamdata& Beam)
 {
-  if(!IsFlyable() || GetCharacter())
+  character* Char = GetCharacter();
+
+  if(!IsFlyable() || Char)
   {
+    if(Char && Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+
     if(CanBeSeenByPlayer(true))
       ADD_MESSAGE("A magical explosion is triggered!");
 
@@ -1563,6 +1582,12 @@ truth lsquare::Teleport(const beamdata& Beam)
 {
   if(Character)
   {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
       Beam.Owner->Hostility(GetCharacter());
 
@@ -1581,13 +1606,21 @@ truth lsquare::Teleport(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::Haste(const beamdata&)
+truth lsquare::Haste(const beamdata& Beam)
 {
   GetStack()->Haste();
   character* Dude = GetCharacter();
 
   if(Dude)
+  {
+    if(Dude->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Dude->DrinkMagic(Beam))
+        return false;
+    }
+
     Dude->Haste();
+  }
 
   return false;
 }
@@ -1599,6 +1632,11 @@ truth lsquare::Slow(const beamdata& Beam)
 
   if(Dude)
   {
+    if(Dude->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Dude->DrinkMagic(Beam))
+        return false;
+    }
     if(Beam.Owner)
       Beam.Owner->Hostility(Dude);
 
@@ -1610,16 +1648,36 @@ truth lsquare::Slow(const beamdata& Beam)
 
 truth lsquare::Resurrect(const beamdata& Beam)
 {
-  if(GetCharacter())
-    return GetCharacter()->RaiseTheDead(Beam.Owner);
+  character* Char = GetCharacter();
+
+  if(Char)
+  {
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+
+    return Char->RaiseTheDead(Beam.Owner);
+  }
   else
     return GetStack()->RaiseTheDead(Beam.Owner);
 }
 
-truth lsquare::Invisibility(const beamdata&)
+truth lsquare::Invisibility(const beamdata& Beam)
 {
-  if(GetCharacter())
-    GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
+  character* Char = GetCharacter();
+
+  if(Char)
+  {
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+
+    Char->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
+  }
 
   return false;
 }
@@ -1630,7 +1688,15 @@ truth lsquare::Duplicate(const beamdata& Beam)
   character* Character = GetCharacter();
 
   if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+
     DuplicatedSomething = truth(Character->DuplicateToNearestSquare(Beam.Owner, Beam.SpecialParameters));
+  }
 
   if(GetStack()->Duplicate(DuplicatedSomething ? 4 : 5, Beam.SpecialParameters))
     DuplicatedSomething = true;
@@ -1648,6 +1714,12 @@ truth lsquare::Lightning(const beamdata& Beam)
 
   if(Char)
   {
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+
     if(Char->IsPlayer())
       ADD_MESSAGE("A massive burst of electricity runs through your body!");
     else if(Char->CanBeSeenByPlayer())
@@ -1668,9 +1740,18 @@ truth lsquare::Lightning(const beamdata& Beam)
 
 truth lsquare::DoorCreation(const beamdata& Beam)
 {
+  character* Char = GetCharacter();
+  if(Char)
+  {
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+  }
   if((!GetOLTerrain()
       || GetOLTerrain()->IsSafeToCreateDoor())
-     && !GetCharacter()
+     && !Char
      && (GetLevel()->IsOnGround()
          || (Pos.X > 0 && Pos.Y > 0
              && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
@@ -1693,9 +1774,18 @@ truth lsquare::DoorCreation(const beamdata& Beam)
 
 truth lsquare::WallCreation(const beamdata& Beam)
 {
+  character* Char = GetCharacter();
+  if(Char)
+  {
+    if(Char->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Char->DrinkMagic(Beam))
+        return false;
+    }
+  }
   if((!GetOLTerrain()
       || GetOLTerrain()->IsSafeToCreateDoor())
-     && !GetCharacter()
+     && !Char
      && (GetLevel()->IsOnGround()
          || (Pos.X > 0 && Pos.Y > 0
              && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
@@ -2704,7 +2794,16 @@ void lsquare::CreateMemorized()
 
 truth lsquare::AcidRain(const beamdata& Beam)
 {
-  if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
+  character* Character = GetCharacter();
+  if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+  }
+  if(!IsFlyable() || Character || Beam.Direction == YOURSELF)
   {
     int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
     lsquare** Stack = GetLevel()->GetSquareStack();
@@ -2714,11 +2813,12 @@ truth lsquare::AcidRain(const beamdata& Beam)
     for(int c = 0; c < StackSize; ++c)
     {
       Stack[c]->AddRain(liquid::Spawn(SULPHURIC_ACID, 300), Speed, Team, true);
+      Character = Stack[c]->GetCharacter();
       Stack[c]->Flags &= ~IN_SQUARE_STACK;
-    }
 
-    if(Beam.Owner && Character && Character->GetTeam() != Beam.Owner->GetTeam())
-      Beam.Owner->Hostility(Character);
+      if(Beam.Owner && Character && Character->GetTeam() != Beam.Owner->GetTeam())
+        Beam.Owner->Hostility(Character);
+    }
 
     return true;
   }
@@ -2728,7 +2828,16 @@ truth lsquare::AcidRain(const beamdata& Beam)
 
 truth lsquare::WaterRain(const beamdata& Beam)
 {
-  if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
+  character* Character = GetCharacter();
+  if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+  }
+  if(!IsFlyable() || Character || Beam.Direction == YOURSELF)
   {
     int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
     lsquare** Stack = GetLevel()->GetSquareStack();
@@ -2813,6 +2922,16 @@ void lsquare::SwapMemorized(lsquare* Square)
 
 truth lsquare::Necromancy(const beamdata& Beam)
 {
+  character* Character = GetCharacter();
+  if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+  }
+
   return GetStack()->Necromancy(Beam.Owner);
 }
 
@@ -2993,8 +3112,20 @@ void lsquare::AddSpecialCursors()
     OLTerrain->AddSpecialCursors();
 }
 
-truth lsquare::Webbing(const beamdata&)
+truth lsquare::Webbing(const beamdata& Beam)
 {
+  character* Character = GetCharacter();
+  if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+  }
+  if(!IsFlyable())
+    return false;
+
   web* Web = web::Spawn();
   Web->SetStrength(50);
 
@@ -3005,6 +3136,18 @@ truth lsquare::Webbing(const beamdata&)
 
 truth lsquare::Alchemize(const beamdata& Beam)
 {
+  character* Character = GetCharacter();
+  if(Character)
+  {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
+  }
+  if(!IsFlyable())
+    return false;
+
   GetStack()->Alchemize(Beam.Owner);
   return false;
 }
@@ -3020,6 +3163,11 @@ truth lsquare::SoftenMaterial(const beamdata& Beam)
 
   if(Character)
   {
+    if(Character->IsMagicDrinker() && Beam.Wand && Beam.Wand->IsExplosive())
+    {
+      if(Character->DrinkMagic(Beam))
+        return false;
+    }
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
       Beam.Owner->Hostility(Character);
 

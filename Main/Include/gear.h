@@ -433,8 +433,7 @@ ITEM(taiaha, meleeweapon)
   virtual truth IsZappable(ccharacter*) const { return true; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual truth Zap(character*, v2, int);
-  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const; //this?
-  virtual truth IsExplosive() const { return true; }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
  protected:
   virtual int GetClassAnimationFrames() const;
   virtual col16 GetOutlineColor(int) const;

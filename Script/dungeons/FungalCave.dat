@@ -31,7 +31,7 @@ Dungeon FUNGAL_CAVE;
     TunnelSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
     Size = 32, 64;
     Rooms = 10:20;
-    Items = 20:35;
+    Items = 15:30;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -463,9 +463,10 @@ Dungeon FUNGAL_CAVE;
   /* MacGuffin */
   Level 4;
   {
-    Size = 42, 26;
     Description = "deep lake";
     ShortDescription = "Deep Lake";
+    Size = 42, 26;
+    Items = 40:90;
     IgnoreDefaultSpecialSquares = true;
     CanGenerateBone = false;
     LOSModifier = 48;

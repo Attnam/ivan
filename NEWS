@@ -17,11 +17,11 @@ Changes:
 * Change structure of quests. Petrus now takes the encrypted scroll and gives
   you some alone time. If you chat with him again, you will receive the GC quest,
   or you can find other people to chat for other quests.
-* Add crysteel.
-* Add several new monsters.
+* Add some new monsters, items, artifacts and materials.
 * Orcs have black blood.
 * Use GitHub app for LGTM.
 * Cats can be tamed with fishes.
+* Make amulets easily recognizable by color.
 
 Fixes:
 * Decos no longer lets you steal from him.
@@ -31,6 +31,7 @@ Fixes:
 * Add day/night cycle to all above-ground locations.
 * Enable weather effects for more above-ground locations.
 * Fix some quest messages not being saved as already displayed.
+* Reveal gas traps when you step on them.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of
@@ -39,6 +40,7 @@ Aslona:
 * Player can now have a ship to sail the oceans of worldmap. This also means
   that they can now bring pets that would normally be unable to cross the ocean
   with them.
+* Moving over the ocean is slightly slower than on dry land.
 
 Version 0.57, released 24th September 2019
 ------------------------------------------

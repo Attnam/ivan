@@ -31,7 +31,7 @@ Dungeon GOBLIN_FORT;
     TunnelSquare = DIRT solidterrain(GROUND), 0;
     Size = 40, 40;
     Rooms = 10:30;
-    Items = 20:35;
+    Items = 15:30;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -475,14 +475,15 @@ Dungeon GOBLIN_FORT;
 
         Types
         {
-          i = imp; /* TODO: mirror imps */
+          c = crimsonimp;
+          m = mirrorimp;
         }
       }
       {
-        .ii.
-        iiii
-        iiii
-        .ii.
+        .cc.
+        cmmc
+        cmmc
+        .cc.
       }
     }
 

@@ -4624,7 +4624,7 @@ ring
     MainMaterialConfig == URANIUM;
     Price = 2500;
     AttachedGod = SCABIES;
-    GearStates = PARASITE_TAPE_WORM;
+    GearStates = PARASITE_TAPE_WORM|DISEASE_IMMUNITY;
     TeleportPriority = 500;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
@@ -6234,6 +6234,7 @@ horn /* magicalinstrument-> */
   {
     MainMaterialConfig == SILVER;
     PostFix = "of bravery";
+    Alias = { 2, "courage", "valor"; }
   }
 
   Config FEAR;
@@ -7692,7 +7693,7 @@ muramasa /* meleeweapon-> */
   MainMaterialConfig == BLACK_JADE;
   SecondaryMaterialConfig == WHITE_JADE;
   BaseEnchantment = 9;
-  Roundness = 20;
+  Roundness = 50;
   Price = 1500;
   WieldedBitmapPos = 176, 112;
   AttachedGod = SCABIES;
@@ -7701,6 +7702,7 @@ muramasa /* meleeweapon-> */
   IsTwoHanded = true;
   IsPolymorphable = false;
   IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
   IsDestroyable = false;
   IsQuestItem = true;
   CanBeWished = false;
@@ -7728,7 +7730,7 @@ masamune /* meleeweapon-> */
   MainMaterialConfig == WHITE_JADE;
   SecondaryMaterialConfig == BLACK_JADE;
   BaseEnchantment = 9;
-  Roundness = 20;
+  Roundness = 50;
   Price = 1500;
   WieldedBitmapPos = 176, 112;
   AttachedGod = SEGES;
@@ -7737,6 +7739,7 @@ masamune /* meleeweapon-> */
   IsTwoHanded = true;
   IsPolymorphable = false;
   IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
   IsDestroyable = false;
   IsQuestItem = true;
   CanBeWished = false;
