@@ -468,6 +468,7 @@ CHARACTER(mysticfrog, frog)
 CHARACTER(lobhse, largecreature)
 {
  public:
+  virtual void Bite(character*, v2, int, truth = false);
   virtual truth IsSpider() const { return true; }
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);

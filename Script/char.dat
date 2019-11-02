@@ -5811,12 +5811,13 @@ feline
   }
   FriendlyReplies =
   {
-    7,
+    8,
     "@Dd mews.",
     "@Dd purrs.",
     "@Dd weaves between your legs.",
     "@Dd kneads you with its paws. Ouch!",
     "@Dd yowls.",
+    "@Dd says: \"Nyah.\"",
     "You pet @dd.",
     "@Dd headbutts you playfully.";
   }
@@ -8972,8 +8973,7 @@ lobhse
   AttachedGod = SCABIES;
   FleshMaterial = SICK_SPIDER_FLESH;
   BloodMaterial = SICK_BLOOD;
-  SweatMaterial = LIQUID_DARKNESS;
-  Sweats = true;
+  VomitMaterial = LIQUID_DARKNESS;
   CanOpen = false;
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;

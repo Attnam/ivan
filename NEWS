@@ -18,9 +18,12 @@ Changes:
   you some alone time. If you chat with him again, you will receive the GC quest,
   or you can find other people to chat for other quests.
 * Add some new monsters, items, artifacts and materials.
-* Orcs have black blood.
+* Hotness can now be used to define materials that deal fire damage on contact,
+  just like Acidicity for acidic materials.
 * Use GitHub app for LGTM.
 * Cats can be tamed with fishes.
+* Orcs have black blood.
+* Lobh-se is a bit more fun.
 * Make amulets easily recognizable by color.
 
 Fixes:
@@ -32,6 +35,7 @@ Fixes:
 * Enable weather effects for more above-ground locations.
 * Fix some quest messages not being saved as already displayed.
 * Reveal gas traps when you step on them.
+* Fix several places where panic immunity or disease immunity was not respected.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

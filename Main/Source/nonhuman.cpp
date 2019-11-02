@@ -2493,11 +2493,27 @@ truth lobhse::MustBeRemovedFromBone() const
          || GetLevel()->GetIndex() != SPIDER_LEVEL;
 }
 
+void lobhse::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+{
+  if(!RAND_N(7))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You vomit at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s vomits at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+    Vomit(HitPos, 500 + RAND() % 500, false);
+  }
+  else
+    nonhumanoid::Bite(Enemy, HitPos, Direction, ForceHit);
+}
+
 truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
-    switch(RAND() % 10)
+    int Effect = Char->StateIsActivated(DISEASE_IMMUNITY) ? 6 : RAND() % 10;
+    switch(Effect)
     {
      case 0: Char->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000)); break;
      case 1: Char->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500)); break;

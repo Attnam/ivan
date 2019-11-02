@@ -6789,7 +6789,7 @@ void goblin::GetAICommand()
 
 void werewolfwolf::GetAICommand()
 {
-  if(GetConfig() == DRUID && !RAND_2)
+  if(GetConfig() == DRUID)
     if(CheckAIZapOpportunity())
       return;
 
@@ -6798,7 +6798,7 @@ void werewolfwolf::GetAICommand()
 
 truth humanoid::CheckAIZapOpportunity()
 {
-  if(!HasAUsableArm() || !CanZap() || !(RAND() % 2) || StateIsActivated(CONFUSED))
+  if(!HasAUsableArm() || !CanZap() || !RAND_2 || StateIsActivated(CONFUSED))
     return false;
   else
     return character::CheckAIZapOpportunity();
