@@ -1053,6 +1053,7 @@ class character : public entity, public id
   void ReceiveBlackUnicorn(long);
   void ReceiveGrayUnicorn(long);
   void ReceiveWhiteUnicorn(long);
+  void ReceiveSickness(long);
   void DecreaseStateCounter(long, int);
   truth IsImmuneToLeprosy() const;
   bodypart* SearchForOriginalBodyPart(int) const;
@@ -1149,6 +1150,7 @@ class character : public entity, public id
   virtual void ApplySpecialAttributeBonuses() { }
   void ReceiveMustardGas(int, long);
   void ReceiveMustardGasLiquid(int, long);
+  void ReceiveAcidGas(long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
   truth ForgetRandomThing();

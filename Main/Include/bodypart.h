@@ -130,6 +130,7 @@ ITEM(bodypart, item)
   item* GetExternalHelmet() const;
   item* GetExternalBelt() const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void ReceiveHeat(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
   virtual truth TestActivationEnergy(int);

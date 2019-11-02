@@ -572,6 +572,7 @@ class item : public object
   void CheckFluidGearPictures(v2, int, truth);
   void DrawFluids(blitdata&) const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void ReceiveHeat(material*, cfestring&, long);
   virtual void FightFire(material*, cfestring&, long);
   virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);

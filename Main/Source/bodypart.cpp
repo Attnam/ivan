@@ -3257,6 +3257,47 @@ void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Mod
   }
 }
 
+void bodypart::ReceiveHeat(material* Material, cfestring& LocationName, long Modifier)
+{
+  if(Master && MainMaterial->GetInteractionFlags() & CAN_BURN)
+  {
+    long Tries = Modifier / 1000;
+    Modifier -= Tries * 1000;
+    int Damage = 0;
+
+    for(long c = 0; c < Tries; ++c)
+      if(!(RAND() % 100))
+        ++Damage;
+
+    if(Modifier && !(RAND() % 100000 / Modifier))
+      ++Damage;
+
+    if(Damage)
+    {
+      ulong Minute = game::GetTotalMinutes();
+      character* Master = this->Master;
+
+      if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
+      {
+        Master->SetLastAcidMsgMin(Minute); // I don't really think we need to track acid and heat damage messages separately.
+        cfestring MName = Material->GetName(false, false);
+
+        if(Master->IsPlayer())
+        {
+          cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
+          ADD_MESSAGE("Scorching %s burns your %s.", MName.CStr(), TName);
+        }
+        else
+          ADD_MESSAGE("Scorching %s burns %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
+      }
+
+      Master->ReceiveBodyPartDamage(0, Damage, FIRE, GetBodyPartIndex(), YOURSELF, false, false, false);
+      ulong DeathFlags = Material->IsStuckTo(Master) ? IGNORE_TRAPS : 0;
+      Master->CheckDeath(CONST_S("burnt to death by ") + Material->GetName(), 0, DeathFlags);
+    }
+  }
+}
+
 void bodypart::TryToRust(long LiquidModifier)
 {
   if(MainMaterial->TryToRust(LiquidModifier << 4))

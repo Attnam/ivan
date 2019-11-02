@@ -743,6 +743,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(StepInWisdomLimit);
   ADD_MEMBER(RustModifier);
   ADD_MEMBER(Acidicity);
+  ADD_MEMBER(Hotness);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
   ADD_MEMBER(SoftenedMaterial);

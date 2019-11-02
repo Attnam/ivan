@@ -230,6 +230,12 @@
 #define EFFECT_TRAIN_WISDOM 36
 #define EFFECT_REGENERATION 37
 #define EFFECT_TELEPORTATION 38
+#define EFFECT_LAUGH 39
+#define EFFECT_POLYJUICE 40
+#define EFFECT_PUKE 41
+#define EFFECT_SICKNESS 42
+#define EFFECT_PHASE 43
+#define EFFECT_ACID_GAS 44
 
 /* CEM = Consume End Message */
 
@@ -546,6 +552,8 @@
 #define MUSTARD_GAS (GAS_ID + 11)
 #define SLEEPING_GAS (GAS_ID + 12)
 #define TELEPORT_GAS (GAS_ID + 13)
+#define LAUGHING_GAS (GAS_ID + 14)
+#define ACID_GAS (GAS_ID + 15)
 
 #define LIQUID_ID (4096 * 4)
 
@@ -606,6 +614,9 @@
 #define TELEPORT_FLUID (LIQUID_ID + 55)
 #define VINEGAR (LIQUID_ID + 56)
 #define BLACK_BLOOD (LIQUID_ID + 57)
+#define POLYMORPHINE (LIQUID_ID + 58)
+#define LAVA (LIQUID_ID + 59)
+#define NAPALM (LIQUID_ID + 60)
 
 #define FLESH_ID (4096 * 5)
 

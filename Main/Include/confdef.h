@@ -300,6 +300,8 @@
 #define MUSTARD_GAS (GAS_ID + 11)
 #define SLEEPING_GAS (GAS_ID + 12)
 #define TELEPORT_GAS (GAS_ID + 13)
+#define LAUGHING_GAS (GAS_ID + 14)
+#define ACID_GAS (GAS_ID + 15)
 
 #define LIQUID_ID (4 << 12)
 
@@ -360,6 +362,9 @@
 #define TELEPORT_FLUID (LIQUID_ID + 55)
 #define VINEGAR (LIQUID_ID + 56)
 #define BLACK_BLOOD (LIQUID_ID + 57)
+#define POLYMORPHINE (LIQUID_ID + 58)
+#define LAVA (LIQUID_ID + 59)
+#define NAPALM (LIQUID_ID + 60)
 
 #define FLESH_ID (5 << 12)
 

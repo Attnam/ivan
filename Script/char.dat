@@ -4934,11 +4934,11 @@ imp
   AttackStyle = USE_ARMS|USE_HEAD;
   KnownCWeaponSkills = { 2, UNARMED, BITE; }
   CWeaponSkillHits = { 2, 50, 50; }
-  PanicLevel = 75;
+  PanicLevel = 0;
   BaseUnarmedStrength = 300;
   BaseBiteStrength = 500;
   UsesNutrition = false;
-  ClassStates = GAS_IMMUNITY;
+  ClassStates = GAS_IMMUNITY|FEARLESS;
   CanChoke = false;
   UndeadVersions = false;
   FriendlyReplies =
@@ -4974,6 +4974,7 @@ crimsonimp /* imp-> */
   HairColor = rgb16(100, 0, 0);
   Adjective = "crimson";
   FleshMaterial = SULFUR;
+  BloodMaterial = NAPALM;
   AttachedGod = CRUENTUS;
   FireResistance = 1000;
   DeathMessage = "@Dd dies in a gout of hellfire.";
@@ -4986,6 +4987,7 @@ mirrorimp /* imp-> */
   HairColor = rgb16(180, 180, 255);
   Adjective = "mirror";
   FleshMaterial = GLASS;
+  BloodMaterial = LIQUID_FEAR;
   AttachedGod = INFUSCOR;
   EnergyResistance = 100;
   PoisonResistance = 100;

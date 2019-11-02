@@ -46,6 +46,7 @@ material
   /* Obligatory: AttachedGod */
   StepInWisdomLimit = NO_LIMIT;
   Acidicity = 0;
+  Hotness = 0;
   NaturalForm = lump;
   HardenedMaterial = NONE;
   SoftenedMaterial = NONE;
@@ -4737,6 +4738,8 @@ gas
     Alpha = 150;
     AttachedGod = MORTIFER;
     HardenedMaterial = SOUL_STEEL;
+    EffectStrength = 3;
+    Effect = EFFECT_PHASE;
     NameFlags = Base|USE_AN;
     BodyFlags = Base|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   }
@@ -4818,6 +4821,30 @@ gas
     Effect = EFFECT_TELEPORTATION;
     HardenedMaterial = TELEPORT_FLUID;
     StepInWisdomLimit = 10;
+  }
+
+  Config LAUGHING_GAS;
+  {
+    Color = rgb16(255, 105, 180);
+    NameStem = "laughing gas";
+    Alpha = 100;
+    AttachedGod = DULCIS;
+    Effect = EFFECT_LAUGH;
+    BreatheMessage = "You laugh like a madman.";
+    StepInWisdomLimit = 10;
+  }
+
+  Config ACID_GAS;
+  {
+    Color = rgb16(160, 160, 0);
+    NameStem = "caustic fumes";
+    Alpha = 150;
+    AttachedGod = SCABIES;
+    HardenedMaterial = SULPHURIC_ACID;
+    Effect = EFFECT_ACID_GAS;
+    EffectStrength = 1;
+    BreatheMessage = "Your skin burns!";
+    StepInWisdomLimit = 3;
   }
 }
 
@@ -4918,6 +4945,22 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
   }
 
+  Config POLYMORPHINE;
+  {
+    StrengthValue = 1;
+    Density = 50;
+    NutritionValue = 1;
+    RustModifier = 0;
+    Color = rgb16(255, 20, 147);
+    NameStem = "polymorphine";
+    Alpha = 50;
+    PriceModifier = 500;
+    AttachedGod = SCABIES;
+    Effect = EFFECT_POLYJUICE;
+    SoftenedMaterial = CHAMELEON_FLESH;
+    CommonFlags = Base|IS_VALUABLE;
+  }
+
   Config PEA_SOUP;
   {
     StrengthValue = 5;
@@ -4937,7 +4980,7 @@ liquid
     NutritionValue = 1500;
     Color = rgb16(244, 164, 96);
     NameStem = "chicken soup";
-    Effect = EFFECT_HEAL; /* Chiken soup is good when you're ill! */
+    Effect = EFFECT_HEAL; /* Chicken soup is good when you're ill! */
     ConsumeEndMessage = CEM_HEALING_LIQUID;
     HitMessage = HM_HEALING_LIQUID;
     EffectStrength = 50;
@@ -5030,6 +5073,8 @@ liquid
     NutritionValue = -10;
     Color = rgb16(244, 244, 244);
     NameStem = "brine";
+    Effect = EFFECT_PUKE;
+    EffectStrength = 50;
     Alpha = 175;
     AttachedGod = SILVA;
     SoftenedMaterial = WATER;
@@ -5293,7 +5338,7 @@ liquid
     StrengthValue = 1;
     NutritionValue = 10;
     Color = rgb16(144, 144, 240);
-    NameStem = "mustard gas in liquid form";
+    NameStem = "liquefied mustard gas";
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
@@ -5380,6 +5425,7 @@ liquid
     Alpha = 175;
     Flexibility = 35;
     AttachedGod = SCABIES;
+    Effect = EFFECT_PUKE;
     RustModifier = 200;
     Acidicity = 10;
     InteractionFlags = Base|AFFECT_INSIDE;
@@ -5575,7 +5621,7 @@ liquid
     InteractionFlags = Base|AFFECT_INSIDE;
     RustModifier = 100;
     Acidicity = 100;
-    Effect = EFFECT_POISON;
+    Effect = EFFECT_SICKNESS;
     EffectStrength = 1000;
     ConsumeWisdomLimit = 3;
   }
@@ -5762,7 +5808,45 @@ liquid
     RustModifier = 0;
   }
 
-  /* LAVA will require some further code. */
+  /* Hot stuff */
+
+  Config LAVA;
+  {
+    StrengthValue = 20;
+    Density = 2400;
+    Flexibility = 20;
+    RustModifier = 0;
+    PriceModifier = 750;
+    ConsumeType = CT_MINERAL;
+    Color = rgb16(207, 16, 32);
+    Emitation = rgb24(150, 120, 90);
+    NameStem = "lava";
+    AttachedGod = INFUSCOR;
+    HardenedMaterial = OBSIDIAN;
+    Hotness = 500;
+    Stickiness = 75;
+    ConsumeWisdomLimit = 2;
+    StepInWisdomLimit = 4;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|AFFECT_INSIDE;
+  }
+
+  Config NAPALM;
+  {
+    StrengthValue = 1;
+    NutritionValue = 5;
+    RustModifier = 0;
+    Color = rgb16(255, 69, 0);
+    NameStem = "napalm";
+    Alpha = 150;
+    Flexibility = 45;
+    AttachedGod = INFUSCOR;
+    Hotness = 50;
+    ConsumeWisdomLimit = 4;
+    PriceModifier = 100;
+    InteractionFlags = Base|AFFECT_INSIDE;
+    StepInWisdomLimit = 8;
+  }
 }
 
 flesh
@@ -5777,7 +5861,7 @@ flesh
   SpoilModifier = 10000;
   PriceModifier = 60;
   BodyFlags = Base|IS_ALIVE|IS_WARM|IS_WARM_BLOODED|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
-  InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
+  InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS|CAN_BURN;
   FireResistance = 0;
 
   /* Food meat */
@@ -5871,7 +5955,6 @@ flesh
     PriceModifier = 40;
     AttachedGod = MORTIFER;
     BodyFlags = Base&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config FROG_FLESH;
@@ -5908,7 +5991,6 @@ flesh
     NameStem = "human flesh";
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DOLPHIN_FLESH;
@@ -5985,7 +6067,6 @@ flesh
     EffectStrength = 10;
     ConsumeWisdomLimit = 10;
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config KOBOLD_FLESH;
@@ -5998,7 +6079,6 @@ flesh
     HitMessage = HM_KOBOLD_FLESH;
     PriceModifier = 0;
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
     BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
@@ -6006,7 +6086,6 @@ flesh
   {
     NameStem = "gibberling flesh";
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
     BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
@@ -6042,7 +6121,6 @@ flesh
     NameStem = "dwarf flesh";
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DAEMON_FLESH;
@@ -6128,7 +6206,6 @@ flesh
     NutritionValue = 15;
     ConsumeWisdomLimit = 15;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config OSTRICH_FLESH;
@@ -6172,7 +6249,6 @@ flesh
     PriceModifier = 100;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config MOOSE_FLESH;
@@ -6239,7 +6315,6 @@ flesh
     EffectStrength = 20;
     PriceModifier = 150;
     BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config SICK_SPIDER_FLESH;
@@ -6267,7 +6342,6 @@ flesh
     ConsumeWisdomLimit = 15;
     EffectStrength = 20;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 }
 

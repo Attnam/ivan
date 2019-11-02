@@ -2324,7 +2324,7 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 44,
+  SecondaryMaterialConfig = { 45,
                               WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID,
                               VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT,
                               OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS,
@@ -2333,10 +2333,11 @@ potion /* materialcontainer-> */
                               MILK, HONEY, COCA_COLA, INK, BRINE, CIDER, WHITE_WINE, RED_WINE,
                               BEER, ELF_ALE, DWARF_BEER, LIQUID_FEAR, ASPHALT, BLOOD, GREEN_BLOOD,
                               BLUE_BLOOD, PLANT_SAP, GLOWING_BLOOD, MERCURY, QUICK_SILVER,
-                              OMMEL_BLOOD, VINEGAR; }
-  MaterialConfigChances = { 44,
+                              OMMEL_BLOOD, VINEGAR, NAPALM; }
+  MaterialConfigChances = { 45,
                             50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 10, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
-                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 10; }
+                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 10,
+                            10; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -2353,12 +2354,12 @@ potion /* materialcontainer-> */
     DefaultMainVolume = 10;
     DefaultSecondaryVolume = 100;
     TeleportPriority = 20;
-    SecondaryMaterialConfig = { 9,
+    SecondaryMaterialConfig = { 11,
                                 WATER, HEALING_LIQUID, TROLL_BLOOD, SULPHURIC_ACID,
                                 LIGHT_FROG_BLOOD, CURE_ALL_LIQUID, MAGIC_LIQUID,
-                                LIQUID_FEAR, TELEPORT_FLUID; }
-    MaterialConfigChances = { 9,
-                              25, 75, 20, 10, 3, 1, 20, 5, 10; }
+                                LIQUID_FEAR, TELEPORT_FLUID, POLYMORPHINE, LAVA; }
+    MaterialConfigChances = { 11,
+                              25, 75, 20, 10, 3, 1, 20, 5, 10, 10, 1; }
     Alias = { 2, "small potion", "phial"; }
   }
 }
@@ -6675,11 +6676,12 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 7,
+  SecondaryMaterialConfig = { 8,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR,
-                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS; }
-  MaterialConfigChances = { 7,
-                            50, 10, 1, 10, 5, 5, 10; }
+                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS,
+                              ACID_GAS; }
+  MaterialConfigChances = { 8,
+                            50, 10, 1, 10, 5, 5, 10, 5; }
   Adjective = "dwarven";
   Alias == "grenade";
 }
@@ -7483,11 +7485,12 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 8,
+  SecondaryMaterialConfig = { 11,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
-                              EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS; }
-  MaterialConfigChances = { 8,
-                            20, 30, 1, 15, 10, 15, 5, 10; }
+                              EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS, LAUGHING_GAS,
+                              ECTOPLASM, ACID_GAS; }
+  MaterialConfigChances = { 11,
+                            20, 30, 1, 15, 10, 15, 5, 10, 5, 1, 10; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;

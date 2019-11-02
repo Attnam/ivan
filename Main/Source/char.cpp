@@ -5988,9 +5988,8 @@ void character::AddCocaColaConsumeEndMessage() const
 
 void character::ReceiveDarkness(long Amount)
 {
-  EditExperience(INTELLIGENCE, -Amount / 5, 1 << 13);
-  EditExperience(WISDOM, -Amount / 5, 1 << 13);
-  EditExperience(CHARISMA, -Amount / 5, 1 << 13);
+  // Decreases random attribute.
+  EditExperience(RAND() % BASE_ATTRIBUTES, -Amount, 1 << 14);
 
   if(IsPlayer())
     game::DoEvilDeed(int(Amount / 50));
@@ -6035,7 +6034,9 @@ void character::AddBoneConsumeEndMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You feel like a hippie.");
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s barks happily.", CHAR_NAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
+    // This suspects that nobody except dogs can eat bones.
+    // Necromancers can now eat bones, too. --red_kangaroo
+    ADD_MESSAGE("%s seems happy.", CHAR_NAME(DEFINITE));
 }
 
 truth character::RawEditAttribute(double& Experience, int Amount) const
@@ -10746,11 +10747,34 @@ void character::ReceiveWhiteUnicorn(long Amount)
     game::DoEvilDeed(Amount / 50);
 
   BeginTemporaryState(TELEPORT, Amount / 100);
+
   DecreaseStateCounter(LYCANTHROPY, -Amount / 100);
   DecreaseStateCounter(POISONED, -Amount / 100);
   DecreaseStateCounter(PARASITE_TAPE_WORM, -Amount / 100);
+  DecreaseStateCounter(PARASITE_MIND_WORM, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
   DecreaseStateCounter(VAMPIRISM, -Amount / 100);
+}
+
+void character::ReceiveSickness(long Amount)
+{
+  if(IsPlayer() && !RAND_N(10))
+    ADD_MESSAGE("You don't feel so good.");
+
+  if(!StateIsActivated(DISEASE_IMMUNITY) && !RAND_N(10))
+  {
+    switch(RAND() % 5)
+    {
+     case 0: BeginTemporaryState(LYCANTHROPY, Amount); break;
+     case 1: BeginTemporaryState(VAMPIRISM, Amount); break;
+     case 2: BeginTemporaryState(PARASITE_TAPE_WORM, Amount); break;
+     case 3: BeginTemporaryState(PARASITE_MIND_WORM, Amount); break;
+     case 4: GainIntrinsic(LEPROSY); break;
+    }
+  }
+
+  if(!RAND_N(10))
+    BeginTemporaryState(POISONED, Amount + RAND_N(Amount));
 }
 
 /* Counter should be negative. Removes intrinsics. */
@@ -12357,6 +12381,22 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
           Action->ActivateInDNDMode();
         }
       }
+    }
+  }
+}
+
+void character::ReceiveAcidGas(long Volume)
+{
+  if(!Volume)
+    return;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      BodyPart->AddFluid(liquid::Spawn(SULPHURIC_ACID, Volume), CONST_S("skin"), 0, true);
     }
   }
 }

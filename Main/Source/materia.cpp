@@ -94,14 +94,9 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_LYCANTHROPY:
     {
       if(!Char->StateIsActivated(DISEASE_IMMUNITY))
-      {
         Char->BeginTemporaryState(LYCANTHROPY, Amount);
-        break;
-      }
-      else
-      {
-        break;
-      }
+
+      break;
     }
    case EFFECT_SCHOOL_FOOD: Char->ReceiveSchoolFood(Amount); break;
    case EFFECT_ANTIDOTE: Char->ReceiveAntidote(Amount); break;
@@ -158,23 +153,25 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_VAMPIRISM:
     {
       if(!Char->StateIsActivated(DISEASE_IMMUNITY))
-      {
         Char->BeginTemporaryState(VAMPIRISM, Amount);
-        break;
-      }
-      else
-      {
-        break;
-      }
+
+      break;
     }
    case EFFECT_PANACEA:
     {
       Char->ReceiveHeal(Amount);
       Char->ReceiveAntidote(Amount);
+      Char->RestoreStamina();
       break;
     }
    case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
-   case EFFECT_PANIC: Char->BeginTemporaryState(PANIC, Amount); break;
+   case EFFECT_PANIC:
+    {
+      if(!Char->StateIsActivated(FEARLESS))
+        Char->BeginTemporaryState(PANIC, Amount);
+
+      break;
+    }
    case EFFECT_TRAIN_WISDOM:
     {
       Char->EditExperience(WISDOM, Amount, 1 << 14);
@@ -187,6 +184,17 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       Char->TeleportRandomly(false);
       break;
     }
+   case EFFECT_LAUGH:
+    {
+      game::CallForAttention(Char->GetPos(), Amount);
+      Char->BeginTemporaryState(HICCUPS, Amount);
+      break;
+    }
+   case EFFECT_POLYJUICE: Char->PolymorphRandomly(Amount, 999999, Amount * 10); break;
+   case EFFECT_PUKE: Char->VomitAtRandomDirection(Amount); break;
+   case EFFECT_SICKNESS: Char->ReceiveSickness(Amount); break;
+   case EFFECT_PHASE: Char->BeginTemporaryState(ETHEREAL_MOVING, Amount); break;
+   case EFFECT_ACID_GAS: Char->ReceiveAcidGas(Amount); break;
    default: return false;
   }
 

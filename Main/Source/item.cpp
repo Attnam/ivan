@@ -1860,6 +1860,20 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
   }
 }
 
+void item::ReceiveHeat(material*, cfestring&, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 1000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
+    }
+  }
+}
+
 void item::FightFire(material*, cfestring&, long Volume)
 {
   int Amount = sqrt(Volume);
