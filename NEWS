@@ -25,6 +25,8 @@ Changes:
 * Orcs have black blood.
 * Lobh-se is a bit more fun.
 * Make amulets easily recognizable by color.
+* Land mines can now be sometimes defused if you levitate over and pick them up.
+* Willpower now protects against some hostile magic.
 
 Fixes:
 * Decos no longer lets you steal from him.

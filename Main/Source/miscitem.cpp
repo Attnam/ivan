@@ -2145,10 +2145,17 @@ void itemcontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray
     }
 }
 
-truth mine::CheckPickUpEffect(character*)
+truth mine::CheckPickUpEffect(character* Picker)
 {
   if(WillExplode(0))
   {
+    // Allow the player to sometimes defuse the mine.
+    if(!RAND_N(80 / Max(Picker->GetAttribute(DEXTERITY), 1)))
+    {
+      SetIsActive(false);
+      return true;
+    }
+
     lsquare* Square = GetLSquareUnder();
 
     if(Square->CanBeSeenByPlayer(true))
@@ -2558,7 +2565,7 @@ void wand::BreakEffect(character* Terrorist, cfestring& DeathMsg)
       YOURSELF,
       GetBeamRange(),
       GetSpecialParameters(),
-      NULL // Must be NULL here, not this, or we'll get stuck in a loop.
+      NULL // Not this, because it won't exist in a second.
     );
 
   for(c = 0; c < Stack.Size; ++c)

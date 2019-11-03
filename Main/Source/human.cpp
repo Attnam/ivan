@@ -5595,13 +5595,15 @@ void darkknight::SpecialBodyPartSeverReaction()
       if(CanBeSeenByPlayer())
       {
         ADD_MESSAGE("%s screams a profane incantation to Infuscor before disappearing.", CHAR_NAME(DEFINITE));
-        TeleportRandomly(true);
       }
+
       if(Called->CanBeSeenByPlayer())
         ADD_MESSAGE("The whole area trembles terribly as %s emerges from the shadows.", Called->CHAR_NAME(INDEFINITE));
       }
       else
         ADD_MESSAGE("You feel the sudden presence of a violent enemy nearby.");
+
+      TeleportRandomly(true);
   }
 }
 
@@ -6836,6 +6838,12 @@ truth mirrorimp::DrinkMagic(const beamdata& Beam)
   if(!Beam.Wand->IsExplosive())
     return false;
 
+  if(Beam.Owner && RAND_N(GetAttribute(MANA)) <= RAND_N(Beam.Owner->GetAttribute(WILL_POWER)))
+  {
+    Beam.Owner->EditExperience(WILL_POWER, 100, 1 << 12);
+    return false;
+  }
+
   festring DeathMsg = CONST_S("killed by an explosion of ");
   Beam.Wand->AddName(DeathMsg, INDEFINITE);
   DeathMsg << " caused @bk";
@@ -7399,4 +7407,41 @@ void lordregent::BeTalkedTo()
   }
 
   humanoid::BeTalkedTo();
+}
+
+struct distancepair
+{
+  distancepair(long Distance, character* Char) : Distance(Distance), Char(Char) { }
+  bool operator<(const distancepair& D) const { return Distance > D.Distance; }
+  long Distance;
+  character* Char;
+};
+
+void lordregent::SpecialBodyPartSeverReaction()
+{
+  if(HasHead())
+  {
+    if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s prays to Seges before disappearing. You feel the sudden presence of enemies nearby.", CHAR_NAME(DEFINITE));
+    }
+    else
+      ADD_MESSAGE("You feel a sudden shift in pressure.");
+
+    // Summons allies and then teleports away.
+    std::vector<distancepair> ToSort;
+    v2 Pos = GetPos();
+
+    for(character* p : GetTeam()->GetMember())
+      if(p->IsEnabled() && p != this)
+        ToSort.push_back(distancepair((Pos - p->GetPos()).GetLengthSquare(), p));
+
+    if(ToSort.size() > 5)
+      std::sort(ToSort.begin(), ToSort.end());
+
+    for(uint c = 0; c < 5 && c < ToSort.size(); ++c)
+      ToSort[c].Char->TeleportNear(this);
+
+    TeleportRandomly(true);
+  }
 }

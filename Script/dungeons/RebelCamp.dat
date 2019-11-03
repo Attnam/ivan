@@ -218,6 +218,24 @@ Dungeon REBEL_CAMP;
       GenerateLanterns = false;
       Type = ROOM_OWNED_AREA;
 
+      GTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+
+        Types
+        {
+          & = 0 { IsExpansive = true; }
+        }
+      }
+      {
+        .&&&.
+        &&&&&
+        &&&&&
+        &&&&&
+        .&&&.
+      }
+
       OTerrainMap
       {
         Pos = 1,1;

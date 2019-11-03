@@ -2390,7 +2390,7 @@ void spider::GetAICommand()
 
           if((ThisDistance < NearestDistance
               || (ThisDistance == NearestDistance && !(RAND() % 3)))
-             && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+             && p->CanBeSeenBy(this, false, false /*IsGoingSomeWhere()*/)
              && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
           {
             NearestChar = p;
@@ -2415,7 +2415,7 @@ void spider::GetAICommand()
 
   if(NearestChar)
   {
-    if(NearestChar->IsStuck())
+    if(NearestChar->IsStuck() || GetConfig() == ARANEA)
       SetGoingTo(NearestChar->GetPos());
     else
       SetGoingTo((Pos << 1) - NearestChar->GetPos());
@@ -2493,6 +2493,12 @@ truth lobhse::MustBeRemovedFromBone() const
          || GetLevel()->GetIndex() != SPIDER_LEVEL;
 }
 
+void lobhse::FinalProcessForBone()
+{
+  largecreature::FinalProcessForBone();
+  TurnsExisted = 0;
+}
+
 void lobhse::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 {
   if(!RAND_N(7))
@@ -2528,6 +2534,18 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
     return false;
 }
 
+void lobhse::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << TurnsExisted;
+}
+
+void lobhse::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> TurnsExisted;
+}
+
 void lobhse::CreateCorpse(lsquare* Square)
 {
   largecreature::CreateCorpse(Square);
@@ -2537,11 +2555,56 @@ void lobhse::CreateCorpse(lsquare* Square)
 
 void lobhse::GetAICommand()
 {
+  ++TurnsExisted;
+
   /* Follow the leader, if any. */
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
     return;
+
+  /*
+   Summon spiders
+    Lobh-se will summon some spiders to harass the player, but only if she's
+    hostile. As she can be tamed, we don't want to allow the player to amass
+    a free spidery army. We can explain it away as her summoning being tied
+    to SPIDER_LEVEL or something, if someone nags. ;)
+   */
+  if(!(RAND() % 60) && GetRelation(PLAYER) == HOSTILE && !GetPos().IsAdjacent(PLAYER->GetPos()))
+  {
+    int NumberOfSpiders = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
+
+    for(int i = 0; i < NumberOfSpiders; i++)
+    {
+      lsquare* LSquare = PLAYER->GetNeighbourLSquare(RAND() % GetNeighbourSquares());
+
+      if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
+      {
+        character* NewSpider;
+        long RandomValue = RAND() % TurnsExisted;
+
+        if(RandomValue < 250)
+          NewSpider = spider::Spawn(!RAND_N(5) ? LARGE : GIANT);
+        else if(RandomValue < 1500)
+          NewSpider = spider::Spawn(ARANEA);
+        else
+          NewSpider = spider::Spawn(PHASE);
+
+        for(int c = 3; c < TurnsExisted / 500; ++c)
+          NewSpider->EditAllAttributes(1);
+
+        NewSpider->SetGenerationDanger(GetGenerationDanger());
+        NewSpider->SetTeam(GetTeam());
+        NewSpider->PutTo(LSquare->GetPos());
+
+        if(NewSpider->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s descends from the darkness above.", NewSpider->CHAR_NAME(INDEFINITE));
+      }
+    }
+
+    EditAP(-2000);
+    return;
+  }
 
   if(GetHP() > (GetMaxHP() / 2))
   {

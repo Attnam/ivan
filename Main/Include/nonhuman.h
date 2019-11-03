@@ -468,14 +468,19 @@ CHARACTER(mysticfrog, frog)
 CHARACTER(lobhse, largecreature)
 {
  public:
+  lobhse() : TurnsExisted(0) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual void Bite(character*, v2, int, truth = false);
   virtual truth IsSpider() const { return true; }
+  virtual void FinalProcessForBone();
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
   virtual bodypart* MakeBodyPart(int) const;
+  long TurnsExisted;
 };
 
 CHARACTER(mindworm, nonhumanoid)

@@ -863,6 +863,8 @@ CHARACTER(lordregent, humanoid)
  public:
   virtual void BeTalkedTo();
   virtual void GetAICommand() { StandIdleAI(); }
+ protected:
+  virtual void SpecialBodyPartSeverReaction();
 };
 
 #endif

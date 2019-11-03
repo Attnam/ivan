@@ -369,6 +369,11 @@ Dungeon GOBLIN_FORT;
       Times = 2;
     }
 
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = spider(PHASE);
+    }
+
     /* Decorations */
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {

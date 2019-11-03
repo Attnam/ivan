@@ -3362,6 +3362,8 @@ spider
   BloodMaterial = SPIDER_BLOOD;
   CanOpen = false;
   SkinColor = rgb16(64, 64, 100);
+  TorsoMainColor = rgb16(30, 30, 30);
+  TorsoBitmapPos = 256, 0;
   NameSingular = "spider";
   AttackStyle = USE_HEAD;
   CanBeGenerated = true;
@@ -3374,8 +3376,9 @@ spider
   IsImmuneToStickiness = true;
   DangerModifier = 25;
   IsAbstract = true;
-  TorsoMainColor = rgb16(30, 30, 30);
   IsCatacombCreature = true;
+  HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
+  FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
 
   Config LARGE;
   {
@@ -3408,34 +3411,50 @@ spider
     DefaultWisdom = 4;
     DefaultCharisma = 5;
     Adjective = "giant";
-    TorsoBitmapPos = 256, 0;
     BaseBiteStrength = 400;
     CWeaponSkillHits == 50;
     TotalVolume = 5000;
     TotalSize = 50;
-    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
-    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
   }
 
   Config ARANEA;
   {
-    DefaultArmStrength = 20;
+    DefaultArmStrength = 18;
     DefaultAgility = 26;
     DefaultEndurance = 18;
     DefaultPerception = 26;
-    DefaultIntelligence = 14;
+    DefaultIntelligence = 8;
     DefaultWillPower = 14;
-    DefaultWisdom = 8;
-    DefaultCharisma = 10;
+    DefaultWisdom = 14;
+    DefaultCharisma = 8;
     Adjective = "aranea";
-    TorsoBitmapPos = 256, 0;
+    SkinColor = rgb16(100, 64, 64);
     BaseBiteStrength = 400;
-    CWeaponSkillHits == 50;
+    CWeaponSkillHits == 150;
     TotalVolume = 5000;
     TotalSize = 50;
     Frequency = 0;
-    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
-    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
+  }
+
+  Config PHASE;
+  {
+    DefaultArmStrength = 20;
+    DefaultAgility = 24;
+    DefaultEndurance = 20;
+    DefaultPerception = 20;
+    DefaultIntelligence = 24;
+    DefaultWillPower = 8;
+    DefaultWisdom = 8;
+    DefaultCharisma = 14;
+    DefaultMana = 14;
+    Adjective = "phase";
+    SkinColor = rgb16(64, 100, 64);
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 150;
+    TotalVolume = 5000;
+    TotalSize = 50;
+    Frequency = 0;
+    ClassStates = ETHEREAL_MOVING|TELEPORT|INVISIBLE|ESP;
   }
 }
 
@@ -4920,7 +4939,7 @@ imp
   DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 5;
-  DefaultMana = 10;
+  DefaultMana = 15;
   HeadBitmapPos = 96, 16;
   TorsoBitmapPos = 48, 112;
   ArmBitmapPos = 64, 32;
