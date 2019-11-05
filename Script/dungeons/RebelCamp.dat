@@ -113,30 +113,6 @@ Dungeon REBEL_CAMP;
       Times = 10;
     }
 
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = decoration(CHEAP_BED);
-      Times = 10:20;
-    }
-
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = decoration(TABLE);
-      Times = 0:2;
-    }
-
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = decoration(WORK_BENCH);
-      Times = 0:2;
-    }
-
-    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = decoration(CHAIR);
-      Times = 1:5;
-    }
-
     Square, BoundedRandom XSize/3, YSize/3, 4*XSize/3, 4*YSize/3, NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(WELL);
@@ -218,24 +194,6 @@ Dungeon REBEL_CAMP;
       GenerateLanterns = false;
       Type = ROOM_OWNED_AREA;
 
-      GTerrainMap
-      {
-        Pos = 1,1;
-        Size = 5,5;
-
-        Types
-        {
-          & = 0 { IsExpansive = true; }
-        }
-      }
-      {
-        .&&&.
-        &&&&&
-        &&&&&
-        &&&&&
-        .&&&.
-      }
-
       OTerrainMap
       {
         Pos = 1,1;
@@ -310,6 +268,57 @@ Dungeon REBEL_CAMP;
       }
     }
 
+    /* Shop */
+    Room
+    {
+      Size = 7,7;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      Type = ROOM_SHOP;
+
+      ItemMap
+      {
+        Pos = 0,0;
+        Size = 7,7;
+
+        Types
+        {
+          # == 0;
+          1 == lantern { SquarePosition = UP; }
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+        }
+      }
+      {
+        .##2##.
+        ##...##
+        #.....#
+        3......
+        #.....#
+        ##...##
+        .##1##.
+      }
+
+      Square, Pos 3,3;
+      {
+        Character = shopkeeper(REBEL_CAMP) { Flags = IS_MASTER; }
+        OTerrain = decoration(CHAIR);
+      }
+
+      Square, Pos 6,3;
+      {
+        OTerrain = door(CURTAIN);
+      }
+      Square, Pos 7,2;
+      {
+        Character = guard(REBEL);
+      }
+      Square, Pos 7,4;
+      {
+        Character = guard(REBEL);
+      }
+    }
+
     /* Kamikaze Room */
     Room
     {
@@ -331,6 +340,47 @@ Dungeon REBEL_CAMP;
         k..k
         kK.k
         .kk.
+      }
+    }
+
+    /* Other Rooms */
+    Room
+    {
+      Square, Random;
+      {
+        OTerrain = decoration(CHEAP_BED);
+        Times = 4:10;
+      }
+    }
+
+    Room
+    {
+      Square, Random;
+      {
+        OTerrain = decoration(CHEAP_BED);
+        Times = 4:10;
+      }
+    }
+
+    Room
+    {
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TABLE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHAIR);
+        Times = 1:3;
+      }
+    }
+
+    Room
+    {
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(WORK_BENCH);
       }
     }
   }

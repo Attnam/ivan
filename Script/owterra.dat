@@ -90,7 +90,7 @@ underwatertunnelexit
 
 aslonacastle
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 112, 96;
   NameStem = "mighty seaside castle";
   UsesLongArticle = false;
   AttachedDungeon = ASLONA_CASTLE;
@@ -112,7 +112,7 @@ rebelcamp
 
 goblinfort
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 80, 96;
   NameStem = "overgrown ruins of ancient fortress";
   UsesLongArticle = true;
   AttachedDungeon = GOBLIN_FORT;
@@ -133,7 +133,7 @@ fungalcave
 
 pyramid
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 96, 128;
   NameStem = "crumbling pyramid";
   AttachedDungeon = PYRAMID;
   CanBeGenerated = true;

@@ -1401,6 +1401,37 @@ shopkeeper
     }
     Inventory = { 2, holybook(MELLIS), DIAMOND EBONY_WOOD pickaxe { Enchantment = -1; } }
   }
+
+  Config REBEL_CAMP;
+  {
+    AttributeBonus = 50;
+    HeadBitmapPos = 96, 0;
+    TorsoBitmapPos = 48, 80;
+    ClothColor = rgb16(75, 83, 32);
+    Helmet = HEPATIZON helmet { Enchantment = 3; }
+    Cloak = NYMPH_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 3; }
+    BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 3; }
+    Belt = HEPATIZON belt(BELT_OF_REGENERATION) { Enchantment = 3; }
+    RightWielded = HEPATIZON darkaxe { Enchantment = 3; }
+    LeftWielded = HEPATIZON shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+    RightRing = ring(RING_OF_INFRA_VISION);
+    LeftRing = ring(RING_OF_POISON_RESISTANCE);
+    RightGauntlet = SELKIE_SKIN gauntlet { Enchantment = 3; }
+    RightBoot = SELKIE_SKIN boot { Enchantment = 3; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
+    CWeaponSkillHits = { 2, 1000, 1000; }
+    RightSWeaponSkillHits = 500;
+    LeftSWeaponSkillHits = 500;
+    DefaultName = "Gustaff";
+    NameSingular = "quartermaster";
+    FriendlyReplies =
+    {
+      2,
+      "@Dd sighs: \"TODO\"",
+      "\"The monsters don't attack me, because of our mutually profitable contract.\"";
+    }
+    Inventory = { 2, holybook(MELLIS), HEPATIZON EBONY_WOOD pickaxe { Enchantment = 3; } }
+  }
 }
 
 priest

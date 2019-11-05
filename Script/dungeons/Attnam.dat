@@ -573,10 +573,6 @@ Dungeon ATTNAM;
       Square, Pos 5, 1;
       {
         Character = shopkeeper(ATTNAM) { Flags = IS_MASTER; }
-      }
-
-      Square, Pos 5, 1;
-      {
         OTerrain = decoration(CHAIR);
       }
 

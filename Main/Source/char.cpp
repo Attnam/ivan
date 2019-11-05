@@ -5988,8 +5988,10 @@ void character::AddCocaColaConsumeEndMessage() const
 
 void character::ReceiveDarkness(long Amount)
 {
-  // Decreases random attribute.
-  EditExperience(RAND() % BASE_ATTRIBUTES, -Amount, 1 << 14);
+  // A bit of a gum solution, but spiders and frogs are immune to prevent
+  // Lobh-se and dark frogs from poisoning themselves.
+  if(!(IsSpider() || IsFrog()))
+    EditExperience(RAND() % BASE_ATTRIBUTES, -Amount, 1 << 14);
 
   if(IsPlayer())
     game::DoEvilDeed(int(Amount / 50));
@@ -12470,6 +12472,19 @@ truth character::ReceiveSirenSong(character* Siren)
   if(Siren->GetRelation(this) != HOSTILE)
     return false;
 
+  if(RAND_N(GetAttribute(WILL_POWER)) > RAND_N(Siren->GetAttribute(CHARISMA)))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("The beautiful song of %s makes you feel a little sad.", Siren->CHAR_NAME(DEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s sings a beautiful melody.", Siren->CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
+
+    EditExperience(WILL_POWER, 100, 1 << 12);
+    return false;
+  }
+
   if(!RAND_N(4))
   {
     if(IsPlayer())
@@ -12514,6 +12529,8 @@ truth character::ReceiveSirenSong(character* Siren)
     {
       if(IsPlayer())
         ADD_MESSAGE("You would like to give something to %s.", Siren->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s looks longingly at %s.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
       else
         ADD_MESSAGE("You hear a beautiful song.");
     }

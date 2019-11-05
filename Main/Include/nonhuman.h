@@ -81,6 +81,7 @@ CHARACTER(nonhumanoid, character)
 CHARACTER(frog, nonhumanoid)
 {
  public:
+  virtual truth IsFrog() const { return true; }
   virtual truth MoveRandomly() { return MoveRandomlyInRoom(); }
 };
 
@@ -383,6 +384,7 @@ CHARACTER(elpuri, largecreature)
   virtual truth SpecialEnemySightedReaction(character*);
   virtual truth MustBeRemovedFromBone() const;
   virtual truth TryToRiseFromTheDead();
+  virtual truth IsFrog() const { return true; }
  protected:
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
