@@ -1,4 +1,7 @@
 #!/bin/bash
+
+echo DEPRECATED;exit 1
+
 echo "//this script will prepare the full code to determine what commands will enable stretched/scaledup blitting regions"
 echo "//just paste the output in the proper source file!"
 

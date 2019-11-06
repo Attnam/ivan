@@ -45,6 +45,12 @@ stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
                                           &configsystem::NormalStringDisplayer,
                                           &SelectedBkgColorChangeInterface,
                                           &SelectedBkgColorChanger);
+stringoption ivanconfig::AutoPickUpMatching("AutoPickUpMatching",
+                                          "Set items to auto pick up. To disable something no need to remove just invalidate it ex.: '_dagger'. To disable everything at once, just begin this config with '!'. Prefer editing this option's regex externally for now.", //TODO if multiline text editing is implemented, remove the last help statement.
+                                          "( (book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
+                                          &configsystem::NormalStringDisplayer,
+                                          &AutoPickUpMatchingChangeInterface,
+                                          &AutoPickUpMatchingChanger);
 numberoption ivanconfig::AutoSaveInterval("AutoSaveInterval",
                                           "autosave interval",
                                           100,
@@ -118,7 +124,7 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "show map while detecting material",
                                           false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
-                                          "auto pick up thrown items",
+                                          "auto pick up thrown weapons",
                                           true);
 truthoption ivanconfig::TransparentMapLM    ("TransparentMapLM",
                                           "show transparent map in look mode",
@@ -563,6 +569,20 @@ truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
   return false;
 }
 
+truth ivanconfig::AutoPickUpMatchingChangeInterface(stringoption* O)
+{
+  festring String;
+  if(O)String<<O->Value;
+
+  if(iosystem::StringQuestion(String, CONST_S("What items you want to auto pickup?"),
+                              GetQuestionPos(), WHITE, 0, 200, !game::IsRunning(), true) == NORMAL_EXIT) //TODO should have no limit? but crashes if going beyond screen limit...
+    O->ChangeValue(String);
+
+  clearToBackgroundAfterChangeInterface();
+
+  return false;
+}
+
 truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -744,6 +764,15 @@ void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
   if(O!=NULL){
     O->Value.Empty();
     O->Value<<What;
+  }
+}
+
+void ivanconfig::AutoPickUpMatchingChanger(stringoption* O, cfestring& What)
+{
+  if(O!=NULL){
+    O->Value.Empty();
+    O->Value<<What;
+    game::UpdateAutoPickUpMatching();
   }
 }
 
@@ -958,6 +987,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&EnhancedLights);
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
+  configsystem::AddOption(fsCategory,&AutoPickUpMatching);
 
   fsCategory="Game Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -1044,5 +1074,6 @@ void ivanconfig::Initialize()
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
+  AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }

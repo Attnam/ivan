@@ -14,6 +14,7 @@
 
 #include <typeinfo>
 
+#include "hiteffect.h"
 #include "traps.h"
 #include "dbgmsgproj.h"
 
@@ -128,29 +129,28 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
 bool craftcore::canBeCrafted(item* it){
   if(dynamic_cast<lump*>(it)!=NULL)
     return true;
+  if(dynamic_cast<stick*>(it)!=NULL) //checked when splitting
+    return true;
+  if(dynamic_cast<itemcontainer*>(it)!=NULL) //to allow crafting chests again
+    return true;
 
   const itemdatabase* itdb = it->GetDataBase();
-
-  if(
-    game::IsQuestItem(it) ||
-    it->GetEnchantment()!=0 ||
-    it->GetCategory()==BOOK ||
-    it->GetCategory()==MISC ||
-    it->GetCategory()==SCROLL ||
-    !itdb->CanBeWished ||
-    itdb->Possibility <= 0 ||
-    !itdb->PostFix.IsEmpty() ||
-    false // just to make it easier to re-organize and add checks above
-  ){
-    return false;
-  }
 
   if(it->GetCategory()==POTION)
   {
     item* Bottle = dynamic_cast<potion*>(it);
-    if(Bottle && !Bottle->GetSecondaryMaterial() && Bottle->GetNameSingular() == "bottle")
-      return true;
-
+    if(Bottle && (Bottle->GetNameSingular() == "bottle" || Bottle->GetNameSingular() == "vial")){ //TODO really necessary the singular name check? excessive?
+      if(!Bottle->GetSecondaryMaterial())
+        return true;
+      if( // extracting from corpses 
+          // TODO may be the "kind of action" (as a parameter for this func) could allow some specific materials only,  so a new action EXTRACT_FROM_CORPSE would allow only the ones below
+         Bottle->GetSecondaryMaterial()->GetConfig()==SULPHURIC_ACID || 
+         Bottle->GetSecondaryMaterial()->GetConfig()==POISON_LIQUID
+        )
+        return true;
+    }
+    
+    DBG3(Bottle->GetSecondaryMaterial()->GetConfig(),SULPHURIC_ACID,POISON_LIQUID);
     return false;
   }
 
@@ -161,13 +161,31 @@ bool craftcore::canBeCrafted(item* it){
     if(Can && !Can->GetSecondaryMaterial())
       return true;
 
+    DBGLN;
     return false;
   }
 
   //TODO all these things should have some easier kind of property to be checked
-  if(!craftcore::MoreCraftDeniedFilters(it))
+  if(!craftcore::MoreCraftDeniedFilters(it)){
+    DBGLN;
     return false;
+  }
 
+  if( // more complex/generic filter, better keep as last check?
+    game::IsQuestItem(it) ||
+    it->GetEnchantment()!=0 ||
+    it->GetCategory()==BOOK ||
+    it->GetCategory()==MISC ||
+    it->GetCategory()==SCROLL ||
+    !itdb->CanBeWished ||
+    itdb->Possibility <= 0 ||
+    !itdb->PostFix.IsEmpty() ||
+    false // just to make it easier to re-organize and add checks above
+  ){
+    DBGLN;
+    return false;
+  }
+  
   return true;
 }
 
@@ -639,7 +657,7 @@ struct recipe{
     rpd.bAlreadyExplained=true;
   }
   void failToolMsg(recipedata& rpd,festring tool){
-    ADD_MESSAGE("You don't have %s to work on.",tool.CStr());
+    ADD_MESSAGE("You don't have %s (at least good enough one) to work on it.",tool.CStr()); // ex.: "good enough" means that a too weak dagger wont be able to work on a much stronger material
     rpd.bAlreadyExplained=true;
   }
 
@@ -728,7 +746,14 @@ struct recipe{
 
     ABORT("at most 2 tools '%s' '%s' '%s'",rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetName(INDEFINITE).CStr(),itTool->GetName(INDEFINITE).CStr());
   }
-
+  
+  static item* findCarvingToolSpecific(recipedata& rpd, item* itTool,int iMinCarvingStr, int iType, int& riMult, int iIncMult){ //this one is to avoid using #define mess :>, but instead of a simple if() we get several method calls... tho more readable...
+    if(itTool==NULL){ 
+      itTool = FindTool(rpd, iType, 0, iMinCarvingStr); 
+      if(itTool!=NULL)riMult+=iIncMult; 
+    } 
+    return itTool;
+  }
   static item* findCarvingTool(recipedata& rpd,item* itToWorkOn){
     int iCarvingStr=0;
 
@@ -740,11 +765,18 @@ struct recipe{
       iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
 
     int iMinCarvingStr = iCarvingStr/2;
-
+    
+    // any blanded thing bug preferably a dagger
+    int iMult=1;
     item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
-
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,DAGGER,iMult,0);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SICKLE,iMult,1);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SHORT_SWORD,iMult,1);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,AXE,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,MEAT_CLEAVER,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,LONG_SWORD,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SPEAR,iMult,3); // mmm... spear is easy enough to be found already TODO all other more difficult to be used weapons with blades may be added below here :), basically create a balsa dagger using a balsa spear and you are good to go xD
     if(itTool!=NULL){
-      int iMult=1;
       if(iCarvingStr>1){
         int itStr=itTool->GetMainMaterial()->GetStrengthValue();
         if(itStr<iCarvingStr)
@@ -759,7 +791,7 @@ struct recipe{
         rpd.iBaseTurnsToFinish *= 3;
       }
     }else{
-      ADD_MESSAGE("You have no dagger to work on it."); //it is good to measure, hold tight, has a good height etc...
+      ADD_MESSAGE("You have no carving tool (at least a good enough one) to work on it."); //it is good to measure, hold tight, has a good height etc...
                                                         // Does it have to be dagger? Wouldn't "tool" be better? --red_kangaroo
       rpd.bAlreadyExplained=true;
     }
@@ -1000,7 +1032,7 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
               ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol);
-            matM->SetVolume(lVolM);
+            matM->SetVolume(lVolM); //TODO there is a big problem here... if the crafting cannot be started because a tool is missing, this ingredient will have less volume than required and may not be reused in case it is a non-meltable!!!
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
 //            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
@@ -1133,10 +1165,11 @@ struct recipe{
   }
   static bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
     bool bFound=false;
+    //obs.: lsqr->CanBeFeltByPlayer() will NOT work if player CAN MOVE on it!
     if(bReqOnlyVisible){DBGLN; //even if far away
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
         lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
-        if((lsqr->CanBeFeltByPlayer() || lsqr->CanBeSeenBy(rpd.rc.H())) && chkOLT(rpd,lsqr,iCfgOLT)){
+        if( chkOLT(rpd,lsqr,iCfgOLT) && (lsqr->GetPos().IsAdjacent(rpd.rc.H()->GetPos()) || lsqr->CanBeSeenBy(rpd.rc.H())) ){
           SetOLT(rpd,lsqr,iCfgOLT);
           bFound = true;
           break;
@@ -1149,7 +1182,7 @@ struct recipe{
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
           lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
 //          if(lsqr->CanBeFeltBy(rpd.rc.H()) && chkOLT(rpd,lsqr,iCfgOLT)){
-          if(lsqr->CanBeFeltByPlayer() && chkOLT(rpd,lsqr,iCfgOLT)){
+          if(chkOLT(rpd,lsqr,iCfgOLT) && lsqr->GetPos().IsAdjacent(rpd.rc.H()->GetPos())){
             SetOLT(rpd,lsqr,iCfgOLT);
             bFound = true;
             break;
@@ -1800,12 +1833,17 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       rpd.bAlreadyExplained=true;
       return false;
     }
-
+    
+    /**
+     * Meltable sticks should be lumpable to easify the code.
+     * Kept in case of wanting to re-enabling for some reason...
+     * 
     if(dynamic_cast<stick*>(itToUse)!=NULL){
       ADD_MESSAGE("%s is already a stick.", itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
     }
+     */
 
     // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE
     // TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
@@ -2383,7 +2421,7 @@ struct srpForgeItem : public recipe{
         return false;
       }
 
-      if(!recipe::findOLT(rpd,ANVIL,true)){
+      if(!recipe::findOLT(rpd,ANVIL)){ //must be near the anvil to use it!!!
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -2623,7 +2661,7 @@ struct srpFluidsBASE : public recipe{
     rpd.itSpawnCfg = itBottle->GetConfig(); //may be a vial
     rpd.itSpawnMatMainCfg = itBottle->GetMainMaterial()->GetConfig();
     rpd.itSpawnMatMainVol = itBottle->GetMainMaterial()->GetVolume();
-    rpd.itSpawnMatSecCfg = iLiqCfg;
+    rpd.itSpawnMatSecCfg = iLiqCfg;DBG1(iLiqCfg);
     rpd.itSpawnMatSecVol = volume;
 //    rpd.itSpawn = potion::Spawn(itBottle->GetConfig()); //may be a vial
 //    delete rpd.itSpawn->SetSecondaryMaterial(liquid::Spawn(iLiqCfg, volume));
@@ -2635,7 +2673,7 @@ struct srpFluidsBASE : public recipe{
 
     rpd.iBaseTurnsToFinish=5;
 
-    rpd. bCanStart=true;
+    rpd.bCanStart=true;
 
     return true;
   }
@@ -2690,11 +2728,16 @@ void updateCraftDesc(){
   static char cSkill[20];
   sprintf(cSkill, "%.1f",fSkill);
   fsSkill<<cSkill;
-  craftRecipes.AddDescription(fsSkill,fSkill<10?RED:WHITE);
+  
+  festring fsDesc=fsSkill;
+  if(vSuspended.size()>0)
+    fsDesc<<" (Suspended Actions: "<<vSuspended.size()<<")";
+  
+  craftRecipes.AddDescription(fsDesc,fSkill<10?RED:WHITE);
 }
 
 void addRecipe(recipe* prp){
-  prp->iListIndex=vrpAllRecipes.size();
+  prp->iListIndex=vrpAllRecipes.size()+1; //+1 is about the 1st entry related to suspended actions
 
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
@@ -2750,6 +2793,14 @@ humanoid* craftcore::CheckHumanoid(character* Char)
   }
   return h;
 }
+
+recipe* CheckSelectedAndInitRecipeIfNeeded(bool bInitRecipes,recipedata& rpd,recipe* prp, recipe& rp){ // to avoid macro hard readability
+  if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
+  DBG3(prp,&rp,rp.desc.CStr()); \
+  if(bInitRecipes)addRecipe((recipe*)&rp);
+  return prp;
+}
+
 truth craftcore::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
   humanoid* h = CheckHumanoid(Char);
@@ -2760,42 +2811,47 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(!CheckArms(h,bLOk,bROk))
     return false;
 
-  if(craftcore::HasSuspended()){
-    int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER, (c)ancel or start a (n)ew one?"),
-      KEY_ESC, 4, 'r', 'c', 'n', KEY_ENTER);
-    if(key==KEY_ESC)return false;
+  uint sel = FELIST_ERROR_BIT;
+  if(vrpAllRecipes.size()>0){
+    game::SetStandardListAttributes(craftRecipes);
+    craftRecipes.AddFlags(SELECTABLE);
+    craftRecipes.ClearFilter();
+    updateCraftDesc();
+    sel = craftRecipes.Draw(); DBG1(sel);
 
-    if(key==KEY_ENTER)
-      key='r';
+    if(sel & FELIST_ERROR_BIT)
+      return false;
+    
+    if(sel==0 && craftcore::HasSuspended()){
+      int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER or (c)ancel?"),
+        KEY_ESC, 3, 'r', 'c', KEY_ENTER);
+      if(key==KEY_ESC)return false;
 
-    felist LSusp("Suspended crafting actions:",WHITE);
-    game::SetStandardListAttributes(LSusp);
-    LSusp.AddFlags(SELECTABLE);
-    for(int i=0;i<vSuspended.size();i++)
-      LSusp.AddEntry(vSuspended[i].fsCraftInfo,LIGHT_GRAY);
+      if(key==KEY_ENTER)key='r';
 
-    festring fsDo;
-    bool bResume=false;
-    bool bNew=false;
-    col16 col=WHITE;
-    switch(key){
-    case 'r':
-      fsDo="Resume";
-      bResume=true;
-      break;
-    case 'c':
-      fsDo="Cancel (cannot be restored after this)"; //TODO could...
-      col=RED;
-      bResume=false;
-      break;
-    case 'n':
-      bNew=true;
-      break;
-    default:
-      return false; //TODO ever reached?
-    }
+      felist LSusp("Suspended crafting actions:",WHITE);
+      game::SetStandardListAttributes(LSusp);
+      LSusp.AddFlags(SELECTABLE);
+      for(int i=0;i<vSuspended.size();i++)
+        LSusp.AddEntry(vSuspended[i].fsCraftInfo,LIGHT_GRAY);
 
-    if(!bNew){
+      festring fsDo;
+      bool bResume=false;
+      col16 col=WHITE;
+      switch(key){
+      case 'r':
+        fsDo="Resume";
+        bResume=true;
+        break;
+      case 'c':
+        fsDo="Cancel (cannot be restored after this)"; //TODO could...
+        col=RED;
+        bResume=false;
+        break;
+      default:
+        return false; //TODO ever reached?
+      }
+
       fsDo<<" which crafting action?";
       LSusp.AddDescription(fsDo,col);
       uint Sel = LSusp.Draw();
@@ -2809,18 +2865,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       }
       return false;
     }
-  }
-
-  uint sel = FELIST_ERROR_BIT;
-  if(vrpAllRecipes.size()>0){
-    game::SetStandardListAttributes(craftRecipes);
-    craftRecipes.AddFlags(SELECTABLE);
-    craftRecipes.ClearFilter();
-    updateCraftDesc();
-    sel = craftRecipes.Draw(); DBG1(sel);
-
-    if(sel & FELIST_ERROR_BIT)
-      return false;
+    
   }
   recipedata rpd(h,sel);
 
@@ -2828,12 +2873,16 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
    * 1st call it just initializes the recipes list after all recipes have been configured!
    */
   bool bInitRecipes = vrpAllRecipes.size()==0;
+  
+  if(bInitRecipes){
+    craftRecipes.AddEntry(festring()+"Suspended crafting actions.", LIGHT_GRAY, 20, 0, true);
+    craftRecipes.SetLastEntryHelp("Here they can be resumed or deleted.");
+  }
+  
+  // these are kind of grouped and not ordered like a-z
   recipe* prp=NULL;
-  #define RP(rp) \
-    if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
-    DBG3(prp,&rp,rp.desc.CStr()); \
-    if(bInitRecipes)addRecipe((recipe*)&rp);
-  // these are kind of grouped and not ordered like a-z TODO add the commented section code as felist (non selectable) section entries?
+  #define RP(MACRO_PARAM_rp) prp=CheckSelectedAndInitRecipeIfNeeded(bInitRecipes,rpd,prp,MACRO_PARAM_rp); // just a simple macro to easify maintenance
+  
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Furniture:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpChair);
   RP(rpDoor);
@@ -2873,6 +2922,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
   }DBGLN;
 
+  ADD_MESSAGE("Your chosen crafting action is to %s %s.",prp->action.CStr(),prp->name.CStr());
   bool bDummy = prp->work(rpd); //bDummy(fied) as there is more detailed fail status from rpd bools
 
   //TODO these messages are generic, therefore dont look good... improve it
@@ -3067,7 +3117,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 
   item* itSpawn = NULL;
   material* matS = NULL;
-  bool bAllowBreak=false;
+  bool bAllowBreak=false;DBG3(rpd.itSpawnType,rpd.itSpawnCfg,rpd.itSpawnMatSecCfg);
   switch(rpd.itSpawnType){
     case CIT_POTION:
       /**
@@ -3083,6 +3133,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
       break;
     case CIT_PROTOTYPE:
       itSpawn = protosystem::CreateItemToCraft(rpd.fsItemSpawnSearchPrototype);
+      
       bAllowBreak=true;
       break;
     case CIT_STONE:
@@ -3099,16 +3150,12 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   if(itSpawn==NULL)
     ABORT("craft spawned no item.");
 
-  if(!craftcore::canBeCrafted(itSpawn)){
-    ABORT(
-      "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
-      "- Quest items.\n"
-      "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
-      "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
-      "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
-    );
+  itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
+  if(ic!=NULL){
+    if(ic->IsLocked())
+      ic->SetIsLocked(false); //to prevent annoyance of not having the key TODO should instead be always a broken lock considering the complexity of the locking system itself?
   }
-
+  
   if(rpd.itSpawnMatMainCfg==0 || rpd.itSpawnMatMainVol==0)
     ABORT("main material and/or volume is 0 %lu %lu",rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
 
@@ -3135,19 +3182,62 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
     fsCreated << " ";
   fsCreated << "You crafted ";
 
+  // this check is more detailed and must be when the item is completely ready!
+  if(!craftcore::canBeCrafted(itSpawn)){
+    ABORT(
+      "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
+      "- Quest items.\n"
+      "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
+      "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
+      "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
+      "This attempt: %s",
+      itSpawn->GetName(DEFINITE).CStr()
+    );
+  }
+  
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
   if(itSpawn!=NULL){
-    fsCreated << itSpawn->GetName(INDEFINITE);
+    if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
+      fsCreated << itSpawn->GetName(INDEFINITE);
     itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
   }
-
+  
   return itSpawn;
 }
 
 void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
-
+  
+  if(clock()%2==0 ? rpd.iRemainingTurnsToFinish%3==0 : rpd.iRemainingTurnsToFinish%5==0){ // to avoid unnecessarily spamming hiteffects
+    // keep this preference order!
+    lsquare* lsqrHF=NULL;
+    if(!lsqrHF)lsqrHF=rpd.lsqrPlaceAt;
+    if(!lsqrHF)lsqrHF=rpd.v2AnvilLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2AnvilLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2WorkbenchLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2WorkbenchLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2PlaceAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt);
+    if(!lsqrHF)lsqrHF=rpd.v2ForgeLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2ForgeLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2XplodAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2XplodAt);
+    if(lsqrHF){
+      hiteffectSetup* pHitEff=new hiteffectSetup();
+      
+      pHitEff->Type = (rpd.itTool || rpd.itTool2) ? WEAPON_ATTACK : UNARMED_ATTACK;
+      pHitEff->WhoHits=rpd.rc.H();
+      pHitEff->HitAtSquare=lsqrHF;
+      
+      item* itHF=NULL; //keep the below order
+      if(!itHF)itHF = rpd.itTool ? rpd.itTool : NULL;
+      if(!itHF)itHF = rpd.itTool2 ? rpd.itTool2 : NULL;
+      if(!itHF)itHF = rpd.rc.H()->GetRightArm() ? rpd.rc.H()->GetRightArm() : NULL;
+      if(!itHF)itHF = rpd.rc.H()->GetLeftArm() ? rpd.rc.H()->GetLeftArm() : NULL;
+      if(itHF){
+        pHitEff->lItemEffectReferenceID = itHF->GetID();
+        lsqrHF->AddHitEffect(*pHitEff);
+      }
+      delete pHitEff;
+    }
+  }
+  
   if(rpd.bGradativeCraftOverride){
     GradativeCraftOverride(rpd);
   }else{
@@ -3380,9 +3470,10 @@ void crafthandle::CheckFacilities(recipedata& rpd){
       ADD_MESSAGE("The workbench was destroyed!");
       rpd.bFailedTerminateCancel=true;
     }
-
-    rpd.bOnlyXplodIfCriticalFumble=true;
-    rpd.v2XplodAt=rpd.v2WorkbenchLocation;
+    
+    //TODO workbench should be damaged w/o explosions (that is area effect related to fire/forge)
+    rpd.bOnlyXplodIfCriticalFumble=true; //TODO kept as WIP
+    //explode/sparks at workbench doesnt make much sense: rpd.v2XplodAt=rpd.v2WorkbenchLocation;
   }
 }
 

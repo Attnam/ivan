@@ -1243,16 +1243,19 @@ void slave::BeTalkedTo()
 
 void slave::GetAICommand()
 {
-  SeekLeader(GetLeader());
+  SeekLeader(GetLeader()); DBG2(GetNameSingular().CStr(), GetLeader());
 
-  if(CheckAIZapOpportunity())
+  if(CheckAIZapOpportunity()){ DBG1(GetNameSingular().CStr());
     return;
+  }
 
-  if(CheckForEnemies(true, true, true))
+  if(CheckForEnemies(true, true, true)){ DBG1(GetNameSingular().CStr());
     return;
+  }
 
-  if(CheckForUsefulItemsOnGround())
+  if(CheckForUsefulItemsOnGround()){ DBG1(GetNameSingular().CStr());
     return;
+  }
 
   if(FollowLeader(GetLeader()))
     return;
@@ -1806,7 +1809,7 @@ item* humanoid::GetEquipment(int I) const
 void humanoid::SetEquipment(int I, item* What)
 {
   if(ivanconfig::GetRotateTimesPerSquare() > 0)
-    What->ResetFlyingThrownStep();
+    if(What)What->ResetFlyingThrownStep();
 
   switch(I)
   {
@@ -6982,6 +6985,7 @@ void terra::BeTalkedTo()
   }
   else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
   {
+    priest::BeTalkedTo(); // in case player also needs a cure, before the tip (below) to grant it wont be ignored
     ADD_MESSAGE("\"You bested her, I see! Now hurry back to the village, and Attnam shall threaten us no more.\"");
   }
   else

@@ -25,6 +25,7 @@
 
 item
 {
+  DescriptiveInfo = "";
   Possibility = 0;
   IsDestroyable = true;
   CanBeWished = true;
@@ -1448,15 +1449,7 @@ meleeweapon
 
   Config MAGE_STAFF;
   {
-    /*
-     * Two hundred years ago, the hellish Dwarven Wars came to a close when
-     * the joint forces of Kharaz-arad and Khaz-zadm broke through the defences
-     * of Khazad-durr and ended their enemy in gunpowder explosions and clouds
-     * of mustard gas. Yet it is said that the sovereign of Khazad-durr was
-     * never captured, instead transforming into a gargantuan spider and
-     * scuttling away. His regalia vanished along with him, including the royal
-     * staff bearing the name Y'yter Durr.
-     */
+    DescriptiveInfo = "Two hundred years ago, the hellish Dwarven Wars came to a close when the joint forces of Kharaz-arad and Khaz-zadm broke through the defences of Khazad-durr and ended their enemy in gunpowder explosions and clouds of mustard gas. Yet it is said that the sovereign of Khazad-durr was never captured, instead transforming into a gargantuan spider and scuttling away. His regalia vanished along with him, including the royal staff bearing the name Y'yter Durr.";
     DefaultSize = 220;
     Possibility = 1;
     WeaponCategory = BLUNT_WEAPONS;
@@ -5719,14 +5712,7 @@ helmet
 
   Config WAR_MASK;
   {
-    /*
-     * In an age long past, the goblin empire of Quetzaltia fought a terrible
-     * war against the spawn of Scabies, the dreaded mind worms. The goblins
-     * were barely holding on until the wizards and alchemists of their king,
-     * the venerable Tlachtlallotlachitl, invented a new type of mask that
-     * rendered the powers of mind worms useless. Very few of those masks
-     * remain today, but any worm-slayer would give a fortune to own one.
-     */
+    DescriptiveInfo = "In an age long past, the goblin empire of Quetzaltia fought a terrible war against the spawn of Scabies, the dreaded mind worms. The goblins were barely holding on until the wizards and alchemists of their king, the venerable Tlachtlallotlachitl, invented a new type of mask that rendered the powers of mind worms useless. Very few of those masks remain today, but any worm-slayer would give a fortune to own one.";
     DefaultSize = 25;
     DefaultMainVolume = 100;
     StrengthModifier = 250;
@@ -7244,11 +7230,7 @@ materialmanual /* holybook-> */
 
 ullrbone
 {
-  /*
-   * Once upon a time an ancient orcish wizard was said to travel the seas
-   * on a magical bone inscribed with foul magic and wreak havoc on all lands
-   * he visited.
-   */
+  DescriptiveInfo = "Once upon a time an ancient orcish wizard was said to travel the seas on a magical bone inscribed with foul magic and wreak havoc on all lands he visited.";
   Possibility = 1;
   DefaultMainVolume = 500;
   StrengthModifier = 100;

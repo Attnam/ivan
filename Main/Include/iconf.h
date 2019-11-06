@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
+  static cfestring& GetAutoPickUpMatching() { return AutoPickUpMatching.Value; }
   static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
@@ -111,6 +112,7 @@ class ivanconfig
   static truth DefaultNameChangeInterface(stringoption*);
   static truth FantasyNameChangeInterface(stringoption* O);
   static truth SelectedBkgColorChangeInterface(stringoption* O);
+  static truth AutoPickUpMatchingChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -122,6 +124,7 @@ class ivanconfig
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void SelectedBkgColorChanger(stringoption* O, cfestring& What);
+  static void AutoPickUpMatchingChanger(stringoption* O, cfestring& What);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void ShowItemsAtPlayerSquareChanger(cycleoption* O, long What);
@@ -168,6 +171,7 @@ class ivanconfig
   static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
   static stringoption SelectedBkgColor;
+  static stringoption AutoPickUpMatching;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;

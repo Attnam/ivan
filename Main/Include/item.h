@@ -196,6 +196,7 @@ struct itemdatabase : public databasebase
   festring BreakMsg;
   truth IsSadistWeapon;
   fearray<int> AllowedDungeons;
+  festring DescriptiveInfo;
 };
 
 class itemprototype
@@ -430,6 +431,7 @@ class item : public object
   DATA_BASE_VALUE(cfestring&, BreakMsg);
   DATA_BASE_TRUTH(IsSadistWeapon);
   DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
+  DATA_BASE_VALUE(cfestring&, DescriptiveInfo);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
