@@ -46,6 +46,8 @@ class iosystem
                          truth = true, bitmapeditor = 0);
   static truth IsOnMenu();
   static bool IsInUse();
+  static bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>(),bool bConfirmMode=true);
+  static void AlertConfirmMsgDraw(bitmap* Buffer);
 };
 
 #endif

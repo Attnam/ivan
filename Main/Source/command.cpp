@@ -166,128 +166,71 @@ truth commandsystem::DevConsCmd(character* Char)
 }
 #endif
 
-truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
-  cchar* str = Command[iIndex]->GetDescription();
-  if(strcmp(str,"apply")==0)return true;
-//  if(strcmp(str,"chat")==0)return true;
-//  if(strcmp(str,"close")==0)return true;
-  if(strcmp(str,"dip")==0)return true;
-  if(strcmp(str,"drink")==0)return true;
-  if(strcmp(str,"drop")==0)return true;
-  if(strcmp(str,"eat")==0)return true;
-  if(strcmp(str,"engrave")==0)return true;
-  if(strcmp(str,"equipment menu")==0)return true;
-//  if(strcmp(str,"go")==0)return true;
-//  if(strcmp(str,"go down/enter area")==0)return true;
-//  if(strcmp(str,"go up")==0)return true;
-//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
-//  if(strcmp(str,"kick")==0)return true;
-//  if(strcmp(str,"look")==0)return true;
-//  if(strcmp(str,"name")==0)return true;
-  if(strcmp(str,"offer")==0)return true;
-  if(strcmp(str,"open")==0)return true;
-  if(strcmp(str,"pick up")==0)return true;
-  if(strcmp(str,"pray")==0)return true;
-//  if(strcmp(str,"quit")==0)return true;
-  if(strcmp(str,"read")==0)return true;
-//  if(strcmp(str,"rest/heal")==0)return true;
-//  if(strcmp(str,"save game")==0)return true;
-//  if(strcmp(str,"scroll messages down")==0)return true;
-//  if(strcmp(str,"scroll messages up")==0)return true;
-//  if(strcmp(str,"show config screen")==0)return true;
-//  if(strcmp(str,"show inventory")==0)return true;
-//  if(strcmp(str,"show key layout")==0)return true;
-//  if(strcmp(str,"show message history")==0)return true;
-//  if(strcmp(str,"show weapon skills")==0)return true;
-//  if(strcmp(str,"search")==0)return true;
-//  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"swap weapons")==0)return true;
-//  if(strcmp(str,"swap weapons configuration")==0)return true;
-  if(strcmp(str,"throw")==0)return true;
-//  if(strcmp(str,"toggle running")==0)return true;
-//  if(strcmp(str,"vomit")==0)return true;
-//  if(strcmp(str,"wait")==0)return true;
-  if(strcmp(str,"wield in right arm")==0)return true;
-  if(strcmp(str,"wield in left arm")==0)return true;
-//  if(strcmp(str,"wizard mode activation")==0)return true;
-  if(strcmp(str,"zap")==0)return true;
-//  if(strcmp(str,"raise stats")==0)return true;
-//  if(strcmp(str,"lower stats")==0)return true;
-//  if(strcmp(str,"see whole map")==0)return true;
-//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
-//  if(strcmp(str,"raise your relations to the gods")==0)return true;
-//  if(strcmp(str,"lower your relations to the gods")==0)return true;
-//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
-//  if(strcmp(str,"gain all items")==0)return true;
-//  if(strcmp(str,"reveal secret knowledge")==0)return true;
-//  if(strcmp(str,"detach a limb")==0)return true;
-//  if(strcmp(str,"set fire to a limb")==0)return true;
-//  if(strcmp(str,"summon monster")==0)return true;
-//  if(strcmp(str,"level teleport")==0)return true;
-//  if(strcmp(str,"possess creature")==0)return true;
-  if(strcmp(str,"polymorph")==0)return true;
+truth commandsystem::IsForRegionListItem(int iIndex){
+  truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
+  
+  static std::vector<truth (*)(character*)> vLF;
+  static bool bInitDummy = [](){ //for easy maintenance avoiding macros
+    vLF.push_back(&Apply);
+    vLF.push_back(&Dip);
+    vLF.push_back(&Drink);
+    vLF.push_back(&Drop);
+    vLF.push_back(&Eat);
+    vLF.push_back(&WhatToEngrave);
+    vLF.push_back(&EquipmentScreen);
+    vLF.push_back(&Offer);
+    vLF.push_back(&Open);
+    vLF.push_back(&PickUp);
+    vLF.push_back(&Pray);
+    vLF.push_back(&Read);
+    vLF.push_back(&Throw);
+    vLF.push_back(&WieldInLeftArm);
+    vLF.push_back(&WieldInRightArm);
+    vLF.push_back(&Zap);
+    vLF.push_back(&Polymorph);
+    return true;
+  }();
+  for(int i=0;i<vLF.size();i++){
+    if(vLF[i]==LinkedFunction){
+      return true;
+    }
+  }
+  
   return false;
 }
 truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
-  cchar* str = Command[iIndex]->GetDescription();
-  if(strcmp(str,"apply")==0)return true;
-//  if(strcmp(str,"chat")==0)return true;
-//  if(strcmp(str,"close")==0)return true;
-  if(strcmp(str,"dip")==0)return true;
-  if(strcmp(str,"drink")==0)return true;
-  if(strcmp(str,"drop")==0)return true;
-  if(strcmp(str,"eat")==0)return true;
-  if(strcmp(str,"engrave")==0)return true;
-  if(strcmp(str,"equipment menu")==0)return true;
-//  if(strcmp(str,"go")==0)return true;
-//  if(strcmp(str,"go down/enter area")==0)return true;
-//  if(strcmp(str,"go up")==0)return true;
-//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
-//  if(strcmp(str,"kick")==0)return true;
-//  if(strcmp(str,"look")==0)return true;
-//  if(strcmp(str,"name")==0)return true;
-  if(strcmp(str,"offer")==0)return true;
-  if(strcmp(str,"open")==0)return true;
-  if(strcmp(str,"pick up")==0)return true;
-  if(strcmp(str,"pray")==0)return true;
-//  if(strcmp(str,"quit")==0)return true;
-  if(strcmp(str,"read")==0)return true;
-//  if(strcmp(str,"rest/heal")==0)return true;
-//  if(strcmp(str,"save game")==0)return true;
-//  if(strcmp(str,"scroll messages down")==0)return true;
-//  if(strcmp(str,"scroll messages up")==0)return true;
-//  if(strcmp(str,"show config screen")==0)return true;
-  if(strcmp(str,"show inventory")==0)return true;
-//  if(strcmp(str,"show key layout")==0)return true;
-//  if(strcmp(str,"show message history")==0)return true;
-//  if(strcmp(str,"show weapon skills")==0)return true;
-//  if(strcmp(str,"search")==0)return true;
-//  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"swap weapons")==0)return true;
-  if(strcmp(str,"swap weapons configuration")==0)return true;
-  if(strcmp(str,"throw")==0)return true;
-//  if(strcmp(str,"toggle running")==0)return true;
-//  if(strcmp(str,"vomit")==0)return true;
-//  if(strcmp(str,"wait")==0)return true;
-  if(strcmp(str,"wield in right arm")==0)return true;
-  if(strcmp(str,"wield in left arm")==0)return true;
-//  if(strcmp(str,"wizard mode activation")==0)return true;
-  if(strcmp(str,"zap")==0)return true;
-//  if(strcmp(str,"raise stats")==0)return true;
-//  if(strcmp(str,"lower stats")==0)return true;
-//  if(strcmp(str,"see whole map")==0)return true;
-//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
-//  if(strcmp(str,"raise your relations to the gods")==0)return true;
-//  if(strcmp(str,"lower your relations to the gods")==0)return true;
-//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
-//  if(strcmp(str,"gain all items")==0)return true;
-//  if(strcmp(str,"reveal secret knowledge")==0)return true;
-//  if(strcmp(str,"detach a limb")==0)return true;
-//  if(strcmp(str,"set fire to a limb")==0)return true;
-//  if(strcmp(str,"summon monster")==0)return true;
-//  if(strcmp(str,"level teleport")==0)return true;
-//  if(strcmp(str,"possess creature")==0)return true;
-  if(strcmp(str,"polymorph")==0)return true;
+  truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
+  
+  static std::vector<truth (*)(character*)> vLF;
+  static bool bInitDummy = [](){ //for easy maintenance avoiding macros
+    vLF.push_back(&Apply);
+    vLF.push_back(&Dip);
+    vLF.push_back(&Drink);
+    vLF.push_back(&Drop);
+    vLF.push_back(&Eat);
+    vLF.push_back(&WhatToEngrave);
+    vLF.push_back(&EquipmentScreen);
+    vLF.push_back(&Offer);
+    vLF.push_back(&Open);
+    vLF.push_back(&PickUp);
+    vLF.push_back(&Pray);
+    vLF.push_back(&Read);
+    vLF.push_back(&ShowInventory);
+    vLF.push_back(&SwapWeaponsCfg);
+    vLF.push_back(&Read);
+    vLF.push_back(&Throw);
+    vLF.push_back(&WieldInLeftArm);
+    vLF.push_back(&WieldInRightArm);
+    vLF.push_back(&Zap);
+    vLF.push_back(&Polymorph);
+    return true;
+  }();
+  for(int i=0;i<vLF.size();i++){
+    if(vLF[i]==LinkedFunction){
+      return true;
+    }
+  }
+  
   return false;
 }
 
@@ -576,8 +519,12 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems())
+        if(ivanconfig::IsAutoPickupThrownItems()){
           ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
+          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
+            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
+          }
+        }
       }
       Success = true;
     }
@@ -724,6 +671,10 @@ truth commandsystem::PickUp(character* Char)
             PileVector[0][c]->ResetFlyingThrownStep();
 
           PileVector[0][c]->MoveTo(Char->GetStack());
+          
+          if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
+            PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
+          }
         }
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
@@ -766,6 +717,10 @@ truth commandsystem::PickUp(character* Char)
             ToPickup[c]->ResetFlyingThrownStep();
 
           ToPickup[c]->MoveTo(Char->GetStack());
+          
+          if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
+            ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
+          }
         }
 
         ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
@@ -801,6 +756,8 @@ truth commandsystem::Quit(character* Char)
 
 truth commandsystem::Talk(character* Char)
 {
+  static char cmdKey = findCmdKey(&Talk);
+  
   if(!Char->CheckTalk())
     return false;
 
@@ -832,11 +789,15 @@ truth commandsystem::Talk(character* Char)
     return ToTalk->ChatMenu();
   else
   {
-    int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk? [press a direction key]"), false, true);
+    static festring fsQ;
+    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<cmdKey<<"']";return true;}();
+    static int iPreviousDirChosen = DIR_ERROR;
+    int Dir = game::DirectionQuestion(fsQ, false, true, cmdKey, iPreviousDirChosen);
 
     if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
       return false;
 
+    iPreviousDirChosen = Dir;
     character* Dude = Char->GetNearSquare(Char->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
 
     if(Dude == Char)
@@ -897,6 +858,7 @@ truth commandsystem::Read(character* Char)
   }
 
   item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to read?"), 0, &item::IsReadable);
+  if(Item)game::DisableAutoPlayMode(); // stops auto question timeout that was preventing reading at all
   return Item && Char->ReadItem(Item);
 }
 
@@ -1062,18 +1024,35 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       festring What;
 
       lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
-      if(lsqrN!=NULL){ //TODO can this be NULL?
+      if(lsqrN!=NULL){ //TODO can this ever be NULL?
         if(lsqrN->GetEngraved()!=NULL){
           cchar* c = lsqrN->GetEngraved();
-          if(c!=NULL)What=c;
-          if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
-            std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
+          if(c!=NULL){
+            What=c;
+            if(What.GetSize()>0){
+              if(What[0]==game::MapNoteToken()){ //having map note token means it is already a map note, so let it be read/write at will
+                std::string str=What.CStr();
+                What.Empty();
+                What<<str.substr(1).c_str(); //removes token prefix TODO implement substr() at festring
+              } else { // this is a case of non-map note "engraving" (like normal vanilla engraving from golemns)
+                if(!lsqrN->HasBeenSeen()){
+                  /*****
+                   * why empty it?
+                   * to prevent determining (cheating) if that square has a golemn using the ShowMap/lookMode command! (possibly other things too)
+                   * a minor problem is that the user may overwrite that engraving with a mapnote TODO something about it?
+                   */
+                  What.Empty();
+                }
+              }
+            }
           }
         }
       }
 
       if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
-        game::SetMapNote(lsqrN,What);
+        if(What.GetSize()>0) {
+          game::SetMapNote(lsqrN,What);
+        }
       }
 
       break;
@@ -1143,8 +1122,9 @@ truth commandsystem::Pray(character* Char)
       {
         desc.Empty();
         desc << game::GetGod(c)->GetCompleteDescription();
-        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(c)->GetLastKnownRelation();
         Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
+        Panthenon.SetLastEntryHelp(game::GetGod(c)->GetDescription()); //using F1 is the correct way for this
         Known[Index++] = c;
       }
   }
@@ -1152,6 +1132,7 @@ truth commandsystem::Pray(character* Char)
     if(game::GetGod(DivineMaster)->IsKnown())
     {
       Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+      Panthenon.SetLastEntryHelp(game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
     else
@@ -1236,8 +1217,8 @@ truth commandsystem::Kick(character* Char)
     return true;
   }
 
-  festring fsQ;
-  fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";
+  static festring fsQ;
+  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";return true;}();
   static int iPreviousDirChosen = DIR_ERROR;
   int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
@@ -1346,7 +1327,8 @@ truth commandsystem::Throw(character* Char)
     Char->EditNP(-50);
     Char->DexterityAction(5);
     if(ivanconfig::IsAutoPickupThrownItems())
-      Item->SetTag('t');
+      if(Item->IsWeapon(PLAYER)) //TODO never made much sense auto-picking up other things than weapons, but this could be optional
+        Item->SetTag('t');
     return true;
   }
   else
@@ -1622,7 +1604,15 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
               }
               if(start.Is0())
                 start=Char->GetPos();
-
+              
+              if(!game::GetCurrentArea()->IsValidPos(start)){
+                // very rare case when opening the map will crash at game::PositionQuestion(,start,...) ... area::GetSquare(start)
+                DBG4("CrashWorkaround",DBGAV2(start),game::GetCurrentArea()->GetXSize(),game::GetCurrentArea()->GetYSize());
+                DBGBREAKPOINT;
+                game::ToggleDrawMapOverlay(); //TODO hint something to the player like internal error was avoided and should just retry?
+                return false;
+              }
+              
               noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
               if(noteAddPos==ERROR_V2){
                 game::ToggleDrawMapOverlay();
@@ -1764,6 +1754,7 @@ truth commandsystem::Go(character* Char)
 
 truth commandsystem::ShowConfigScreen(character*)
 {
+  configsystem::Load(); // some fields may be too big to be edited from the game interface ex.: autopickup regex would require multiline editing otherwise would not work. TODO should this be optional?
   ivanconfig::Show();
   return false;
 }

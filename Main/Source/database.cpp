@@ -620,6 +620,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BreakMsg);
   ADD_MEMBER(IsSadistWeapon);
   ADD_MEMBER(AllowedDungeons);
+  ADD_MEMBER(DescriptiveInfo);
 }
 
 template <class type>
