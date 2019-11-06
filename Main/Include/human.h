@@ -461,7 +461,7 @@ CHARACTER(zombie, humanoid)
   virtual void PostConstruct();
   virtual void AddPostFix(festring&, int) const;
   virtual void GetAICommand();
-  virtual truth AllowExperience() const { return false; }
+  virtual truth AllowExperience() const { return GetConfig() == ZOMBIE_OF_KHAZ_ZADM; }
   festring Description;
 };
 
@@ -846,9 +846,8 @@ CHARACTER(aslonapriest, priest)
 CHARACTER(gasghoul, zombie)
 {
  public:
+  virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
   virtual truth AllowSpoil() const { return false; }
- protected:
-  virtual void GetAICommand();
 };
 
 CHARACTER(harvan, humanoid)

@@ -236,6 +236,7 @@
 #define EFFECT_SICKNESS 42
 #define EFFECT_PHASE 43
 #define EFFECT_ACID_GAS 44
+#define EFFECT_FIRE_GAS 45
 
 /* CEM = Consume End Message */
 
@@ -554,6 +555,7 @@
 #define TELEPORT_GAS (GAS_ID + 13)
 #define LAUGHING_GAS (GAS_ID + 14)
 #define ACID_GAS (GAS_ID + 15)
+#define FIRE_GAS (GAS_ID + 16)
 
 #define LIQUID_ID (4096 * 4)
 

@@ -5047,6 +5047,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
+  if(!BodyPart)
+    return 0;
+
   if(!Damager || Damager->AttackMayDamageArmor())
     BodyPart->DamageArmor(Damager, Damage, Type);
 
@@ -12400,6 +12403,23 @@ void character::ReceiveAcidGas(long Volume)
     {
       BodyPart->AddFluid(liquid::Spawn(SULPHURIC_ACID, Volume), CONST_S("skin"), 0, true);
     }
+  }
+}
+
+void character::ReceiveFireGas(long Volume)
+{
+  if(!Volume)
+    return;
+
+  int CritChance = 10;
+  if(Volume > 1)
+  {
+    CritChance -= (int)log10(Volume);
+  }
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    ReceiveBodyPartDamage(0, 1, FIRE, c, YOURSELF, false, !RAND_N(CritChance), false);
   }
 }
 

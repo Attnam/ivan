@@ -1152,6 +1152,7 @@ class character : public entity, public id
   void ReceiveMustardGas(int, long);
   void ReceiveMustardGasLiquid(int, long);
   void ReceiveAcidGas(long);
+  void ReceiveFireGas(long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
   truth ForgetRandomThing();

@@ -405,6 +405,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define EFFECT_SICKNESS 42
 #define EFFECT_PHASE 43
 #define EFFECT_ACID_GAS 44
+#define EFFECT_FIRE_GAS 45
 
 /* CEM = Consume End Message */
 

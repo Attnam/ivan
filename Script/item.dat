@@ -6676,12 +6676,12 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 8,
+  SecondaryMaterialConfig = { 9,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR,
                               SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS,
-                              ACID_GAS; }
-  MaterialConfigChances = { 8,
-                            50, 10, 1, 10, 5, 5, 10, 5; }
+                              ACID_GAS, FIRE_GAS; }
+  MaterialConfigChances = { 9,
+                            50, 10, 1, 10, 5, 5, 10, 5, 5; }
   Adjective = "dwarven";
   Alias == "grenade";
 }
@@ -7485,12 +7485,12 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 11,
+  SecondaryMaterialConfig = { 12,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
                               EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS, LAUGHING_GAS,
-                              ECTOPLASM, ACID_GAS; }
-  MaterialConfigChances = { 11,
-                            20, 30, 1, 15, 10, 15, 5, 10, 5, 1, 10; }
+                              ECTOPLASM, ACID_GAS, FIRE_GAS; }
+  MaterialConfigChances = { 12,
+                            20, 30, 1, 15, 10, 15, 5, 10, 5, 1, 10, 10; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;

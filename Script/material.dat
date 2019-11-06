@@ -4842,8 +4842,21 @@ gas
     AttachedGod = SCABIES;
     HardenedMaterial = SULPHURIC_ACID;
     Effect = EFFECT_ACID_GAS;
-    EffectStrength = 1;
+    EffectStrength = 2;
     BreatheMessage = "Your skin burns!";
+    StepInWisdomLimit = 3;
+  }
+
+  Config FIRE_GAS;
+  {
+    Color = rgb16(255, 69, 0);
+    Emitation = rgb24(150, 120, 90);
+    NameStem = "burning vapours";
+    Alpha = 175;
+    AttachedGod = LEGIFER;
+    HardenedMaterial = NAPALM;
+    Effect = EFFECT_FIRE_GAS;
+    BreatheMessage = "You burn!";
     StepInWisdomLimit = 3;
   }
 }

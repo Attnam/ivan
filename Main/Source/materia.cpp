@@ -195,6 +195,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_SICKNESS: Char->ReceiveSickness(Amount); break;
    case EFFECT_PHASE: Char->BeginTemporaryState(ETHEREAL_MOVING, Amount); break;
    case EFFECT_ACID_GAS: Char->ReceiveAcidGas(Amount); break;
+   case EFFECT_FIRE_GAS: Char->ReceiveFireGas(Amount); break;
    default: return false;
   }
 

@@ -302,6 +302,7 @@
 #define TELEPORT_GAS (GAS_ID + 13)
 #define LAUGHING_GAS (GAS_ID + 14)
 #define ACID_GAS (GAS_ID + 15)
+#define FIRE_GAS (GAS_ID + 16)
 
 #define LIQUID_ID (4 << 12)
 

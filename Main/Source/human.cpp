@@ -6579,14 +6579,9 @@ void guard::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Do you accept the quest? [y/N]"), REQUIRES_ANSWER))
     {
-      game::TextScreen(CONST_S("\"You might be asking what am I doing down here? Lets just say I had spent some time\n"
-                               "arranging... things in the catacombs below. I was the undertaker for the city of Attnam,\n"
-                               "you see. Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
-                               "223 years later, and I was still down here, drinking blood, eating bones, and generally \n"
-                               "trying all the old life-extension tricks. Finally I got caught by that meddling Haedlac.\n"
-                               "He's got nothing better to do these days, I guess. He sent me here to the Cellar, agonizingly\n"
-                               "close to my minions, but still unable to escape. That stupid floating eye hovers by here\n"
-                               "every now and again to check up on me.\"")); // TODO
+      game::TextScreen(CONST_S("\"TODO\n\n"
+                               "Go to the Castle of Aslona and talk to Lord Regent.\n"
+                               "Also I give you a ship and rebels are scum.\""));
 
       game::GivePlayerBoat();
       game::LoadWorldMap();
@@ -6995,6 +6990,11 @@ void aslonawizard::GetAICommand()
   if(FollowLeader(GetLeader()))
     return;
 
+  /*
+   * Teleports when in danger, otherwise either blinks his allies close to
+   * an enemy, or summons a gas golem.
+   */
+
   character* NearestEnemy = 0;
   long NearestEnemyDistance = 0x7FFFFFFF;
   character* RandomFriend = 0;
@@ -7131,17 +7131,34 @@ void aslonawizard::GetAICommand()
   StandIdleAI();
 }
 
-void gasghoul::GetAICommand()
+int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
+                      double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
 {
-  if(RAND_N(3))
-  {
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s fumes.", CHAR_NAME(DEFINITE));
+  int Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage,
+                                 ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
-    GetLSquareUnder()->AddSmoke(gas::Spawn(MUSTARD_GAS, 20));
+  if(Return != HAS_DODGED && Return != HAS_BLOCKED)
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("%s releases a cloud of fumes as you strike %s.", CHAR_DESCRIPTION(DEFINITE), GetObjectPronoun().CStr());
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s releases a cloud of fumes as %s strikes %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE),
+                                                                    GetObjectPronoun().CStr());
+
+    int GasMaterial = MUSTARD_GAS;
+    switch (RAND_N(6))
+    {
+      case 0: GasMaterial = SKUNK_SMELL; break;
+      case 1:
+      case 2: GasMaterial = ACID_GAS; break;
+      case 3:
+      case 4: GasMaterial = FIRE_GAS; break;
+    }
+
+    GetLevel()->GasExplosion(gas::Spawn(GasMaterial, 100), GetLSquareUnder(), this);
   }
 
-  zombie::GetAICommand();
+  return Return;
 }
 
 void elder::Save(outputfile& SaveFile) const
@@ -7210,18 +7227,9 @@ void aslonawizard::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                               "\n"
-                               "\"I have volunteered all those years ago to be buried here in this cave\n"
-                               "along with the shrine, to tend it and to protect the rites and traditions\n"
-                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
-                               "every day that a word would come about an end to the tyranny, that\n"
-                               "I would be free to return home. I guess my hope dwindled over the years,\n"
-                               "but you are here now and my wishes came true. Thank you.\"\n"
-                               "\n"
-                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
-                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Go to the goblin fort and bring back alchemical notebook.\n"
+                               "We'll cook us some mustard gas against the rebel scum.\"\n"));
       // bring alchemy book
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
@@ -7256,18 +7264,9 @@ void aslonacaptain::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                               "\n"
-                               "\"I have volunteered all those years ago to be buried here in this cave\n"
-                               "along with the shrine, to tend it and to protect the rites and traditions\n"
-                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
-                               "every day that a word would come about an end to the tyranny, that\n"
-                               "I would be free to return home. I guess my hope dwindled over the years,\n"
-                               "but you are here now and my wishes came true. Thank you.\"\n"
-                               "\n"
-                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
-                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Go to the Pyramid and bring me a nuke. Be careful, the Pyramid\n"
+                               "will be dangerous, so it's probably good to go there later.\"\n"));
       // bring nuke
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
@@ -7296,18 +7295,9 @@ void aslonapriest::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                               "\n"
-                               "\"I have volunteered all those years ago to be buried here in this cave\n"
-                               "along with the shrine, to tend it and to protect the rites and traditions\n"
-                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
-                               "every day that a word would come about an end to the tyranny, that\n"
-                               "I would be free to return home. I guess my hope dwindled over the years,\n"
-                               "but you are here now and my wishes came true. Thank you.\"\n"
-                               "\n"
-                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
-                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Go to the fungal cave and bring me weeping obsidian shard.\n"
+                               "We need that clean water for our citizens.\"\n"));
       // bring weeping obsidian
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
@@ -7336,18 +7326,9 @@ void harvan::BeTalkedTo()
   {
     if(!game::GetRebelStoryState())
     {
-      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                               "\n"
-                               "\"I have volunteered all those years ago to be buried here in this cave\n"
-                               "along with the shrine, to tend it and to protect the rites and traditions\n"
-                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
-                               "every day that a word would come about an end to the tyranny, that\n"
-                               "I would be free to return home. I guess my hope dwindled over the years,\n"
-                               "but you are here now and my wishes came true. Thank you.\"\n"
-                               "\n"
-                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
-                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Lord Regent is !!EVIL!! Don't do anything he says, bring\n"
+                               "whatever he wants to me instead. Or just get me his sword.\"\n"));
 
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
@@ -7376,18 +7357,11 @@ void lordregent::BeTalkedTo()
   {
     if(game::GetAslonaStoryState() == 1)
     {
-      game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
-                               "\n"
-                               "\"I have volunteered all those years ago to be buried here in this cave\n"
-                               "along with the shrine, to tend it and to protect the rites and traditions\n"
-                               "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
-                               "every day that a word would come about an end to the tyranny, that\n"
-                               "I would be free to return home. I guess my hope dwindled over the years,\n"
-                               "but you are here now and my wishes came true. Thank you.\"\n"
-                               "\n"
-                               "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
-                               "to channel the power of Silva and shroud Tweraif against further attacks.\n"
-                               "I wish it was that simple, but I have no seeds to give you.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Hi there, I have no time. Go find Lord Mittrars, Myrddin Wyllt and\n"
+                               "Senex of Seges, ask them if they want anything and don't bother me\n"
+                               "before you finish their quests. Also Harvan bad and this would be\n"
+                               "much faster if you could bring me his sword.\"\n"));
 
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
