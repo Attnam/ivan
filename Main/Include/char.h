@@ -1151,8 +1151,7 @@ class character : public entity, public id
   virtual void ApplySpecialAttributeBonuses() { }
   void ReceiveMustardGas(int, long);
   void ReceiveMustardGasLiquid(int, long);
-  void ReceiveAcidGas(long);
-  void ReceiveFireGas(long);
+  void ReceiveFlames(long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
   truth ForgetRandomThing();

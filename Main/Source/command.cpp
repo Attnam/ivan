@@ -168,7 +168,7 @@ truth commandsystem::DevConsCmd(character* Char)
 
 truth commandsystem::IsForRegionListItem(int iIndex){
   truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
-  
+
   static std::vector<truth (*)(character*)> vLF;
   static bool bInitDummy = [](){ //for easy maintenance avoiding macros
     vLF.push_back(&Apply);
@@ -195,12 +195,12 @@ truth commandsystem::IsForRegionListItem(int iIndex){
       return true;
     }
   }
-  
+
   return false;
 }
 truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
   truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
-  
+
   static std::vector<truth (*)(character*)> vLF;
   static bool bInitDummy = [](){ //for easy maintenance avoiding macros
     vLF.push_back(&Apply);
@@ -230,7 +230,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -671,7 +671,7 @@ truth commandsystem::PickUp(character* Char)
             PileVector[0][c]->ResetFlyingThrownStep();
 
           PileVector[0][c]->MoveTo(Char->GetStack());
-          
+
           if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
             PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
@@ -717,7 +717,7 @@ truth commandsystem::PickUp(character* Char)
             ToPickup[c]->ResetFlyingThrownStep();
 
           ToPickup[c]->MoveTo(Char->GetStack());
-          
+
           if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
             ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
@@ -757,7 +757,7 @@ truth commandsystem::Quit(character* Char)
 truth commandsystem::Talk(character* Char)
 {
   static char cmdKey = findCmdKey(&Talk);
-  
+
   if(!Char->CheckTalk())
     return false;
 
@@ -1604,7 +1604,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
               }
               if(start.Is0())
                 start=Char->GetPos();
-              
+
               if(!game::GetCurrentArea()->IsValidPos(start)){
                 // very rare case when opening the map will crash at game::PositionQuestion(,start,...) ... area::GetSquare(start)
                 DBG4("CrashWorkaround",DBGAV2(start),game::GetCurrentArea()->GetXSize(),game::GetCurrentArea()->GetYSize());
@@ -1612,7 +1612,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
                 game::ToggleDrawMapOverlay(); //TODO hint something to the player like internal error was avoided and should just retry?
                 return false;
               }
-              
+
               noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
               if(noteAddPos==ERROR_V2){
                 game::ToggleDrawMapOverlay();

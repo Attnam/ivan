@@ -46,7 +46,7 @@ stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
                                           &SelectedBkgColorChangeInterface,
                                           &SelectedBkgColorChanger);
 stringoption ivanconfig::AutoPickUpMatching("AutoPickUpMatching",
-                                          "Set items to auto pick up. To disable something no need to remove just invalidate it ex.: '_dagger'. To disable everything at once, just begin this config with '!'. Prefer editing this option's regex externally for now.", //TODO if multiline text editing is implemented, remove the last help statement.
+                                          "auto pick up regex",
                                           "( (book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
                                           &configsystem::NormalStringDisplayer,
                                           &AutoPickUpMatchingChangeInterface,
@@ -574,7 +574,7 @@ truth ivanconfig::AutoPickUpMatchingChangeInterface(stringoption* O)
   festring String;
   if(O)String<<O->Value;
 
-  if(iosystem::StringQuestion(String, CONST_S("What items you want to auto pickup?"),
+  if(iosystem::StringQuestion(String, CONST_S("What items do you want to auto pick up? To disable something, no need to remove it, just invalidate it with '_'. For example: '_dagger'. To disable everything at once, begin this config with '!'. Preferable editing of this option's regex is external for now."), //TODO if multiline text editing is implemented, remove the last help statement.
                               GetQuestionPos(), WHITE, 0, 200, !game::IsRunning(), true) == NORMAL_EXIT) //TODO should have no limit? but crashes if going beyond screen limit...
     O->ChangeValue(String);
 

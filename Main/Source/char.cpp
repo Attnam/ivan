@@ -4088,7 +4088,7 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
 
         if(CheckGround && CheckForUsefulItemsOnGround())
           return true;
-        
+
         if(!Leader || Leader!=PLAYER || (Leader==PLAYER && ivanconfig::GetHoldPosMaxDist()==0)){ // this lets all pets stay put if hold pos is > 0
           if(MayMoveRandomly){
             if(MoveRandomly()) // one has heard that an enemy is near but doesn't know where
@@ -12395,7 +12395,7 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
   }
 }
 
-void character::ReceiveAcidGas(long Volume)
+void character::ReceiveFlames(long Volume)
 {
   if(!Volume)
     return;
@@ -12404,27 +12404,34 @@ void character::ReceiveAcidGas(long Volume)
   {
     bodypart* BodyPart = GetBodyPart(c);
 
-    if(BodyPart)
+    if(BodyPart && BodyPart->GetMainMaterial())
     {
-      BodyPart->AddFluid(liquid::Spawn(SULPHURIC_ACID, Volume), CONST_S("skin"), 0, true);
+      if(BodyPart->CanBeBurned()
+         && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+         && !BodyPart->IsBurning())
+      {
+        BodyPart->TestActivationEnergy(Volume);
+      }
+      else if(BodyPart->IsBurning())
+        BodyPart->GetMainMaterial()->AddToThermalEnergy(Volume);
     }
   }
-}
 
-void character::ReceiveFireGas(long Volume)
-{
-  if(!Volume)
-    return;
-
-  int CritChance = 10;
-  if(Volume > 1)
+  for(int c = 0; c < GetEquipments(); ++c)
   {
-    CritChance -= (int)log10(Volume);
-  }
+    item* Equipment = GetEquipment(c);
 
-  for(int c = 0; c < BodyParts; ++c)
-  {
-    ReceiveBodyPartDamage(0, 1, FIRE, c, YOURSELF, false, !RAND_N(CritChance), false);
+    if(Equipment)
+    {
+      if(Equipment->CanBeBurned()
+         && (Equipment->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+         && !Equipment->IsBurning())
+      {
+        Equipment->TestActivationEnergy(Volume);
+      }
+      else if(Equipment->IsBurning())
+        Equipment->GetMainMaterial()->AddToThermalEnergy(Volume);
+    }
   }
 }
 
@@ -12549,6 +12556,12 @@ truth character::ReceiveSirenSong(character* Siren)
                     CHAR_NAME(DEFINITE), What->CHAR_NAME(INDEFINITE), Siren->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
       else
         ADD_MESSAGE("You hear a beautiful song.");
+
+      if(Siren->GetConfig() == AMBASSADOR_SIREN)
+      {
+        Siren->TeleportRandomly(true);
+        ADD_MESSAGE("%s disappears!", Siren->CHAR_NAME(DEFINITE));
+      }
     }
     else
     {

@@ -460,7 +460,7 @@ void liquid::TouchEffect(item* Item, cfestring& LocationName)
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
 
-  if(Item->IsBurning() && !GetHotness())
+  if(Item->IsBurning() && !GetHotness() && !GetExplosivePower())
     Item->FightFire(this, LocationName, Volume);
 
   if(GetHotness())

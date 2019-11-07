@@ -510,8 +510,9 @@ void silva::PrayGoodEffect()
       );
 
     lsquare* Square = PLAYER->GetLSquareUnder();
+    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 200 + RAND() % 400));
+    Square->LiquidRain(Beam, WATER);
 
-    Square->WaterRain(Beam);
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
   }
   else if(!game::GetCurrentLevel()->IsOnGround())

@@ -164,6 +164,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
         Entry.Resize(iLim-1);
       Entry<<" "; //space between "columns"
       Option[c]->DisplayValue(Entry);
+      Entry.Resize(iLim+30);
 
       if(fsLastCategory!=Option[c]->fsCategory){
         List.AddEntry(Option[c]->fsCategory, WHITE, 0, NO_IMAGE, false);

@@ -4800,6 +4800,7 @@ gas
     BreatheMessage = "It smells like mustard here.";
     Effect = EFFECT_MUSTARD_GAS;
     StepInWisdomLimit = 8;
+    CategoryFlags = Base|IS_SCARY;
   }
 
   Config SLEEPING_GAS;
@@ -4842,21 +4843,21 @@ gas
     AttachedGod = SCABIES;
     HardenedMaterial = SULPHURIC_ACID;
     Effect = EFFECT_ACID_GAS;
-    EffectStrength = 2;
-    BreatheMessage = "Your skin burns!";
+    EffectStrength = 50;
+    BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }
 
   Config FIRE_GAS;
   {
-    Color = rgb16(255, 69, 0);
+    Color = rgb16(225, 25, 25);
     Emitation = rgb24(150, 120, 90);
-    NameStem = "burning vapours";
-    Alpha = 175;
+    NameStem = "burning vapors";
+    Alpha = 100;
     AttachedGod = LEGIFER;
     HardenedMaterial = NAPALM;
     Effect = EFFECT_FIRE_GAS;
-    BreatheMessage = "You burn!";
+    BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }
 }
@@ -5831,7 +5832,7 @@ liquid
     RustModifier = 0;
     PriceModifier = 750;
     ConsumeType = CT_MINERAL;
-    Color = rgb16(207, 16, 32);
+    Color = rgb16(161, 36, 36);
     Emitation = rgb24(150, 120, 90);
     NameStem = "lava";
     AttachedGod = INFUSCOR;
@@ -5849,12 +5850,12 @@ liquid
     StrengthValue = 1;
     NutritionValue = 5;
     RustModifier = 0;
-    Color = rgb16(255, 69, 0);
+    Color = rgb16(255, 127, 0);
     NameStem = "napalm";
     Alpha = 150;
     Flexibility = 45;
     AttachedGod = INFUSCOR;
-    Hotness = 50;
+    Hotness = 150;
     ConsumeWisdomLimit = 4;
     PriceModifier = 100;
     InteractionFlags = Base|AFFECT_INSIDE;

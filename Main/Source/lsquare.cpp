@@ -2826,7 +2826,7 @@ truth lsquare::AcidRain(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::WaterRain(const beamdata& Beam)
+truth lsquare::LiquidRain(const beamdata& Beam, int Material)
 {
   character* Character = GetCharacter();
   if(Character)
@@ -2846,7 +2846,7 @@ truth lsquare::WaterRain(const beamdata& Beam)
 
     for(int c = 0; c < StackSize; ++c)
     {
-      Stack[c]->AddRain(liquid::Spawn(WATER, 1000), Speed, Team, true);
+      Stack[c]->AddRain(liquid::Spawn(Material, 1000), Speed, Team, true);
       Stack[c]->Flags &= ~IN_SQUARE_STACK;
     }
 
@@ -3122,6 +3122,8 @@ truth lsquare::Webbing(const beamdata& Beam)
       if(Character->DrinkMagic(Beam))
         return false;
     }
+    if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(Character);
   }
   if(!IsFlyable())
     return false;

@@ -7141,7 +7141,7 @@ int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
   int Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage,
                                  ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
-  if(Return != HAS_DODGED && Return != HAS_BLOCKED)
+  if(Return != HAS_DODGED && Return != HAS_BLOCKED && (!RAND_2 || Critical))
   {
     if(IsPlayer())
       ADD_MESSAGE("%s releases a cloud of fumes as you strike %s.", CHAR_DESCRIPTION(DEFINITE), GetObjectPronoun().CStr());

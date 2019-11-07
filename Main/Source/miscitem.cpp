@@ -2150,9 +2150,10 @@ truth mine::CheckPickUpEffect(character* Picker)
   if(WillExplode(0))
   {
     // Allow the player to sometimes defuse the mine.
-    if(!RAND_N(80 / Max(Picker->GetAttribute(DEXTERITY), 1)))
+    if(Picker-> IsPlayer() && !RAND_N(80 / Max(Picker->GetAttribute(DEXTERITY), 1)))
     {
       SetIsActive(false);
+      ADD_MESSAGE("You successfully defuse %s.", CHAR_NAME(DEFINITE));
       return true;
     }
 

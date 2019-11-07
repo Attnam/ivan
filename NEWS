@@ -27,6 +27,9 @@ Changes:
 * Make amulets easily recognizable by color.
 * Land mines can now be sometimes defused if you levitate over and pick them up.
 * Willpower now protects against some hostile magic.
+* Add autopick regex.
+* An option to show info about gods now remembers the god's last reaction to prayer.
+* Some items now have descriptions, accessed by 'F1' command.
 
 Fixes:
 * Decos no longer lets you steal from him.
@@ -38,6 +41,14 @@ Fixes:
 * Fix some quest messages not being saved as already displayed.
 * Reveal gas traps when you step on them.
 * Fix several places where panic immunity or disease immunity was not respected.
+* Fix several crafting bugs, hopefully preventing crashes.
+* Fix Terra not offering priestly services after you killed Lobh-se.
+* Spill more water over a burning player when they pray to Silva, so ther's
+  a better chance to be extinguished.
+* Prevent long strings in config options from overflowing when displayed.
+* Prevent building features in owned rooms.
+* Better help for crafting actions.
+* Explosive liquids can no longer be used to douse flames.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of
