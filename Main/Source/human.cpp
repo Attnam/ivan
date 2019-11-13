@@ -650,6 +650,25 @@ void petrus::BeTalkedTo()
     return;
   }
 
+  if(PLAYER->HasMuramasa() && PLAYER->HasMasamune())
+  {
+    if(game::TruthQuestion(CONST_S("Report your actions in the kingdom of Aslona? [y/N]"), REQUIRES_ANSWER))
+    {
+      game::PlayVictoryMusic();
+      game::TextScreen(CONST_S("TODO:\n"
+                               "thou shalt lead my armoies and destroy Aslona\n"
+                               "the end of your content life.\n\nYou are victorious!"));
+
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("helped Attnamese armies to conquer the dying Aslona");
+      AddScoreEntry(Msg, 3, false);
+      game::End(Msg);
+      return;
+    }
+  }
+
   if(PLAYER->HasGoldenEagleShirt())
   {
     ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Mayst thou be blessed by Valpurus for the rest of thy life! "
@@ -5043,7 +5062,7 @@ void necromancer::BeTalkedTo()
 
   if(game::GetXinrochTombStoryState() == 1)
   {
-    if(PLAYER->HasShadowVeil() && PLAYER->RemoveShadowVeil())
+    if(PLAYER->HasShadowVeil() && PLAYER->RemoveShadowVeil(this))
     {
       game::TextScreen(CONST_S("\"At last I can make my escape from Petrus' wretched clutches!\"\n\n"
                                "Anmah takes the shadow veil from you and seems completely lost in\n"
@@ -5742,14 +5761,7 @@ void zombie::PostConstruct()
 
 truth orc::MoveRandomly()
 {
-  if(GetConfig() == REPRESENTATIVE)
-  {
-    return MoveRandomlyInRoom();
-  }
-  else
-  {
-    return humanoid::MoveRandomly();
-  }
+  return GetConfig() == REPRESENTATIVE ? MoveRandomlyInRoom() : humanoid::MoveRandomly();
 }
 
 void orc::PostConstruct()
@@ -6789,7 +6801,7 @@ void goblin::GetAICommand()
 
 void werewolfwolf::GetAICommand()
 {
-  if(GetConfig() == DRUID)
+  if(GetConfig() == DRUID && !RAND_N(4))
     if(CheckAIZapOpportunity())
       return;
 
@@ -6798,7 +6810,7 @@ void werewolfwolf::GetAICommand()
 
 truth humanoid::CheckAIZapOpportunity()
 {
-  if(!HasAUsableArm() || !CanZap() || !RAND_2 || StateIsActivated(CONFUSED))
+  if(!HasAUsableArm() || StateIsActivated(CONFUSED))
     return false;
   else
     return character::CheckAIZapOpportunity();
@@ -7041,7 +7053,7 @@ void aslonawizard::GetAICommand()
     return;
   }
 
-  if(CheckAIZapOpportunity())
+  if(!RAND_2 && CheckAIZapOpportunity())
     return;
 
   if(NearestEnemy && (NearestEnemyDistance < 10 || StateIsActivated(PANIC)) && RAND() & 3)
@@ -7141,7 +7153,7 @@ int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
   int Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage,
                                  ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
-  if(Return != HAS_DODGED && Return != HAS_BLOCKED && (!RAND_2 || Critical))
+  if(Return != HAS_DODGED && Return != HAS_BLOCKED && GetLSquareUnder()->IsFlyable())
   {
     if(IsPlayer())
       ADD_MESSAGE("%s releases a cloud of fumes as you strike %s.", CHAR_DESCRIPTION(DEFINITE), GetObjectPronoun().CStr());
@@ -7159,7 +7171,10 @@ int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
       case 4: GasMaterial = FIRE_GAS; break;
     }
 
-    GetLevel()->GasExplosion(gas::Spawn(GasMaterial, 100), GetLSquareUnder(), this);
+    if(Critical)
+      GetLevel()->GasExplosion(gas::Spawn(GasMaterial, 100), GetLSquareUnder(), this);
+    else
+      GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial, 100));
   }
 
   return Return;
@@ -7234,7 +7249,13 @@ void aslonawizard::BeTalkedTo()
       game::TextScreen(CONST_S("\"TODO:\"\n\n"
                                "\"Go to the goblin fort and bring back alchemical notebook.\n"
                                "We'll cook us some mustard gas against the rebel scum.\"\n"));
-      // bring alchemy book
+
+      game::LoadWorldMap();
+      v2 GoblinPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+      game::GetWorldMap()->GetWSquare(GoblinPos)->ChangeOWTerrain(goblinfort::Spawn());
+      game::GetWorldMap()->RevealEnvironment(GoblinPos, 1);
+      game::SaveWorldMap();
+
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
 
@@ -7271,7 +7292,13 @@ void aslonacaptain::BeTalkedTo()
       game::TextScreen(CONST_S("\"TODO:\"\n\n"
                                "\"Go to the Pyramid and bring me a nuke. Be careful, the Pyramid\n"
                                "will be dangerous, so it's probably good to go there later.\"\n"));
-      // bring nuke
+
+      game::LoadWorldMap();
+      v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
+      game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
+      game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
+      game::SaveWorldMap();
+
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
 
@@ -7302,7 +7329,13 @@ void aslonapriest::BeTalkedTo()
       game::TextScreen(CONST_S("\"TODO:\"\n\n"
                                "\"Go to the fungal cave and bring me weeping obsidian shard.\n"
                                "We need that clean water for our citizens.\"\n"));
-      // bring weeping obsidian
+
+      game::LoadWorldMap();
+      v2 CavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
+      game::GetWorldMap()->GetWSquare(CavePos)->ChangeOWTerrain(fungalcave::Spawn());
+      game::GetWorldMap()->RevealEnvironment(CavePos, 1);
+      game::SaveWorldMap();
+
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"This is a placeholder message.\"");
 
@@ -7339,16 +7372,89 @@ void harvan::BeTalkedTo()
       game::SetRebelStoryState(2); // To have same StoryState values as Aslona.
       return;
     }
-    else if(game::GetRebelStoryState() == 5)
+    else if(PLAYER->HasMasamune())
     {
-      // TODO
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the noble katana named E-numa sa-am? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveMasamune(this);
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetRebelStoryState(game::GetRebelStoryState() + 3);
+        return;
+      }
     }
-    else if(PLAYER->HasAlchemyBook() || PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
+    else if(PLAYER->HasAlchemyBook())
     {
-      ADD_MESSAGE("\"This is a placeholder message.\"");
-      game::SetRebelStoryState(game::GetRebelStoryState() + 1);
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the alchemical notebook? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveAlchemyBook();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+        return;
+      }
+    }
+    else if(PLAYER->HasNuke())
+    {
+      if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveNuke();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+        return;
+      }
+    }
+    else if(PLAYER->HasWeepObsidian())
+    {
+      if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveWeepObsidian();
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+        return;
+      }
+    }
+    else if(game::GetRebelStoryState() >= 5)
+    {
+      if(game::GetStoryState() < 3)
+      {
+        game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                                 "\"Bring me Artorius!!!!!!!!!!\n"
+                                 "He's in trouble.\"\n"));
+
+        game::LoadWorldMap();
+        v2 BattlePos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
+        game::GetWorldMap()->GetWSquare(BattlePos)->ChangeOWTerrain(battlefield::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BattlePos, 1);
+        game::SaveWorldMap();
+
+        GetArea()->SendNewDrawRequest();
+        ADD_MESSAGE("\"Final quest!\"");
+        game::SetStoryState(3);
+        return;
+      }
+      else
+      {
+        // Does the player have prince Artorius in his team?
+        character* CrownPrince = 0;
+        for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+          if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
+            CrownPrince = p;
+
+        if(CrownPrince)
+        {
+          game::PlayVictoryMusic();
+          game::TextScreen(CONST_S("TODO:\n"
+                                   "thou shalt lead my armoies and destroy Aslona\n"
+                                   "the end of your content life.\n\nYou are victorious!"));
+
+          game::GetCurrentArea()->SendNewDrawRequest();
+          game::DrawEverything();
+          PLAYER->ShowAdventureInfo();
+          festring Msg = CONST_S("helped the rebels to win the civil war");
+          AddScoreEntry(Msg, game::GetRebelStoryState() == 8 ? 3 : 2, false); // Did the player do all quests just for rebels?
+          game::End(Msg);
+          return;
+        }
+      }
     }
   }
 
@@ -7372,10 +7478,59 @@ void lordregent::BeTalkedTo()
       game::SetAslonaStoryState(2);
       return;
     }
-    else if(game::GetAslonaStoryState() == 5)
+    else if(PLAYER->HasMuramasa())
     {
-      // TODO final quest
-      return;
+      if(game::TruthQuestion(CONST_S("Turn in the wicked katana named Asa'marum? [y/N]"), REQUIRES_ANSWER))
+      {
+        PLAYER->RemoveMuramasa(this);
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetAslonaStoryState(game::GetAslonaStoryState() + 3);
+        return;
+      }
+    }
+    else if(game::GetAslonaStoryState() >= 5)
+    {
+      if(game::GetStoryState() < 3)
+      {
+        game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                                 "\"Bring me Artorius!!!!!!!!!!\n"
+                                 "He's in trouble.\"\n"));
+
+        game::LoadWorldMap();
+        v2 BattlePos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
+        game::GetWorldMap()->GetWSquare(BattlePos)->ChangeOWTerrain(battlefield::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BattlePos, 1);
+        game::SaveWorldMap();
+
+        GetArea()->SendNewDrawRequest();
+        ADD_MESSAGE("\"Final quest!\"");
+        game::SetStoryState(3);
+        return;
+      }
+      else
+      {
+        // Does the player have prince Artorius in his team?
+        character* CrownPrince = 0;
+        for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+          if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
+            CrownPrince = p;
+
+        if(CrownPrince)
+        {
+          game::PlayVictoryMusic();
+          game::TextScreen(CONST_S("TODO:\n"
+                                   "thou shalt lead my armoies and destroy Aslona\n"
+                                   "the end of your content life.\n\nYou are victorious!"));
+
+          game::GetCurrentArea()->SendNewDrawRequest();
+          game::DrawEverything();
+          PLAYER->ShowAdventureInfo();
+          festring Msg = CONST_S("helped the royalists to win the civil war");
+          AddScoreEntry(Msg, game::GetAslonaStoryState() == 8 ? 3 : 2, false); // Did the player do all quests just for royalists?
+          game::End(Msg);
+          return;
+        }
+      }
     }
     else if(PLAYER->HasAlchemyBook() || PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
     {
@@ -7422,4 +7577,26 @@ void lordregent::SpecialBodyPartSeverReaction()
 
     TeleportRandomly(true);
   }
+}
+
+void child::BeTalkedTo()
+{
+  if(GetConfig() == KING &&
+     GetRelation(PLAYER) != HOSTILE &&
+     GetTeam() != PLAYER->GetTeam() &&
+     GetPos().IsAdjacent(PLAYER->GetPos())
+   ) // Prince Artorius will follow you back to Aslona.
+  {
+    ADD_MESSAGE("%s looks at you with hope. \"I want to go home. Will you take me home, %s?\"",
+                CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr());
+
+    ChangeTeam(PLAYER->GetTeam());
+  }
+
+  character::BeTalkedTo();
+}
+
+truth child::MoveRandomly()
+{
+  return GetConfig() == KING ? MoveRandomlyInRoom() : humanoid::MoveRandomly();
 }

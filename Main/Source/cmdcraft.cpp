@@ -139,13 +139,15 @@ bool craftcore::canBeCrafted(item* it){
   if(it->GetCategory()==POTION)
   {
     item* Bottle = dynamic_cast<potion*>(it);
-    if(Bottle && (Bottle->GetNameSingular() == "bottle" || Bottle->GetNameSingular() == "vial")){ //TODO really necessary the singular name check? excessive?
+    if(Bottle && (Bottle->GetNameSingular() == "bottle" || Bottle->GetNameSingular() == "vial")) //TODO really necessary the singular name check? excessive?
+    {
       if(!Bottle->GetSecondaryMaterial())
         return true;
       if( // extracting from corpses
           // TODO may be the "kind of action" (as a parameter for this func) could allow some specific materials only,  so a new action EXTRACT_FROM_CORPSE would allow only the ones below
          Bottle->GetSecondaryMaterial()->GetConfig()==SULPHURIC_ACID ||
-         Bottle->GetSecondaryMaterial()->GetConfig()==POISON_LIQUID
+         Bottle->GetSecondaryMaterial()->GetConfig()==POISON_LIQUID ||
+         Bottle->GetSecondaryMaterial()->GetConfig()==MAGIC_LIQUID
         )
         return true;
     }
@@ -2693,9 +2695,8 @@ struct srpPoison : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some poison");
-    desc << "Use a " << fsTool << " to " << action << " " << name << " from "
-      << fsCorpse << " into a " << fsBottle <<  ".";
+    init("extract","poison");
+    desc << "Use a " << fsTool << " to " << action << " " << name << " from a poisonous corpse into a " << fsBottle << ".";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2712,9 +2713,8 @@ struct srpAcid : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some sulphuric acid");
-    desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
-      << fsCorpse << " into a " << fsBottle <<  ".";
+    init("extract","acid");
+    desc << "Use a " << fsTool << " to " << action << " " << name << " from an acidic corpse into a " << fsBottle << ".";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2724,6 +2724,24 @@ struct srpAcid : public srpFluidsBASE{
   }
 };srpAcid rpAcid;
 
+struct srpMagic : public srpFluidsBASE{
+  virtual bool chkCorpse(const materialdatabase* blood, const materialdatabase* flesh){
+    return (blood->Effect == EFFECT_MUSHROOM || flesh->Effect == EFFECT_MUSHROOM ||
+            blood->Effect == EFFECT_MAGIC_MUSHROOM || flesh->Effect == EFFECT_MAGIC_MUSHROOM);
+  }
+
+  virtual void fillInfo(){
+    init("extract","raw magic");
+    desc << "Use a " << fsTool << " to " << action << " raw liquefied magic from a mushroom into a " << fsBottle <<  ".";
+  }
+
+  virtual bool work(recipedata& rpd){
+    iLiqCfg=MAGIC_LIQUID;
+
+    return srpFluidsBASE::work(rpd);
+  }
+};srpMagic rpMagic;
+
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrpAllRecipes;
 
@@ -2731,7 +2749,7 @@ void updateCraftDesc(){
   craftRecipes.EmptyDescription();
 
   float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
-  festring fsSkill="Crafting Skill: ";
+  festring fsSkill="\nCrafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
   sprintf(cSkill, "%.1f",fSkill);
   fsSkill<<cSkill;
@@ -2899,8 +2917,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpWorkBench);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Alchemy:", DARK_GRAY, 0, NO_IMAGE, false);
-  RP(rpPoison);
   RP(rpAcid);
+  RP(rpPoison);
+  RP(rpMagic);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Material crafting:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpDismantle);

@@ -94,7 +94,12 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_LYCANTHROPY:
     {
       if(!Char->StateIsActivated(DISEASE_IMMUNITY))
-        Char->BeginTemporaryState(LYCANTHROPY, Amount);
+      {
+        if(!RAND_N(Char->GetAttribute(ENDURANCE)))
+          Char->GainIntrinsic(LYCANTHROPY);
+        else
+          Char->BeginTemporaryState(LYCANTHROPY, Amount);
+      }
 
       break;
     }
@@ -167,7 +172,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
    case EFFECT_PANIC:
     {
-      if(!Char->StateIsActivated(FEARLESS))
+      if(!Char->StateIsActivated(FEARLESS) && Char->GetPanicLevel() > 0)
         Char->BeginTemporaryState(PANIC, Amount);
 
       break;

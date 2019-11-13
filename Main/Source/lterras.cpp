@@ -764,17 +764,37 @@ void door::Break()
 
 void door::ActivateBoobyTrap()
 {
+  if(BoobyTrap && GetLSquareUnder()->CanBeSeenByPlayer(true))
+    ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
+
   switch(BoobyTrap)
   {
-   case 1:
-    // Explosion
-    if(LSquareUnder->CanBeSeenByPlayer(true))
-      ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
+   case 1: // Explosion
+   {
+     BoobyTrap = 0;
+     GetLevel()->Explosion(0, "killed by an exploding booby-trapped door",
+                           GetPos(), 20 + RAND() % 5 - RAND() % 5);
+     break;
+   }
+   case 2: // Gas
+   {
+     int GasMaterial = MUSTARD_GAS;
+     switch (RAND_N(9))
+     {
+       case 0: GasMaterial = FART; break;
+       case 1: GasMaterial = SKUNK_SMELL; break;
+       case 2: GasMaterial = EVIL_WONDER_STAFF_VAPOUR; break;
+       case 3: GasMaterial = SLEEPING_GAS; break;
+       case 4: GasMaterial = TELEPORT_GAS; break;
+       case 5: GasMaterial = LAUGHING_GAS; break;
+       case 6: GasMaterial = ACID_GAS; break;
+       case 7: GasMaterial = FIRE_GAS; break;
+     }
 
-    BoobyTrap = 0;
-    GetLevel()->Explosion(0, "killed by an exploding booby trapped door",
-                          GetPos(), 20 + RAND() % 5 - RAND() % 5);
-    break;
+     BoobyTrap = 0;
+     GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial, 250));
+     break;
+   }
    case 0:
     break;
   }
@@ -782,7 +802,7 @@ void door::ActivateBoobyTrap()
 
 void door::CreateBoobyTrap()
 {
-  SetBoobyTrap(1);
+  SetBoobyTrap(!RAND_N(4) ? 2 : 1);
 }
 
 truth fountain::DipInto(item* ToBeDipped, character* Who)

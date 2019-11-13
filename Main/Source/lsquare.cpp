@@ -3125,8 +3125,12 @@ truth lsquare::Webbing(const beamdata& Beam)
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
       Beam.Owner->Hostility(Character);
   }
+
   if(!IsFlyable())
     return false;
+
+  if(Beam.Owner && GetRoom())
+    GetRoom()->HostileAction(Beam.Owner);
 
   web* Web = web::Spawn();
   Web->SetStrength(50);

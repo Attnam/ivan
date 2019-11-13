@@ -2095,14 +2095,14 @@ truth character::RemoveEncryptedScroll()
   return false;
 }
 
-truth character::RemoveShadowVeil()
+truth character::RemoveShadowVeil(character* ToWhom)
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsShadowVeil())
     {
       item* Item = *i;
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
 
@@ -2113,7 +2113,7 @@ truth character::RemoveShadowVeil()
     if(Item && Item->IsShadowVeil())
     {
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
   }
@@ -2219,6 +2219,76 @@ truth character::RemoveWeepObsidian()
     {
       Item->RemoveFromSlot();
       Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::HasMuramasa() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsMuramasa())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsMuramasa, 1);
+}
+
+truth character::RemoveMuramasa(character* ToWhom)
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsMuramasa())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      ToWhom->ReceiveItemAsPresent(Item);
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsMuramasa())
+    {
+      Item->RemoveFromSlot();
+      ToWhom->ReceiveItemAsPresent(Item);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::HasMasamune() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsMasamune())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsMasamune, 1);
+}
+
+truth character::RemoveMasamune(character* ToWhom)
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsMasamune())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      ToWhom->ReceiveItemAsPresent(Item);
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsMasamune())
+    {
+      Item->RemoveFromSlot();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
   }
@@ -2509,7 +2579,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
     if(AddEndLevel)
     {
       if(game::IsInWilderness())
-        Desc << " in the world map";
+        Desc << " in the wilderness";
       else
         Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
     }
@@ -6098,7 +6168,7 @@ void character::DrawPanel(truth AnimationDraw) const
   ++PanelPosY;
 
   if(game::IsInWilderness())
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Worldmap");
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wilderness");
   else
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "%s",
                  game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex()).CapitalizeCopy().CStr());
@@ -8548,6 +8618,11 @@ truth character::CheckZap()
   if(!CanZap())
   {
     ADD_MESSAGE("This monster type can't zap.");
+    return false;
+  }
+  if(GetAttribute(INTELLIGENCE) < 5)
+  {
+    ADD_MESSAGE("You are too dumb to operate any delicate magical devices.");
     return false;
   }
 
@@ -12896,7 +12971,7 @@ truth character::StateIsActivated (long What) const
 
 truth character::CheckAIZapOpportunity()
 {
-  if(!CanZap() || !IsHumanoid() || !IsEnabled())
+  if(!CanZap() || !IsHumanoid() || !IsEnabled() || GetAttribute(INTELLIGENCE) < 5)
     return false;
 
   // Check visible area for hostiles:

@@ -780,6 +780,11 @@ CHARACTER(punisher, humanoid)
 
 CHARACTER(child, humanoid)
 {
+ public:
+  virtual truth MoveRandomly();
+  virtual truth IsKing() const { return GetConfig() == KING; }
+ protected:
+  virtual void BeTalkedTo();
 };
 
 CHARACTER(bum, humanoid)

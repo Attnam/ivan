@@ -1324,7 +1324,7 @@ pcre *reAutoPickup=NULL;
 void game::UpdateAutoPickUpMatching() //simple matching syntax
 {
   afsAutoPickupMatch.clear();
-  
+
   bool bSimple=false;
   if(bSimple){ //TODO just drop the simple code? or start the string with something to let it be used instead of regex? tho is cool to let ppl learn regex :)
     if(ivanconfig::GetAutoPickUpMatching().GetSize()==0 || ivanconfig::GetAutoPickUpMatching()[0]=='!')return;
@@ -4802,7 +4802,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
         lsqr->KickAnyoneStandingHereAway();
 
       Player->PutToOrNear(Pos);
-      
+
       game::CheckAddAutoMapNote();
       game::CheckAutoPickup();
     }
@@ -5313,7 +5313,7 @@ int game::GetLevels()
 void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMsg)
 {
   if(InWilderness)
-    DeathMsg << " in the world map";
+    DeathMsg << " in the wilderness";
   else
     DeathMsg << " in " << GetCurrentDungeon()->GetLevelDescription(CurrentLevelIndex);
 

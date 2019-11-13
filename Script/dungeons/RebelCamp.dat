@@ -142,7 +142,7 @@ Dungeon REBEL_CAMP;
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       Character = cossack(REBEL_LIEUTENANT);
-      Times = 3;
+      Times = 5;
     }
 
     Square, Random NOT_IN_ROOM;
@@ -172,12 +172,13 @@ Dungeon REBEL_CAMP;
     Square, Random IN_ROOM;
     {
       Character = guard(REBEL);
-      Times = 1:3;
+      Times = 2:5;
     }
 
     Square, Random IN_ROOM;
     {
       Character = mysticfrog(LIGHT);
+      Times = 1:2;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;

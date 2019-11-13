@@ -1234,7 +1234,8 @@ truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !Enemy->TemporaryStateIsActivated(PANIC) && !(RAND() % 2))
+  if(!IsBroken() && Enemy->IsEnabled() && !Enemy->TemporaryStateIsActivated(PANIC) &&
+     Enemy->GetPanicLevel() > (RAND() % (50 - Min(Hitter->GetAttribute(MANA), 49))))
   {
     if(Hitter)
     {
@@ -1772,16 +1773,26 @@ truth masamune::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(IsEvil)
     {
       for(int c = 0; c < STATES; ++c)
-        if(1 << c != PANIC)
+      {
+        // Remove most temporary status effects, leaving only some negative ones.
+        if((1 << c != SLOW) && (1 << c != POISONED) &&
+           (1 << c != PANIC) && (1 << c != CONFUSED) &&
+           (1 << c != TELEPORT_LOCK) && (1 << c != PARASITE_TAPE_WORM) &&
+           (1 << c != PARASITE_MIND_WORM))
         {
           Enemy->DeActivateTemporaryState(1 << c);
 
           if(!IsEnabled())
             break;
         }
+      }
 
-      if(!Enemy->TemporaryStateIsActivated(PANIC))
+      // Terrify the evil doer and prevent them from escaping.
+      if(!Enemy->TemporaryStateIsActivated(PANIC) && !Enemy->TemporaryStateIsActivated(FEARLESS) &&
+         Enemy->GetPanicLevel() > (RAND() % (50 - Min(Hitter->GetAttribute(MANA), 49))))
         Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
+      else if(!Enemy->TemporaryStateIsActivated(TELEPORT_LOCK))
+        Enemy->BeginTemporaryState(TELEPORT_LOCK, 200 + RAND_N(500));
 
       if(Hitter)
       {

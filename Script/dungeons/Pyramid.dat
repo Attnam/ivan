@@ -397,6 +397,7 @@ Dungeon PYRAMID;
         Types
         {
           # = GLASS wall(BRICK_FINE);
+          _ = PLASTIC_STEEL decoration(PEDESTAL);
         }
       }
       {
@@ -405,6 +406,11 @@ Dungeon PYRAMID;
         #...#
         #...#
         #####
+      }
+
+      Square, Pos 5,5;
+      {
+        Items == nuke;
       }
     }
 
@@ -412,6 +418,8 @@ Dungeon PYRAMID;
     Room
     {
       Size = 7,7;
+      GenerateFountains = false;
+      AltarPossible = false;
       Shape = RECTANGLE;
 
       OTerrainMap
@@ -439,6 +447,8 @@ Dungeon PYRAMID;
     Room
     {
       Size = 7,7;
+      GenerateFountains = false;
+      AltarPossible = false;
       Shape = RECTANGLE;
 
       OTerrainMap
@@ -466,6 +476,8 @@ Dungeon PYRAMID;
     Room
     {
       Size = 7,7;
+      GenerateFountains = false;
+      AltarPossible = false;
       Shape = RECTANGLE;
 
       OTerrainMap

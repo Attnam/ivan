@@ -17,7 +17,7 @@ Changes:
 * Change structure of quests. Petrus now takes the encrypted scroll and gives
   you some alone time. If you chat with him again, you will receive the GC quest,
   or you can find other people to chat for other quests.
-* Add some new monsters, items, artifacts and materials.
+* Add some new monsters, items, artifacts, materials and crafting recipes.
 * Hotness can now be used to define materials that deal fire damage on contact,
   just like Acidicity for acidic materials.
 * Use GitHub app for LGTM.
@@ -30,6 +30,8 @@ Changes:
 * Add autopick regex.
 * An option to show info about gods now remembers the god's last reaction to prayer.
 * Some items now have descriptions, accessed by 'F1' command.
+* Add alternate door traps.
+* Prevent very dumb creatures from using wands.
 
 Fixes:
 * Decos no longer lets you steal from him.
@@ -49,6 +51,8 @@ Fixes:
 * Prevent building features in owned rooms.
 * Better help for crafting actions.
 * Explosive liquids can no longer be used to douse flames.
+* Wands of webbing were not causing hostility.
+* Fix horns of fear causing panic without checking the panic level of the victim.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

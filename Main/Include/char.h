@@ -309,13 +309,17 @@ class character : public entity, public id
   truth RemoveEncryptedScroll();
   truth HasShadowVeil() const;
   truth HasLostRubyFlamingSword() const;
-  truth RemoveShadowVeil();
+  truth RemoveShadowVeil(character*);
   truth HasAlchemyBook() const;
   truth RemoveAlchemyBook();
   truth HasNuke() const;
   truth RemoveNuke();
   truth HasWeepObsidian() const;
   truth RemoveWeepObsidian();
+  truth HasMuramasa() const;
+  truth RemoveMuramasa(character*);
+  truth HasMasamune() const;
+  truth RemoveMasamune(character*);
   truth IsPlayer() const { return Flags & C_PLAYER; }
   ulong GetFlags() const { return Flags; } //mainly for debugging
   truth Engrave(cfestring&);
@@ -982,6 +986,7 @@ class character : public entity, public id
   virtual truth CreateRoute();
   void TerminateGoingTo();
   virtual truth IsSpy() const { return false; }
+  virtual truth IsKing() const { return false; }
   truth CheckForFood(int);
   truth CheckForFoodInSquare(v2);
   virtual truth CheckIfSatiated() { return GetNP() > SATIATED_LEVEL; }

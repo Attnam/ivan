@@ -1086,9 +1086,9 @@ guard
       "\"What do you need?\"",
       "\"Trouble? Causing or having?\"",
       "\"Things have been bad since old king Othyr died.\"",
-      "\"Poor king Artorius. He's too young to rule a broken country.\"",
-      "\"Seges bless Lord Regent for standing by the young king and this country in their hour of need.\"",
-      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of king Artorius as well.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
+      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of prince Artorius as well.\"",
       "\"Lord Regent saved the kingdom, sure enough.\"",
       "\"Damn the rebel scum! We should hunt them down and hang them from the castle walls.\"",
       "\"I've heard the orc are stirring now, too. We should have burned down the freeholds when we had a chance.\"",
@@ -1127,8 +1127,8 @@ guard
       10,
       "@Dd says gravely: \"The king's death was a harsh lesson for all of us. We failed in our duty. It must not happen again.\"",
       "\"Things have been bad since old king Othyr died.\"",
-      "\"Poor king Artorius. He's too young to rule a broken country.\"",
-      "\"Seges bless Lord Regent for standing by the young king and this country in their hour of need.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
       "\"Lord Regent saved the kingdom, sure enough.\"",
       "\"Kings have been assassinated before, but this time... I don't know. It's different.\"",
       "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
@@ -1161,12 +1161,12 @@ guard
       "\"Trouble? Causing or having?\"",
       "\"Things have been bad since old king Othyr died.\"",
       "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
-      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"We must free crown prince Artorius from the clutches of that wretched Lord Regent.\"",
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
       "\"Everyone wants to know what really happened to the old king.\"",
-      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a king again.\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
@@ -6784,14 +6784,14 @@ cossack
     {
       10,
       "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
-      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"We must free young prince Artorius from the clutches of that wretched Lord Regent.\"",
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
       "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"Everyone wants to know what really happened to the old king.\"",
-      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a good king again.\"",
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"";
     }
     HostileReplies == "@Dd screams obscenities.";
@@ -6820,14 +6820,14 @@ cossack
     {
       10,
       "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
-      "\"We must free young king Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"We must free young prince Artorius from the clutches of that wretched Lord Regent.\"",
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
       "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
       "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
-      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young king is no longer a prisoner in his own castle.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a good king again.\"",
       "\"We all believe Harvan will lead us to victory. But we can't let it go to his head, right? Heh heh.\"";
     }
     HostileReplies == "@Dd screams obscenities.";
@@ -9466,16 +9466,11 @@ child
     HeadBitmapPos = 96, 415;
     HairColor = rgb16(36, 36, 36);
     ClothColor = rgb16(176, 0, 0);
-    DefaultName = "His Majesty King Artorius";
-    Adjective = "young";
-    NameSingular = "sovereign";
-    PostFix = "of Aslona";
-    Amulet = GOLD amulet(AMULET_OF_LIFE_SAVING);
-    Cloak = FABRIC cloak { Enchantment = 3; }
-    Belt = FABRIC belt { Enchantment = 3; }
-    RightRing = GOLD ring(RING_OF_FIRE_RESISTANCE);
-    LeftRing = GOLD ring(RING_OF_POISON_RESISTANCE);
-    RightBoot = SELKIE_SKIN boot { Enchantment = 3; }
+    DefaultName = "His Majesty crown prince Artorius";
+    NameSingular = "heir";
+    PostFix = "to the throne of Aslona";
+    Cloak = FABRIC cloak { Enchantment = 1; }
+    Belt = FABRIC belt { Enchantment = 1; }
     Sex = MALE;
     AttachedGod = SEGES;
     BloodMaterial = BLUE_BLOOD;
@@ -9485,8 +9480,6 @@ child
     CanBeCloned = false;
     IsPolymorphable = false;
     UndeadVersions = false;
-    IsExtraFragile = false;
-    AutomaticallySeen = false;
     CanRead = true;
     FriendlyReplies =
     {
@@ -10087,6 +10080,7 @@ harvan
   RightSWeaponSkillHits = 500;
   LeftSWeaponSkillHits = 200;
   PanicLevel = 0;
+  CriticalModifier = 4;
   TamingDifficulty = NO_TAMING;
   TotalVolume = 120000;
   TotalSize = 195;
@@ -10107,7 +10101,6 @@ harvan
     "\"TODO\"",
     "\"The point is there's no point.\"";
   }
-  /*Inventory = { 2, Random, horn(HEALING); }*/
 }
 
 lordregent
@@ -10182,5 +10175,4 @@ lordregent
     "\"TODO\"",
     "\"The point is there's no point.\"";
   }
-  /*Inventory = { 2, Random, horn(HEALING); }*/
 }

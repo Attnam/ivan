@@ -64,6 +64,11 @@ Dungeon BATTLE_FIELD;
       Times = 10;
     }
 
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Character = child(KING);
+    }
+
     Square, Random;
     {
       OTerrain = stairs(STAIRS_DOWN);

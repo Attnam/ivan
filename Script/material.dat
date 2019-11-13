@@ -4843,7 +4843,7 @@ gas
     AttachedGod = SCABIES;
     HardenedMaterial = SULPHURIC_ACID;
     Effect = EFFECT_ACID_GAS;
-    EffectStrength = 50;
+    EffectStrength = 25;
     BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }
@@ -4857,6 +4857,7 @@ gas
     AttachedGod = LEGIFER;
     HardenedMaterial = NAPALM;
     Effect = EFFECT_FIRE_GAS;
+    EffectStrength = 50;
     BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }
@@ -5321,7 +5322,7 @@ liquid
     Effect = EFFECT_PEPSI;
     ConsumeEndMessage = CEM_PEPSI;
     HitMessage = HM_PEPSI;
-    AttachedGod = MELLIS;
+    AttachedGod = MORTIFER;
     RustModifier = 200;
     Acidicity = 10;
     PriceModifier = 10000;
@@ -5406,6 +5407,7 @@ liquid
     Flexibility = 25;
     AttachedGod = LORICATUS;
     Stickiness = 250;
+    Hotness = 10;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;

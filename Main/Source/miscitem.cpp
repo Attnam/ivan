@@ -56,6 +56,10 @@ truth backpack::IsExplosive() const { return GetSecondaryMaterial() && GetSecond
 long backpack::GetTotalExplosivePower() const
 { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
+truth nuke::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
+long nuke::GetTotalExplosivePower() const
+{ return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
+
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
 //long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
@@ -82,6 +86,14 @@ col16 charmlyre::GetMaterialColorB(int) const { return MakeRGB16(150, 130, 110);
 col16 skullofxinroch::GetOutlineColor(int) const { return MakeRGB16(180, 0, 0); }
 
 alpha skullofxinroch::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+col16 weepobsidian::GetOutlineColor(int) const { return MakeRGB16(0, 0, 180); }
+
+alpha weepobsidian::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
@@ -2312,6 +2324,7 @@ truth horn::Apply(character* Blower)
             }
           }
           else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && !Audience->StateIsActivated(FEARLESS)
+                  && Audience->GetPanicLevel() > (RAND() % (50 - Min(PLAYER->GetAttribute(CHARISMA), 49)))
                   && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
           else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())
@@ -4152,4 +4165,44 @@ truth alchemybook::Read(character*)
 col16 alchemybook::GetMaterialColorA(int) const
 {
   return MakeRGB16(111, 64, 37);
+}
+
+truth nuke::Apply(character* Terrorist)
+{
+  if(IsExplosive())
+  {
+    if(Terrorist->IsPlayer())
+      ADD_MESSAGE("You attempt to arm %s, but you don't have the required eighteen-digit activation code.", CHAR_NAME(DEFINITE));
+    else if(Terrorist->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s fiddles with %s, but nothing seems to happen.", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+
+    return true;
+  }
+  else if(Terrorist->IsPlayer())
+    ADD_MESSAGE("%s unfortunately seems to be inoperative.", CHAR_NAME(DEFINITE));
+
+  return false;
+}
+
+void weepobsidian::Be()
+{
+  stone::Be();
+
+  if(Exists())
+  {
+    if(!RAND_N(1000))
+    {
+      beamdata Beam
+        (
+          0,
+          CONST_S("drowned by the tears of ") + CHAR_NAME(DEFINITE),
+          YOURSELF,
+          0
+        );
+      GetLSquareUnder()->LiquidRain(Beam, WATER);
+
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s releases torrential rain.", CHAR_NAME(DEFINITE));
+    }
+  }
 }

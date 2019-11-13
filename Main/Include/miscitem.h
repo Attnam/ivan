@@ -793,4 +793,27 @@ ITEM(alchemybook, holybook)
   virtual col16 GetMaterialColorA(int) const;
 };
 
+ITEM(nuke, materialcontainer)
+{
+ public:
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual truth IsNuke() const { return true; }
+  virtual truth IsExplosive() const;
+  virtual long GetTotalExplosivePower() const;
+};
+
+ITEM(weepobsidian, stone)
+{
+ public:
+  weepobsidian() { Enable(); }
+  virtual void Be();
+  virtual truth IsWeepObsidian() const { return true; }
+ protected:
+  virtual truth CalculateHasBe() const { return true; }
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 #endif

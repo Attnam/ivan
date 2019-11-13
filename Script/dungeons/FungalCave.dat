@@ -504,7 +504,6 @@ Dungeon FUNGAL_CAVE;
       Character = veterankamikazedwarf(MORTIFER);
     }
 
-    /* TODO: item in the middle of a lake */
     Room
     {
       Size = 11,7;
@@ -512,6 +511,11 @@ Dungeon FUNGAL_CAVE;
       DoorSquare = MYCELIUM solidterrain(DARK_GRASS_TERRAIN), 0;
       FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
       Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 5,3;
+      {
+        Items == weepobsidian;
+      }
     }
   }
 
