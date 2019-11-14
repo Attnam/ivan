@@ -155,6 +155,7 @@ lantern
   WallBitmapPos = 0, 192;
   AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 160;
+  DescriptiveInfo = "Often carried strapped on a backpack to leave your hands free, a lantern is invaluable when delving through the dark dungeons.";
 
   Config BROKEN;
   {
@@ -199,6 +200,7 @@ can /* materialcontainer-> */
   AllowedDungeons = { 10,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
                       REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A sturdy, hermetically-sealed container that will prevent the contents from spoiling.";
 }
 
 lump
@@ -222,6 +224,7 @@ lump
   AllowedDungeons = { 10,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
                       REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A shapeless chunk.";
 }
 
 meleeweapon
@@ -233,6 +236,7 @@ meleeweapon
   CanBeEnchanted = true;
   HasSecondaryMaterial = true;
   TeleportPriority = 500;
+  DescriptiveInfo = "An ugly instrument of killing.";
 
   Config LONG_SWORD;
   {
@@ -292,9 +296,7 @@ meleeweapon
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
     Alias = { 2, "longsword", "sword"; }
-    AllowedDungeons = { 9,
-                        NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, XINROCH_TOMB,
-                        BLACK_MARKET, MONDEDR, IRINOX, DARK_FOREST; }
+    DescriptiveInfo = "The staple of any fighter, the long sword makes an effective weapon. Critics denounce the trend for everyone to wield a long sword, citing that it leads to boring battle scenes and little originality in gear, but said critics likely don't have to wander dangerous dungeons and fight for their life.";
   }
 
   Config BROKEN|LONG_SWORD;
@@ -323,9 +325,6 @@ meleeweapon
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
                               50, 10, 5, 50, 50; }
     EnchantmentPlusChance = 10;
-    AllowedDungeons = { 9,
-                        NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, XINROCH_TOMB,
-                        BLACK_MARKET, MONDEDR, IRINOX, DARK_FOREST; }
   }
 
   Config TWO_HANDED_SWORD;
@@ -388,6 +387,7 @@ meleeweapon
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
     Alias = { 4, "greatsword", "great sword", "broadsword", "broad sword"; }
+    DescriptiveInfo = "An unusually large and heavy sword normally wielded with two hands. Favored by many barbaric warriors for the sheer power of its blows.";
   }
 
   Config BROKEN|TWO_HANDED_SWORD;
@@ -614,6 +614,7 @@ meleeweapon
     WieldedBitmapPos = 160, 96;
     EnchantmentPlusChance = 15;
     DamageFlags = PIERCE;
+    DescriptiveInfo = "A common, simple thrusting weapon.";
   }
 
   Config BROKEN|SPEAR;
@@ -687,6 +688,7 @@ meleeweapon
     WieldedBitmapPos = 160, 176;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A hatchet that can serve both as a weapon and a tool of many uses.";
   }
 
   Config BROKEN|AXE;
@@ -749,6 +751,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
+    DescriptiveInfo = "A long-hilted weapon combining the traits of an axe and a spear. Strong, but difficult to handle.";
   }
 
   Config BROKEN|HALBERD;
@@ -810,6 +813,7 @@ meleeweapon
     AttachedGod = LEGIFER;
     WieldedBitmapPos = 160, 192;
     EnchantmentPlusChance = 10;
+    DescriptiveInfo = "What maces lack in accuracy, they make up for in brute power.";
   }
 
   Config BROKEN|MACE;
@@ -871,6 +875,7 @@ meleeweapon
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 320;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "A heavy hammerhead atop a stout handle. This weapon can easily smash through the strongest of armor.";
   }
 
   Config BROKEN|WAR_HAMMER;
@@ -964,7 +969,7 @@ meleeweapon
     FormModifier = 75;
     StrengthModifier = 60;
     NameSingular = "dagger";
-    Alias = { 3, "knife", "cutter", "cut"; }
+    Alias = { 4, "knife", "cutter", "cut", "cutting tool"; }
     MainMaterialConfig = { 67,
                            DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
                            DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
@@ -1007,6 +1012,7 @@ meleeweapon
     WieldedBitmapPos = 160, 288;
     EnchantmentPlusChance = 25;
     DamageFlags = SLASH|PIERCE;
+    DescriptiveInfo = "A short blade suitable for quick strikes, throwing and even crafting.";
   }
 
   Config BROKEN|DAGGER;
@@ -1089,6 +1095,7 @@ meleeweapon
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH|PIERCE;
     Alias = { 2, "shortsword", "blade"; }
+    DescriptiveInfo = "The smaller cousin of the eternally popular long sword.";
   }
 
   Config BROKEN|SHORT_SWORD;
@@ -1175,6 +1182,7 @@ meleeweapon
     WieldedBitmapPos = 160, 16;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A straight sword with a long, broad blade designed to be wielded with one and a half hand.";
   }
 
   Config BROKEN|BASTARD_SWORD;
@@ -1246,6 +1254,7 @@ meleeweapon
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
     Alias = { 3, "battleaxe", "battle-axe", "great axe"; }
+    DescriptiveInfo = "An axe crafted for battle, not labor.";
   }
 
   Config BROKEN|BATTLE_AXE;
@@ -1308,6 +1317,7 @@ meleeweapon
     IsGoodWithPlants = true;
     EnchantmentPlusChance = 20;
     DamageFlags = SLASH;
+    DescriptiveInfo = "Normally used for crop harvesting, scythes can mow down enemies just as well.";
   }
 
   Config BROKEN|SCYTHE;
@@ -1425,7 +1435,8 @@ meleeweapon
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 16;
     EnchantmentPlusChance = 20;
-    Alias == "mallet";
+    Alias = { 2, "mallet", "blunt tool"; }
+    DescriptiveInfo = "A blunt tool useful for crushing skulls and forging metal.";
   }
 
   Config BROKEN|HAMMER;
@@ -1514,6 +1525,7 @@ meleeweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 160, 352;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "Hell hath no fury like a woman scorned, especially if she has a rolling pin in hand.";
   }
 
   Config BROKEN|ROLLING_PIN;
@@ -1547,6 +1559,7 @@ meleeweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "Great for food preparation and face smashing.";
   }
 
   Config BROKEN|FRYING_PAN;
@@ -1660,6 +1673,7 @@ meleeweapon
     WieldedBitmapPos = 160, 32;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH;
+    Alias == "meat cleaver";
   }
 
   Config BROKEN|MEAT_CLEAVER;
@@ -1704,6 +1718,7 @@ meleeweapon
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
+    DescriptiveInfo = "The runes seem to thirstily drink in enchantments.";
     Price = 500;
   }
 
@@ -1756,9 +1771,8 @@ meleeweapon
     WieldedBitmapPos = 176, 112;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
-    AllowedDungeons = { 7,
-                        BLACK_MARKET, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT,
-                        FUNGAL_CAVE, PYRAMID, BATTLE_FIELD; }
+    AllowedDungeons = { 2, BLACK_MARKET, DARK_FOREST; }
+    DescriptiveInfo = "A rare blade characterized by the fine craftsmanship of the far away land where it was forged.";
     IsTwoHanded = true;
   }
 
@@ -1780,9 +1794,7 @@ meleeweapon
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
                               50, 10, 5, 50, 50; }
     EnchantmentPlusChance = 10;
-    AllowedDungeons = { 7,
-                        BLACK_MARKET, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT,
-                        FUNGAL_CAVE, PYRAMID, BATTLE_FIELD; }
+    AllowedDungeons = { 2, BLACK_MARKET, DARK_FOREST; }
 }
 }
 
@@ -1810,6 +1822,7 @@ banana /* materialcontainer-> */
   IsValuable = false;
   IsSadistWeapon = true;
   AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
+  DescriptiveInfo = "Ugh, not bananas again! There was pretty much nothing but bananas to eat back in New Attnam, and you would finally like to try a different diet.";
 
   Config BROKEN;
   {
@@ -1845,6 +1858,7 @@ holybanana /* materialcontainer->banana-> */
   IsValuable = true;
   CanBePiled = false;
   IsMaterialChangeable = false;
+  DescriptiveInfo = "Oily Orpiv was an explorer turned merchant. His  commercial empire began its rise when on one expedition, he discovered a small village that never had to deal with the hardships of agriculture because of a seeming miraculous crop. Oily Orpiv had discovered the banana. Being a follower of Mellis, he saw the monetary potential in this new fruit, subjugated the people and turned them into a highly efficient banana production facility. He turned a quick profit that he soon used as investment for further business ventures. It is said that Oily Orpiv saved the third banana he ever saw (he ate the first and sold the second, claiming it was the first one) as a keepsake. When later in his life he became the champion of Mellis, this banana was imbued with powers both beneficial and deadly by Oily Orpiv's appreciative patron.";
 }
 
 justifier /* meleeweapon-> */
@@ -1961,6 +1975,7 @@ pickaxe /* meleeweapon-> */
   WieldedBitmapPos = 160, 64;
   EnchantmentPlusChance = 10;
   DamageFlags = PIERCE;
+  DescriptiveInfo = "Strike the earth!";
 
   Config BROKEN;
   {
@@ -1988,6 +2003,7 @@ armor
   IsAbstract = true;
   CanBePiled = false;
   CanBeEnchanted = true;
+  DescriptiveInfo = "Offering protection against the weapons, claws and carnassials of your many adversaries, it is invaluable to your continued life. Heavy armor might hinder your movements, though.";
 }
 
 bodyarmor /* armor-> */
@@ -2001,6 +2017,7 @@ bodyarmor /* armor-> */
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 144;
   TeleportPriority = 200;
+  DescriptiveInfo = "Most of one's vitals lie within the torso, so it is wise indeed to have them properly protected. Many a swordmaster had felt secure in their ability to defend against any opponent, only to receive a dagger to the kidneys from behind.";
 
   Config CHAIN_MAIL;
   {
@@ -2194,6 +2211,7 @@ bodyarmor /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SEGES;
     EnchantmentPlusChance = 2;
+    DescriptiveInfo = "Traditionally crafted and worn by members of the Monastic Order of the Haemophiliac Knights, this cuirass boosts one's bodily endurance.";
     Alias = { 5, "AoGH", "armour", "life", "health", "endurance"; }
     TorsoArmorBitmapPos = 32, 464;
     ArmArmorBitmapPos = 80, 464;
@@ -2269,6 +2287,7 @@ bodyarmor /* armor-> */
     ArmArmorBitmapPos = 80, 416;
     AthleteArmArmorBitmapPos = 80, 448;
     LegArmorBitmapPos = 16, 416;
+    DescriptiveInfo = "You know how dromedaries have one hump and camels have two? Ommels have eight, in a circular pattern. They are gargantuan yet docile herbivores that are remarkable in that their physiology seems reversed from almost all other animals. Their diet consists mostly of plants that to other animals (including humans) are poisonous at best, or even outright deadly on contact. While their meat is unsurprisingly vile and toxic, most of their waste products are extremely beneficial to other animals (still including humans). Ommels live in large herds headed by a single white-haired ommel, informally referred to as \"bristler\" due to the sharp spine-like quality their hair takes on as it turns white. Ommels have significantly larger lifespans than all humanoid races and a given herd will only have one bristler at a time, another male becoming a bristler only if the previous dies. Combined with the fact that bristlers do not shed their hair during the summer like normal ommels do, this renders armor made of their distinctive barbed hair incredibly rare.";
   }
 }
 
@@ -2338,6 +2357,7 @@ potion /* materialcontainer-> */
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   TeleportPriority = 200;
+  DescriptiveInfo = "You have heard that in some realms, the glass-blowing guild is so powerful that adventurers are required by law to destroy their bottles immediately after consuming the contents. You are glad that here, recycling is encouraged, even if that might mean cluttering your backpack with empty bottles.";
 
   Config VIAL;
   {
@@ -2354,6 +2374,7 @@ potion /* materialcontainer-> */
     MaterialConfigChances = { 11,
                               25, 75, 20, 10, 3, 1, 20, 5, 10, 10, 1; }
     Alias = { 2, "small potion", "phial"; }
+    DescriptiveInfo = "A tiny bottle good enough for a single sip.";
   }
 }
 
@@ -2375,6 +2396,7 @@ bananapeels
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
+  DescriptiveInfo = "Careful, someone might slip on it!";
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -2395,6 +2417,8 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
   IsValuable = false;
   DamageFlags = PIERCE;
   IsSadistWeapon = true;
+  DescriptiveInfo = "Sharp and dangerous to your feet. Maybe it could still be put back together?";
+
   Config VIAL;
   {
     NameSingular = "vial";
@@ -2417,6 +2441,7 @@ scroll
   WieldedBitmapPos = 176, 144;
   AllowEquip = false;
   TeleportPriority = 300;
+  DescriptiveInfo = "Words of Power written down for ease of use.";
 }
 
 scrollofteleportation /* scroll-> */
@@ -2562,6 +2587,7 @@ loaf
   AllowedDungeons = { 10,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
                       REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "Some processed food to sate your hunger.";
 }
 
 scrollofwishing /* scroll-> */
@@ -2624,6 +2650,8 @@ wand
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 1000;
   CanBeBurned = false;
+  BreakMsg = "releases its powers, causing a number of highly unexpected effects to occur around itself";
+  DescriptiveInfo = "A fragile rod filled to the brim with magic.";
 
   Config WAND_OF_POLYMORPH;
   {
@@ -2641,6 +2669,7 @@ wand
     AttachedGod = SCABIES;
     IsKamikazeWeapon = true;
     BreakMsg = "shatters, its pieces transforming into a myriad of exotic forms before vanishing";
+    DescriptiveInfo = "The target of this wand is not really transformed. It is shunted to a pocket dimension while the enchantments shift through a myriad of quantum variations on this reality, substantiating what the target could have been if a tiny change was introduced millions of years ago.";
   }
 
   Config WAND_OF_STRIKING;
@@ -2657,6 +2686,7 @@ wand
     AttachedGod = INFUSCOR;
     IsKamikazeWeapon = true;
     BreakMsg = "explodes, releasing all of its energy at once";
+    DescriptiveInfo = "Loaded with raw destructive magic, this wand is highly popular among the wandslingers in the western lands.";
   }
 
   Config WAND_OF_FIRE_BALLS;
@@ -2674,6 +2704,7 @@ wand
     BreakEffectRangeSquare = 0;
     IsKamikazeWeapon = true;
     BreakMsg = "turns into a fiery ball of rapidly expanding plasma";
+    DescriptiveInfo = "A fire elemental is trapped inside and tormented every time you zap this wand. Its wrath is then channeled into a mighty explosion. It might not be very understanding should it ever break free.";
   }
 
   Config WAND_OF_TELEPORTATION;
@@ -2691,6 +2722,7 @@ wand
     AttachedGod = SOPHOS;
     BreakEffectRangeSquare = 9;
     BreakMsg = "breaks apart and a thousand splinters scatter in random directions, each cutting a tiny hole in space and time";
+    DescriptiveInfo = "A hole was torn in the space-time continuum and then sealed in this wand. It's absolutely, perfectly, hundred percent safe. Really.";
   }
 
   Config WAND_OF_HASTE;
@@ -2706,6 +2738,7 @@ wand
     BeamEffect = BEAM_HASTE;
     AttachedGod = CLEPTIA;
     BreakMsg = "breaks, speeding up everything around it";
+    DescriptiveInfo = "A bit of extra time saved up for when you really need it.";
   }
 
   Config WAND_OF_SLOW;
@@ -2736,6 +2769,7 @@ wand
     BeamEffect = BEAM_RESURRECT;
     AttachedGod = SEGES;
     BreakMsg = "breaks, releasing countless green rays of highly compressed life energy";
+    DescriptiveInfo = "Filled with life energy drained from a thousand sacrifices and capable of bringing back the dead, this wand is rare and powerful. All claims of permanent brain damage, demonic possession or other side effects of resurrection are unsubstantiated.";
     Alias = { 2, "heal", "healing"; }
   }
 
@@ -2752,7 +2786,8 @@ wand
     BeamEffect = BEAM_DOOR_CREATION;
     BeamStyle = SHIELD_BEAM;
     AttachedGod = LORICATUS;
-    BreakMsg = "releases its powers, causing a number of highly unexpected effects to occur around itself";
+    BreakMsg = "releases its powers, thousands of spectral doors manifesting all around";
+    DescriptiveInfo = "Transmuting the surrounding matter and focusing it through a Platonic ideal of a gateway, this wand can manifest door out of the proverbial thin air.";
     Alias == "wand of door";
   }
 
@@ -2787,6 +2822,7 @@ wand
     AttachedGod = INFUSCOR;
     BreakEffectRangeSquare = 0;
     BreakMsg = "breaks up, its dispersing splinters multiplying infinitely";
+    DescriptiveInfo = "The pinnacle of alchemical expertise, this wand allows one to fabricate a perfect, permanent duplicate of nearly anything imaginable.";
   }
 
   Config WAND_OF_LIGHTNING;
@@ -2805,6 +2841,7 @@ wand
     BreakEffectRangeSquare = 9;
     IsKamikazeWeapon = true;
     BreakMsg = "breaks and releases all of its stored electricity at once";
+    DescriptiveInfo = "The actinic glare of a lightning bolt searing through a darkened corridor would be enough to strike terror in the most stout of warrior. One can only imagine their terror when the bolt, which seemed to just miss them, bounces off a wall to strike them from behind! In the past, massive thunderstorm farms were necessary to produce and harvest the lightning stored in this wand. Nowadays, the progress in the techniques of hattifattener breeding allowes for much quicker, cheaper and more environmental friendly manufacture.";
   }
 
   Config WAND_OF_ACID_RAIN;
@@ -2822,6 +2859,7 @@ wand
     BreakEffectRangeSquare = 1;
     IsKamikazeWeapon = true;
     BreakMsg = "vaporizes in an instant, unleashing a deadly rainstorm of polluted acid";
+    DescriptiveInfo = "The magic of this wand catalyses a reaction between the water vapors in the air and the naturally occurring nitrogen. The resulting nitric acid condenses into larger particles, forming a caustic shower that wreaks havoc on anything caught inside.";
     Alias == "wand of acid";
   }
 
@@ -2841,6 +2879,7 @@ wand
     AttachedGod = INFUSCOR;
     BreakEffectRangeSquare = 0;
     BreakMsg = "shatters, its slivers reflecting each other recursively ad infinitum";
+    DescriptiveInfo = "The enchantments of this wand construct an astral simulacrum of the target. Unfortunately, the false matter of the duplicate is only metastable and will eventually discorporate.";
   }
 
   Config WAND_OF_NECROMANCY;
@@ -2856,6 +2895,7 @@ wand
     BeamEffect = BEAM_NECROMANCY;
     AttachedGod = INFUSCOR;
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
+    DescriptiveInfo = "Dabblers who lack the motivation or ability to learn proper incantations use this wand to infuse the fallen bodies of their foes with a sick parody of life. Contemporary necromantic science is unfortunately unable to induce undeath in non-humanoid corpses, though at least one research team has recently reported a successful animation of a puppy skeleton.";
     Alias = { 2, "necromancy", "undeath"; }
   }
 
@@ -2872,6 +2912,7 @@ wand
     BeamEffect = BEAM_WEBBING;
     AttachedGod = SCABIES;
     BreakMsg = "breaks, sending strands of spider silk everywhere";
+    DescriptiveInfo = "When you zap this wand, a spray of special high-pressure shear-thinning liquid is ejected from an extradimensional reservoir. On contact with air, this long-chain polymer rapidly knits and forms an extremely tough webbing.";
   }
 
   Config WAND_OF_ALCHEMY;
@@ -2887,6 +2928,7 @@ wand
     BeamEffect = BEAM_ALCHEMY;
     AttachedGod = MELLIS;
     BreakMsg = "explodes in a puff of golden dust";
+    DescriptiveInfo = "Monetary value, as every scholar of Mellis knows, is an intrinsic quality of every object, just as its temperature or mass. This wand can dispose of the unnecessary substance of an item, transferring its value to you directly.";
   }
 
   Config WAND_OF_SOFTEN_MATERIAL;
@@ -2902,6 +2944,7 @@ wand
     BeamEffect = BEAM_SOFTEN_MATERIAL;
     AttachedGod = SCABIES; /* Change to SOLICITUS? */
     BreakMsg = "turns itself into dust";
+    DescriptiveInfo = "Inscribed with the same magic formula as a scroll of harden material, except backwards.";
   }
 }
 
@@ -2963,6 +3006,7 @@ kiwi
   AllowedDungeons = { 7,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, FUNGAL_CAVE,
                       DARK_FOREST, BLACK_MARKET; }
+  DescriptiveInfo = "Kiwis would be more popular if the plants didn't try to eat the harvesters.";
 }
 
 pineapple
@@ -2984,6 +3028,7 @@ pineapple
   AllowedDungeons = { 10,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
                       REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A delicious fruit native to the vast pine forests of the far north.";
 }
 
 palmbranch
@@ -3036,6 +3081,7 @@ whip /* meleeweapon-> */
   DamageFlags = SLASH;
   IsSadistWeapon = true;
   Alias = { 4, "BDSM", "love", "porn", "sex"; }
+  DescriptiveInfo = "Favored by slave-masters and mistresses of Nefas.";
 
   Config BROKEN;
   {
@@ -3112,6 +3158,7 @@ holybook
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1000;
+  DescriptiveInfo = "A tome of myths, rituals, allegories, parables and ancient wisdom. The gods are fickle, but this might help you understand them more.";
 }
 
 fiftymillionroubles
@@ -3132,6 +3179,7 @@ fiftymillionroubles
   AttachedGod = MELLIS;
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
+  DescriptiveInfo = "Jackpot! You're filthy rich, you lucky bastard!"; /* maybe in Soviet Russia */
 }
 
 oillamp
@@ -3156,6 +3204,7 @@ oillamp
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 128;
   CanBeBurned = false;
+  DescriptiveInfo = "You have heard stories about genies trapped in this kind of a lamp.";
 }
 
 stone
@@ -3191,6 +3240,7 @@ stone
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
   HasNormalPictureDirection = false;
+  DescriptiveInfo = "It's a rock, duh.";
 
   Config SOL_STONE;
   {
@@ -3202,6 +3252,7 @@ stone
     IsValuable = true;
     TeleportPriority = 2000;
     Alias = { 0; }
+    DescriptiveInfo = "This rock seems to be floating just above the ground.";
   }
 
   Config INGOT;
@@ -3211,6 +3262,7 @@ stone
     NameSingular = "ingot";
     IsValuable = true;
     Alias == "metal";
+    DescriptiveInfo = "Useful in crafting.";
   }
 }
 
@@ -3368,6 +3420,7 @@ shield /* armor-> */
   WieldedBitmapPos = 128, 32;
   EnchantmentPlusChance = 15;
   Alias = { 2, "defense", "protection"; }
+  DescriptiveInfo = "A shield can both deflect attacks aside and provide a measure of defence against those that manage to connect.";
 
   Config BROKEN;
   {
@@ -3402,7 +3455,7 @@ shield /* armor-> */
     Possibility = 1;
     Adjective = "blessed";
     PostFix = "of the Phoenix";
-    Alias = { 0; }
+    Alias == "phoenix shield";
     MainMaterialConfig == PHOENIX_FEATHER;
     EnchantmentPlusChance = 2;
     StrengthModifier = 150;
@@ -3415,19 +3468,9 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    CanBeBroken = false; /* Prevent breaking, because dying when a strong attack first breaks the shield and then kills you feels really cheap. */
     Price = 2500;
-  }
-
-  Config BROKEN|PHOENIX_SHIELD;
-  {
-    Possibility = 1;
-    DefaultSize = 40;
-    FormModifier = 20;
-    StrengthModifier = 75;
-    BitmapPos = 48, 224;
-    WieldedBitmapPos = 128, 48;
-    EnchantmentPlusChance = 5;
-    GearStates = 0;
+    DescriptiveInfo = "A phoenix displayed or, langued and membered sable, on a field azure is emblazoned on this shield. According to the legends, it once belonged to Kuolee Kauheasti the Immortal Knight, who was killed in the battle of Prym after his shield arm was cut off.";
   }
 
   Config AEGIS_SHIELD;
@@ -4227,6 +4270,7 @@ belt /* armor-> */
   EnchantmentPlusChance = 10;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
+  DescriptiveInfo = "You should realize that your groin is the most valuable part of your body. Wait, or was it your head?";
 
   Config BROKEN;
   {
@@ -4550,6 +4594,7 @@ ring
     Price = 500;
     AttachedGod = LEGIFER;
     GearStates = SEARCHING;
+    DescriptiveInfo = "This ring bestows the diligent observational skills necessary to readily identify any hidden traps you might happen upon during your dungeoneering adventures.";
   }
 
   Config RING_OF_ACID_RESISTANCE;
@@ -4685,6 +4730,7 @@ amulet
   WieldedBitmapPos = 160, 112;
   HasNormalPictureDirection = false;
   CanBeBurned = false;
+  DescriptiveInfo = "A trinket imbued with magical power.";
 
   Config AMULET_OF_LIFE_SAVING;
   {
@@ -4696,6 +4742,7 @@ amulet
     Price = 5000;
     AttachedGod = SEGES;
     Alias = { 3, "AoLS", "longevity", "immortality"; }
+    DescriptiveInfo = "The most sure path to immortality is not to die. This amulet will help.";
   }
 
   Config AMULET_OF_ESP;
@@ -4732,6 +4779,7 @@ amulet
     GearStates = GAS_IMMUNITY|SWIMMING;
     Price = 2000;
     AttachedGod = SCABIES;
+    DescriptiveInfo = "This magical trinket provides a bubble of fresh air, protecting you from gases and drowning.";
     Alias = { 2, "amulet of unbreathing", "swimming"; }
   }
 
@@ -5223,7 +5271,7 @@ helmet
   CoverPercentile = 50;
   HelmetBitmapPos = 112, 416;
   EnchantmentPlusChance = 15;
-  SoundResistance = 0;
+  DescriptiveInfo = "A sturdy helmet can provide an excellent protection against hits to the head. Unfortunately, the sound of rain on it would soon drive you mad.";
 
   Config BROKEN;
   {
@@ -5502,6 +5550,7 @@ helmet
     AttachedGod = INFUSCOR;
     EnchantmentPlusChance = 2;
     Alias = { 3, "helmet of ESP", "helm of ESP", "cap of ESP"; }
+    DescriptiveInfo = "Purportedly, the helmet of telepathy was invented by witch-queen Yala, who was looking for a way to read the thoughts of her manservant and thus dispose of any with dirty fantasies. According to her memoirs, the enchantments were an utter failure as she never found a way to decipher the detected thoughts. She later decided to dispatch all her servants and use skeletons instead. However, the Society of Adventuring Gentlemen recognized the value in her research and cheaply bought the magical patent. They turned a quick profit on helmets alerting a cautious delver to any lurking dangers even through closed doors.";
   }
 
   Config BROKEN|HELM_OF_TELEPATHY;
@@ -5974,6 +6023,7 @@ turox /* meleeweapon-> */
   AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
   EnchantmentPlusChance = 2;
+  DescriptiveInfo = "It is said that when the siege of Prym drove the Shining Knights to desperation and they prepared for one last charge to break through the orcish hordes, their Lord Legifer smiled upon their bravery and blessed their maces with divine fire, naming them all Turox. The Shining Knights were slaughtered anyway, and the holy maces were lost.";
 
   Config BROKEN;
   {
@@ -6195,6 +6245,7 @@ encryptedscroll /* scroll-> */
   AttachedGod = MELLIS;
   IsQuestItem = true;
   CanBeBurned = false;
+  DescriptiveInfo = "This scroll contains a coded message for the eyes of the high priest Petrus only. Given to you by Richel Decos, the viceroy of New Attnam, it should be delivered posthaste to the Cathedral of Attnam.";
 }
 
 horn /* magicalinstrument-> */
@@ -6409,6 +6460,7 @@ carrot
   AllowedDungeons = { 12,
                       NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, MONDEDR,
                       REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST, FUNGAL_CAVE; }
+  DescriptiveInfo = "Beloved by bunnies and people with poor eyesight.";
 
   Config BROKEN;
   {
@@ -6435,6 +6487,7 @@ mango
   IsValuable = false;
   CanBeBroken = true;
   AllowedDungeons = { 3, DARK_FOREST, BLACK_MARKET, FUNGAL_CAVE; }
+  DescriptiveInfo = "Yummy!";
 
   Config BROKEN;
   {
@@ -6688,6 +6741,7 @@ holyhandgrenade
   Alias = { 3, "holy grenade", "hand grenade", "handgrenade"; }
   CanBePiled = false;
   CanBeBurned = false;
+  DescriptiveInfo = "And Saint Attila raised the hand grenade up on high, saying: \"O Lord, bless this Thy hand grenade that, with it, Thou mayest blow Thine enemies to tiny bits in Thy mercy.\" And the Lord spake, saying: \"First shalt thou take out the Holy Pin. Then, shalt thou count to three. No more. No less. Three shalt be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, nor either count thou two, excepting that thou then proceed to three. Five is right out. Once the number three, being the third number, be reached, then, lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in My sight, shall snuff it.\""; /* Monty Python and the Holy Grail */
 }
 
 daggerofvenom
@@ -7198,10 +7252,11 @@ celestialmonograph /* holybook-> */
   Roundness = 70;
   IsTwoHanded = true;
   CreateDivineConfigurations = false;
-  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  AttachedGod = NONE; /* or more accurately SOLICITUS */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
   Alias = { 3, "insight", "revelation", "truth"; }
+  DescriptiveInfo = "The forbidden holy book of Solicitus, the toppled god of atheism and hopeless situations. Even the most ardent of believers are said to loose their faith upon reading these sacrilegious words, though heretics might cherish the book as a form of absolution.";
 }
 
 materialmanual /* holybook-> */
@@ -7577,7 +7632,7 @@ eptyron /* meleeweapon-> */
   CanBePiled = false;
   Alias == "Eptyron";
   Price = 2500;
-  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  AttachedGod = NONE; /* or more accurately SOLICITUS */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
@@ -7651,6 +7706,7 @@ alchemybook /* holybook-> */
   IsMaterialChangeable = false;
   IsPolymorphable = false;
   IsPolymorphSpawnable = false;
+  CanBeBurned = true; /* To make it harder for the player. */
   CanBeCloned = false;
   CanBePiled = false;
   MainMaterialConfig == PAPYRUS;
@@ -7658,8 +7714,60 @@ alchemybook /* holybook-> */
   Roundness = 70;
   IsTwoHanded = true;
   CreateDivineConfigurations = false;
-  AttachedGod = LORICATUS;
+  AttachedGod = SOPHOS;
   WieldedBitmapPos = 176, 144;
+}
+
+nuke /* materialcontainer-> */
+{
+  DefaultSize = 200;
+  Possibility = 0;
+  Category = MISC;
+  DefaultMainVolume = 10000;
+  DefaultSecondaryVolume = 1309;
+  BitmapPos = 112, 0;
+  WieldedBitmapPos = 160, 144;
+  Roundness = 100;
+  Price = 500;
+  Adjective = "thaumic";
+  NameSingular = "bomb";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsQuestItem = true;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsKamikazeWeapon = true;
+  IsTwoHanded = true;
+  MainMaterialConfig == STEEL;
+  SecondaryMaterialConfig == URANIUM;
+  AttachedGod = MORTIFER;
+  Alias == "nuke";
+}
+
+weepobsidian /* stone-> */
+{
+  Possibility = 0;
+  Adjective = "weeping obsidian";
+  NameSingular = "shard";
+  Price = 500;
+  MainMaterialConfig == OBSIDIAN;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsQuestItem = true;
+  IsValuable = true;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  AttachedGod = SILVA;
 }
 
 muramasa /* meleeweapon-> */

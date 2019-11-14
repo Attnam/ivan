@@ -3619,7 +3619,7 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
-    "\"@Nu gone through spacetime portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
+    "\"@Nu gone through space-time portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
     "\"You can always find party in Lunethia. But in Soviet Russia, Party can always find you!\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
     "\"Lenin want @nu kill capitalists!\"";
@@ -9736,6 +9736,7 @@ nihil
   CanRead = true;
   UndeadVersions = false;
   UsesNutrition = false;
+  IgnoreDanger = true;
   AllowPlayerToChangeEquipment = false;
   Helmet = BLACK_DIAMOND helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
   Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
@@ -9757,7 +9758,7 @@ nihil
   TotalSize = 200;
   Sex = FEMALE;
   AttachedGod = NONE;
-  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY;
+  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY|FEARLESS;
   TamingDifficulty = NO_TAMING;
   MoveType = FLY;
   StandVerb = "flying";

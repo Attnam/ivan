@@ -354,7 +354,7 @@ void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
   case 0: Entry << "disabled";break;
   case 1: Entry << "immersive";break;
   case 2: Entry << "indicator";break;
-  case 3: Entry << "ind+color";break;
+  case 3: Entry << "indicator + color";break;
   case 4: Entry << "dynamic";break;
   }
 }
@@ -374,9 +374,9 @@ void ivanconfig::ShowMapDisplayer(const cycleoption* O, festring& Entry)
   switch(O->Value){
     case 0:Entry << "vanilla";break; //mmm... just not using xBRZ
     case 1:Entry << "xBRZ";break;
-    case 2:Entry << "imersive";break;
-    case 3:Entry << "imersive2";break;
-    case 4:Entry << "imersive3";break;
+    case 2:Entry << "immersive 1";break;
+    case 3:Entry << "immersive 2";break;
+    case 4:Entry << "immersive 3";break;
   }
 }
 
@@ -407,7 +407,7 @@ void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring
 //    Entry << ",";
 //    Entry << "x" << game::ItemUnderZoom(O->Value);
 
-    Entry << ",";
+    Entry << ", ";
     Entry << (game::ItemUnderHV(iCode) ? "horizontal" : "vertical");
   }
 }
