@@ -1775,7 +1775,7 @@ void game::DrawMapOverlay(bitmap* buffer)
           int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
           float fFrom=0.95;
           float fStep=0.15;
-          int iTot=1.0/fStep;
+          cint iTot=6; // was 1.0/fStep;
           col16 clMap[iTot];
           for(int i=0;i<iTot;i++){
             float f=fFrom -fStep*i;
@@ -3621,7 +3621,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
 
     if(CurrentBaseSaveFileName.GetSize() == 0)
     {
-      int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
+      cint iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;

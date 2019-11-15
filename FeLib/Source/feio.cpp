@@ -990,7 +990,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 //  static festring fsLastChangeDetector="_Last_Change_Detector_.sav";
 //  addFileInfo(fsLastChangeDetector.CStr());
 
-  int iTmSz=100;
+  cint iTmSz=100;
   struct stat attr;
   for(int i=0;i<vFiles.size();i++)
   {
