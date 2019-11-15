@@ -2749,7 +2749,7 @@ void updateCraftDesc(){
   craftRecipes.EmptyDescription();
 
   float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
-  festring fsSkill="\nCrafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
+  festring fsSkill="Crafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
   sprintf(cSkill, "%.1f",fSkill);
   fsSkill<<cSkill;
@@ -2900,7 +2900,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   bool bInitRecipes = vrpAllRecipes.size()==0;
 
   if(bInitRecipes){
-    craftRecipes.AddEntry(festring()+"Suspended crafting actions.", LIGHT_GRAY, 20, 0, true);
+    craftRecipes.AddEntry(festring()+"Suspended crafting actions", LIGHT_GRAY, 20, 0, true);
     craftRecipes.SetLastEntryHelp("Resume or remove already started crafting actions.");
   }
 

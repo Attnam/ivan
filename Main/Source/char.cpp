@@ -4484,10 +4484,15 @@ void character::ShowNewPosInfo() const
 
     if(GetLSquareUnder()->HasEngravings())
     {
-      if(CanRead())
-        ADD_MESSAGE("Something has been engraved here: \"%s\"", GetLSquareUnder()->GetEngraved());
-      else
-        ADD_MESSAGE("Something has been engraved here.");
+      cchar* Text = GetLSquareUnder()->GetEngraved();
+
+      if(Text[0] != '#') // Prevent displaying map notes.
+      {
+        if(CanRead())
+          ADD_MESSAGE("Something has been engraved here: \"%s\"", Text);
+        else
+          ADD_MESSAGE("Something has been engraved here.");
+      }
     }
   }
 

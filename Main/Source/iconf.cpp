@@ -25,259 +25,349 @@
 #include "bugworkaround.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
-                                          "player's default name",
+                                          "Player's default name",
+                                          "Pick a character name for all your future games. When left empty, the game will generate a random name if a random name generator pattern is configured, or otherwise ask you to pick a name whenever you start a new game.",
                                           "",
                                           &configsystem::NormalStringDisplayer,
                                           &DefaultNameChangeInterface);
 stringoption ivanconfig::FantasyNamePattern("FantasyNamePattern",
-                                          "random name generator pattern",
+                                          "Random name generator pattern",
+                                          /*festring() << "Set a pattern for the random fantasy name generator. When you start\n"
+                                                     << "a game with no pre-set name, the generator will create a name based\n"
+                                                     << "on this pattern. The letters s, v, V, c, B, C, i, m, M, D, and d\n"
+                                                     << "represent different types of random replacements. Everything else\n"
+                                                     << "is produced literally.\n\n"
+                                                     << "  s - generic syllable\n"
+                                                     << "  v - vowel\n"
+                                                     << "  c - consonant\n"
+                                                     << "  B - consonant or consonant combination suitable for beginning a word\n"
+                                                     << "  C - consonant or consonant combination suitable anywhere in a word\n"
+                                                     << "  i - insult\n"
+                                                     << "  m - mushy name\n"
+                                                     << "  M - mushy name ending\n"
+                                                     << "  D - consonant suited for a stupid person's name\n"
+                                                     << "  d - syllable suited for a stupid person's name (begins with a vowel)\n\n"
+                                                     << "All characters between parenthesis () are produced literally. For example,\n"
+                                                     << "the pattern \"s(dim)\", produces a random generic syllable followed by\n"
+                                                     << "\"dim\".\n"
+                                                     << "Characters between angle brackets <> produce patterns from the table above.\n"
+                                                     << "Imagine the entire pattern is wrapped in one of these.\n"
+                                                     << "In both types of groupings, a vertical bar | denotes a random choice.\n"
+                                                     << "Empty groups are allowed. For example, \"(foo|bar)\" produces either\n"
+                                                     << "\"foo\" or \"bar\". The pattern \"<c|v|>\" produces a constant, vowel,\n"
+                                                     << "or nothing at all.\n"
+                                                     << "An exclamation point ! means to capitalize the component that follows\n"
+                                                     << "it. For example, \"!(foo)\" will produce \"Foo\" and \"v!s\" will\n"
+                                                     << "produce a lowercase vowel followed by a capitalized syllable, like\n"
+                                                     << "\"eRod\".\n"
+                                                     << "A tilde ~ means to reverse the letters of the component that follows\n"
+                                                     << "it. For example, \"~(foo)\" will produce \"oof\". To reverse an entire\n"
+                                                     << "template, wrap it in brackets. For example, to reverse \"sV'i\" as\n"
+                                                     << "a whole use \"~<sV'i>\". The template \"~sV'i\" will only reverse"
+                                                     << "the initial syllable.",*/
+                                          "", // TODO: this above
                                           "!ss !sV",
                                           &configsystem::NormalStringDisplayer,
                                           &FantasyNameChangeInterface);
 stringoption ivanconfig::DefaultPetName(  "DefaultPetName",
-                                          "starting pet's default name",
+                                          "Starting pet's default name",
+                                          "",
                                           CONST_S("Kenny"),
                                           &configsystem::NormalStringDisplayer,
                                           &DefaultPetNameChangeInterface);
 stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
-                                          "highlight color of selected entry",
+                                          "Highlight color of selected entry",
+                                          "",
                                           "8,8,8",
                                           &configsystem::NormalStringDisplayer,
                                           &SelectedBkgColorChangeInterface,
                                           &SelectedBkgColorChanger);
 stringoption ivanconfig::AutoPickUpMatching("AutoPickUpMatching",
-                                          "auto pick up regex",
-                                          "( (book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
+                                          "Auto pick up regex",
+                                          "Automatically pick up items according to a regular expression. To disable something, you can invalidate it with '_' without removing it from the expression (eg. '_dagger'). To disable everything at once, begin this config option with '!'. Due to current constraints on length of options, editing is easier to do externally for now.",  //TODO if multiline text editing is implemented, remove the last help statement.
+                                          "!((book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
                                           &configsystem::NormalStringDisplayer,
                                           &AutoPickUpMatchingChangeInterface,
                                           &AutoPickUpMatchingChanger);
 numberoption ivanconfig::AutoSaveInterval("AutoSaveInterval",
-                                          "autosave interval",
+                                          "Autosave interval",
+                                          "Automatically backs up your game in case of a crash.",
                                           100,
                                           &AutoSaveIntervalDisplayer,
                                           &AutoSaveIntervalChangeInterface,
                                           &AutoSaveIntervalChanger);
 scrollbaroption ivanconfig::Contrast(     "Contrast",
-                                          "contrast",
+                                          "Contrast",
+                                          "",
                                           100,
                                           &ContrastDisplayer,
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
 cycleoption ivanconfig::HitIndicator(     "HitIndicator",
-                                          "show successful hit",
+                                          "Show successful hit",
+                                          "",
                                           0, 5,
                                           &HitIndicatorDisplayer);
 cycleoption ivanconfig::HoldPosMaxDist(   "HoldPosMaxDist",
-                                          "pets stay put when not following", // if pet is set to not follow, will move away max the specified distance. if it loses the player, will stay near the last position it moves to trying to follow the player.
+                                          "Pets stay put when not following",
+                                          "If pets are set not to follow the player, they will move around from their spot no further than the maximum specified distance. If a pet set to be following loses track of the player, it will stay near the last position where it was still able to follow the player.",
                                           0, 7,
                                           &HoldPosMaxDistDisplayer);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
-                                          "show items at player's square",
+                                          "Show items at player's square",
+                                          "",
                                           0, 12,
                                           &ShowItemsAtPlayerSquareDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &ShowItemsAtPlayerSquareChanger);
 cycleoption ivanconfig::ShowMap(          "ShowMap",
-                                          "map preferences",
+                                          "Map preferences",
+                                          "",
                                           0, 5,
                                           &ShowMapDisplayer);
 cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
-                                          "thrown weapons rotate (times per square)",
+                                          "Thrown weapons rotate",
+                                          "Select how many times per square should the animation rotate a thrown weapon.",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* window width in pixels (min 640)",
+                                          "* Window width in pixels (min 640)",
+                                          "",
                                           800, //default will be vanilla, but mininum still can be 640
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* window height in pixels (min 480)",
+                                          "* Window height in pixels (min 480)",
+                                          "",
                                           600, //default will be vanilla, but mininum still can be 480
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
 numberoption ivanconfig::StackListPageLength("StackListPageLength",
-                                          "page length in entries for non-selectable lists",
+                                          "Page length in entries for non-selectable lists",
+                                          "",
                                           stack::GetDefaultPageLength(),
                                           &StackListPageLengthDisplayer,
                                           &StackListPageLengthChangeInterface,
                                           &StackListPageLengthChanger);
 cycleoption ivanconfig::GoOnStopMode(     "GoOnStopMode",
-                                          "fastwalk stop mode",
+                                          "Fastwalk stop mode",
+                                          "",
                                           0, 4,
                                           &GoOnStopModeDisplayer);
 numberoption ivanconfig::FrameSkip(       "FrameSkip",
-                                          "frame skip (assures responsiveness)",
+                                          "Frame skip (assures responsiveness)",
+                                          "",
                                           0,
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
 truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
-                                          "enable mouse cursor on lists",
+                                          "Enable mouse cursor on lists",
+                                          "",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &AllowMouseOnFelistChanger);
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
-                                          "show map while detecting material",
+                                          "Show map while detecting material",
+                                          "",
                                           false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
-                                          "auto pick up thrown weapons",
+                                          "Auto pick up thrown weapons",
+                                          "",
                                           true);
-truthoption ivanconfig::TransparentMapLM    ("TransparentMapLM",
-                                          "show transparent map in look mode",
+truthoption ivanconfig::TransparentMapLM( "TransparentMapLM",
+                                          "Show transparent map in look mode",
+                                          "",
                                           true);
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
-                                          "import old savegames (v131 up, experimental)",
+                                          "Import old savegames (v131 up, experimental)",
+                                          "",
                                           false);
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
-                                          "wait until neutral NPCs move from your path",
+                                          "Wait until neutral NPCs move from your path",
+                                          "",
                                           false);
 truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
-                                          "only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
+                                          "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
+                                          "",
                                           false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
-                                          "show item volume in cm3",
+                                          "Show item volume in cm3",
+                                          "",
                                           false);
 truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
-                                          "allow distant lights to be seen",
+                                          "Allow distant lights to be seen",
+                                          "",
                                           true);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
-                                          "hide hit animations that look like miss",
+                                          "Hide hit animations that look like miss",
+                                          "",
                                           true);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
-                                          "show full name of current dungeon",
+                                          "Show full name of current dungeon",
+                                          "",
                                           false);
 truthoption ivanconfig::ShowGodInfo(      "ShowGodInfo",
-                                          "show info about gods when praying",
+                                          "Show extra info about gods when praying",
+                                          "",
                                           false);
 truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
-                                          "center camera on player after exiting look mode",
+                                          "Center camera on player after exiting look mode",
+                                          "",
                                           false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
-                                          "warn about very dangerous monsters",
+                                          "Warn about very dangerous monsters",
+                                          "",
                                           true);
 truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
-                                          "drop food leftovers automatically",
+                                          "Drop food leftovers automatically",
+                                          "",
                                           true);
 truthoption ivanconfig::LookZoom(         "LookZoom",
-                                          "zoom in look mode",
+                                          "Zoom in look mode",
+                                          "",
                                           false);
 truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
-                                          "enhanced message review mode after death",
+                                          "Enhanced message review mode after death",
+                                          "",
                                           false);
 cycleoption ivanconfig::MemorizeEquipmentMode("MemorizeEquipmentMode",
                                           "NPCs restore equipped items after polymorph",
-                                          0, 3,
+                                          "",
+                                          2, 3,
                                           &MemorizeEquipmentModeDisplayer);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "use xBRZScale to stretch graphics",
+                                          "Use xBRZScale to stretch graphics",
+                                          "",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &XBRZScaleChanger);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
-                                          "stretch squares around player with xBRZ",
+                                          "Stretch squares around player with xBRZ",
+                                          "",
                                           3,
                                           &XBRZSquaresAroundPlayerDisplayer,
                                           &XBRZSquaresAroundPlayerChangeInterface,
                                           &XBRZSquaresAroundPlayerChanger);
 cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
-                                          "* select graphics scaling factor",
+                                          "* Select graphics scaling factor",
+                                          "",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
-                                          "* select font",
+                                          "* Select font",
+                                          "",
                                           1, 3, //from 1 to 3 (three options available)
                                           &FontGfxDisplayer,
                                           &FontGfxChangeInterface,
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
-                                          "breeders' active range (suggested 8)",
+                                          "Breeders' active range (suggested 8)",
+                                          "",
                                           0, 16,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
-                                          "sort savegame files by dungeon IDs",
+                                          "Sort savegame files by dungeon IDs",
+                                          "",
                                           0, 4,
                                           &SaveGameSortModeDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &SaveGameSortModeChanger);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
-                                          "silhouette scaling factor (1 to disable)",
+                                          "Silhouette scaling factor (1 to disable)",
+                                          "",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
                                           &SilhouetteScaleDisplayer,
                                           &SilhouetteScaleChangeInterface,
                                           &SilhouetteScaleChanger);
 cycleoption ivanconfig::AltSilhouette(    "AltSilhouette",
-                                          "alternative silhouette mode",
+                                          "Alternative silhouette mode",
+                                          "",
                                           0, 7,
                                           &AltSilhouetteDisplayer);
 cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
-                                          "alternative silhouette background",
+                                          "Alternative silhouette background",
+                                          "",
                                           2, 3,
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
-                                          "movement control scheme",
+                                          "Movement control scheme",
+                                          "",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
-                                          "smart open/close/apply behavior",
+                                          "Smart open/close/apply behavior",
+                                          "",
                                           true);
 truthoption ivanconfig::BeNice(           "BeNice",
-                                          "be nice to pets",
+                                          "Be nice to pets",
+                                          "",
                                           true);
 cycleoption ivanconfig::AltListItemPos(   "AltListItemPos",
-                                          "use alternative position of stretched lists",
+                                          "Use alternative position of stretched lists",
+                                          "",
                                           0, 3,
                                           &AltListItemPosDisplayer);
 numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
-                                          "list width for previous option",
+                                          "List width for previous option",
+                                          "",
                                           game::getDefaultItemsListWidth(),
                                           &AltListItemWidthDisplayer,
                                           &AltListItemWidthChangeInterface,
                                           &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
-                                          "volume",
+                                          "Volume",
+                                          "",
                                           127,
                                           &VolumeDisplayer,
                                           &VolumeChangeInterface,
                                           &VolumeChanger,
                                           &VolumeHandler);
-cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
-                                          "select MIDI output device",
+cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
+                                          "Select MIDI output device",
+                                          "",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
-                                          "select window scaling factor",
+                                          "Select window scaling factor",
+                                          "",
                                           1, 2,
                                           &GraphicsScaleDisplayer,
                                           &GraphicsScaleChangeInterface,
                                           &GraphicsScaleChanger);
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
-                                          "full screen mode",
+                                          "Full screen mode",
+                                          "",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &FullScreenModeChanger);
 cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
-                                          "* scaling quality",
+                                          "* Scaling quality",
+                                          "",
                                           0, 2,
                                           &ScalingQualityDisplayer);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
-                                          "use sound effects",
+                                          "Use sound effects",
+                                          "",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
-                                          "show game turn on message log",
+                                          "Show game turn on message log",
+                                          "",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
-                                          "* use outlined graphics",
+                                          "* Use outlined graphics",
+                                          "",
                                           false);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
@@ -574,7 +664,7 @@ truth ivanconfig::AutoPickUpMatchingChangeInterface(stringoption* O)
   festring String;
   if(O)String<<O->Value;
 
-  if(iosystem::StringQuestion(String, CONST_S("What items do you want to auto pick up? To disable something, no need to remove it, just invalidate it with '_'. For example: '_dagger'. To disable everything at once, begin this config with '!'. Preferable editing of this option's regex is external for now."), //TODO if multiline text editing is implemented, remove the last help statement.
+  if(iosystem::StringQuestion(String, CONST_S("What items do you want to automatically pick up?"),
                               GetQuestionPos(), WHITE, 0, 200, !game::IsRunning(), true) == NORMAL_EXIT) //TODO should have no limit? but crashes if going beyond screen limit...
     O->ChangeValue(String);
 
@@ -973,7 +1063,7 @@ void ivanconfig::Initialize()
   fsCategory="Gameplay Options";
   configsystem::AddOption(fsCategory,&BeNice);
   configsystem::AddOption(fsCategory,&HoldPosMaxDist);
-  configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
+  //configsystem::AddOption(fsCategory,&MemorizeEquipmentMode); // Let everyone retore equipped items on unpolymorph.
   configsystem::AddOption(fsCategory,&WarnAboutDanger);
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);

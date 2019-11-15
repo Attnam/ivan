@@ -5482,6 +5482,7 @@ liquid
     Alpha = 175;
     Flexibility = 40;
     AttachedGod = CRUENTUS;
+    HardenedMaterial = RED_ICE;
     RustModifier = 1;
     CategoryFlags = Base|IS_BLOOD|IS_GOLEM_MATERIAL;
   }
@@ -5600,7 +5601,7 @@ liquid
     AttachedGod = CRUENTUS;
     CategoryFlags = IS_BLOOD;
     Effect = EFFECT_POISON;
-    HardenedMaterial = POISON_LIQUID;
+    HardenedMaterial = SICK_BLOOD;
     EffectStrength = 1000;
     ConsumeWisdomLimit = 3;
   }
@@ -5769,6 +5770,7 @@ liquid
     Alpha = 150;
     AttachedGod = SCABIES;
     Effect = EFFECT_POISON;
+    EffectStrength = 200;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
     CommonFlags = Base|CAN_BE_WISHED;
   }
@@ -5789,6 +5791,7 @@ liquid
     Alpha = 175;
     AttachedGod = NEFAS;
     Effect = EFFECT_POISON;
+    EffectStrength = 500;
     CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
     CommonFlags = Base|IS_VALUABLE|CAN_BE_WISHED;
   }

@@ -1317,7 +1317,7 @@ meleeweapon
     IsGoodWithPlants = true;
     EnchantmentPlusChance = 20;
     DamageFlags = SLASH;
-    DescriptiveInfo = "Normally used for crop harvesting, scythes can mow down enemies just as well.";
+    DescriptiveInfo = "A long shaft topped with a wicked, curved blade. Normally used for crop harvesting, scythe can make a potentially dangerous weapon in skilled hands.";
   }
 
   Config BROKEN|SCYTHE;

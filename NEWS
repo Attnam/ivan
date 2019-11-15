@@ -30,6 +30,8 @@ Changes:
 * Add autopick regex.
 * An option to show info about gods now remembers the god's last reaction to prayer.
 * Some items now have descriptions, accessed by 'F1' command.
+* Better help for crafting actions.
+* Prepare help for config options.
 * Add alternate door traps.
 * Prevent very dumb creatures from using wands.
 
@@ -49,10 +51,10 @@ Fixes:
   a better chance to be extinguished.
 * Prevent long strings in config options from overflowing when displayed.
 * Prevent building features in owned rooms.
-* Better help for crafting actions.
 * Explosive liquids can no longer be used to douse flames.
 * Wands of webbing were not causing hostility.
 * Fix horns of fear causing panic without checking the panic level of the victim.
+* Remove redundant messages from auto map notes.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of
