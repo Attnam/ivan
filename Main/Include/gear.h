@@ -482,6 +482,20 @@ ITEM(unpick, pickaxe)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(magestaff, meleeweapon)
+{
+ public:
+  magestaff() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
+ protected:
+  ulong LastUsed;
+};
+
 ITEM(muramasa, meleeweapon)
 {
  public:

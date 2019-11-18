@@ -1458,48 +1458,6 @@ meleeweapon
     EnchantmentPlusChance = 40;
   }
 
-  Config MAGE_STAFF;
-  {
-    DescriptiveInfo = "Two hundred years ago, the hellish Dwarven Wars came to a close when the joint forces of Kharaz-arad and Khaz-zadm broke through the defences of Khazad-durr and ended their enemy in gunpowder explosions and clouds of mustard gas. Yet it is said that the sovereign of Khazad-durr was never captured, instead transforming into a gargantuan spider and scuttling away. His regalia vanished along with him, including the royal staff bearing the name Y'yter Durr.";
-    DefaultSize = 220;
-    Possibility = 1;
-    WeaponCategory = BLUNT_WEAPONS;
-    StrengthModifier = 150;
-    BitmapPos = 64, 240;
-    FormModifier = 125;
-    DefaultMainVolume = 2000;
-    DefaultSecondaryVolume = 200;
-    NameSingular = "mage staff";
-    PostFix = "named Y'yter Durr";
-    Alias == "Y'yter Durr";
-    MainMaterialConfig == OCTIRON;
-    SecondaryMaterialConfig == GREEN_CRYSTAL;
-    Roundness = 20;
-    IsTwoHanded = true;
-    AttachedGod = SCABIES;
-    WieldedBitmapPos = 160, 304;
-    Price = 1000;
-    EnchantmentPlusChance = 2;
-    ArticleMode = FORCE_THE;
-    CanBeWished = false;
-    IsMaterialChangeable = false;
-    IsPolymorphable = false;
-    IsPolymorphSpawnable = false;
-    CanBeCloned = false;
-    CanBeMirrored = true;
-    CanBePiled = false;
-    GearStates = POLYMORPH|POLYMORPH_CONTROL;
-  }
-
-  Config BROKEN|MAGE_STAFF;
-  {
-    Possibility = 1;
-    BitmapPos = 64, 256;
-    WieldedBitmapPos = 176, 304;
-    GearStates = 0;
-    EnchantmentPlusChance = 5;
-  }
-
   Config ROLLING_PIN;
   {
     DefaultSize = 45;
@@ -7842,4 +7800,58 @@ masamune /* meleeweapon-> */
   CanBeBurned = false;
   CanBePiled = false;
   Alias == "Masamune";
+}
+
+magestaff /* meleeweapon-> */
+{
+  DefaultSize = 220;
+  NameSingular = "staff";
+  NamePlural = "staves";
+  WeaponCategory = BLUNT_WEAPONS;
+  StrengthModifier = 150;
+  BitmapPos = 64, 240;
+  FormModifier = 125;
+  DefaultMainVolume = 2000;
+  DefaultSecondaryVolume = 200;
+  Roundness = 20;
+  IsTwoHanded = true;
+  IsAbstract = true;
+  CanBePiled = false;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 304;
+  Price = 500;
+  EnchantmentPlusChance = 5;
+  DescriptiveInfo = "A staff imbued with arcane powers.";
+
+  Config ROYAL_STAFF;
+  {
+    DescriptiveInfo = "Two hundred years ago, the hellish Dwarven Wars came to a close when the joint forces of Kharaz-arad and Khaz-zadm broke through the defences of Khazad-durr and ended their enemy in gunpowder explosions and clouds of mustard gas. Yet it is said that the sovereign of Khazad-durr was never captured, instead transforming into a gargantuan spider and scuttling away. His regalia vanished along with him, including the royal staff bearing the name Y'yter Durr.";
+    Possibility = 1;
+    Adjective = "royal";
+    PostFix = "named Y'yter Durr";
+    Alias == "Y'yter Durr";
+    MainMaterialConfig == OCTIRON;
+    SecondaryMaterialConfig == GREEN_CRYSTAL;
+    AttachedGod = SCABIES;
+    EnchantmentPlusChance = 2;
+    BeamRange = 1;
+    BeamColor = RANDOM_COLOR;
+    BeamEffect = BEAM_POLYMORPH;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    GearStates = POLYMORPH|POLYMORPH_CONTROL;
+  }
+
+  Config BROKEN|ROYAL_STAFF;
+  {
+    Possibility = 1;
+    BitmapPos = 64, 256;
+    WieldedBitmapPos = 176, 304;
+    GearStates = 0;
+  }
 }

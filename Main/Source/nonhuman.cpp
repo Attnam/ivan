@@ -951,7 +951,12 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
 {
   if(!BlockedByArmour)
   {
-    Char->BeginTemporaryState(POISONED, 400 + RAND_N(200));
+    switch (GetConfig())
+    {
+      case RED_SNAKE: Char->BeginTemporaryState(PANIC, 400 + RAND_N(200)); break;
+      case GREEN_SNAKE: Char->BeginTemporaryState(POISONED, 400 + RAND_N(200)); break;
+      case BLUE_SNAKE: Char->BeginTemporaryState(SLOW, 400 + RAND_N(200)); break;
+    }
     return true;
   }
   else

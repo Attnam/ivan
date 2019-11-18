@@ -1652,7 +1652,7 @@ truth unpick::Zap(character* Zapper, v2, int Direction)
   {
     LastUsed = game::GetTick();
     ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
-    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+    Zapper->EditExperience(MANA, 150, 1 << 10);
 
     beamdata Beam
       (
@@ -1810,4 +1810,83 @@ truth masamune::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
   }
 
   return BaseSuccess;
+}
+
+void magestaff::Save(outputfile& SaveFile) const
+{
+  meleeweapon::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void magestaff::Load(inputfile& SaveFile)
+{
+  meleeweapon::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void magestaff::FinalProcessForBone()
+{
+  meleeweapon::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+int magestaff::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
+truth magestaff::Zap(character* Zapper, v2, int Direction)
+{
+  int Cooldown;
+  switch (GetConfig())
+  {
+    case ROYAL_STAFF: Cooldown = 2500; break;
+    default: Cooldown = 1000; break;
+  }
+
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(Cooldown, Zapper))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(MANA, 150, 1 << 10);
+
+    // Prepare for magical staves with different effects.
+    switch (GetConfig())
+    {
+      case ROYAL_STAFF: // Infinite polymorph, but with range of only 1.
+      {
+        beamdata Beam
+          (
+            Zapper,
+            CONST_S("killed by ") + GetName(INDEFINITE) + " zapped @bk",
+            Zapper->GetPos(),
+            GetBeamColor(),
+            GetBeamEffect(),
+            Direction,
+            GetBeamRange(),
+            0,
+            this
+          );
+        (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
+        break;
+      }
+      default:
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s releases a shower of polychromatic sparks.", CHAR_NAME(DEFINITE));
+        break;
+      }
+    }
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
 }

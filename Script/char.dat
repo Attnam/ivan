@@ -6408,16 +6408,17 @@ snake
   }
   FriendlyReplies == "@Dd hisses in a friendly manner.";
   TotalSize = 250;
-  SkinColor = rgb16(130, 0, 0);
   NameSingular = "snake";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 500;
   StandVerb = "lying";
   CanBeGenerated = true;
+  Frequency = 3000; /* for each Config */
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   ClassStates = INFRA_VISION;
   HasALeg = false;
+  IsAbstract = true;
   FleshMaterial = SNAKE_FLESH;
   DangerModifier = 75;
   CanOpen = false;
@@ -6425,6 +6426,24 @@ snake
   AutomaticallySeen = true;
   RunDescriptionLineOne = "Slithering";
   RunDescriptionLineTwo = " very fast";
+
+  Config RED_SNAKE;
+  {
+    Adjective = "carmine";
+    SkinColor = rgb16(130, 0, 0);
+  }
+
+  Config GREEN_SNAKE;
+  {
+    Adjective = "viridian";
+    SkinColor = rgb16(0, 130, 0);
+  }
+
+  Config BLUE_SNAKE;
+  {
+    Adjective = "cerulean";
+    SkinColor = rgb16(0, 0, 130);
+  }
 }
 
 orc

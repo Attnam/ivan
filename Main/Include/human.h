@@ -783,6 +783,7 @@ CHARACTER(child, humanoid)
  public:
   virtual truth MoveRandomly();
   virtual truth IsKing() const { return GetConfig() == KING; }
+  virtual truth MustBeRemovedFromBone() const;
  protected:
   virtual void BeTalkedTo();
 };

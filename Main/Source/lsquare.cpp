@@ -1895,8 +1895,17 @@ truth lsquare::LowerEnchantment(const beamdata& Beam)
 
   if(Char)
   {
+    if(Beam.Owner && RAND_N(Char->GetAttribute(WILL_POWER)) > RAND_N(Beam.Owner->GetAttribute(MANA)))
+    {
+      if(Char->IsPlayer())
+        ADD_MESSAGE("%s glows dull brown for a second, but then it passes.", RandomItem->CHAR_NAME(DEFINITE));
+
+      Char->EditExperience(WILL_POWER, 100, 1 << 12);
+      return false;
+    }
+
     if(Char->IsPlayer())
-      ADD_MESSAGE("%s glows blue for a moment!", RandomItem->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s glows dull brown for a moment!", RandomItem->CHAR_NAME(DEFINITE));
 
     if(Beam.Owner)
       Beam.Owner->Hostility(Char);

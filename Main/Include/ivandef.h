@@ -572,6 +572,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define VESANA_LEVEL 2
 #define CRYSTAL_LEVEL 3
 #define SPIDER_LEVEL 4
+
 #define ENNER_BEAST_LEVEL 4
 #define ZOMBIE_LEVEL 5
 #define IVAN_LEVEL 7
@@ -582,6 +583,8 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define NECRO_CHAMBER_LEVEL 6
 
 #define FUSANGA_LEVEL 3
+
+#define KING_LEVEL 2
 
 /* stack::DrawContents flags */
 

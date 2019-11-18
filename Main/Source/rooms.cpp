@@ -165,7 +165,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
                 "Decos Bananas Co. if I wish to stay here.\"");
     return false;
   }
-  else if(GetMaster()->GetConfig() == ASLONA_CASTLE)
+  else if(GetMaster()->GetConfig() == REBEL_CAMP)
   {
     ADD_MESSAGE("\"I'm a quartermaster, not a merchant. Go sell your stuff somewhere else.\"");
     return false;

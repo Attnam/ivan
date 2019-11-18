@@ -4497,6 +4497,17 @@ truth ennerchild::MustBeRemovedFromBone() const
     || GetLevel()->GetIndex() != DUAL_ENNER_BEAST_LEVEL;
 }
 
+truth child::MustBeRemovedFromBone() const
+{
+  if(GetConfig() != KING)
+    return false;
+
+  return !IsEnabled()
+    || GetTeam()->GetID() != ASLONA_TEAM
+    || GetDungeon()->GetIndex() != BATTLE_FIELD
+    || GetLevel()->GetIndex() != KING_LEVEL;
+}
+
 truth communist::MustBeRemovedFromBone() const
 {
   return !IsEnabled()

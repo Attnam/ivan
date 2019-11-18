@@ -466,7 +466,7 @@
 #define QUARTER_STAFF 15
 #define HAMMER 16
 #define GRAND_STOLLEN_KNIFE 17
-#define MAGE_STAFF 18
+//#define TODO 18
 #define ROLLING_PIN 19
 #define FRYING_PAN 20
 #define CLAW 21
@@ -479,6 +479,8 @@
 #define GOROVITS_HAMMER 1
 #define GOROVITS_SICKLE 2
 #define GOROVITS_SCIMITAR 3
+
+#define ROYAL_STAFF 1
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
@@ -660,6 +662,10 @@
 
 #define GREATER 1
 #define GIANT 2
+
+#define RED_SNAKE 1
+#define GREEN_SNAKE 2
+#define BLUE_SNAKE 3
 
 #define SLAUGHTERER 1
 #define SQUAD_LEADER 2
