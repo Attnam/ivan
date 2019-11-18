@@ -478,6 +478,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A hulking sword, built to cleave opponents in twain.";
     Alias = { 3, "scimitar", "curved sword", "curved blade"; }
   }
 
@@ -1676,7 +1677,7 @@ meleeweapon
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
-    DescriptiveInfo = "The runes seem to thirstily drink in enchantments.";
+    DescriptiveInfo = "A thin blade inscribed with countless, softly glowing runes. They seems to be thirstily drinking in any enchantments you present to them.";
     Price = 500;
   }
 
@@ -1730,7 +1731,7 @@ meleeweapon
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
     AllowedDungeons = { 2, BLACK_MARKET, DARK_FOREST; }
-    DescriptiveInfo = "A rare blade characterized by the fine craftsmanship of the far away land where it was forged.";
+    DescriptiveInfo = "To train with the sword, first master sweeping. When you have mastered sweeping, you must master the way of drawing water. Once you have learned how to draw water, you must split wood. Once you have split wood, you must learn the arts of finding the fine herbs in the forest, the arts of writing, the arts of paper making, and poetry writing. You must become familiar with the awl and the pen in equal measure. When you have mastered all these things you must master building a house. Once your house is built, you have no further need for a sword, since it is an ugly piece of metal and its adherents idiots."; /* K6BD */
     IsTwoHanded = true;
   }
 
@@ -3456,6 +3457,7 @@ shield /* armor-> */
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "A tower displayed argent on a field sable is emblazoned on this shield. Forged in likeness of lord Xinroch's arcanite shield, it used to belong to the master of dark templars who guard Xinroch's eternal resting place. Both Cruentus and Infuscor blessed the shield to offer unparalleled protection against blade and spell alike.";
   }
 
   Config SHIELD_OF_FIRE_RESISTANCE;
@@ -3558,6 +3560,7 @@ cloak /* armor-> */
   CanBeBroken = true;
   CloakBitmapPos = 48, 416;
   EnchantmentPlusChance = 10;
+  DescriptiveInfo = "A long, hooded cloak faded from years of exposure to rough weather.";
 
   Config BROKEN;
   {
@@ -3694,6 +3697,7 @@ cloak /* armor-> */
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "A huge pile of stinking, lice-infested hide flayed alive from a werewolf. There's little humanity left in those who wear it.";
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -3844,6 +3848,7 @@ cloak /* armor-> */
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "An ageless, dark robe stained with dried blood. Now that you think of it, maybe you wouldn't be against some prowling and blood-drinking...";
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -4634,6 +4639,7 @@ ring
     CanBeBroken = false;
     CanBeBurned = false;
     CanBePiled = false;
+    DescriptiveInfo = "A coiled worm transmuted into a sickly glowing ring. It whispers promises of safety into your mind, but also nibbles at your hand with a barely restrained hunger.";
     Alias == "worm ring";
   }
 
@@ -4920,6 +4926,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   IsQuestItem = true;
   CanBeBurned = false;
   CanBePiled = false;
+  DescriptiveInfo = "Alas, great Elpuri, may thy hunger be finally forgotten in the sleep of death.";
 }
 
 corpse
@@ -5062,6 +5069,7 @@ itemcontainer
   WieldedBitmapPos = 160, 144;
   CreateLockConfigurations = true;
   CanBeBurned = false;
+  DescriptiveInfo = "A sturdy container for your necessities.";
 
   Config SMALL_CHEST;
   {
@@ -5131,6 +5139,7 @@ itemcontainer
     BitmapPos = 48, 368;
     DamageDivider = 5;
     StrengthModifier = 150;
+    DescriptiveInfo = "A small, portable safe that can protect your valuables from harm.";
   }
 }
 
@@ -5454,6 +5463,7 @@ helmet
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    DescriptiveInfo = "A durable mask fitted with a filter that provides good protection against dangerous gases and vapors.";
   }
 
   Config HELM_OF_WILLPOWER;
@@ -5697,6 +5707,7 @@ helmet
                               25, 100, 75, 50, 25, 50, 5, 50, 1, 1, 100, 75, 50, 5,
                               25, 5, 50, 10, 5, 1, 15, 5, 15, 5, 5, 5, 3, 3, 1; }
     EnchantmentPlusChance = 30;
+    DescriptiveInfo = "A highly decorative mask to conceal all your troubles.";
   }
 
   Config BROKEN|MASK;
@@ -5816,6 +5827,7 @@ flamingsword /* meleeweapon-> */
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
   CanBeBurned = false;
+  DescriptiveInfo = "A sword wreathed in ceaseless flames.";
 
   Config BROKEN;
   {
@@ -5863,6 +5875,7 @@ flamingsword /* meleeweapon-> */
     ArticleMode = FORCE_THE;
     DamageFlags = SLASH|PIERCE;
     GearStates = GAS_IMMUNITY|DISEASE_IMMUNITY;
+    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. Some sources claim that Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted. In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, and his two crossed flaming swords are still found on the banner of the grand master dark knights to this day. While his predecessors were beasts on the battlefield and masters of the military arts of tactics and strategy, Xinroch was well-versed in the use of another weapon they rarely considered - diplomacy. He conquered a land - then used the fear to gain ten times more in a fraction of time. Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished. Even Ischaldirh, the champion of Infuscor since times immemorial, who always thought of warriors as nothing more than brutes and uncivilized savages, befriended Xinroch and accompanied him on many a campaign. Not even demigods could stand in their way. But years eventually caught up with Xinroch, after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. Only that which already died and was raised to undeath or which ascended beyond this world is truly immortal. Xinroch started to heavily fund research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life. During one of the countless battles late in his life, Xinroch lost one of the iconic ruby flaming swords he wielded most of his life. The dwarves of Khaz-zadm forged an arcanite shield for him, but it was clear to everyone his prime years have irreversibly passed. Xinroch died in a glorious battle. His army crushed the invasion of frost giants while Xinroch himself, by then of venerable age, dueled and slayed their jarl. Yet his years and exhaustion took their toll and Xinroch could not fend off the treacherous dagger his most trusted lieutenant turned against him. Old grand master slain and the battle won, this second-in-command became the new grand master dark knight. The Tomb of Xinroch was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory.";
   }
 }
 
@@ -6009,6 +6022,7 @@ whipofthievery /* meleeweapon->whip-> */
   Price = 500;
   AttachedGod = CLEPTIA;
   EnchantmentPlusChance = 10;
+  DescriptiveInfo = "This whip is normally wielded by the clergy of Cleptia. The lash seems to be moving on its own accord, snatching weapons from the hands of your foes.";
 
   Config BROKEN;
   {
@@ -6097,6 +6111,7 @@ skullofxinroch
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
   Price = 500;
+  DescriptiveInfo = "It was a great shame to the guardians of the Tomb of Xinroch when several decades ago, an unknown necromancer managed to slip past their guard and animate the skeleton of Xinroch in a mockery of his once-living might. But even though you hold in your hands the skull of this diminished and defeated Xinroch, it radiates an aura of ageless, adamant glory. All hail the mighty lord Xinroch.";
 }
 
 gorovitsweapon
@@ -6506,6 +6521,7 @@ wondersmellstaff
   WieldedBitmapPos = 160, 304;
   Price = 500;
   EnchantmentPlusChance = 5;
+  DescriptiveInfo = "It is said that Infuscor was astounded when she saw the massacre that became of the Dwarven Wars. Her magical destruction was flashy and powerful, but the indiscriminate, insidious death that alchemical combat gases brought to the battlefield impressed her enough that she rushed to inspire one of her priestesses to enchant a magic staff for a similar purpose. With a little bit of a twist, this staff conjures both gases detrimental to your foes and beneficial to you and your allies, soon plunging the combat zone into utter chaos, exactly to Infuscor's liking.";
 
   Config BROKEN;
   {
@@ -6732,6 +6748,7 @@ daggerofvenom
   WieldedBitmapPos = 160, 288;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "Invented by Vulcan-Loki, an accomplished assassin and a grandmaster of the Guild, this dagger is always poisoned and ready for a kill.";
 
   Config BROKEN;
   {
@@ -6768,6 +6785,7 @@ weepblade
   WieldedBitmapPos = 160, 16;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "A single caustic tear of Scabies was trapped within this blade. It shall spill its acidic sorrow upon your adversaries.";
 
   Config BROKEN;
   {
@@ -6857,6 +6875,7 @@ pantheonbook /* holybook-> */
   AttachedGod = NONE; /* it's about them all, but none in particular */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
+  DescriptiveInfo = "The most famous theosophical work of professor Keathos of the Tweraif University, this book discusses the manifold, often-times contradictory myths and legends associated with the divine pantheon.";
   Alias = { 2, "tome", "knowledge"; }
 }
 
@@ -6973,6 +6992,7 @@ darkaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Pure darkness drips from the blade of this axe.";
 
   Config BROKEN;
   {
@@ -7014,6 +7034,7 @@ slowaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Rime glazes the blade of this axe and your fingers stiffen a bit when you touch it.";
 
   Config BROKEN;
   {
@@ -7057,6 +7078,7 @@ terrorscythe  /* meleeweapon-> */
   WieldedBitmapPos = 176, 48;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "The hair on the back of your neck stand up as you grip the scythe.";
 
   Config BROKEN;
   {
@@ -7097,6 +7119,7 @@ bansheesickle  /* meleeweapon-> */
   WieldedBitmapPos = 176, 32;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Every little movement of this curved blade elicits a muffled scream. You can only imagine how striking an enemy with full force would sound like.";
 
   Config BROKEN;
   {
@@ -7133,6 +7156,7 @@ rustscythe  /* meleeweapon-> */
   WieldedBitmapPos = 176, 48;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "A shower of tiny rust flakes falls from the scythe as you grip it, even though the blade seems no worse for wear.";
 
   Config BROKEN;
   {
@@ -7174,6 +7198,7 @@ sharpaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Do not try the sharpness of this axe with your thumb, or you might loose it along with the whole arm.";
 
   Config BROKEN;
   {
@@ -7238,6 +7263,7 @@ materialmanual /* holybook-> */
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 500;
+  DescriptiveInfo = "Morgo is the leading expert in the field of materials science and author of several best-selling popular science books such as Morgo's Magical Metamorphoses and Morgo's Mysteries Mastered (for Morons). His books have been published in nearly thirty kingdoms and have received starred reviews in Bazzarian Times and Sophos Recommends. Also included is an exclusive discount coupon for the upcoming Morgo's Mesmerizing Memoires where he recounts his early life as a Khaz-zadm survivor who lost the whole family in the Dwarven Wars. Preorder now!";
   Alias = { 2, "materials", "material"; }
 }
 
@@ -7304,6 +7330,7 @@ taiaha /* meleeweapon-> */
   MinCharges = 2;
   MaxCharges = 8;
   TeleportPriority = 1000;
+  DescriptiveInfo = "The weapon of a Sophite Knight. Not as random or as clumsy as a wand, an elegant weapon for a more civilized age. It can channel magical energies into a spark of raw destruction.";
 
   Config BROKEN;
   {
@@ -7413,6 +7440,7 @@ trinket
     MainMaterialConfig == SARDINE;
     Roundness = 15;
     AttachedGod = SEGES;
+    DescriptiveInfo = "Dead fish, dead fish, lovely lovely dead fish! Eat them up! Yum!";
   }
 
   Config BONE_FISH;
@@ -7446,6 +7474,7 @@ trinket
     SecondaryMaterialConfig == OAK_WOOD;
     Roundness = 75;
     AttachedGod = ATAVUS;
+    DescriptiveInfo = "Tick tock, goes the clock...";
   }
 
   Config LARGE_CLOCK;
@@ -7640,6 +7669,7 @@ locationmap /* scroll-> */
   IsAbstract = true;
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
+  DescriptiveInfo = "A detailed map of a secret location.";
 
   Config BLACK_MARKET;
   {
