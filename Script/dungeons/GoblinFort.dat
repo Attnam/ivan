@@ -632,7 +632,7 @@ Dungeon GOBLIN_FORT;
     Description = "goblin hideout";
     ShortDescription = "Hideout";
     Size = 36, 64;
-    Items = 40:90;
+    Items = 30:70;
     IgnoreDefaultSpecialSquares = true;
     CanGenerateBone = false;
     MonsterAmountBase = 30;

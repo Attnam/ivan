@@ -430,6 +430,7 @@ truth fountain::Drink(character* Drinker)
           {
            case 0:
             Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
+            Config = (RAND() % 3) + 1;
             AddChance = 66;
             break;
            case 1:

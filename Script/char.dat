@@ -3888,6 +3888,7 @@ dolphin
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
   HasALeg = false;
+  IsAbstract = true;
   FleshMaterial = DOLPHIN_FLESH;
   AttachedGod = SOPHOS;
   ForceVomitMessage = "You push your fin down to your throat and vomit.";

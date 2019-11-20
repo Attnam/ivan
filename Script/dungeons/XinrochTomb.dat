@@ -1637,20 +1637,12 @@ Dungeon XINROCH_TOMB;
       Square, Pos 1,20;
       {
         OTerrain = stairs(STAIRS_UP);
-      }
-
-      Square, Pos 1,20;
-      {
         EntryIndex = STAIRS_UP;
       }
 
       Square, Pos 1,1;
       {
         OTerrain = stairs(STAIRS_DOWN);
-      }
-
-      Square, Pos 1,1;
-      {
         EntryIndex = STAIRS_DOWN;
       }
 

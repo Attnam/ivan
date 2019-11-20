@@ -288,15 +288,22 @@ Dungeon REBEL_CAMP;
           1 == lantern { SquarePosition = UP; }
           2 == lantern { SquarePosition = DOWN; }
           3 == lantern { SquarePosition = RIGHT; }
+          a == Random { MinPrice = 250; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
+          d == Random { MinPrice = 250; Category = RING|AMULET; }
+          w == Random { MinPrice = 500; Category = WEAPON|SHIELD; }
+          e == Random { MinPrice = 10; Category = FOOD|POTION; }
+          u == Random { MinPrice = 200; Category = WAND|TOOL; }
+          v == Random { MinPrice = 500; Category = SCROLL|TOOL; }
+          s = { 2, locationmap(BLACK_MARKET), wand(WAND_OF_STRIKING); }
         }
       }
       {
         .##2##.
-        ##...##
-        #.....#
-        3......
-        #.....#
-        ##...##
+        ##eeu##
+        #aeeew#
+        3au.ee.
+        #adevv#
+        ##dws##
         .##1##.
       }
 

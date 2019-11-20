@@ -466,7 +466,7 @@ Dungeon FUNGAL_CAVE;
     Description = "deep lake";
     ShortDescription = "Deep Lake";
     Size = 42, 26;
-    Items = 40:90;
+    Items = 30:70;
     IgnoreDefaultSpecialSquares = true;
     CanGenerateBone = false;
     LOSModifier = 48;
