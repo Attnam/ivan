@@ -7112,18 +7112,9 @@ void aslonawizard::GetAICommand()
 
       EditAP(-GetSpellAPCost());
 
-      int MaterialConfig = MUSTARD_GAS;
-      switch (RAND_N(6))
-      {
-        case 0: MaterialConfig = MAGIC_VAPOUR; break;
-        case 1: MaterialConfig = SLEEPING_GAS; break;
-        case 2:
-        case 3: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
-        case 4: MaterialConfig = TELEPORT_GAS; break;
-      }
-
-      ToBeCalled = golem::Spawn(MaterialConfig);
-
+      int GasMaterial[] = { MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, TELEPORT_GAS,
+                            EVIL_WONDER_STAFF_VAPOUR, EVIL_WONDER_STAFF_VAPOUR };
+      ToBeCalled = golem::Spawn(GasMaterial[RAND() % 6]);
       v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
 
       if(Where == ERROR_V2)
@@ -7172,20 +7163,12 @@ int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
       ADD_MESSAGE("%s releases a cloud of fumes as %s strikes %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE),
                                                                     GetObjectPronoun().CStr());
 
-    int GasMaterial = MUSTARD_GAS;
-    switch (RAND_N(6))
-    {
-      case 0: GasMaterial = SKUNK_SMELL; break;
-      case 1:
-      case 2: GasMaterial = ACID_GAS; break;
-      case 3:
-      case 4: GasMaterial = FIRE_GAS; break;
-    }
+    int GasMaterial[] = { MUSTARD_GAS, SKUNK_SMELL, ACID_GAS, FIRE_GAS };
 
     if(Critical)
-      GetLevel()->GasExplosion(gas::Spawn(GasMaterial, 100), GetLSquareUnder(), this);
+      GetLevel()->GasExplosion(gas::Spawn(GasMaterial[RAND() % 4], 100), GetLSquareUnder(), this);
     else
-      GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial, 100));
+      GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial[RAND() % 4], 100));
   }
 
   return Return;

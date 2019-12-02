@@ -1112,9 +1112,8 @@ truth key::Apply(character* User)
 
         if(Key == 'i')
         {
-          item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want "
-                                                                    "to lock or unlock?"),
-                                                      0, &item::HasLock);
+          item* Item = User->SelectFromPossessions(CONST_S("What do you want to lock or unlock?"),
+                                                   &item::HasLock);
           return Item && Item->TryKey(this, User);
         }
       }

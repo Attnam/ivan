@@ -622,6 +622,8 @@
 
 #define CONICAL 1
 #define FLAT 2
+#define MAGMA 3
+#define BLOAT 4
 
 #define SKELETON_DOG 1
 

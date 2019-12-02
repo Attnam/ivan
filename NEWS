@@ -34,6 +34,7 @@ Changes:
 * Prepare help for config options.
 * Add alternate door traps.
 * Prevent very dumb creatures from using wands.
+* You cannot unequip locked chastity belt.
 
 Fixes:
 * Decos no longer lets you steal from him.
@@ -55,6 +56,8 @@ Fixes:
 * Wands of webbing were not causing hostility.
 * Fix horns of fear causing panic without checking the panic level of the victim.
 * Remove redundant messages from auto map notes.
+* Let monsters also benefit from Detecting status effect.
+* Fix sitting on fountains and drinking from non-water fountains.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

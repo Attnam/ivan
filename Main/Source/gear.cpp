@@ -1890,3 +1890,34 @@ truth magestaff::Zap(character* Zapper, v2, int Direction)
 
   return true;
 }
+
+truth chastitybelt::CanBeEquipped(int I) const
+{
+  return !IsLocked();
+}
+
+truth chastitybelt::CanBeUnEquipped(int I) const
+{
+  // Worn locked chastity belt cannot be taken off.
+  return !IsInCorrectSlot(I) || !IsLocked();
+}
+
+void chastitybelt::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth ShowSpecialInfo) const
+{
+  if(Amount == 1)
+    AddName(Entry, INDEFINITE);
+  else
+  {
+    Entry << Amount << ' ';
+    AddName(Entry, PLURAL);
+  }
+
+  if(ShowSpecialInfo)
+    Entry << " [" << GetWeight() * Amount << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << ", " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue();
+    if(IsLocked())
+      Entry << ", locked";
+    Entry << ']';
+}

@@ -157,7 +157,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "Polymorphing",
+    "Polymorphitis",
     SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginPolymorphMessage,
     &character::PrintEndPolymorphMessage,
@@ -1029,22 +1029,19 @@ void character::Be()
       if(!Action || Action->AllowFoodConsumption())
         Hunger();
 
-
       int MinHPPercent = 128;
       for(int c = 0; c < BodyParts; ++c)
       {
-         int tempHpPercent;
+        int tempHpPercent;
         bodypart* BodyPart = GetBodyPart(c);
 
         if(BodyPart)
         {
-           tempHpPercent = (BodyPart->GetHP() * audio::MAX_INTENSITY_VOLUME) / BodyPart->GetMaxHP();
-           if(tempHpPercent < MinHPPercent )
-           {
-              MinHPPercent = tempHpPercent;
-           }
-
-
+          tempHpPercent = (BodyPart->GetHP() * audio::MAX_INTENSITY_VOLUME) / BodyPart->GetMaxHP();
+          if(tempHpPercent < MinHPPercent )
+          {
+            MinHPPercent = tempHpPercent;
+          }
         }
       }
       audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
@@ -1207,7 +1204,7 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
     if(IsPlayer())
     {
       cchar* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
-      ADD_MESSAGE("You try very hard to %s forward. But your load is too heavy.", CrawlVerb);
+      ADD_MESSAGE("You try very hard to %s forward, but your load is too heavy.", CrawlVerb);
     }
 
     EditAP(-1000);
@@ -4877,6 +4874,7 @@ material* character::SetSecondaryMaterial(material*, int)
 void character::TeleportRandomly(truth Intentional)
 {
   v2 TelePos = ERROR_V2;
+  lsquare* FromSquare = GetLSquareUnder();
 
   if(StateIsActivated(TELEPORT_LOCK))
   {
@@ -4966,6 +4964,15 @@ void character::TeleportRandomly(truth Intentional)
 
   if(IsPlayerAutoPlay())
     AutoPlayAIReset(true);
+
+  // There's a small chance that some warp gas/fluid is left behind.
+  if(FromSquare->IsFlyable() && !RAND_N(1000))
+  {
+    if(!RAND_N(100))
+      FromSquare->AddSmoke(gas::Spawn(TELEPORT_GAS, 50 + RAND() % 100));
+    else
+      FromSquare->SpillFluid(this, liquid::Spawn(TELEPORT_FLUID, 50 + RAND() % 50));
+  }
 }
 
 truth character::IsPlayerAutoPlay()
@@ -4975,7 +4982,8 @@ truth character::IsPlayerAutoPlay()
 
 void character::DoDetecting()
 {
-  if(IsPlayerAutoPlay())return;
+  if(IsPlayerAutoPlay() || !IsPlayer())
+    return;
 
   material* TempMaterial;
 
@@ -6935,7 +6943,8 @@ truth character::CanBeSeenBy(ccharacter* Who, truth Theoretically, truth IgnoreE
     {
       truth MayBeESPSeen = Who->IsEnabled() && !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
       truth MayBeInfraSeen = Who->IsEnabled() && Who->StateIsActivated(INFRA_VISION) && IsWarm();
-      truth Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
+      truth Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen || Who->StateIsActivated(DETECTING);
+      // Let monsters also make use of Detecting status effect. Here we simulate that they always ask to detect player flesh.
 
       if(game::IsInWilderness())
         return Visible;
@@ -8846,7 +8855,19 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
   }
 
   if(OldEquipment)
-    OldEquipment->MoveTo(MainStack);
+  {
+    if(!OldEquipment->CanBeUnEquipped(Chosen))
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You fail to unequip %s.", OldEquipment->CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("%s fails to unequip %s.", CHAR_DESCRIPTION(DEFINITE), OldEquipment->CHAR_NAME(DEFINITE));
+
+      return false;
+    }
+    else
+      OldEquipment->MoveTo(MainStack);
+  }
 
   sorter Sorter = EquipmentSorter(Chosen);
 
@@ -8891,6 +8912,16 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
       if(!IsPlayer() && !AllowEquipment(Item, Chosen))
       {
         ADD_MESSAGE("%s refuses to equip %s.", CHAR_DESCRIPTION(DEFINITE), Item->CHAR_NAME(DEFINITE));
+        return false;
+      }
+
+      if(!Item->CanBeEquipped(Chosen))
+      {
+        if(IsPlayer())
+          ADD_MESSAGE("You fail to equip %s.", Item->CHAR_NAME(DEFINITE));
+        else
+          ADD_MESSAGE("%s fails to equip %s.", CHAR_DESCRIPTION(DEFINITE), Item->CHAR_NAME(DEFINITE));
+
         return false;
       }
 
@@ -11361,25 +11392,25 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
   for(;;)
   {
     List.Empty();
-        List.EmptyDescription();
+    List.EmptyDescription();
 
-        TotalEquippedWeight = 0;
+    TotalEquippedWeight = 0;
 
-        for(int c = 0; c < GetEquipments(); ++c) // if equipment exists, add to TotalEquippedWeight
-        {
-                item* Equipment = GetEquipment(c);
-                TotalEquippedWeight += (Equipment) ? Equipment->GetWeight() : 0;
-        }
+    for(int c = 0; c < GetEquipments(); ++c) // if equipment exists, add to TotalEquippedWeight
+    {
+      item* Equipment = GetEquipment(c);
+      TotalEquippedWeight += (Equipment) ? Equipment->GetWeight() : 0;
+    }
 
-        if(IsPlayer())
-        {
-                festring Total("Total weight: ");
-                Total << TotalEquippedWeight;
-                Total << "g";
+    if(IsPlayer())
+    {
+      festring Total("Total weight: ");
+      Total << TotalEquippedWeight;
+      Total << "g";
 
-                List.AddDescription(CONST_S(""));
-                List.AddDescription(Total);
-        }
+      List.AddDescription(CONST_S(""));
+      List.AddDescription(Total);
+    }
 
     if(!IsPlayer())
     {

@@ -380,6 +380,9 @@ ITEM(chastitybelt, lockablebelt)
 {
  public:
   virtual int GetFormModifier() const { return item::GetFormModifier(); }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
+  virtual truth CanBeEquipped(int) const;
+  virtual truth CanBeUnEquipped(int) const;
 };
 
 ITEM(darkaxe, meleeweapon)

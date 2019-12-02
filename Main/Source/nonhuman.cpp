@@ -30,7 +30,7 @@ cchar* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful p
 int billswill::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
 int mommo::GetBodyPartWobbleData(int) const
-{ return (GetConfig() == CONICAL ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
+{ return (GetConfig() % 2 != 0 ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
 
 bodypart* dog::MakeBodyPart(int) const { return dogtorso::Spawn(0, NO_MATERIALS); }
 

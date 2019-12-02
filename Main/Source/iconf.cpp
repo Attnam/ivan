@@ -269,9 +269,9 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChangeInterface,
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
-                                          "Breeders' active range (suggested 8)",
+                                          "Breeders' active range",
                                           "",
-                                          0, 16,
+                                          0, 4,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "Sort savegame files by dungeon IDs",

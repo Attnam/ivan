@@ -3310,12 +3310,12 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
     if(Neighbour && Neighbour->IsFlyable())
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
 
-                if(Neighbour)
+    if(Neighbour)
     {
       character* Victim = Neighbour->GetCharacter();
 
       if(Victim && Terrorist)
-                                Terrorist->Hostility(Victim);
+        Terrorist->Hostility(Victim);
     }
   }
 }

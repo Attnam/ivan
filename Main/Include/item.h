@@ -523,6 +523,8 @@ class item : public object
   virtual truth IsInCorrectSlot(int) const;
   truth IsInCorrectSlot() const;
   int GetEquipmentIndex() const;
+  virtual truth CanBeEquipped(int) const { return true; }
+  virtual truth CanBeUnEquipped(int) const { return true; }
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   virtual truth HasBetterVersion() const { return false; }
   virtual void SortAllItems(const sortdata&) const;

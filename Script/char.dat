@@ -3041,6 +3041,28 @@ mommo
     FleshMaterial = VOMIT;
     VomitMaterial = VOMIT;
   }
+
+  Config MAGMA;
+  {
+    DefaultArmStrength = 5;
+    DefaultAgility = 5;
+    DefaultPerception = 8;
+    DefaultIntelligence = 3;
+    DefaultWillPower = 3;
+    DefaultWisdom = 3;
+    DefaultCharisma = 5;
+    TotalVolume = 250000;
+    TorsoBitmapPos = 176, 0;
+    TotalSize = 100;
+    Adjective = "smouldering";
+    HPRequirementForGeneration = 150;
+    DayRequirementForGeneration = 15;
+    Frequency = 500;
+    BloodMaterial = LAVA;
+    FleshMaterial = LAVA;
+    VomitMaterial = LAVA;
+    FireResistance = 1000;
+  }
 }
 
 golem
@@ -3484,7 +3506,7 @@ spider
     CWeaponSkillHits == 150;
     TotalVolume = 5000;
     TotalSize = 50;
-    Frequency = 0;
+    Frequency = 10;
     ClassStates = ETHEREAL_MOVING|TELEPORT|INVISIBLE|ESP;
   }
 }
@@ -6414,7 +6436,6 @@ snake
   BaseBiteStrength = 500;
   StandVerb = "lying";
   CanBeGenerated = true;
-  Frequency = 3000; /* for each Config */
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   ClassStates = INFRA_VISION;
@@ -6432,18 +6453,21 @@ snake
   {
     Adjective = "carmine";
     SkinColor = rgb16(130, 0, 0);
+    Frequency = 2000;
   }
 
   Config GREEN_SNAKE;
   {
     Adjective = "viridian";
     SkinColor = rgb16(0, 130, 0);
+    Frequency = 6000;
   }
 
   Config BLUE_SNAKE;
   {
     Adjective = "cerulean";
     SkinColor = rgb16(0, 0, 130);
+    Frequency = 2000;
   }
 }
 

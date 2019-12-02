@@ -213,6 +213,7 @@ void valpurus::PrayBadEffect()
 void legifer::PrayGoodEffect()
 {
   // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
+  // No, my bad. Inlux is an anagram of Linux, which will hopefully save us from the horrid Bill. ;)
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
   //ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
   game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),

@@ -954,7 +954,8 @@
 
 #define CONICAL 1
 #define FLAT 2
-#define BLOAT 3
+#define MAGMA 3
+#define BLOAT 4
 
 #define DIRE 1
 

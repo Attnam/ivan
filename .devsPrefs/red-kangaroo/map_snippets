@@ -1,27 +1,11 @@
-  /* Throne Room */
-  RandomLevel 0:4;
+void solicitus::PrayBadEffect()
+{
+  if(PLAYER->HasAllBodyParts()) //Checks if Player has all his limbs! Important because this effect crashes if you try it with missing limbs.
   {
-    Room
-    {
-      Size = 3,3;
-      AllowLockedDoors = true;
-      AllowBoobyTrappedDoors = false;
-      GenerateFountains = false;
-      GenerateLanterns = false;
-      GenerateDoor = false;
-      GenerateTunnel = false;
-      AltarPossible = false;
-      Flags = NO_MONSTER_GENERATION;
-
-      Square, Pos 1,1;
-      {
-        OTerrain = PORCELAIN throne;
-      }
-
-      Square, Pos 1,2;
-      {
-        OTerrain = BEECH_WOOD door(HEART_SHAPED_LOCK);
-        AttachRequired = true;
-      }
-    }
+    ADD_MESSAGE("A voice speaks. \"BANANAAAAAAAAAAAAAAA.\"");
+    PLAYER->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH)); //Change whole body to banana flesh.
+    ADD_MESSAGE("You feel like a banana.");
   }
+  else
+    ADD_MESSAGE("\"No banana for you.\"");
+}
