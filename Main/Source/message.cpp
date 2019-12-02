@@ -500,17 +500,17 @@ void soundsystem::playSound(festring Buffer)
 
     if(*sf->chunk)
     {
-			for(int i=0; i<16; i++)
-			{
-				if(!Mix_Playing(i))
-				{
-					Mix_PlayChannel(i, *sf->chunk, 0);
-//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
-		//    Mix_SetPosition(i, angle, dist);
-					return;
-				}
-			}
-		}
+      for(int i=0; i<16; i++)
+      {
+        if(!Mix_Playing(i))
+        {
+          Mix_PlayChannel(i, *sf->chunk, 0);
+//          fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
+    //    Mix_SetPosition(i, angle, dist);
+          return;
+        }
+      }
+    }
   }
 }
 

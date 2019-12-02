@@ -1412,15 +1412,15 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
-		Entry << ", " << GetBaseToHitValueDescription();
+    Entry << ", " << GetBaseToHitValueDescription();
 
-		if(!IsBroken() && !IsWhip())
+    if(!IsBroken() && !IsWhip())
       Entry << ", " << GetStrengthValueDescription();
 
-		int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
     int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-		if(CWeaponSkillLevel || SWeaponSkillLevel)
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
       Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
     if(TimesUsed == 1)
@@ -1436,7 +1436,7 @@ void taiaha::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << TimesUsed << Charges;
-	SaveFile << Enchantment;
+  SaveFile << Enchantment;
   SaveFile << SecondaryMaterial;
 }
 
@@ -1444,7 +1444,7 @@ void taiaha::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> TimesUsed >> Charges;
-	SaveFile >> Enchantment;
+  SaveFile >> Enchantment;
   LoadMaterial(SaveFile, SecondaryMaterial);
 }
 
@@ -1452,7 +1452,7 @@ void taiaha::PostConstruct()
 {
   Charges = GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1);
   TimesUsed = 0;
-	meleeweapon::PostConstruct();
+  meleeweapon::PostConstruct();
 }
 
 alpha taiaha::GetOutlineAlpha(int Frame) const
@@ -1656,14 +1656,14 @@ truth unpick::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	      Zapper,
-	      CONST_S("killed by ") + GetName(INDEFINITE),
-	      Zapper->GetPos(),
-	      TRANSPARENT_COLOR,
-	      BEAM_WALL_CREATION,
-	      Direction,
-	      1,
-	      0,
+        Zapper,
+        CONST_S("killed by ") + GetName(INDEFINITE),
+        Zapper->GetPos(),
+        TRANSPARENT_COLOR,
+        BEAM_WALL_CREATION,
+        Direction,
+        1,
+        0,
         this
       );
 

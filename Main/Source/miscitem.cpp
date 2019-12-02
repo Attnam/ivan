@@ -3788,14 +3788,14 @@ truth ullrbone::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	      Zapper,
-	      CONST_S("killed by ") + GetName(INDEFINITE),
-	      Zapper->GetPos(),
-	      YELLOW,
-	      BEAM_LIGHTNING,
-	      Direction,
-	      50,
-	      0,
+        Zapper,
+        CONST_S("killed by ") + GetName(INDEFINITE),
+        Zapper->GetPos(),
+        YELLOW,
+        BEAM_LIGHTNING,
+        Direction,
+        50,
+        0,
         this
       );
 

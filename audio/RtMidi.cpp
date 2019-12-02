@@ -1225,7 +1225,7 @@ static void *alsaMidiHandler( void *ptr )
       if ( !( data->ignoreFlags & 0x04 ) ) doDecode = true;
       break;
 
-		case SND_SEQ_EVENT_SYSEX:
+    case SND_SEQ_EVENT_SYSEX:
       if ( (data->ignoreFlags & 0x01) ) break;
       if ( ev->data.ext.len > apiData->bufferSize ) {
         apiData->bufferSize = ev->data.ext.len;
@@ -1572,11 +1572,11 @@ void MidiInAlsa :: openVirtualPort( std::string portName )
     snd_seq_port_info_t *pinfo;
     snd_seq_port_info_alloca( &pinfo );
     snd_seq_port_info_set_capability( pinfo,
-				      SND_SEQ_PORT_CAP_WRITE |
-				      SND_SEQ_PORT_CAP_SUBS_WRITE );
+              SND_SEQ_PORT_CAP_WRITE |
+              SND_SEQ_PORT_CAP_SUBS_WRITE );
     snd_seq_port_info_set_type( pinfo,
-				SND_SEQ_PORT_TYPE_MIDI_GENERIC |
-				SND_SEQ_PORT_TYPE_APPLICATION );
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC |
+        SND_SEQ_PORT_TYPE_APPLICATION );
     snd_seq_port_info_set_midi_channels(pinfo, 16);
 #ifndef AVOID_TIMESTAMPING
     snd_seq_port_info_set_timestamping(pinfo, 1);
@@ -1688,7 +1688,7 @@ void MidiOutAlsa :: initialize( const std::string& clientName )
     errorString_ = "MidiOutAlsa::initialize: error creating ALSA sequencer client object.";
     error( RtMidiError::DRIVER_ERROR, errorString_ );
     return;
-	}
+  }
 
   // Set client name.
   snd_seq_set_client_name( seq, clientName.c_str() );
@@ -1721,8 +1721,8 @@ void MidiOutAlsa :: initialize( const std::string& clientName )
 
 unsigned int MidiOutAlsa :: getPortCount()
 {
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+  snd_seq_port_info_t *pinfo;
+  snd_seq_port_info_alloca( &pinfo );
 
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   return portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, -1 );
@@ -1771,8 +1771,8 @@ void MidiOutAlsa :: openPort( unsigned int portNumber, const std::string portNam
     return;
   }
 
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+  snd_seq_port_info_t *pinfo;
+  snd_seq_port_info_alloca( &pinfo );
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   if ( portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, (int) portNumber ) == 0 ) {
     std::ostringstream ost;
