@@ -53,6 +53,8 @@ int eddy::GetBodyPartWobbleData(int) const { return WOBBLE_VERTICALLY|(2 << WOBB
 
 bodypart* magicmushroom::MakeBodyPart(int) const { return magicmushroomtorso::Spawn(0, NO_MATERIALS); }
 
+bodypart* fusanga::MakeBodyPart(int) const { return fusangatorso::Spawn(0, NO_MATERIALS); }
+
 cchar* magpie::FirstPersonBiteVerb() const { return "peck"; }
 cchar* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
 cchar* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
@@ -67,6 +69,8 @@ int hattifattener::GetBodyPartWobbleData(int) const
 { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(1 << WOBBLE_FREQ_SHIFT); }
 
 col16 vladimir::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
+
+col16 fusanga::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
 bodypart* blinkdog::MakeBodyPart(int) const { return blinkdogtorso::Spawn(0, NO_MATERIALS); }
 
@@ -1204,9 +1208,11 @@ bool CPUwiseAI(nonhumanoid* nh)
 
   return bActivated;
 }
+
 void magicmushroom::GetAICommand()
 {
-  if(!CPUwiseAI(this))return;
+  if(!CPUwiseAI(this))
+    return;
 
   if(!(RAND() % 750))
   {
@@ -2823,4 +2829,118 @@ void fruitbat::GetAICommand()
   }
 
   bat::GetAICommand();
+}
+
+void fusanga::GetAICommand()
+{
+  if(AttackAdjacentEnemyAI())
+    return;
+
+  /* Chaos magic */
+  lsquare* Square = GetLevel()->GetLSquare(GetLevel()->GetRandomSquare(0, HAS_NO_OTERRAIN));
+
+  if(Square && !RAND_N(30))
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s radiates pure magic.", CHAR_NAME(DEFINITE));
+
+    switch (RAND_4)
+    {
+      case 0: // Random spell
+      {
+        int BeamEffect = RAND_N(17); // Change if more beams are added.
+        beamdata Beam
+          (
+            this,
+            CONST_S("killed by the sorcery of ") + GetName(DEFINITE),
+            GetPos(),
+            RANDOM_COLOR,
+            BeamEffect,
+            YOURSELF,
+            1,
+            0,
+            NULL
+          );
+        (Square->*lsquare::GetBeamEffect(BeamEffect))(Beam);
+        break;
+      }
+      case 1: // Create gas
+      {
+        // Change if more gases are added.
+        if(!RAND_2)
+          GetLevel()->GasExplosion(gas::Spawn(GAS_ID + RAND_N(14) + 3, 100), Square, this);
+        else
+          Square->AddSmoke(gas::Spawn(GAS_ID + RAND_N(14) + 3, 100));
+
+        ADD_MESSAGE("You hear the hiss of gas.");
+        break;
+      }
+      default: // Create rain
+      {
+        beamdata Beam
+          (
+            this,
+            CONST_S("killed by the showers of ") + GetName(DEFINITE),
+            YOURSELF,
+            0
+          );
+        Square->LiquidRain(Beam, LIQUID_ID + RAND_N(60) + 1); // Change if more liquids are added.
+
+        if(Square->CanBeSeenByPlayer())
+          ADD_MESSAGE("A drizzle comes down.");
+        else
+          ADD_MESSAGE("You hear the sounds of rainfall.");
+
+        break;
+      }
+    }
+
+    EditAP(-4000);
+    return;
+  }
+
+  /* Spawn mushrooms */
+  if(!RAND_N(60))
+  {
+    int NumberOfMushrooms = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
+
+    for(int i = 0; i < NumberOfMushrooms; i++)
+    {
+      character* NewShroom;
+
+      switch (RAND_4)
+      {
+        case 2: NewShroom = magicmushroom::Spawn(); break;
+        //case 3: NewShroom = weepmushroom::Spawn(); break;
+        default: NewShroom = mushroom::Spawn(); break;
+      }
+
+      NewShroom->SetGenerationDanger(GetGenerationDanger());
+      NewShroom->SetTeam(GetTeam());
+      NewShroom->PutTo(GetLevel()->GetRandomSquare(NewShroom));
+
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s radiates strange magic.", CHAR_NAME(DEFINITE));
+      if(NewShroom->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s sprouts from the ground.", NewShroom->CHAR_NAME(INDEFINITE));
+    }
+
+    EditAP(-2000);
+    return;
+  }
+
+  /* Just chill there. */
+  EditAP(-1000);
+}
+
+void fusanga::CreateCorpse(lsquare* Square)
+{
+  largecreature::CreateCorpse(Square);
+}
+
+truth fusanga::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM
+                      || GetDungeon()->GetIndex() != FUNGAL_CAVE
+                      || GetLevel()->GetIndex() != FUSANGA_LEVEL;
 }

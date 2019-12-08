@@ -1865,7 +1865,7 @@ truth magestaff::Zap(character* Zapper, v2, int Direction)
         beamdata Beam
           (
             Zapper,
-            CONST_S("killed by ") + GetName(INDEFINITE) + " zapped @bk",
+            CONST_S("killed by ") + GetName(DEFINITE) + " zapped @bk",
             Zapper->GetPos(),
             GetBeamColor(),
             GetBeamEffect(),

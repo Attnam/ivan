@@ -1,3 +1,4 @@
+// Solicitus' banana prayer.
 void solicitus::PrayBadEffect()
 {
   if(PLAYER->HasAllBodyParts()) //Checks if Player has all his limbs! Important because this effect crashes if you try it with missing limbs.

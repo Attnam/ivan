@@ -725,6 +725,14 @@ ITEM(magicmushroomtorso, normaltorso)
   virtual v2 GetBitmapPos(int) const;
 };
 
+ITEM(fusangatorso, largetorso)
+{
+  // TODO: Animated largetorso.
+ /*protected:
+  virtual int GetClassAnimationFrames() const { return 64; }
+  virtual v2 GetBitmapPos(int) const;*/
+};
+
 ITEM(dogtorso, normaltorso)
 {
  protected:

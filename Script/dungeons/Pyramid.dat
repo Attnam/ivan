@@ -185,6 +185,11 @@ Dungeon PYRAMID;
       Pos = 2:XSize-5,2:YSize-5;
     }
 
+    Square, Random;
+    {
+      Character = veterankamikazedwarf(MORTIFER);
+    }
+
     /* Stairs & Traps */
     Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
     {

@@ -492,4 +492,18 @@ CHARACTER(mindworm, nonhumanoid)
   virtual truth TryToImplantLarvae(character*);
   virtual void PsiAttack(character*);
 };
+
+CHARACTER(fusanga, largecreature)
+{
+ public:
+  virtual col16 GetSkinColor() const;
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void SpecialTurnHandler() { UpdatePictures(); }
+  virtual truth IsMushroom() const { return true; }
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+  virtual truth MustBeRemovedFromBone() const;
+};
+
 #endif

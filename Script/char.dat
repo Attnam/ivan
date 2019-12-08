@@ -3032,7 +3032,7 @@ mommo
     DefaultWisdom = 1;
     DefaultCharisma = 2;
     TotalVolume = 100000;
-    TorsoBitmapPos = 128, 16;
+    TorsoBitmapPos = 192, 0;
     TotalSize = 50;
     Adjective = "bloated";
     Frequency = 1000;
@@ -7574,7 +7574,7 @@ mushroom
   FriendlyReplies == "@Dd wobbles knowingly.";
 }
 
-magicmushroom
+magicmushroom /* mushroom-> */
 {
   DefaultArmStrength = 6;
   DefaultAgility = 3;
@@ -7590,10 +7590,6 @@ magicmushroom
   TotalSize = 60;
   Adjective = "magical";
   NameSingular = "mushroom";
-  HasEyes = false;
-  HasHead = false;
-  HasALeg = false;
-  UsesNutrition = false;
   FleshMaterial = MAGIC_MUSHROOM_FLESH;
   SkinColor = rgb16(200, 170, 170);
   CanBeGenerated = true;
@@ -7604,7 +7600,6 @@ magicmushroom
   Frequency = 5000;
   DangerModifier = 75;
   StandVerb = "wobbling";
-  CanChoke = false;
 }
 
 darkmage
@@ -10220,4 +10215,63 @@ lordregent
     "\"TODO\"",
     "\"The point is there's no point.\"";
   }
+}
+
+fusanga
+{
+  DefaultArmStrength = 60;
+  DefaultAgility = 8;
+  DefaultEndurance = 60;
+  DefaultPerception = 40;
+  DefaultIntelligence = 40;
+  DefaultWisdom = 8;
+  DefaultWillPower = 60;
+  DefaultCharisma = 40;
+  DefaultMana = 60;
+  TotalVolume = 100000;
+  TotalSize = 300;
+  Adjective = "massive magical";
+  NameSingular = "mushroom";
+  DefaultName = "Fusanga";
+  TorsoBitmapPos = 128, 128;
+  TorsoMainColor = rgb16(111, 74, 60); /* the cap */
+  TorsoSpecialColor = rgb16(111, 74, 60);
+  BaseEmitation = rgb24(140, 100, 100);
+  IsNameable = false;
+  IsUnique = true;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  UndeadVersions = false;
+  HasEyes = false;
+  HasHead = false;
+  HasALeg = false;
+  UsesNutrition = false;
+  SpillsBlood = false;
+  Sweats = false;
+  CanOpen = false;
+  IsRooted = true;
+  CanChoke = false;
+  FleshMaterial = MAGIC_MUSHROOM_FLESH;
+  AttachedGod = SCABIES;
+  ClassStates = ESP|TELEPORT_LOCK|GAS_IMMUNITY|REGENERATION;
+  /* No damage resistances, but regenerates. */
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 0;
+  BaseUnarmedStrength = 600;
+  KnownCWeaponSkills == UNARMED;
+  CWeaponSkillHits == 150;
+  StandVerb = "glowering";
+  DeathMessage = "@Dd is finally squashed.";
+  HostileReplies =
+  {
+    2,
+    "@Dd radiates loathing and contempt.",
+    "@Dd radiates danger and majesty.";
+  }
+  FriendlyReplies == "@Dd wobbles disappointedly due to the fact that you are cheating.";
 }

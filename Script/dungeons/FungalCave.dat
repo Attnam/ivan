@@ -426,12 +426,13 @@ Dungeon FUNGAL_CAVE;
 
         Types
         {
-          f = mushroom; /* TODO: fusanga */
+          f = mushroom;
+          F = fusanga;
         }
       }
       {
         ffff
-        f..f
+        fF.f
         f..f
         ffff
       }
@@ -496,12 +497,7 @@ Dungeon FUNGAL_CAVE;
     Square, Random;
     {
       Character = kamikazedwarf(MORTIFER);
-      Times = 1:3;
-    }
-
-    Square, Random;
-    {
-      Character = veterankamikazedwarf(MORTIFER);
+      Times = 1:2;
     }
 
     Room
