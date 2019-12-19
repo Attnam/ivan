@@ -139,7 +139,7 @@ OLTERRAIN(fountain, olterrain)
   virtual truth SitOn(character*);
   virtual truth Drink(character*);
   virtual truth HasDrinkEffect() const { return true; }
-  virtual void DryOut();
+  virtual void DryOut(character*);
   virtual truth DipInto(item*, character*);
   virtual truth IsDipDestination() const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }

@@ -4836,7 +4836,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     /* Gum solution! */
 
     if(New && GetCurrentLevel()->IsOnGround() &&
-       (CurrentDungeonIndex == ATTNAM || CurrentDungeonIndex == BATTLE_FIELD))
+       CurrentDungeonIndex == ATTNAM)
     {
       GlobalRainLiquid = powder::Spawn(SNOW);
       GlobalRainSpeed = v2(-64, 128);

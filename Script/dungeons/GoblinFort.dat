@@ -665,7 +665,7 @@ Dungeon GOBLIN_FORT;
       DoorSquare = SHALE solidterrain(PARQUET), MAHOGANY_WOOD door;
     }
 
-    /* Goblin Room */
+    /* Goblin Prince Room */
     Room
     {
       Size = 9,9;
@@ -700,8 +700,70 @@ Dungeon GOBLIN_FORT;
 
       Square, Pos 4,4;
       {
-        Character = goblin(PRINCE) { Inventory == alchemybook; }
+        Character = goblin(PRINCE);
         OTerrain = throne;
+      }
+    }
+
+    /* Aslona Prince Room */
+    Room
+    {
+      Size = 11,9;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+
+      Square, Pos 2, 0;
+      {
+        Items == lantern { SquarePosition = DOWN; }
+      }
+
+      Square, Pos 5,0;
+      {
+        GTerrain = SHALE solidterrain(PARQUET);
+        OTerrain = COPPER door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Pos 5,8;
+      {
+        GTerrain = SHALE solidterrain(PARQUET);
+        OTerrain = COPPER door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 9,7;
+        Types
+        {
+          # = COPPER barwall;
+          $ = COPPER barwall(BROKEN_BARWALL);
+          % = COPPER door(BARDOOR);
+          x = COPPER door(BARDOOR) { Parameters = LOCKED; }
+        }
+      }
+      {
+        ...#.#...
+        ...x.%...
+        ...#.#...
+        ####.####
+        ...$.#...
+        ...%.x...
+        ...#.#...
+      }
+
+      Square, Pos 2,2;
+      {
+        Character = goblin { Team = PRISONER_TEAM; }
+      }
+
+      Square, Pos 8,6;
+      {
+        Character = child(KING) { Team = PRISONER_TEAM; }
       }
     }
 

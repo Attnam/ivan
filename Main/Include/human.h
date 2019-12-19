@@ -859,6 +859,7 @@ CHARACTER(gasghoul, zombie)
 CHARACTER(harvan, humanoid)
 {
  public:
+  virtual truth SpecialEnemySightedReaction(character*);
   virtual void BeTalkedTo();
   virtual void GetAICommand() { StandIdleAI(); }
 };

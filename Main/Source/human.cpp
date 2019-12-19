@@ -4504,7 +4504,7 @@ truth child::MustBeRemovedFromBone() const
 
   return !IsEnabled()
     || GetTeam()->GetID() != ASLONA_TEAM
-    || GetDungeon()->GetIndex() != BATTLE_FIELD
+    || GetDungeon()->GetIndex() != GOBLIN_FORT
     || GetLevel()->GetIndex() != KING_LEVEL;
 }
 
@@ -6616,6 +6616,7 @@ void guard::BeTalkedTo()
       game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
       v2 RebelCampPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
       game::GetWorldMap()->GetWSquare(RebelCampPos)->ChangeOWTerrain(rebelcamp::Spawn());
+      game::GetWorldMap()->RevealEnvironment(RebelCampPos, 0);
       game::SaveWorldMap();
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"Hey macarena.\"");
@@ -7241,49 +7242,6 @@ void aslonawizard::BeTalkedTo()
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
       game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Go to the goblin fort and bring back alchemical notebook.\n"
-                               "We'll cook us some mustard gas against the rebel scum.\"\n"));
-
-      game::LoadWorldMap();
-      v2 GoblinPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
-      game::GetWorldMap()->GetWSquare(GoblinPos)->ChangeOWTerrain(goblinfort::Spawn());
-      game::GetWorldMap()->RevealEnvironment(GoblinPos, 1);
-      game::SaveWorldMap();
-
-      GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
-
-      HasBeenSpokenTo = true;
-      return;
-    }
-    else if(PLAYER->HasAlchemyBook())
-    {
-      if(game::TruthQuestion(CONST_S("Turn in the alchemical notebook? [y/N]"), REQUIRES_ANSWER))
-      {
-        PLAYER->RemoveAlchemyBook();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
-        game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
-        return;
-      }
-    }
-  }
-
-  humanoid::BeTalkedTo();
-}
-
-void aslonawizard::CreateCorpse(lsquare* Square)
-{
-  game::GetCurrentLevel()->GasExplosion(gas::Spawn(MAGIC_VAPOUR, 100), Square, this);
-  SendToHell();
-}
-
-void aslonacaptain::BeTalkedTo()
-{
-  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
-  {
-    if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
-    {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
                                "\"Go to the Pyramid and bring me a nuke. Be careful, the Pyramid\n"
                                "will be dangerous, so it's probably good to go there later.\"\n"));
 
@@ -7307,6 +7265,60 @@ void aslonacaptain::BeTalkedTo()
         ADD_MESSAGE("\"This is a placeholder message.\"");
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
+      }
+    }
+  }
+
+  humanoid::BeTalkedTo();
+}
+
+void aslonawizard::CreateCorpse(lsquare* Square)
+{
+  game::GetCurrentLevel()->GasExplosion(gas::Spawn(MAGIC_VAPOUR, 100), Square, this);
+  SendToHell();
+}
+
+void aslonacaptain::BeTalkedTo()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
+    {
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"save prince Artorius from goblins\n"
+                               "will be dangerous, so it's probably good to go there later.\"\n"));
+
+      game::LoadWorldMap();
+      v2 GoblinPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+      game::GetWorldMap()->GetWSquare(GoblinPos)->ChangeOWTerrain(goblinfort::Spawn());
+      game::GetWorldMap()->RevealEnvironment(GoblinPos, 1);
+      game::SaveWorldMap();
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"This is a placeholder message.\"");
+
+      HasBeenSpokenTo = true;
+      return;
+    }
+    else if(HasBeenSpokenTo)
+    {
+      // Does the player have prince Artorius in his team?
+      character* CrownPrince = 0;
+      for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+        if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
+          CrownPrince = p;
+
+      if(CrownPrince)
+      {
+        if(game::TruthQuestion(CONST_S("Entrust young prince to Lord Mittrars' care? [y/N]"), REQUIRES_ANSWER))
+        {
+          team* Team = game::GetTeam(ASLONA_TEAM);
+          CrownPrince->ChangeTeam(Team);
+
+          ADD_MESSAGE("\"This is a placeholder message.\"");
+          game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
+          return;
+        }
       }
     }
   }
@@ -7370,19 +7382,18 @@ void harvan::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the noble katana named E-numa sa-am? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveMasamune(this);
-        ADD_MESSAGE("\"This is a placeholder message.\"");
-        game::SetRebelStoryState(game::GetRebelStoryState() + 3);
-        return;
-      }
-    }
-    else if(PLAYER->HasAlchemyBook())
-    {
-      if(game::TruthQuestion(CONST_S("Turn in the alchemical notebook? [y/N]"), REQUIRES_ANSWER))
-      {
-        PLAYER->RemoveAlchemyBook();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
-        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("TODO:\n"
+                                 "thou shalt lead my armoies and destroy Aslona\n"
+                                 "the end of your content life.\n\nYou are victorious!"));
+        // TODO: Different message if prince was given to Harvan?
+
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("helped the rebels to win the civil war");
+        AddScoreEntry(Msg, game::GetRebelStoryState() == 5 ? 3 : 2, false); // Did the player do all quests just for rebels?
+        game::End(Msg);
         return;
       }
     }
@@ -7406,53 +7417,58 @@ void harvan::BeTalkedTo()
         return;
       }
     }
-    else if(game::GetRebelStoryState() >= 5)
+    else if(game::GetRebelStoryState() == 5 && game::GetStoryState() < 3)
     {
-      if(game::GetStoryState() < 3)
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Bring me that sword\n"
+                               "He's in trouble.\"\n"));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"Final quest!\"");
+      game::SetStoryState(3);
+      return;
+    }
+    else
+    {
+      // Does the player have prince Artorius in his team?
+      character* CrownPrince = 0;
+      for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+        if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
+          CrownPrince = p;
+
+      if(CrownPrince)
       {
-        game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                                 "\"Bring me Artorius!!!!!!!!!!\n"
-                                 "He's in trouble.\"\n"));
+        team* Team = game::GetTeam(REBEL_TEAM);
+        CrownPrince->ChangeTeam(Team);
 
-        game::LoadWorldMap();
-        v2 BattlePos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
-        game::GetWorldMap()->GetWSquare(BattlePos)->ChangeOWTerrain(battlefield::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BattlePos, 1);
-        game::SaveWorldMap();
-
-        GetArea()->SendNewDrawRequest();
-        ADD_MESSAGE("\"Final quest!\"");
-        game::SetStoryState(3);
+        ADD_MESSAGE("\"This is a placeholder message.\"");
+        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;
-      }
-      else
-      {
-        // Does the player have prince Artorius in his team?
-        character* CrownPrince = 0;
-        for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
-          if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
-            CrownPrince = p;
-
-        if(CrownPrince)
-        {
-          game::PlayVictoryMusic();
-          game::TextScreen(CONST_S("TODO:\n"
-                                   "thou shalt lead my armoies and destroy Aslona\n"
-                                   "the end of your content life.\n\nYou are victorious!"));
-
-          game::GetCurrentArea()->SendNewDrawRequest();
-          game::DrawEverything();
-          PLAYER->ShowAdventureInfo();
-          festring Msg = CONST_S("helped the rebels to win the civil war");
-          AddScoreEntry(Msg, game::GetRebelStoryState() == 8 ? 3 : 2, false); // Did the player do all quests just for rebels?
-          game::End(Msg);
-          return;
-        }
       }
     }
   }
 
   humanoid::BeTalkedTo();
+}
+
+truth harvan::SpecialEnemySightedReaction(character* Char)
+{
+  if(!Char->IsPlayer())
+    return false;
+
+  if(GetHP() > (GetMaxHP() / 2))
+  {
+    if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s bows his head in a quick prayer to Legifer.", CHAR_NAME(DEFINITE));
+    }
+    else
+      ADD_MESSAGE("You sense a small miracle about to happen!");
+
+    Char->TeleportNear(this);
+  }
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s screams at you in violent rage.", CHAR_NAME(DEFINITE));
 }
 
 void lordregent::BeTalkedTo()
@@ -7476,60 +7492,49 @@ void lordregent::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the wicked katana named Asa'marum? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveMuramasa(this);
-        ADD_MESSAGE("\"This is a placeholder message.\"");
-        game::SetAslonaStoryState(game::GetAslonaStoryState() + 3);
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("TODO:\n"
+                                 "thou shalt lead my armoies and destroy Aslona\n"
+                                 "the end of your content life.\n\nYou are victorious!"));
+
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("helped the royalists to win the civil war");
+        AddScoreEntry(Msg, game::GetAslonaStoryState() == 5 ? 3 : 2, false); // Did the player do all quests just for royalists?
+        game::End(Msg);
         return;
       }
     }
-    else if(game::GetAslonaStoryState() >= 5)
+    else if(game::GetAslonaStoryState() == 5 && game::GetStoryState() < 3)
     {
-      if(game::GetStoryState() < 3)
-      {
-        game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                                 "\"Bring me Artorius!!!!!!!!!!\n"
-                                 "He's in trouble.\"\n"));
+      game::TextScreen(CONST_S("\"TODO:\"\n\n"
+                               "\"Bring me sword\n"
+                               "He's in trouble.\"\n"));
 
-        game::LoadWorldMap();
-        v2 BattlePos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
-        game::GetWorldMap()->GetWSquare(BattlePos)->ChangeOWTerrain(battlefield::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BattlePos, 1);
-        game::SaveWorldMap();
-
-        GetArea()->SendNewDrawRequest();
-        ADD_MESSAGE("\"Final quest!\"");
-        game::SetStoryState(3);
-        return;
-      }
-      else
-      {
-        // Does the player have prince Artorius in his team?
-        character* CrownPrince = 0;
-        for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
-          if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
-            CrownPrince = p;
-
-        if(CrownPrince)
-        {
-          game::PlayVictoryMusic();
-          game::TextScreen(CONST_S("TODO:\n"
-                                   "thou shalt lead my armoies and destroy Aslona\n"
-                                   "the end of your content life.\n\nYou are victorious!"));
-
-          game::GetCurrentArea()->SendNewDrawRequest();
-          game::DrawEverything();
-          PLAYER->ShowAdventureInfo();
-          festring Msg = CONST_S("helped the royalists to win the civil war");
-          AddScoreEntry(Msg, game::GetAslonaStoryState() == 8 ? 3 : 2, false); // Did the player do all quests just for royalists?
-          game::End(Msg);
-          return;
-        }
-      }
-    }
-    else if(PLAYER->HasAlchemyBook() || PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
-    {
-      ADD_MESSAGE("\"Ah, seems like you were not idle. I'm sure my advisors will be thrilled.\"");
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"Final quest!\"");
+      game::SetStoryState(3);
       return;
+    }
+    else
+    {
+      // Does the player have prince Artorius in his team?
+      character* CrownPrince = 0;
+      for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+        if(p->IsEnabled() && !p->IsPlayer() && p->IsKing())
+          CrownPrince = p;
+
+      if(CrownPrince)
+      {
+        ADD_MESSAGE("%s bows his head slightly. \"Your Highness, it is excellent to see you safe and sound. Please, hurry to tell Lord Mittrars about your return. He was truly sick with worry.\"", CHAR_NAME(DEFINITE));
+        return;
+      }
+      else if(PLAYER->HasNuke() || PLAYER->HasWeepObsidian())
+      {
+        ADD_MESSAGE("\"Ah, seems like you were not idle. I'm sure my advisors will be thrilled.\"");
+        return;
+      }
     }
   }
 
@@ -7550,10 +7555,10 @@ void lordregent::SpecialBodyPartSeverReaction()
   {
     if(CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s prays to Seges before disappearing. You feel the sudden presence of enemies nearby.", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s prays to Seges before disappearing. You feel the sudden presence of enemies.", CHAR_NAME(DEFINITE));
     }
     else
-      ADD_MESSAGE("You feel a sudden shift in pressure.");
+      ADD_MESSAGE("You sense a small miracle happen nearby.");
 
     // Summons allies and then teleports away.
     std::vector<distancepair> ToSort;
@@ -7569,7 +7574,20 @@ void lordregent::SpecialBodyPartSeverReaction()
     for(uint c = 0; c < 5 && c < ToSort.size(); ++c)
       ToSort[c].Char->TeleportNear(this);
 
-    TeleportRandomly(true);
+    /* Teleport away, but rather than doing it the simple way, we're going to use
+     * a teleport beam to also remove any items on the square. In effect, if the
+     * player cuts off Lord Efra's sword arm, he will teleport and so will
+     * Masamune, rather than for it to stay lying on the ground.
+     */
+    beamdata Beam
+      (
+        this,
+        CONST_S("killed by the fickle favor of Seges"),
+        YOURSELF,
+        0
+      );
+    GetLSquareUnder()->Teleport(Beam);
+    //TeleportRandomly(true);
   }
 }
 
@@ -7585,6 +7603,7 @@ void child::BeTalkedTo()
                 CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr());
 
     ChangeTeam(PLAYER->GetTeam());
+    return;
   }
 
   character::BeTalkedTo();

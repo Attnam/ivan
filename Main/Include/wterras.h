@@ -97,10 +97,6 @@ OWTERRAIN(pyramid, owterrain)
 {
 };
 
-OWTERRAIN(battlefield, owterrain)
-{
-};
-
 OWTERRAIN(blackmarket, owterrain)
 {
 };

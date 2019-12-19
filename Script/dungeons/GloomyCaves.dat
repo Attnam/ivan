@@ -240,8 +240,8 @@ Dungeon ELPURI_CAVE;
 
         Types
         {
-          g = guard(SHOP) { Team = 5; }
-          s = shopkeeper(ELPURI_CAVE) { Team = 5; Flags = IS_MASTER; }
+          g = guard(SHOP) { Team = GUILD_TEAM; }
+          s = shopkeeper(ELPURI_CAVE) { Team = GUILD_TEAM; Flags = IS_MASTER; }
         }
       }
       {

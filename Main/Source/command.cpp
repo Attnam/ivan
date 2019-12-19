@@ -1913,10 +1913,6 @@ truth commandsystem::WizardMode(character* Char)
         game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
         game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
 
-        v2 BattleFieldPos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
-        game::GetWorldMap()->GetWSquare(BattleFieldPos)->ChangeOWTerrain(battlefield::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BattleFieldPos, 1);
-
         v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
         game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
         game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
@@ -1953,10 +1949,6 @@ truth commandsystem::WizardMode(character* Char)
         v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
         game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
         game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
-
-        v2 BattleFieldPos = game::GetWorldMap()->GetEntryPos(0, BATTLE_FIELD);
-        game::GetWorldMap()->GetWSquare(BattleFieldPos)->ChangeOWTerrain(battlefield::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BattleFieldPos, 1);
 
         v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
         game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());

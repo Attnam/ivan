@@ -2918,7 +2918,36 @@ goblin
     EnergyResistance = 30;
     TamingDifficulty = 20;
     UndeadVersions = false;
-    /* TODO: Special dialogue. */
+    /* Gus is just a bit odd. */
+    HostileReplies =
+    {
+      10,
+      "@Dd seems to be deep in thoughts.",
+      "\"Can a paladin kill baby orcs?\"",
+      "\"Must a paladin never stab a man in the back?\"",
+      "\"Must laws be upheld with no reason or logic?\"",
+      "\"Is saying you love someone always good?\"",
+      "\"Can a king like me be lawful?\"",
+      "\"Is it chaotic to refuse an order to kill an innocent man?\"",
+      "\"Can you be born evil? If so, are you compelled to do evil, regardless of its utility?\"",
+      "\"Is being nailed to things good?\"",
+      "\"Is everything not forbidden compulsory?\"";
+    }
+    FriendlyReplies =
+    {
+      10,
+      "@Dd seems to be deep in thoughts.",
+      "\"Can a paladin kill baby orcs?\"",
+      "\"Must a paladin never stab a man in the back?\"",
+      "\"Must laws be upheld with no reason or logic?\"",
+      "\"Is saying you love someone always good?\"",
+      "\"Can a king like me be lawful?\"",
+      "\"Is it chaotic to refuse an order to kill an innocent man?\"",
+      "\"Can you be born evil? If so, are you compelled to do evil, regardless of its utility?\"",
+      "\"Is being nailed to things good?\"",
+      "\"Is everything not forbidden compulsory?\"";
+    }
+    DeathMessage = "@Dd passed on, @pp ceased to be, @pp expired and went to meet @sp maker. @Pp is an ex-king!";
   }
 }
 
@@ -3346,7 +3375,7 @@ dog /* canine-> */
   FleshMaterial = DOG_FLESH;
   AttachedGod = SILVA;
   Alias == "dog";
-  DeathMessage = "@Dd is killed.";
+  DeathMessage = "@Dd is killed. You feel sad for a moment, but then it passes.";
   ScienceTalkAdjectiveAttribute =
   {
     16,
@@ -4062,7 +4091,7 @@ petrusswife
       "\"You met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
       "\"I wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
     }
-    DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
+    DeathMessage = "With a calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
     ScienceTalkIntelligenceModifier = 25;
     ScienceTalkWisdomModifier = 25;
     ScienceTalkIntelligenceRequirement = 20;
@@ -5616,6 +5645,15 @@ kobold
   RightSWeaponSkillHits = 0;
   PanicLevel = 75;
   FleshMaterial = KOBOLD_FLESH;
+  HostileReplies =
+  {
+    5,
+    "@Dd grunts angrily.",
+    "@Dd yells at the top of @sp lungs.",
+    "@Dd makes vulgar gestures in your general direction.",
+    "@Dd eyes you warily.",
+    "@Dd screams: \"You killed all my friends!\"";
+  }
   DeathMessage = "@Dd dies yelling like a tortured hyena.";
   StandVerb = "skulking";
   AttachedGod = CRUENTUS;
@@ -5694,6 +5732,14 @@ kobold
       "\"I often struggle to lead my kind on the Path of Enlightenment, but I must persevere. Too long we were beasts, now we shall become people.\"",
       "\"The mind is everything. What you think you become.\"",
       "\"Peace comes from within. Do not seek it without.\"";
+    }
+    HostileReplies =
+    {
+      4,
+      "@Dd snarls: \"You murderer!\"",
+      "@Dd frowns: \"I cannot let you terrorize my kind any longer.\"",
+      "\"Die, you widowmaker!\"",
+      "\"How many of my kin have you slaughtered?!\"";
     }
   }
 
@@ -6321,8 +6367,15 @@ carnivorousplant
   CanOpen = false;
   TotalVolume = 20000;
   TorsoBitmapPos = 0, 16;
-  HostileReplies == "@Dd is silent.";
-  FriendlyReplies == "@Dd is silent.";
+  HostileReplies =
+  {
+    4,
+    "@Dd is silent in a hostile manner.",
+    "@Dd rustles @sp leaves.",
+    "@Dd sways.",
+    "@Dd drools."; /* It's carnivorous, after all. */
+  }
+  FriendlyReplies == "@Dd is silent in a firendly manner.";
   TotalSize = 100;
   Adjective = "carnivorous";
   NameSingular = "plant";
@@ -7570,7 +7623,14 @@ mushroom
   IsRooted = true;
   AllowUnconsciousness = false;
   CanChoke = false;
-  HostileReplies == "@Dd expresses @sp utter contempt for your pitiful and loathsome existence by wobbling erratically.";
+  HostileReplies =
+  {
+    4,
+    "@Dd wobbles threateningly.",
+    "@Dd suddenly seems very still.",
+    "@Dd sporulates a bit.",
+    "@Dd expresses @sp utter contempt for your pitiful and loathsome existence by wobbling erratically.";
+  }
   FriendlyReplies == "@Dd wobbles knowingly.";
 }
 
@@ -8099,7 +8159,7 @@ genetrixvesana
   FriendlyReplies == "@Dd is silent.";
   ClassStates = INFRA_VISION;
   HasALeg = false;
-  SpillsBlood = false;
+  SpillsBlood = true; /* It will be more fun! */
   Sweats = false;
   StandVerb = "rooted";
   IsRooted = true;
@@ -10086,10 +10146,8 @@ harvan
   ArmBitmapPos = 80, 32;
   LegBitmapPos = 0, 240;
   HairColor = rgb16(6, 6, 6); /* horns */
-  SkinColor = rgb16(48, 48, 48); /* arms */
-  ClothColor = rgb16(96, 96, 96);
-  LegMainColor = rgb16(72, 72, 72);
-  LegSpecialColor = rgb16(112, 80, 48);
+  SkinColor = rgb16(160, 160, 160); /* arms */
+  ClothColor = rgb16(211, 211, 211);
   WieldedPosition = -1, -1;
   DefaultName = "Harvan Black-cloak";
   NameSingular = "rebel leader";
@@ -10104,17 +10162,17 @@ harvan
   AllowUnconsciousness = false;
   CanRead = true;
   UndeadVersions = false;
-  Helmet = SOUL_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+  Helmet = UR_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
   Amulet = amulet(AMULET_OF_LIFE_SAVING);
-  BodyArmor = SOUL_STEEL bodyarmor(CHAIN_MAIL);
+  BodyArmor = UR_STEEL bodyarmor(CHAIN_MAIL);
   Cloak = SOUL_STEEL cloak(CLOAK_OF_PROTECTION) { Enchantment = 10; }
-  Belt = SOUL_STEEL belt(BELT_OF_CARRYING) { Enchantment = 4; }
+  Belt = UR_STEEL belt(BELT_OF_CARRYING) { Enchantment = 4; }
   RightWielded = muramasa;
-  LeftWielded = SOUL_STEEL shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 4; }
+  LeftWielded = UR_STEEL shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 4; }
   RightRing = ring(RING_OF_INFRA_VISION);
   LeftRing = ring(RING_OF_POISON_RESISTANCE);
-  RightGauntlet = SHADOW_CLOTH gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-  RightBoot = SHADOW_CLOTH boot(BOOT_OF_AGILITY) { Enchantment = 4; }
+  RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 4; }
   KnownCWeaponSkills = { 5, LARGE_SWORDS, SHIELDS, UNARMED, KICK, BITE; }
   CWeaponSkillHits = { 5, 2000, 2000, 2000, 1500, 1500; }
   RightSWeaponSkillHits = 500;
@@ -10187,7 +10245,7 @@ lordregent
   Belt = GOLD belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 6; }
   RightWielded = masamune;
   LeftWielded = OCTIRON GOLD daggerofvenom { Enchantment = 6; }
-  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  RightRing = ring(RING_OF_ACID_RESISTANCE);
   LeftRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
   RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
   RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
@@ -10232,7 +10290,7 @@ fusanga
   TotalSize = 300;
   Adjective = "massive magical";
   NameSingular = "mushroom";
-  DefaultName = "Fusanga";
+  DefaultName = "Sieni Fusanga";
   TorsoBitmapPos = 128, 128;
   TorsoMainColor = rgb16(111, 74, 60); /* the cap */
   TorsoSpecialColor = rgb16(111, 74, 60);

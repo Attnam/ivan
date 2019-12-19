@@ -123,6 +123,14 @@ Team XINROCH_TOMB_KAMIKAZE_DWARF_TEAM;
   KillEvilness = 100;
 }
 
+Team PRISONER_TEAM;
+{
+  Relation 1, UNCARING;
+  Relation 17, FRIEND;
+  Relation 18, FRIEND;
+  KillEvilness = 100;
+}
+
 Team TERRA_TEAM;
 {
   Relation 1, UNCARING;

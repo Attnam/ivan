@@ -101,7 +101,7 @@ aslonacastle
 
 rebelcamp
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 16, 64;
   NameStem = "hidden camp";
   UsesLongArticle = false;
   AttachedDungeon = REBEL_CAMP;
@@ -123,7 +123,7 @@ goblinfort
 
 fungalcave
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 32, 64;
   NameStem = "damp and dank cave entrance";
   AttachedDungeon = FUNGAL_CAVE;
   CanBeGenerated = true;
@@ -141,19 +141,9 @@ pyramid
   NativeGTerrainType = DESERT;
 }
 
-battlefield
-{
-  BitmapPos = 64, 64;
-  NameStem = "besieged stronghold";
-  AttachedDungeon = BATTLE_FIELD;
-  CanBeGenerated = true;
-  HideLocationInitially = true;
-  NativeGTerrainType = TUNDRA;
-}
-
 blackmarket
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 80, 80;
   NameStem = "old, decrepit building";
   UsesLongArticle = true;
   AttachedDungeon = BLACK_MARKET;

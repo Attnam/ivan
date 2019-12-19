@@ -4155,17 +4155,6 @@ void locationmap::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
-truth alchemybook::Read(character*)
-{
-  ADD_MESSAGE("It's just scribbles to you.");
-  return false;
-}
-
-col16 alchemybook::GetMaterialColorA(int) const
-{
-  return MakeRGB16(111, 64, 37);
-}
-
 truth nuke::Apply(character* Terrorist)
 {
   if(IsExplosive())

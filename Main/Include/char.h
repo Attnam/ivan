@@ -310,8 +310,6 @@ class character : public entity, public id
   truth HasShadowVeil() const;
   truth HasLostRubyFlamingSword() const;
   truth RemoveShadowVeil(character*);
-  truth HasAlchemyBook() const;
-  truth RemoveAlchemyBook();
   truth HasNuke() const;
   truth RemoveNuke();
   truth HasWeepObsidian() const;

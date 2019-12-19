@@ -2839,7 +2839,7 @@ void fusanga::GetAICommand()
   /* Chaos magic */
   lsquare* Square = GetLevel()->GetLSquare(GetLevel()->GetRandomSquare(0, HAS_NO_OTERRAIN));
 
-  if(Square && !RAND_N(30))
+  if(Square && !RAND_N(20))
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s radiates pure magic.", CHAR_NAME(DEFINITE));
@@ -2900,7 +2900,7 @@ void fusanga::GetAICommand()
   }
 
   /* Spawn mushrooms */
-  if(!RAND_N(60))
+  if(!RAND_N(40))
   {
     int NumberOfMushrooms = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 

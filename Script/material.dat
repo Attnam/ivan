@@ -5837,7 +5837,7 @@ liquid
     RustModifier = 0;
     PriceModifier = 750;
     ConsumeType = CT_MINERAL;
-    Color = rgb16(161, 36, 36);
+    Color = rgb16(207, 16, 32);
     Emitation = rgb24(150, 120, 90);
     NameStem = "lava";
     AttachedGod = INFUSCOR;

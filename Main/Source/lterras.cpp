@@ -354,16 +354,16 @@ truth fountain::SitOn(character* Sitter)
 
       Sitter->SpillFluid(Sitter, static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
 
-      if(!RAND_N(100))
-        DryOut();
+      if(!RAND_N(20))
+        DryOut(Sitter);
     }
     else if(GetSecondaryMaterial()->IsGaseous())
     {
       ADD_MESSAGE("You sit on the fountain. It releases some %s.", GetSecondaryMaterial()->GetName(false, false).CStr());
       GetLSquareUnder()->AddSmoke(static_cast<gas*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
 
-      if(!RAND_N(100))
-        DryOut();
+      if(!RAND_N(20))
+        DryOut(Sitter);
     }
     else // Should not happen.
     {
@@ -437,7 +437,7 @@ truth fountain::Drink(character* Drinker)
                          "Two %s appear from nothing and the spirit flies happily away!", false);
             }
             else
-              DryOut();
+              DryOut(Drinker);
 
             break;
            case 4:
@@ -631,8 +631,8 @@ truth fountain::Drink(character* Drinker)
 
           GetSecondaryMaterial()->EatEffect(Drinker, 500);
 
-          if(!RAND_N(100))
-            DryOut();
+          if(!RAND_N(20))
+            DryOut(Drinker);
 
           return true;
         }
@@ -642,8 +642,8 @@ truth fountain::Drink(character* Drinker)
         ADD_MESSAGE("%s releases some %s.", CHAR_NAME(DEFINITE), GetSecondaryMaterial()->GetName(false, false).CStr());
         GetLSquareUnder()->AddSmoke(static_cast<gas*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
 
-        if(!RAND_N(100))
-          DryOut();
+        if(!RAND_N(20))
+          DryOut(Drinker);
 
         return true;
       }
@@ -661,7 +661,7 @@ truth fountain::Drink(character* Drinker)
   }
 }
 
-void fountain::DryOut(/* character* Dude */)
+void fountain::DryOut(character* Dude)
 {
   ADD_MESSAGE("%s dries out.", CHAR_NAME(DEFINITE));
   delete SetSecondaryMaterial(0);
@@ -673,13 +673,13 @@ void fountain::DryOut(/* character* Dude */)
   }
 
   // Drying fountain of an owned room makes the master angry.
-  /*room* Room = GetRoom();
+  room* Room = GetRoom();
 
-  if(Room && Room->MasterIsActive())
+  if(Dude && Room && Room->MasterIsActive())
   {
-    if(GetMaster() != Dude && Dude->IsPlayer())
-      Dude->Hostility(GetMaster());
-  }*/
+    if(Room->GetMaster() != Dude && Dude->IsPlayer())
+      Dude->Hostility(Room->GetMaster());
+  }
 }
 
 void brokendoor::BeKicked(character* Kicker, int KickDamage, int)
@@ -870,8 +870,8 @@ truth fountain::DipInto(item* ToBeDipped, character* Who)
 {
   ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(ToBeDipped->GetDefaultSecondaryVolume())), Who);
 
-  if(!RAND_N(100))
-    DryOut();
+  if(!RAND_N(20))
+    DryOut(Who);
 
   return true;
 }

@@ -2118,41 +2118,6 @@ truth character::RemoveShadowVeil(character* ToWhom)
   return false;
 }
 
-truth character::HasAlchemyBook() const
-{
-  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-    if(i->IsAlchemyBook())
-      return true;
-
-  return combineequipmentpredicates()(this, &item::IsAlchemyBook, 1);
-}
-
-truth character::RemoveAlchemyBook()
-{
-  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-    if(i->IsAlchemyBook())
-    {
-      item* Item = *i;
-      Item->RemoveFromSlot();
-      Item->SendToHell();
-      return true;
-    }
-
-  for(int c = 0; c < GetEquipments(); ++c)
-  {
-    item* Item = GetEquipment(c);
-
-    if(Item && Item->IsAlchemyBook())
-    {
-      Item->RemoveFromSlot();
-      Item->SendToHell();
-      return true;
-    }
-  }
-
-  return false;
-}
-
 truth character::HasNuke() const
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)

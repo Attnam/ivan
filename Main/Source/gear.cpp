@@ -1791,7 +1791,7 @@ truth masamune::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
       if(!Enemy->TemporaryStateIsActivated(PANIC) && !Enemy->TemporaryStateIsActivated(FEARLESS) &&
          Enemy->GetPanicLevel() > (RAND() % (50 - Min(Hitter->GetAttribute(MANA), 49))))
         Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
-      else if(!Enemy->TemporaryStateIsActivated(TELEPORT_LOCK))
+      if(!Enemy->TemporaryStateIsActivated(TELEPORT_LOCK))
         Enemy->BeginTemporaryState(TELEPORT_LOCK, 200 + RAND_N(500));
 
       if(Hitter)

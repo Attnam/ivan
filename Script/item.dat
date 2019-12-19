@@ -236,7 +236,7 @@ meleeweapon
   CanBeEnchanted = true;
   HasSecondaryMaterial = true;
   TeleportPriority = 500;
-  DescriptiveInfo = "An ugly instrument of killing.";
+  DescriptiveInfo = "Who lives by the sword dies by the sword. Who lives by the hammer dies by the hammer. Who lives by the spoon... You get the idea.";
 
   Config LONG_SWORD;
   {
@@ -2411,6 +2411,7 @@ scrollofteleportation /* scroll-> */
   Alias = { 2, "teleport", "teleportation"; }
   AttachedGod = SOPHOS;
   ReadDifficulty = 50;
+  DescriptiveInfo = "With the proper incantation to alter the flow of ley lines, one can arbitrarily increase the similarity of two different locations. When the areas become superimposed (with a maximum deviation of 2^-20 m), the Universe itself can no longer tell them apart. The net effect is that, while to an outside observer the inexplicable miracle of teleportation took place, what has actually happened is that the source location became the destination. This is yet another proof that the so-called miracles are only as of yet unexplained phenomena of magical science.";
 }
 
 scrolloffireballs /* scroll-> */
@@ -3233,6 +3234,7 @@ scrolloftaming /* scroll-> */
   AttachedGod = DULCIS;
   ReadDifficulty = 100;
   Alias = { 8, "pet", "ally", "minion", "companion", "familiar", "slave", "friend", "help"; }
+  DescriptiveInfo = "All brain washing, memory altering and mind controlling magic is forbidden under the penalty of death in nine out of ten kingdoms. Thankfully, you are in the one that allows it.";
 }
 
 mine /*materialcontainer-> */
@@ -3677,6 +3679,7 @@ cloak /* armor-> */
     ArticleMode = FORCE_THE;
     CanBeEnchanted = false;
     CanBePiled = false;
+    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live. He was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished. But years eventually caught up with him, after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. But Xinroch wasn't one to give up and thus he started to heavily fund research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life. The Tomb of Xinroch was erected on the battlefield where Lord Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory.";
   }
 
   Config CLOAK_OF_WEREWOLF;
@@ -3922,6 +3925,7 @@ boot /* armor-> */
   BootBitmapPos = 16, 432;
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
+  DescriptiveInfo = "Protection for your legs.";
   Alias = { 3, "boots", "shoes", "moccasins"; }
 
   Config BROKEN;
@@ -4113,6 +4117,7 @@ gauntlet /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   HasNormalPictureDirection = false;
+  DescriptiveInfo = "Protection for your hands.";
 
   Config BROKEN;
   {
@@ -5879,7 +5884,7 @@ flamingsword /* meleeweapon-> */
     ArticleMode = FORCE_THE;
     DamageFlags = SLASH|PIERCE;
     GearStates = GAS_IMMUNITY|DISEASE_IMMUNITY;
-    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. Some sources claim that Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted. In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, and his two crossed flaming swords are still found on the banner of the grand master dark knights to this day. While his predecessors were beasts on the battlefield and masters of the military arts of tactics and strategy, Xinroch was well-versed in the use of another weapon they rarely considered - diplomacy. He conquered a land - then used the fear to gain ten times more in a fraction of time. Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished. Even Ischaldirh, the champion of Infuscor since times immemorial, who always thought of warriors as nothing more than brutes and uncivilized savages, befriended Xinroch and accompanied him on many a campaign. Not even demigods could stand in their way. But years eventually caught up with Xinroch, after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. Only that which already died and was raised to undeath or which ascended beyond this world is truly immortal. Xinroch started to heavily fund research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life. During one of the countless battles late in his life, Xinroch lost one of the iconic ruby flaming swords he wielded most of his life. The dwarves of Khaz-zadm forged an arcanite shield for him, but it was clear to everyone his prime years have irreversibly passed. Xinroch died in a glorious battle. His army crushed the invasion of frost giants while Xinroch himself, by then of venerable age, dueled and slayed their jarl. Yet his years and exhaustion took their toll and Xinroch could not fend off the treacherous dagger his most trusted lieutenant turned against him. Old grand master slain and the battle won, this second-in-command became the new grand master dark knight. The Tomb of Xinroch was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory.";
+    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live. Some sources claim that he was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent and he rose quickly through the ranks, never stopping until the very top. In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, and his two crossed flaming swords are still found on the banner of the grand master dark knights to this day. During a battle late in his life, Xinroch lost one of the flaming swords he wielded for most of his life, and after his death, the lost sword became shrouded in myths. It was even said that the return of this sword will herald the return of Lord Xinroch himself.";
   }
 }
 
@@ -6403,6 +6408,7 @@ chameleonwhip /* meleeweapon->whip-> */
   WieldedBitmapPos = 160, 224;
   EnchantmentMinusChance = 50;
   EnchantmentPlusChance = 50;
+  DescriptiveInfo = "Woven into the lash are tiny fragments of protean chaos, each strike destabilizing the biomorphic field of your foes.";
 
   Config BROKEN;
   {
@@ -6554,6 +6560,7 @@ charmlyre /* magicalinstrument-> */
   AttachedGod = DULCIS;
   WieldedBitmapPos = 176, 352;
   CanBeBurned = false;
+  DescriptiveInfo = "Finally, everyone will be working together. For you.";
   Alias = { 6, "music", "charm", "domination", "control", "peace", "world peace"; }
 }
 
@@ -7679,35 +7686,6 @@ locationmap /* scroll-> */
   {
     PostFix = "of black market";
   }
-}
-
-alchemybook /* holybook-> */
-{
-  DefaultSize = 50;
-  Possibility = 0;
-  Category = BOOK;
-  DefaultMainVolume = 3500;
-  StrengthModifier = 150;
-  BitmapPos = 0, 144;
-  FormModifier = 20;
-  Adjective = "dwarven alchemical";
-  NameSingular = "handbook";
-  ArticleMode = FORCE_THE;
-  CanBeWished = false;
-  IsQuestItem = true;
-  IsMaterialChangeable = false;
-  IsPolymorphable = false;
-  IsPolymorphSpawnable = false;
-  CanBeBurned = true; /* To make it harder for the player. */
-  CanBeCloned = false;
-  CanBePiled = false;
-  MainMaterialConfig == PAPYRUS;
-  Price = 500;
-  Roundness = 70;
-  IsTwoHanded = true;
-  CreateDivineConfigurations = false;
-  AttachedGod = SOPHOS;
-  WieldedBitmapPos = 176, 144;
 }
 
 nuke /* materialcontainer-> */

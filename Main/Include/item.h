@@ -508,7 +508,6 @@ class item : public object
   virtual truth IsBanana() const { return false; }
   virtual truth IsMangoSeedling() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
-  virtual truth IsAlchemyBook() const { return false; }
   virtual truth IsNuke() const { return false; }
   virtual truth IsWeepObsidian() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
