@@ -91,7 +91,7 @@ void highscore::Draw() const
     Desc.Resize(13, ' ');
     Desc << Entry[c];
     List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
-    List.SetLastEntryHelp(festring() << Entry[c]);
+    List.SetLastEntryHelp(festring() << "The brave, foolish souls who ventured into the world of IVAN.");
   }
 
   List.SetFlags(FADE);

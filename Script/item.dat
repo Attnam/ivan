@@ -7440,17 +7440,21 @@ trinket
     Category = FOOD;
     DefaultSize = 30;
     DefaultMainVolume = 250;
+    Possibility = 250;
     HasSecondaryMaterial = false;
     BitmapPos = 80, 336;
     FormModifier = 25;
     StrengthModifier = 75;
+    Roundness = 15;
     Adjective = "dead";
     NameSingular = "fish";
     /* one more "fish" to avoid conflicts with "fish bone" */
     Alias = { 2, "fish", "sardine"; }
     MainMaterialConfig == SARDINE;
-    Roundness = 15;
     AttachedGod = SEGES;
+    AllowedDungeons = { 7,
+                        ASLONA_CASTLE, REBEL_CAMP, FUNGAL_CAVE, GOBLIN_FORT, PYRAMID,
+                        MONDEDR, IRINOX; }
     DescriptiveInfo = "Dead fish, dead fish, lovely lovely dead fish! Eat them up! Yum!";
   }
 

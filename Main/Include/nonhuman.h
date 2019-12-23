@@ -501,9 +501,16 @@ CHARACTER(fusanga, largecreature)
   virtual void SpecialTurnHandler() { UpdatePictures(); }
   virtual truth IsMushroom() const { return true; }
  protected:
+  virtual truth AllowExperience() const { return false; }
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
+};
+
+CHARACTER(goldspider, spider)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 #endif

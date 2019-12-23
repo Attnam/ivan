@@ -369,11 +369,6 @@ Dungeon GOBLIN_FORT;
       Times = 2;
     }
 
-    Square, Random HAS_NO_OTERRAIN;
-    {
-      Character = spider(PHASE);
-    }
-
     /* Decorations */
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {
@@ -1070,6 +1065,15 @@ Dungeon GOBLIN_FORT;
     Square, Random HAS_NO_OTERRAIN|IN_ROOM;
     {
       OTerrain = decoration(WELL);
+    }
+  }
+
+  RandomLevel 0:4;
+  {
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = spider(PHASE);
+      Times = 1:3;
     }
   }
 }

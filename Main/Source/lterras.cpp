@@ -851,9 +851,12 @@ void door::ActivateBoobyTrap()
    {
      int GasMaterial[] = { MUSTARD_GAS, FART, SKUNK_SMELL, EVIL_WONDER_STAFF_VAPOUR,
                            SLEEPING_GAS, TELEPORT_GAS, LAUGHING_GAS, ACID_GAS, FIRE_GAS };
-
      BoobyTrap = 0;
-     GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial[RAND() % 9], 250));
+
+     if(!RAND_4)
+       GetLevel()->GasExplosion(gas::Spawn(GasMaterial[RAND() % 9], 250), GetLSquareUnder(), 0);
+     else
+       GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial[RAND() % 9], 250));
      break;
    }
    case 0:

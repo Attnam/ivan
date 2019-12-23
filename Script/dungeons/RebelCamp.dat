@@ -22,12 +22,13 @@
 Dungeon REBEL_CAMP;
 {
   Levels = 1;
-  Description = "rebel camp";
+  Description = "Rebel Camp";
   ShortDescription = "RC";
 
   Level 0;
   {
     LevelMessage = "You pass the sentries and draw closer to the camp.";
+    Description = "Rebel Camp";
     ShortDescription = "Rebel Camp";
     FillSquare = solidterrain(GRASS_TERRAIN), 0;
     Size = 55, 55;
@@ -179,6 +180,12 @@ Dungeon REBEL_CAMP;
     {
       Character = mysticfrog(LIGHT);
       Times = 1:2;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = necromancer(MASTER_NECROMANCER);
+      Times = 2;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
@@ -354,6 +361,8 @@ Dungeon REBEL_CAMP;
     /* Other Rooms */
     Room
     {
+      Shape = RECTANGLE;
+
       Square, Random;
       {
         OTerrain = decoration(CHEAP_BED);
@@ -363,6 +372,8 @@ Dungeon REBEL_CAMP;
 
     Room
     {
+      Shape = RECTANGLE;
+
       Square, Random;
       {
         OTerrain = decoration(CHEAP_BED);

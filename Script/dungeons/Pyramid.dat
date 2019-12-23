@@ -22,7 +22,7 @@
 Dungeon PYRAMID;
 {
   Levels = 5;
-  Description = "pyramid";
+  Description = "Pyramid";
   ShortDescription = "PY";
 
   LevelDefault

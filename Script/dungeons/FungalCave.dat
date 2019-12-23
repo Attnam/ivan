@@ -22,7 +22,7 @@
 Dungeon FUNGAL_CAVE;
 {
   Levels = 5;
-  Description = "fungal cave";
+  Description = "Fungal Cave";
   ShortDescription = "FC";
 
   LevelDefault
@@ -500,6 +500,11 @@ Dungeon FUNGAL_CAVE;
       Times = 1:2;
     }
 
+    Square, Random;
+    {
+      Character = darkmage(ELDER);
+    }
+
     Room
     {
       Size = 11,7;
@@ -760,6 +765,14 @@ Dungeon FUNGAL_CAVE;
     Square, Random IN_ROOM|HAS_NO_OTERRAIN;
     {
       Items = { 2, mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }, Random { MinPrice = 250; Category = SCROLL; } }
+    }
+  }
+
+  RandomLevel 0:3;
+  {
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = goldspider(GIANT_GOLD);
     }
   }
 }

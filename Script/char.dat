@@ -595,7 +595,7 @@ farmer
     {
       9,
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
-      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
       "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
       "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
@@ -1047,7 +1047,7 @@ guard
       "\"I've heard other emissaries were sent from Aslona even to goblin lands to negotiate assistance.\"",
       "\"After the old king was assassinated and the Rebellion started, Aslona lost much of its former power.\"",
       "\"I will see the Rebellion crushed and every last rebel executed for their crimes!\"",
-      "\"My king is young and inexperienced; his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
+      "\"Lord Regent is doing his best, but his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
       "\"Bandits are roving free through the forests of Aslona; you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
       "\"My father was a trusted general of the old king, and the first one to meet with the rebel army on a battlefield after the regicide. Alas, he was betrayed by his slave-soldiers and murdered along with all of his loyal knights.\"",
       "\"I see a representative of the orcish freeholds arrived. Don't trust him! Those orcish vultures would love to feast on the carcass of Aslona, but I won't let that happen.\"",
@@ -1169,7 +1169,7 @@ guard
       "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a king again.\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
-      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"";
     }
   }
@@ -1277,7 +1277,7 @@ shopkeeper
       "@Dd sighs: \"I wonder why I have so few customers these days...\"",
       "\"The topmost reason why I work here is that the monsters devour tax collectors.\"",
       "\"Elpuri, eh? Folks say he hatched as a light frog in the Cathedral of Attnam. Yet his voracious appetite quickly set him apart. He ate and grew until his swollen bulk dwarfed even the largest of the giant dark frogs.\"",
-      "\"I've heard that Elpuri once was the favourite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
+      "\"I've heard that Elpuri once was the favorite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
       "\"After being renounced by Petrus, Elpuri fled the Cathedral and found refuge here in these caves, where he bides his time to build an army of dark frogs and strike back against the high priest.\"",
       "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster than they could flood and torment the world.\"",
       "\"The monsters don't really bother me, no. Not even they are stupid enough to want to be on the bad side of the Guild.\"",
@@ -1426,9 +1426,11 @@ shopkeeper
     NameSingular = "quartermaster";
     FriendlyReplies =
     {
-      2,
-      "@Dd sighs: \"TODO\"",
-      "\"The monsters don't attack me, because of our mutually profitable contract.\"";
+      4,
+      "@Dd sighs: \"Business is slow these days, with the civil war and stuff.\"",
+      "@Dd smiles: \"If you need money fast, I will buy your stuff. No problem.\"",
+      "\"Harvan is a sneaky one. Kind of makes you wonder what he's up to.\"",
+      "\"Lots of rats in this camp. Lots of children, too. Of course, I prefer the taste of rats.\"";
     }
     Inventory = { 2, holybook(MELLIS), HEPATIZON EBONY_WOOD pickaxe { Enchantment = 3; } }
   }
@@ -3536,7 +3538,37 @@ spider
     TotalVolume = 5000;
     TotalSize = 50;
     Frequency = 10;
+    PanicLevel = 50;
     ClassStates = ETHEREAL_MOVING|TELEPORT|INVISIBLE|ESP;
+  }
+}
+
+goldspider /* spider-> */
+{
+  DefaultArmStrength = 18;
+  DefaultAgility = 26;
+  DefaultEndurance = 18;
+  DefaultPerception = 26;
+  DefaultIntelligence = 8;
+  DefaultWillPower = 14;
+  DefaultWisdom = 14;
+  DefaultCharisma = 8;
+  DefaultMana = 14;
+  FleshMaterial = GOLD;
+  AttachedGod = INFUSCOR;
+  IsAbstract = true;
+  IsCatacombCreature = false;
+  BaseBiteStrength = 400;
+  CWeaponSkillHits == 150;
+  TotalVolume = 5000;
+  TotalSize = 50;
+
+  Config GIANT_GOLD;
+  {
+    /* Defined this way because of how spider::GetAICommand() works. */
+    Adjective = "giant gold";
+    SkinColor = rgb16(224, 224, 0);
+    Frequency = 1;
   }
 }
 
@@ -4431,6 +4463,30 @@ housewife
     AllowedDungeons == XINROCH_TOMB;
   }
 
+  Config ASLONA_CASTLE;
+  {
+    NameSingular = "maid";
+    NamePlural = "maids";
+    LegMainColor = rgb16(0, 191, 255);
+    FriendlyReplies =
+    {
+      5,
+      "\"A master sorcerer like Myrddin inevitably outlives all his peers. It must be a lonely existence.\"",
+      "\"I hear Myrddin is quite a mage. Of course, it's not like he'd bother to stop to talk to you when he ventures into the castle.\"",
+      "\"I went to the chapel yesterday, but that kamikaze dwarf was sitting there. He makes me nervous, so I figured I'd come back another time.\"",
+      "\"I don't know if Senex ever leaves the chapel. That man works day and night to take care of all of us.\"",
+      "@Dd chatters.";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"You will hang for this!\"",
+      "\"Guards! Guards!\"",
+      "@Dd screams for help.";
+    }
+    ScienceTalkPossibility = 0;
+  }
+
   Config REBEL_CAMP;
   {
     NameSingular = "rebel";
@@ -4439,7 +4495,7 @@ housewife
     {
       9,
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
-      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
       "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
       "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
@@ -6884,7 +6940,7 @@ cossack
       "\"We must free young prince Artorius from the clutches of that wretched Lord Regent.\"",
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
-      "\"I've heard some people talk about just burning the castle to the ground. Probaby just talk though. Everyone's a bit on edge right now.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"Everyone wants to know what really happened to the old king.\"",
@@ -9582,15 +9638,20 @@ child
     CanRead = true;
     FriendlyReplies =
     {
-      3,
-      "\"This is a placeholder message.\"",
-      "\"This is a placeholder message.\"",
-      "\"This is a placeholder message.\"";
+      8,
+      "\"I was just coming back home from Castle Noth when those ugly goblins attacked and took me here.\"",
+      "\"I will tell daddy to catch all the goblins and send them to the mines!\"",
+      "\"I will tell uncle Myrddin to burn this whole dungeon down with his magic!\"",
+      "\"I hope uncle Mittrars is all right. He always worries so much!\"",
+      "\"I hope uncle Efra and uncle Harvan are talking with each other again. When I last saw them they were arguing pretty badly.\"",
+      "\"I hate goblins! They are mean and stinky!\"",
+      "@Dd whines: \"Are we there yet?\"",
+      "\"I can't wait to see my daddy! I miss him so much!\"";
     }
     HostileReplies =
     {
       3,
-      "\"How dare you assault the king!\"",
+      "\"How dare you assault a prince!\"",
       "\"Guards! Guards!\"",
       "@Dd screams for help.";
     }
@@ -9652,7 +9713,7 @@ bum
     "\"Breaking your wands can have quite an effect, har har har. I've learned the hard way.\"",
     "\"One of my friends once told me that altars and wands of polymorph mix surprisingly well. Hm, I'll have to try for myself one day.\"",
     "\"My mama always told me, eat carrots and you'll see as well as a giant golden eagle.\"",
-    "\"Mushrooms are my favourite! They spawn so quickly you'll never run out of food! Har har har!\"",
+    "\"Mushrooms are my favorite! They spawn so quickly you'll never run out of food! Har har har!\"",
     "\"My mama always told me that fat people are not very agile and gaunt people are weak. It's best to try and stay fit, she said.\"",
     "\"Ommels, eh? Magnificent creatures. Some say they have bones harder than steel and teeth like adamant!\"",
     "\"Ommels, eh? Magnificent creatures. Some say you can even make good use of their excretions.\"",
@@ -9750,8 +9811,8 @@ bum
     "\"You came through that scary underwater tunnel, right? I've heard it's deeper than it seems. Sounds spooky, eh?\"",
     "\"I hate zombies! Dead things should stay dead and not try to bite you. I was bitten once, in the Cellar, and my arm got all inflamed and necrotic.\"",
     "\"You know how people talk about the genies locked in old oil lamps? Tavern stories and wishful legends, I tell ya!\"",
-    "\"One cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favourite sword, so he came back.\"",
-    "\"Some cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
+    "\"One Cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favorite sword, so he came back.\"",
+    "\"Some Cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
     "\"I've heard that only the dead can be safe around an enner beast! I say when you're dead, it's no longer of concern what's around you, eh?\"",
     "\"The Cathedral has impenetrable defenses with its four Cardinals scanning the thoughts of everyone, they say. Well, they still get their stuff stolen by kobolds, har har har! Those little midgets are so dumb no thoughts can be read from them! Har har!\"",
     "\"My mama told me you only need a wand of polymorph and some rocks to make a fortune. Eh, never held a wand in my hands, so what can I know?\"",
@@ -9764,7 +9825,7 @@ bum
     "\"My mama always told me, don't eat people, it's indecent. I'd say more like evil, but she always knew best.\"",
     "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
     "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
-    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stand each other?\"",
+    "\"Some priest once told me that gods can be quite jealous of their worshipers. I guess that's why they can't stand each other?\"",
     "\"When my mama took me to an altar for the first time, she made me kneel there. It makes the gods happy, she said.\"",
     "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
     "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
@@ -9772,7 +9833,7 @@ bum
     "\"They say necromancy sows Chaos into your heart. I say you have to already have some Chaos in you to even try using necromancy.\"",
     "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself with water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
     "\"I used to drink from the fountains, because it's free, but then I got all sick, so it's not always healthy. Now I drink vodka.\"",
-    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get suckud inside, right? Har har!\"",
+    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get sucked inside, right? Har har!\"",
     "\"One mage once told me that wet clothes and electricity don't mix well. Eh, it's not like I know what an electricity is, but wet clothes are uncomfortable.\"",
     "\"One mage once told me that metal armor and electricity don't mix well. I have neither armor, nor electricity, so I don't care.\"",
     "\"One mage once told me not only gods can wield thunder in their hands. I told her that's a blasphemy and she should burn at a stake.\"",
@@ -9925,7 +9986,7 @@ terra
     "\"Hopefully one day, I will find an apprentice to take my place. How I wish to see Tweraif again!\"",
     "\"My vigil is long and lonely, but necessary. Lobh-se cannot be let out of her prison.\"",
     "\"Beware and avoid Lobh-se at all costs! She is the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses.\"",
-    "\"Through the millenia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
+    "\"Through the millennia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
     "\"Fortunately, Lobh-se only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty here, and she returns promptly when satiated. Still, it is becoming harder and harder to ward her off.\"",
     "\"This cave once was a magnificent garden, a bulwark against evil. But after the Attnamese invasion, the power of Silva was weakened, and darkness and strife crept in here from below.\"",
     "\"I am bound by sacred oaths to protect this shrine with my life. I remained behind when Tweraifians buried the entrance to hide this place from Attnam.\"";
@@ -10047,11 +10108,11 @@ aslonacaptain /* guard-> */
   FriendlyReplies =
   {
     5,
-    "@Dd says gravely: \"This is a placeholder dialogue.\"",
-    "@Dd snorts.",
-    "\"...\"",
-    "\"Hmph.\"",
-    "\"This is a placeholder dialogue.\"";
+    "@Dd says with a sad nod: \"This civil war, I worry that it will be the end of us all.\"",
+    "@Dd sighs with a deep sadness.",
+    "\"This will all end in tears, I'm telling you.\"",
+    "\"I knew something bad was about to happen when the dolphin looked all dejected, and then prince Artorius was abducted.\"",
+    "\"I knew something bad was about to happen when I spilled wine on my favorite cloak, and then king Othyr died.\"";
   }
   HostileReplies =
   {
@@ -10087,14 +10148,14 @@ aslonapriest /* priest-> */
   TorsoBitmapPos = 32, 16;
   ArmBitmapPos = 64, 16;
   LegBitmapPos = 0, 32;
-  TotalVolume = 8000;
+  TotalVolume = 80000;
   TotalSize = 175;
   DefaultName = "Senex";
   PostFix = "of Seges";
   AttachedGod = SEGES;
   BloodMaterial = BLUE_BLOOD;
   Helmet = HEPATIZON helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
-  Amulet = amulet(AMULET_OF_DISEASE_IMMUNITY);
+  Amulet = amulet(AMULET_OF_WARDING);
   BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
   Cloak = ELF_CLOTH cloak { Enchantment = 2; }
   Belt = ELF_CLOTH belt { Enchantment = 2; }
@@ -10123,7 +10184,7 @@ aslonapriest /* priest-> */
     "\"I've sometimes thought I'd like to make a pilgrimage to the Cathedral of Attnam, but my duties prevent me from such extensive and dangerous travel.\"",
     "\"There's something strange about Lord Regent.\"";
   }
-  Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
+  Inventory = { 3, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; }, Random { Category = WAND; Times = 5; } }
 }
 
 harvan
@@ -10189,15 +10250,21 @@ harvan
   DeathMessage = "@Dd dies and the rebellion will soon follow.";
   FriendlyReplies =
   {
-    2,
-    "\"TODO\"",
-    "\"The point is there's no point.\"";
+    7,
+    "\"We are surrounded by jackals and vultures, and now Lord Peredivall drives a new wedge between the people of Aslona.\"",
+    "\"The death of old king Othyr was a great blow, but greater still is the unrest that Lord Regent brings with his controversies.\"",
+    "\"I never wished to lead, yet here I am. I will not allow Aslona to fall apart.\"",
+    "\"You cannot come to an already bad situation and expect to make it better by disturbing things further, yet this is what Lord Efra seems to be doing.\"",
+    "\"Lord Efra used to be like a brother to me. I don't know what madness possessed him to start a civil war like this.\"",
+    "\"We must end this quickly and decisively. I won't let Aslona turn its back on hundreds of years of history.\"",
+    "\"Lord Peredivall used to be the secretary of the state of Aslona. Interesting how quickly he grabbed for more power after king Othyr's death, right?\"";
   }
   HostileReplies =
   {
-    2,
-    "\"TODO\"",
-    "\"The point is there's no point.\"";
+    3,
+    "\"So you're with him, after all.\"",
+    "\"I should have expected someone from Attnam to be nothing but a traitor.\"",
+    "\"I don!t want to kill you, but trust me that I will.\"";
   }
 }
 
@@ -10250,7 +10317,7 @@ lordregent
   RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
   RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
   KnownCWeaponSkills = { 5, LARGE_SWORDS, SMALL_SWORDS, UNARMED, KICK, BITE; }
-  CWeaponSkillHits = { 5, 2000, 2000, 2000, 1500, 1500; }
+  CWeaponSkillHits = { 5, 5000, 5000, 2000, 1500, 1500; }
   RightSWeaponSkillHits = 500;
   LeftSWeaponSkillHits = 500;
   PanicLevel = 0;
@@ -10260,18 +10327,24 @@ lordregent
   Sex = MALE;
   AttachedGod = SEGES;
   BloodMaterial = BLUE_BLOOD;
-  DeathMessage = "@Dd dies and TODO.";
+  DeathMessage = "@Dd dies and the few remaining royalists will soon scatter without his lead.";
   FriendlyReplies =
   {
-    2,
-    "\"TODO\"",
-    "\"The point is there's no point.\"";
+    7,
+    "\"Change is never simple, but we must change or be left behind.\"",
+    "\"A tragedy has granted me this chance, but I will try to make sure Aslona benefits in the end.\"",
+    "\"Lord Harvan seems to think that ends justify the means. I will never stand for that.\"",
+    "\"Lord Harvan used to be like a brother to me. I don't know what madness possessed him to start a civil war like this.\"",
+    "\"The rebels don't understand that we *need* to change. The kingdom is rigid and crumbling under the weight of history, our traditions will hinder our very survival if we don't approach them with reason and not reverence.\"",
+    "\"Not only did we lost our king, but crown prince Artorius was abducted by a goblin raiding party, too!\"",
+    "\"Our history was forged from the blood and sweat of others, but never more. I cannot stand by and let our history thwart our future.\"";
   }
   HostileReplies =
   {
-    2,
-    "\"TODO\"",
-    "\"The point is there's no point.\"";
+    3,
+    "\"I don't know what Harvan told you, but I hope it's worth dying for.\"",
+    "@Dd hisses: \"I cannot let you stop me now!\"",
+    "\"Do you really wish to see Aslona fall?\"";
   }
 }
 

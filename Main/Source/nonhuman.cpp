@@ -978,6 +978,39 @@ truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
     return false;
 }
 
+truth goldspider::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex,
+                                    int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour || Critical)
+  {
+    bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
+
+    if(BodyPart && BodyPart->IsMaterialChangeable())
+    {
+      festring Desc;
+      BodyPart->AddName(Desc, UNARTICLED);
+
+      // Instead of a cockatrice turning you to stone, gold spider will turn you to gold!
+      delete BodyPart->SetMainMaterial(MAKE_MATERIAL(GOLD));
+
+      if(Victim->IsPlayer())
+      {
+        Desc << " tingles painfully";
+        ADD_MESSAGE("Your %s.", Desc.CStr());
+      }
+      else if(Victim->CanBeSeenByPlayer())
+      {
+        Desc << " vibrates and changes into gold";
+        ADD_MESSAGE("%s's %s.", Victim->CHAR_DESCRIPTION(DEFINITE), Desc.CStr());
+      }
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
 truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 3) || Critical) && !Victim->AllowSpoil())
@@ -2409,10 +2442,10 @@ void spider::GetAICommand()
           }
         }
 
-  if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
+  if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)) && GetLSquareUnder()->IsFlyable())
   {
     web* Web = web::Spawn();
-    Web->SetStrength(GetConfig() == LARGE ? 10 : 25);
+    Web->SetStrength(GetConfig() * 10);
 
     if(GetLSquareUnder()->AddTrap(Web))
     {
@@ -2426,7 +2459,7 @@ void spider::GetAICommand()
 
   if(NearestChar)
   {
-    if(NearestChar->IsStuck() || GetConfig() == ARANEA)
+    if(NearestChar->IsStuck() || GetConfig() >= ARANEA)
       SetGoingTo(NearestChar->GetPos());
     else
       SetGoingTo((Pos << 1) - NearestChar->GetPos());
@@ -2436,6 +2469,10 @@ void spider::GetAICommand()
   }
 
   if(MoveRandomly())
+    return;
+
+  // Attack if trapped in a corner.
+  if(AttackAdjacentEnemyAI())
     return;
 
   EditAP(-1000);
@@ -2670,6 +2707,10 @@ void lobhse::GetAICommand()
     }
 
     if(MoveRandomly())
+      return;
+
+    // Attack if trapped in a corner.
+    if(AttackAdjacentEnemyAI())
       return;
 
     EditAP(-1000);
