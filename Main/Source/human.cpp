@@ -655,14 +655,22 @@ void petrus::BeTalkedTo()
     if(game::TruthQuestion(CONST_S("Report your actions in the kingdom of Aslona? [y/N]"), REQUIRES_ANSWER))
     {
       game::PlayVictoryMusic();
-      game::TextScreen(CONST_S("TODO:\n"
-                               "thou shalt lead my armoies and destroy Aslona\n"
-                               "the end of your content life.\n\nYou are victorious!"));
+      game::TextScreen(CONST_S("\"Yes, citizen? Ah, it is thee. I was wondering were hast thou wandered off. Art thou\n"
+                               "coming back to beg for forgiveness and mercy?\"\n\n"
+                               "But Petrus' anger is quickly quelled when you fall to your knees and present to him\n"
+                               "the two regal swords of Aslona. He takes them and admires them in silence for a while,\n"
+                               "though interrupted by Sir Lancelyn who realizes your deeds, screams in rage and is\n"
+                               "promptly dragged away to a prison cell.\n\n"
+                               "Lost in thoughts, Petrus hands the swords to a servant and turns back to you again:\n\n"
+                               "\"I have decided thy fate, slave. I shan't have thee executed if thou canst prove thy worth.\n"
+                               "Sir Galladon hast telepathically informed me that our trainee guards are just about ready\n"
+                               "for their first war. Thou shalt join my army and help conquer Aslona while they are reeling.\n"
+                               "For the glory of Valpurus!\"\n\nYou are victorious!"));
 
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
       PLAYER->ShowAdventureInfo();
-      festring Msg = CONST_S("helped Attnamese armies to conquer the dying Aslona");
+      festring Msg = CONST_S("became an officer of the Attnamese army");
       AddScoreEntry(Msg, 3, false);
       game::End(Msg);
       return;
@@ -5464,7 +5472,7 @@ void imperialist::BeTalkedTo()
                                "the late viceroy were brothers? Not especially close brothers, but I think\n"
                                "he'll still want to roast you very slowly over a firepit; flay and cut and\n"
                                "tear and break you; and then have the priests heal you up to start over again.\n"
-                               "So why did you come to tell me this, hmm?\"\n"));
+                               "So why did you come to tell me this, hmm?\""));
 
       game::TextScreen(CONST_S("\"Fifty thousand gold?! Oh, sorry I cried out. Hmm, yes, now I can see your point.\"\n"
                                "\n"
@@ -5474,15 +5482,15 @@ void imperialist::BeTalkedTo()
                                "bits of the Empire just breaking free. It sets a bad example.\"\n"
                                "\n"
                                "\"Hmm, so fifty thousand gold pieces a year. And of course, you will\n"
-                               "provide a steady supply of bananas. Hmm...\"\n"));
+                               "provide a steady supply of bananas. Hmm...\""));
 
-      game::TextScreen(CONST_S("\"Hmm...\"\n"));
+      game::TextScreen(CONST_S("\"Hmm...\""));
 
       game::TextScreen(CONST_S("\"Very well! In that case, trouble yourself not with the master torturer,\n"
                                "nor with the high priest. I will handle things here, as long as you handle\n"
                                "things in your village. We have a deal. Hmm...\"\n"
                                "\n"
-                               "\"Congratulations, mister. It's nice to meet the new viceroy of Tweraif.\"\n"));
+                               "\"Congratulations, mister. It's nice to meet the new viceroy of Tweraif.\""));
 
       game::PlayVictoryMusic();
       game::TextScreen(CONST_S("You are victorious!"));
@@ -6052,6 +6060,9 @@ void priest::GetAICommand()
       CallForMonsters();
   }
 
+  if(CheckAIZapOpportunity())
+    return;
+
   StandIdleAI();
 }
 
@@ -6373,7 +6384,7 @@ cchar* humanoid::GetRunDescriptionLine(int I) const
 cchar* humanoid::GetNormalDeathMessage() const
 {
   if(BodyPartIsVital(HEAD_INDEX) && (!GetHead() || GetHead()->GetHP() <= 0))
-    return "beheaded @k";
+    return !RAND_2 ? "beheaded @k" : "decapitated @k";
   else if(BodyPartIsVital(GROIN_INDEX) && (!GetGroin() || GetGroin()->GetHP() <= 0))
     return "killed @bkp dirty attack below the belt";
   else
@@ -6605,9 +6616,13 @@ void guard::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Do you accept the quest? [y/N]"), REQUIRES_ANSWER))
     {
-      game::TextScreen(CONST_S("\"TODO\n\n"
-                               "Go to the Castle of Aslona and talk to Lord Regent.\n"
-                               "Also I give you a ship and rebels are scum.\""));
+      game::TextScreen(CONST_S("\"I shouldn't be saying this so openly, but my kingdom is in dire straits and needs any\n"
+                               "help it can get. High priest Petrus will not hear my pleas and I don't believe that\n"
+                               "my colleagues in other lands will be more successful. Lord Regent is doing his best,\n"
+                               "but his army just barely holds the rebels back.\"\n\n"
+                               "\"I know you are just one man, but maybe you could help where an army couldn't. Please,\n"
+                               "go to the Castle of Aslona and seek out Lord Efra Peredivall. He will know what must\n"
+                               "be done to mercilessly crush the rebel scum!\""));
 
       game::GivePlayerBoat();
       game::LoadWorldMap();
@@ -6619,7 +6634,7 @@ void guard::BeTalkedTo()
       game::GetWorldMap()->RevealEnvironment(RebelCampPos, 0);
       game::SaveWorldMap();
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"Hey macarena.\"");
+      ADD_MESSAGE("\"If you need to cross the sea, you can use my ship. It should be waiting at the shore.\"");
       game::SetAslonaStoryState(1);
       game::SetStoryState(2);
       return;
@@ -7262,7 +7277,7 @@ void aslonawizard::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveNuke();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
+        ADD_MESSAGE("\"Yes! Thank you, thank you! With this, we can blow the rebels to tiny bits, we can end the war in a single, decisive strike!\"");
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
       }
@@ -7295,7 +7310,7 @@ void aslonacaptain::BeTalkedTo()
       game::SaveWorldMap();
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
+      ADD_MESSAGE("%s says: \"Hurry, please.\"", CHAR_NAME(DEFINITE));
 
       HasBeenSpokenTo = true;
       return;
@@ -7315,7 +7330,8 @@ void aslonacaptain::BeTalkedTo()
           team* Team = game::GetTeam(ASLONA_TEAM);
           CrownPrince->ChangeTeam(Team);
 
-          ADD_MESSAGE("\"This is a placeholder message.\"");
+          ADD_MESSAGE("\"Uncle Mittrars!\"");
+          ADD_MESSAGE("\"My prince! Thanks Seges and all the gods of Law, I was already loosing any hope that I will see you again.\"");
           game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
           return;
         }
@@ -7332,9 +7348,18 @@ void aslonapriest::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Go to the fungal cave and bring me weeping obsidian shard.\n"
-                               "We need that clean water for our citizens.\"\n"));
+      game::TextScreen(CONST_S("\"Yes, I can most definitely put your skills to good use. You see, this senseless\n"
+                               "war has already claimed many lives by the blades of the soldiers, but a more insidious\n"
+                               "enemy is rearing her ugly head. I'm talking about Scabies. With many injured and access\n"
+                               "to supplies limited, diseases are starting to spread, and even my skills and magic\n"
+                               "are not enough without proper medical care and hygiene. Hygiene is essential to health,\n"
+                               "but essential to hygiene is access to clean water, which is one of the things this castle\n"
+                               "lacks right now.\"\n\n"
+                               "\"I have found some adventurer's journal describing an artifact that might help solve\n"
+                               "our troubles. A single tear of Silva, petrified into the form of an obsidian shard, yet still\n"
+                               "weeping with rains of freshwater. I would ask of you to retrieve this shard for me. It should\n"
+                               "be located in a nearby coal cave, though you should know the journal mentioned strange fungal\n"
+                               "growths appearing in the cave, nourished by the life-giving water.\""));
 
       game::LoadWorldMap();
       v2 CavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
@@ -7343,7 +7368,7 @@ void aslonapriest::BeTalkedTo()
       game::SaveWorldMap();
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
+      ADD_MESSAGE("\"Thank you very much for your kind help.\"");
 
       HasBeenSpokenTo = true;
       return;
@@ -7353,7 +7378,7 @@ void aslonapriest::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveWeepObsidian();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
+        ADD_MESSAGE("%s says: \"Wonderful! Let me get to work right away.\"", CHAR_NAME(DEFINITE));
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
       }
@@ -7369,12 +7394,27 @@ void harvan::BeTalkedTo()
   {
     if(!game::GetRebelStoryState())
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Lord Regent is !!EVIL!! Don't do anything he says, bring\n"
-                               "whatever he wants to me instead. Or just get me his sword.\"\n"));
+      game::TextScreen(CONST_S("\"Well met, adventurer! It's always nice to talk to someone unaffected by\n"
+                               "the unfortunate quarrels of our kingdom.\"\n\n"
+                               "\"I don't know how much have you heard, but our old king Othyr was murdered\n"
+                               "and then even the crown prince Artorius disappeared in an alleged goblin raid.\n"
+                               "Immediately, Lord Efra Peredivall named himself the Lord Regent of Aslona and\n"
+                               "made it known that he intends to *use* his newfound power. I have known\n"
+                               "Lord Peredivall for most of my life, I used to call him my friend, but I cannot\n"
+                               "stand for this high treason, and the people of Aslona support me. But now we must\n"
+                               "hide in the woods like brigands, hunted by those corrupt or mislead by\n"
+                               "Lord Regent's lies. I fear we will need some edge if we want to win this war\n"
+                               "without drowning in blood.\""));
+
+      game::TextScreen(CONST_S("\"Ah-hah! And here I'm talking without realizing you could be of a great help!\n"
+                               "You are an obvious foreigner, hardly suspected of any connections to us. You could\n"
+                               "infiltrate Lord Regent's forces and try to glean his plans. Maybe even offer\n"
+                               "your services and whatever he asks of you to acquire, bring to us instead!\n"
+                               "Yes, go to the Castle of Aslona, help our cause and once we achieve victory,\n"
+                               "I will reward you handsomely.\""));
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
+      ADD_MESSAGE("%s pats you on the back. \"Good luck and return soon, my friend.\"", CHAR_NAME(DEFINITE));
       game::SetRebelStoryState(2); // To have same StoryState values as Aslona.
       return;
     }
@@ -7391,8 +7431,20 @@ void harvan::BeTalkedTo()
         game::GetCurrentArea()->SendNewDrawRequest();
         game::DrawEverything();
         PLAYER->ShowAdventureInfo();
-        festring Msg = CONST_S("helped the rebels to win the civil war");
-        AddScoreEntry(Msg, game::GetRebelStoryState() == 5 ? 3 : 2, false); // Did the player do all quests just for rebels?
+
+        // Did the player do all quests just for rebels?
+        festring Msg;
+        if(game::GetRebelStoryState() == 5)
+        {
+          Msg = CONST_S("helped the rebels to an overwhelming victory");
+          AddScoreEntry(Msg, 3, false);
+        }
+        else
+        {
+          Msg = CONST_S("helped the rebels to an uneasy victory");
+          AddScoreEntry(Msg, 2, false);
+        }
+
         game::End(Msg);
         return;
       }
@@ -7402,7 +7454,8 @@ void harvan::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveNuke();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
+        ADD_MESSAGE("\"So this is the fate Lord Regent had planned for me and my people. Thank you for saving all of our lives, %s\"",
+                    PLAYER->GetAssignedName().CStr());
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;
       }
@@ -7412,19 +7465,35 @@ void harvan::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveWeepObsidian();
-        ADD_MESSAGE("\"This is a placeholder message.\"");
+        ADD_MESSAGE("\"The royalists are starting to feel their isolation in the castle, it would seem. Sooner or later, they will loose their strength to oppose us.\"");
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;
       }
     }
     else if(game::GetRebelStoryState() == 5 && game::GetStoryState() < 3)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Bring me that sword\n"
-                               "He's in trouble.\"\n"));
+      game::TextScreen(CONST_S("\"You are a hero to me, you should know that. You have already done so much,\n"
+                               "yet I must ask for one last favor.\"\n\n"
+                               "\"This war is costly in both innocent lives and money we cannot spare,\n"
+                               "it needs to end right now. Thanks to your help, we have the thaumic bomb and\n"
+                               "could level the whole castle and wipe Lord Regent and his royalists from the surface\n"
+                               "of the world, but I'm unwilling to sacrifice everyone in the castle and the castle\n"
+                               "with itself. It would be a hollow victory to kill the traitor, but loose the kingdom\n"
+                               "when the symbol of our proud history was in ruins.\"\n\n"
+                               "\"Yet there is a third option. It is my sincere belief that many of Lord Peredivall's\n"
+                               "troops would change sides if prince Artorius took on the title of his father as\n"
+                               "the rightful king of Aslona. But for His Highness to be crowned the king without\n"
+                               "any doubts or dispute, we need the regalia of Aslona, two ancient, masterwork katanas,\n"
+                               "Asamarum and E-numa sa-am.\""));
+
+      game::TextScreen(CONST_S("\"I have managed to take Asamarum with me during Lord Regent's coup, but he still\n"
+                               "holds E-numa sa-am. One last time, I would ask you to steal into the Castle of Aslona\n"
+                               "and retrieve the sword from Lord Regent, so that we might claim victory without\n"
+                               "bloodshed.\""));
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"Final quest!\"");
+      PLAYER->GetTeam()->Hostility(game::GetTeam(ASLONA_TEAM)); // Too easy otherwise.
+      ADD_MESSAGE("%s hugs you tightly. \"Godspeed, my friend.\"", CHAR_NAME(DEFINITE));
       game::SetStoryState(3);
       return;
     }
@@ -7463,12 +7532,12 @@ truth harvan::SpecialEnemySightedReaction(character* Char)
       ADD_MESSAGE("%s bows his head in a quick prayer to Legifer.", CHAR_NAME(DEFINITE));
     }
     else
-      ADD_MESSAGE("You sense a small miracle about to happen!");
+      ADD_MESSAGE("You sense a small miracle about to happen.");
 
     Char->TeleportNear(this);
   }
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s screams at you in violent rage.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s screams at you in a violent rage.", CHAR_NAME(DEFINITE));
 }
 
 void lordregent::BeTalkedTo()
@@ -7477,14 +7546,15 @@ void lordregent::BeTalkedTo()
   {
     if(game::GetAslonaStoryState() == 1)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Hi there, I have no time. Go find Lord Mittrars, Myrddin Wyllt and\n"
-                               "Senex of Seges, ask them if they want anything and don't bother me\n"
-                               "before you finish their quests. Also Harvan bad and this would be\n"
-                               "much faster if you could bring me his sword.\"\n"));
+      game::TextScreen(CONST_S("\"Sir Lancelyn sent you? He thought you can be of any use to me? I doubt that,\n"
+                               "but then again maybe there is something in you, we shall see.\"\n\n"
+                               "\"Several of my advisors have been complaining lately that we don't have enough\n"
+                               "expendable personnel to send on special mission. Go see Lord Mittrars,\n"
+                               "Myrddin the wizard and Senex of Seges, and report back once they are happy.\"\n\n"
+                               "\"Now away with you, I have other things to worry about.\""));
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
+      ADD_MESSAGE("%s sighs: \"I don't have time for this.\"", CHAR_NAME(DEFINITE));
       game::SetAslonaStoryState(2);
       return;
     }
@@ -7500,20 +7570,50 @@ void lordregent::BeTalkedTo()
         game::GetCurrentArea()->SendNewDrawRequest();
         game::DrawEverything();
         PLAYER->ShowAdventureInfo();
-        festring Msg = CONST_S("helped the royalists to win the civil war");
-        AddScoreEntry(Msg, game::GetAslonaStoryState() == 5 ? 3 : 2, false); // Did the player do all quests just for royalists?
+
+        // Did the player do all quests just for the royalists?
+        festring Msg;
+        if(game::GetAslonaStoryState() == 5)
+        {
+          Msg = CONST_S("helped the royalists to an overwhelming victory");
+          AddScoreEntry(Msg, 3, false);
+        }
+        else
+        {
+          Msg = CONST_S("helped the royalists to an uneasy victory");
+          AddScoreEntry(Msg, 2, false);
+        }
+
         game::End(Msg);
         return;
       }
     }
     else if(game::GetAslonaStoryState() == 5 && game::GetStoryState() < 3)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Bring me sword\n"
-                               "He's in trouble.\"\n"));
+      game::TextScreen(CONST_S("\"Ah, you are back? I guess I owe you an apology. I expected you to try and leverage\n"
+                               "some money from us, and then scram. But you really showed what you are made of!\n"
+                               "I hope you could lend your services to Aslona one last time.\"\n\n"
+                               "\"This civil war needs to end right now, before our kingdom tears itself apart, but\n"
+                               "I don't like the options I see. The scouts of Lord Mittrars finally discovered\n"
+                               "the location of Harvan's headquarters, but attacking them head-on in a difficult\n"
+                               "terrain would be foolish and costly. Myrddin informed me he has a magical item\n"
+                               "that could destroy the rebels once and for all, but I'm hesitant to condemn\n"
+                               "every single one of those misguided souls to death.\""));
+
+      game::TextScreen(CONST_S("\"Yet there is a third option. It is my sincere belief that many of Harvan's troops\n"
+                               "would change sides if prince Artorius took the throne of his father as the rightful\n"
+                               "king of Aslona. But for His Highness to be crowned the king without any doubts or\n"
+                               "dispute, we need the regalia of Aslona, two ancient katanas of immaculate craft,\n"
+                               "Asamarum and E-numa sa-am.\"\n\n"
+                               "\"E-numa sa-am I already have, but Harvan absconded with Asamarum when he fled after\n"
+                               "the old king's death. And where a direct assault would be hard-pressed for victory,\n"
+                               "I think you as an outlander could slip through the sentries of the rebels' camp\n"
+                               "unaccosted and steal Asamarum from Harvan.\"\n\n"
+                               "\"A stealth mission, if you will.\""));
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"Final quest!\"");
+      PLAYER->GetTeam()->Hostility(game::GetTeam(REBEL_TEAM)); // So much for a stealth mission. ;)
+      ADD_MESSAGE("%s smiles at you: \"Together, we'll bring Harvan to justice.\"", CHAR_NAME(DEFINITE));
       game::SetStoryState(3);
       return;
     }
@@ -7557,8 +7657,6 @@ void lordregent::SpecialBodyPartSeverReaction()
     {
       ADD_MESSAGE("%s prays to Seges before disappearing. You feel the sudden presence of enemies.", CHAR_NAME(DEFINITE));
     }
-    else
-      ADD_MESSAGE("You sense a small miracle happen nearby.");
 
     // Summons allies and then teleports away.
     std::vector<distancepair> ToSort;
