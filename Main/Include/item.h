@@ -300,6 +300,7 @@ class item : public object
   virtual truth IsDipDestination(ccharacter*) const { return false; }
   virtual truth IsAppliable(ccharacter*) const { return false; }
   virtual truth IsZappable(ccharacter*) const { return false; }
+  virtual truth IsZapWorthy(ccharacter*) const { return false; }
   virtual truth IsChargeable(ccharacter*) const { return false; }
   virtual truth IsHelmet(ccharacter*) const { return false; }
   virtual truth IsAmulet(ccharacter*) const { return false; }

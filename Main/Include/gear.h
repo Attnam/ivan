@@ -434,6 +434,7 @@ ITEM(taiaha, meleeweapon)
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsAppliable(ccharacter*) const { return false; }
   virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsZapWorthy(ccharacter*) const { return Charges > TimesUsed; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual truth Zap(character*, v2, int);
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;

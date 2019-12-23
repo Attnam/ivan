@@ -48,7 +48,7 @@ Fixes:
 * Fix several places where panic immunity or disease immunity was not respected.
 * Fix several crafting bugs, hopefully preventing crashes.
 * Fix Terra not offering priestly services after you killed Lobh-se.
-* Spill more water over a burning player when they pray to Silva, so ther's
+* Spill more water over a burning player when they pray to Silva, so there's
   a better chance to be extinguished.
 * Prevent long strings in config options from overflowing when displayed.
 * Prevent building features in owned rooms.
@@ -58,6 +58,7 @@ Fixes:
 * Remove redundant messages from auto map notes.
 * Let monsters also benefit from Detecting status effect.
 * Fix sitting on fountains and drinking from non-water fountains.
+* Fix AI not using equipped zappable items.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

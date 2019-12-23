@@ -63,6 +63,7 @@ ITEM(banana, materialcontainer)
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsZapWorthy(ccharacter*) const { return Charges > TimesUsed; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual void SignalSpoil(material*);
   virtual truth IsBanana() const { return true; }
@@ -262,6 +263,7 @@ ITEM(wand, item)
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsZapWorthy(ccharacter*) const { return Charges > TimesUsed; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth Zap(character*, v2, int);
@@ -693,6 +695,7 @@ ITEM(ullrbone, item)
   virtual truth Zap(character*, v2, int);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsZapWorthy(ccharacter*) const { return Charges > TimesUsed; }
   virtual truth IsChargeable(const character*) const { return true; }
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual void Be() { }

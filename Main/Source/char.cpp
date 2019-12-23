@@ -13057,27 +13057,29 @@ truth character::CheckAIZapOpportunity()
       }
     }
     if(!TargetFound)
-    {
       return false;
-    }
   }
   else
     return false;
 
 
-  // Check inventory for zappable item.
+  // Check inventory and equipment for zappable items.
   itemvector ItemVector;
   GetStack()->FillItemVector(ItemVector);
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Equipment = GetEquipment(c);
+
+    if(Equipment)
+      ItemVector.push_back(Equipment);
+  }
+  std::random_shuffle(ItemVector.begin(), ItemVector.end());
+
   item* ToBeZapped = 0;
-
   for(uint c = 0; c < ItemVector.size(); ++c)
-    if((ItemVector[c]->GetMinCharges() > 0) && ItemVector[c]->GetPrice()) // Empty wands have zero price!
-    {
+    if(ItemVector[c]->IsZappable(this) && ItemVector[c]->IsZapWorthy(this))
       ToBeZapped = ItemVector[c];
-
-      if(!(RAND() % 3)) // Do not always pick the first available wand to zap.
-        break;
-    }
 
   if(!ToBeZapped)
     return false;
@@ -13090,11 +13092,8 @@ truth character::CheckAIZapOpportunity()
     EditAP(-100000 / APBonus(GetAttribute(PERCEPTION)));
     return true;
   }
-  else
-    return false;
 
-  TerminateGoingTo(); // Is this useful here? I don't think the code will ever
-  return true;        // get down here.
+  return false;
 
   // Steps:
   // (1) - Acquire target as nearest enemy.
