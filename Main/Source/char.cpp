@@ -13079,7 +13079,10 @@ truth character::CheckAIZapOpportunity()
   item* ToBeZapped = 0;
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->IsZappable(this) && ItemVector[c]->IsZapWorthy(this))
+    {
       ToBeZapped = ItemVector[c];
+      break;
+    }
 
   if(!ToBeZapped)
     return false;

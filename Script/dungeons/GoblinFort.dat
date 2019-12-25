@@ -737,28 +737,39 @@ Dungeon GOBLIN_FORT;
         {
           # = COPPER barwall;
           $ = COPPER barwall(BROKEN_BARWALL);
-          % = COPPER door(BARDOOR);
           x = COPPER door(BARDOOR) { Parameters = LOCKED; }
         }
       }
       {
         ...#.#...
-        ...x.%...
+        ...x.x...
         ...#.#...
         ####.####
         ...$.#...
-        ...%.x...
+        ...x.x...
         ...#.#...
       }
 
-      Square, Pos 2,2;
+      CharacterMap
       {
-        Character = goblin { Team = PRISONER_TEAM; }
+        Pos = 1,1;
+        Size = 9,7;
+        Types
+        {
+          # = 0;
+          K = child(KING) { Team = PRISONER_TEAM; }
+          g = goblin { Team = PRISONER_TEAM; }
+          G = guard(CASTLE) { Team = PRISONER_TEAM; }
+        }
       }
-
-      Square, Pos 8,6;
       {
-        Character = child(KING) { Team = PRISONER_TEAM; }
+        ...#.#...
+        .g.#.#..G
+        ...#.#...
+        ####.####
+        ...#.#...
+        ...#.#.K.
+        ...#.#...
       }
     }
 

@@ -7256,9 +7256,19 @@ void aslonawizard::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"Go to the Pyramid and bring me a nuke. Be careful, the Pyramid\n"
-                               "will be dangerous, so it's probably good to go there later.\"\n"));
+      game::TextScreen(CONST_S("\"You have been sent by Lord Regent? Excellent! As the only protector of Aslona from\n"
+                               "supernatural incursions, I cannot leave the castle, so I shall welcome any help you\n"
+                               "can provide.\"\n\n"
+                               "\"My request for you might cause some to brand me a coward. But no matter. We must win\n"
+                               "the war quickly, or Aslona looses even if we eventually achieve victory. Swords and\n"
+                               "spells may have won earlier battles, but now we need to end the rebels in one fell swoop.\n"
+                               "Lord Mittrars is already working hard on locating the command centre of Harvan's forces,\n"
+                               "so my task is to arrange for the weapon.\"\n\n"
+                               "\"My research shows that such a weapon capable of complete obliteration appears in many\n"
+                               "tales from the long lost empire of Otoul'iv Ik-Omit. I have uncovered the site of\n"
+                               "a pyramid dating back to that era, and all sources indicate that deep within, an untouched\n"
+                               "arms depot should be located.\"\n\n"
+                               "\"Please fetch me this mighty weapon post haste. I'm sure you will recognize it once you see it.\""));
 
       game::LoadWorldMap();
       v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
@@ -7267,7 +7277,7 @@ void aslonawizard::BeTalkedTo()
       game::SaveWorldMap();
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"This is a placeholder message.\"");
+      ADD_MESSAGE("%s says with a concern: \"Be careful, the pyramid is said to be a dangerous place. Better be prepared when you go there.\"", CHAR_NAME(DEFINITE));
 
       HasBeenSpokenTo = true;
       return;
@@ -7277,7 +7287,7 @@ void aslonawizard::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveNuke();
-        ADD_MESSAGE("\"Yes! Thank you, thank you! With this, we can blow the rebels to tiny bits, we can end the war in a single, decisive strike!\"");
+        ADD_MESSAGE("%s beams: \"Yes! Thank you, thank you! With this, we can blow the rebels to tiny bits, we can end the war!\"", CHAR_NAME(DEFINITE));
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
       }
@@ -7299,9 +7309,21 @@ void aslonacaptain::BeTalkedTo()
   {
     if((game::GetAslonaStoryState() > 1) && !HasBeenSpokenTo)
     {
-      game::TextScreen(CONST_S("\"TODO:\"\n\n"
-                               "\"save prince Artorius from goblins\n"
-                               "will be dangerous, so it's probably good to go there later.\"\n"));
+      game::TextScreen(CONST_S("\"Finally someone not tangled up in their responsibilities! I was almost ready to drop\n"
+                               "everything and go myself, but thankfully you are here.\"\n\n"
+                               "\"Let me explain. When king Othyr died, Seges rest his soul, and Harvan fled justice to\n"
+                               "start the rebellion, the crown prince, His Highness Artorius, was away on a visit to Castle\n"
+                               "Noth. I sent for him to immediately return back to the Castle of Aslona, both for safety\n"
+                               "and to pay respects to his father. But his retinue never arrived. My scouts found marks\n"
+                               "of an ambush and tracked the responsible raiding party of goblins back to their lair\n"
+                               "in a nearby ruined fort, where we also believe they imprisoned the young prince.\"\n\n"
+                               "\"I would have loved to throw the whole army of Aslona at the goblins, but with\n"
+                               "the ceaseless attacks of rebel squads, that would mean sacrificing the kingdom.\n"
+                               "I was forced to wait for a momentary respite from the fighting, or for some trustworthy\n"
+                               "outsider willing to go on a rescue mission.\"\n\n"
+                               "\"It tears at my heart that poor prince languishes in some jail cell, as if his father's\n"
+                               "death wasn't hard on him already. Save prince Artorius, I beg of you, and bring him to me\n"
+                               "so that I need to worry no more.\""));
 
       game::LoadWorldMap();
       v2 GoblinPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
@@ -7368,7 +7390,7 @@ void aslonapriest::BeTalkedTo()
       game::SaveWorldMap();
 
       GetArea()->SendNewDrawRequest();
-      ADD_MESSAGE("\"Thank you very much for your kind help.\"");
+      ADD_MESSAGE("%s says: \"Thank you very much for your kind help.\"", CHAR_NAME(DEFINITE));
 
       HasBeenSpokenTo = true;
       return;
@@ -7423,10 +7445,14 @@ void harvan::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the noble katana named E-numa sa-am? [y/N]"), REQUIRES_ANSWER))
       {
         game::PlayVictoryMusic();
-        game::TextScreen(CONST_S("TODO:\n"
-                                 "thou shalt lead my armoies and destroy Aslona\n"
-                                 "the end of your content life.\n\nYou are victorious!"));
-        // TODO: Different message if prince was given to Harvan?
+        game::TextScreen(CONST_S("You hand over the ancient katana and thus the regalia necessary to crown a new\n"
+                                 "king of Aslona are together again.\n\n"
+                                 "\"Thank you, my friend,\" Harvan says and then turns to his army. \"Comrades,\n"
+                                 "this is our hour of victory. You have fought well. You are heroes, all of you.\n"
+                                 "Our country and the very soul of our nation was saved only thanks to you, thanks\n"
+                                 "to your courage, loyalty, selflessness and resolve. But now, the war is over.\n"
+                                 "The traitors shall face justice and peace will return to our homes. Gods bless Aslona!\"\n\n"
+                                 "A deafening cheer echoes his words.\n\nYou are victorious!"));
 
         game::GetCurrentArea()->SendNewDrawRequest();
         game::DrawEverything();
@@ -7510,7 +7536,8 @@ void harvan::BeTalkedTo()
         team* Team = game::GetTeam(REBEL_TEAM);
         CrownPrince->ChangeTeam(Team);
 
-        ADD_MESSAGE("\"This is a placeholder message.\"");
+        ADD_MESSAGE("\"Hi, uncle Harvan! Where are we? When are we gonna go home?\"");
+        ADD_MESSAGE("\"Your Highness, I'm so very glad to see you. Don't worry, I will take you home soon.\"");
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;
       }
@@ -7563,9 +7590,14 @@ void lordregent::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the wicked katana named Asa'marum? [y/N]"), REQUIRES_ANSWER))
       {
         game::PlayVictoryMusic();
-        game::TextScreen(CONST_S("TODO:\n"
-                                 "thou shalt lead my armoies and destroy Aslona\n"
-                                 "the end of your content life.\n\nYou are victorious!"));
+        game::TextScreen(CONST_S("You hand over the ancient katana and thus the regalia necessary to crown a new\n"
+                                 "king of Aslona are together again.\n\n"
+                                 "\"I am in your debt,\" Lord Peredivall says and then turns to his army. \"Citizens,\n"
+                                 "this is our hour of victory. You have fought well. You are heroes, all of you.\n"
+                                 "Our country and the very soul of our nation was saved only thanks to you, thanks\n"
+                                 "to your bravery, honor, devotion and determination. But now, the war is over.\n"
+                                 "The traitors shall face justice and peace will return to our homes. Gods bless Aslona!\"\n\n"
+                                 "A deafening cheer echoes his words.\n\nYou are victorious!"));
 
         game::GetCurrentArea()->SendNewDrawRequest();
         game::DrawEverything();

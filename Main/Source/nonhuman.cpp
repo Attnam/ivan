@@ -953,7 +953,7 @@ void elpuri::CreateCorpse(lsquare* Square)
 
 truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
-  if(!BlockedByArmour)
+  if(!BlockedByArmour || Critical)
   {
     switch (GetConfig())
     {
@@ -969,7 +969,7 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
 
 truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
-  if(!BlockedByArmour)
+  if(!BlockedByArmour || Critical)
   {
     Char->BeginTemporaryState(POISONED, GetConfig() == LARGE ? 80 + RAND_N(40) : 400 + RAND_N(200));
     return true;
@@ -2564,7 +2564,7 @@ void lobhse::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 
 truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
-  if(!BlockedByArmour)
+  if(!BlockedByArmour || Critical)
   {
     int Effect = Char->StateIsActivated(DISEASE_IMMUNITY) ? 6 : RAND() % 10;
     switch(Effect)

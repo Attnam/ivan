@@ -1340,7 +1340,7 @@ truth sharpaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && !(Enemy->IsUnique()))
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && (!Enemy->IsUnique() || Enemy->IsPlayer()))
   {
     bodypart* ToBeSevered = Enemy->GetBodyPart(BodyPartIndex);
 

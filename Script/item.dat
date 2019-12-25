@@ -7416,6 +7416,7 @@ trinket
     AttachedGod = SCABIES;
     IsSadistWeapon = true;
     DamageFlags = PIERCE;
+    DescriptiveInfo = "It's probably Echinocactus platyacanthus. Or maybe Mammillaria dixanthocentron? You're not really sure.";
   }
 
   Config POTTED_PLANT;
@@ -7433,6 +7434,7 @@ trinket
     SecondaryMaterialConfig == PLANT_FIBER;
     Roundness = 60;
     AttachedGod = SILVA;
+    DescriptiveInfo = "It needs watering.";
   }
 
   Config DEAD_FISH;
@@ -7742,6 +7744,7 @@ weepobsidian /* stone-> */
   CanBeBurned = false;
   CanBePiled = false;
   AttachedGod = SILVA;
+  DescriptiveInfo = "A single tear of Silva, petrified into the form of an obsidian shard. It brings torrential rains, growth and rejuvenation.";
 }
 
 muramasa /* meleeweapon-> */
@@ -7779,6 +7782,7 @@ muramasa /* meleeweapon-> */
   CanBeBurned = false;
   CanBePiled = false;
   Alias == "Muramasa";
+  DescriptiveInfo = "The legend goes that in the days of ancient past, two master artificers approached the queen of Aslona and knelt before her, asking her to judge their masterworks and declare the better weaponsmith. They each presented an enchanted sword of immaculate craft and extraordinary might. One was named E-numa sa-am, a katana so noble and pure that the mere sight of it struck fear into the hearts of all evil-doers. The other was named Asamarum, a wickedly sharp katana that killed with the smallest of scratches. The queen, being shrewd and cunning as she was, scrutinized both weapons for a long time and then ordered both of the artificers executed, for the swords were flawless and she didn't wish for them to create such a weapon for anyone else. From then on, the two swords served as the regalia of Aslonian sovereigns and each new king brandished them both during their coronation.";
 }
 
 masamune /* meleeweapon-> */
@@ -7816,6 +7820,7 @@ masamune /* meleeweapon-> */
   CanBeBurned = false;
   CanBePiled = false;
   Alias == "Masamune";
+  DescriptiveInfo = "The legend goes that in the days of ancient past, two master artificers approached the queen of Aslona and knelt before her, asking her to judge their masterworks and declare the better weaponsmith. They each presented an enchanted sword of immaculate craft and extraordinary might. One was named E-numa sa-am, a katana so noble and pure that the mere sight of it struck fear into the hearts of all evil-doers. The other was named Asamarum, a wickedly sharp katana that killed with the smallest of scratches. The queen, being shrewd and cunning as she was, scrutinized both weapons for a long time and then ordered both of the artificers executed, for the swords were flawless and she didn't wish for them to create such a weapon for anyone else. From then on, the two swords served as the regalia of Aslonian sovereigns and each new king brandished them both during their coronation.";
 }
 
 magestaff /* meleeweapon-> */

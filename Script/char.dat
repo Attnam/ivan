@@ -565,6 +565,7 @@ farmer
     IsSadist = true;
     UndeadVersions = false;
     CanBeGenerated = true;
+    Frequency = 1000;
     ClassStates = CONFUSED;
     DeathMessage = "@Dd laughs and sobs and screams and dies.";
     HostileReplies =
@@ -593,7 +594,7 @@ farmer
     NameSingular = "rebel";
     FriendlyReplies =
     {
-      9,
+      10,
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
@@ -602,6 +603,7 @@ farmer
       "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
       "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
       "\"What?\"",
+      "\"These necromancer twins give me the creeps. Why do we even associate with such types?\"",
       "@Dd boasts about @sp farmstead back home.";
     }
     ScienceTalkPossibility = 0;
@@ -1078,7 +1080,7 @@ guard
     ClothColor = rgb16(120, 80, 40);
     FriendlyReplies =
     {
-      21,
+      22,
       "@Dd says gravely: \"I think we're all in for some hard times.\"",
       "\"...\"",
       "\"Hmph.\"",
@@ -1090,6 +1092,7 @@ guard
       "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
       "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of prince Artorius as well.\"",
       "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"The roads near the Castle are safer now, thanks to Lord Regent. He's an example for us all.\"",
       "\"Damn the rebel scum! We should hunt them down and hang them from the castle walls.\"",
       "\"I've heard the orc are stirring now, too. We should have burned down the freeholds when we had a chance.\"",
       "\"The guard duty here in the castle is usually a dull affair. Near the borders, though, things are a bit more challenging, and one can make a name for oneself.\"",
@@ -3554,7 +3557,6 @@ goldspider /* spider-> */
   DefaultWisdom = 14;
   DefaultCharisma = 8;
   DefaultMana = 14;
-  FleshMaterial = GOLD;
   AttachedGod = INFUSCOR;
   IsAbstract = true;
   IsCatacombCreature = false;
@@ -4470,11 +4472,20 @@ housewife
     LegMainColor = rgb16(0, 191, 255);
     FriendlyReplies =
     {
-      5,
+      14,
       "\"A master sorcerer like Myrddin inevitably outlives all his peers. It must be a lonely existence.\"",
       "\"I hear Myrddin is quite a mage. Of course, it's not like he'd bother to stop to talk to you when he ventures into the castle.\"",
       "\"I went to the chapel yesterday, but that kamikaze dwarf was sitting there. He makes me nervous, so I figured I'd come back another time.\"",
       "\"I don't know if Senex ever leaves the chapel. That man works day and night to take care of all of us.\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
+      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of prince Artorius as well.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"The roads near the Castle are safer now, thanks to Lord Regent. He's an example for us all.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Can you believe that the bastard Black-cloak managed to sneak into the very king's rooms?!\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
       "@Dd chatters.";
     }
     HostileReplies =
@@ -4493,7 +4504,7 @@ housewife
     NamePlural = "rebels";
     FriendlyReplies =
     {
-      9,
+      10,
       "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
@@ -4502,6 +4513,7 @@ housewife
       "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
       "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
       "\"What?\"",
+      "\"These necromancer twins give me the creeps. Why do we even associate with such types?\"",
       "@Dd boasts about @sp farmstead back home.";
     }
     HostileReplies == "\"I will smack you down, young man!\"";
