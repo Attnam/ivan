@@ -709,6 +709,7 @@ Dungeon GOBLIN_FORT;
       GenerateDoor = false;
       GenerateTunnel = false;
       AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
 
       Square, Pos 2, 0;
       {

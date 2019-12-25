@@ -7480,7 +7480,7 @@ void harvan::BeTalkedTo()
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
         PLAYER->RemoveNuke();
-        ADD_MESSAGE("\"So this is the fate Lord Regent had planned for me and my people. Thank you for saving all of our lives, %s\"",
+        ADD_MESSAGE("\"So this is the fate Lord Regent had planned for me and my people. Thank you for saving all of our lives, %s.\"",
                     PLAYER->GetAssignedName().CStr());
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;
@@ -7533,13 +7533,16 @@ void harvan::BeTalkedTo()
 
       if(CrownPrince)
       {
-        team* Team = game::GetTeam(REBEL_TEAM);
-        CrownPrince->ChangeTeam(Team);
+        if(game::TruthQuestion(CONST_S("Entrust young prince to Harvan's care? [y/N]"), REQUIRES_ANSWER))
+        {
+          team* Team = game::GetTeam(REBEL_TEAM);
+          CrownPrince->ChangeTeam(Team);
 
-        ADD_MESSAGE("\"Hi, uncle Harvan! Where are we? When are we gonna go home?\"");
-        ADD_MESSAGE("\"Your Highness, I'm so very glad to see you. Don't worry, I will take you home soon.\"");
-        game::SetRebelStoryState(game::GetRebelStoryState() + 1);
-        return;
+          ADD_MESSAGE("\"Hi, uncle Harvan! Where are we? When are we gonna go home?\"");
+          ADD_MESSAGE("\"Your Highness, I'm so very glad to see you. Don't worry, I will take you home soon.\"");
+          game::SetRebelStoryState(game::GetRebelStoryState() + 1);
+          return;
+        }
       }
     }
   }
@@ -7576,7 +7579,7 @@ void lordregent::BeTalkedTo()
       game::TextScreen(CONST_S("\"Sir Lancelyn sent you? He thought you can be of any use to me? I doubt that,\n"
                                "but then again maybe there is something in you, we shall see.\"\n\n"
                                "\"Several of my advisors have been complaining lately that we don't have enough\n"
-                               "expendable personnel to send on special mission. Go see Lord Mittrars,\n"
+                               "expendable personnel to send on special missions. Go see Lord Mittrars,\n"
                                "Myrddin the wizard and Senex of Seges, and report back once they are happy.\"\n\n"
                                "\"Now away with you, I have other things to worry about.\""));
 
@@ -7726,6 +7729,8 @@ void child::BeTalkedTo()
   if(GetConfig() == KING &&
      GetRelation(PLAYER) != HOSTILE &&
      GetTeam() != PLAYER->GetTeam() &&
+     GetDungeon()->GetIndex() == GOBLIN_FORT &&
+     GetLevel()->GetIndex() == KING_LEVEL &&
      GetPos().IsAdjacent(PLAYER->GetPos())
    ) // Prince Artorius will follow you back to Aslona.
   {

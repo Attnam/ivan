@@ -1039,7 +1039,7 @@ guard
     CanBeCloned = false;
     IsPolymorphable = false;
     UndeadVersions = false;
-    TamingDifficulty = 25;
+    TamingDifficulty = NO_TAMING;
     AttachedGod = CRUENTUS;
     BloodMaterial = BLUE_BLOOD;
     FriendlyReplies =
@@ -9633,7 +9633,7 @@ child
     HeadBitmapPos = 96, 415;
     HairColor = rgb16(36, 36, 36);
     ClothColor = rgb16(176, 0, 0);
-    DefaultName = "His Majesty crown prince Artorius";
+    DefaultName = "His Highness crown prince Artorius";
     NameSingular = "heir";
     PostFix = "to the throne of Aslona";
     Cloak = FABRIC cloak { Enchantment = 1; }
@@ -9641,7 +9641,7 @@ child
     Sex = MALE;
     AttachedGod = SEGES;
     BloodMaterial = BLUE_BLOOD;
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 20;
     IsUnique = true;
     IsNameable = false;
     CanBeCloned = false;
@@ -9667,6 +9667,7 @@ child
       "\"Guards! Guards!\"",
       "@Dd screams for help.";
     }
+    Alias == "Artorius";
   }
 }
 
@@ -9864,6 +9865,7 @@ bum
     "\"Bad adventurer! No more living for you!\"",
     "@Dd yells gibberish in a drunken rage.";
   }
+  Alias == "hobo";
 }
 
 nihil
@@ -10417,4 +10419,5 @@ fusanga
     "@Dd radiates danger and majesty.";
   }
   FriendlyReplies == "@Dd wobbles disappointedly due to the fact that you are cheating.";
+  Alias == "Fusanga";
 }
