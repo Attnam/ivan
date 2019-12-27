@@ -187,7 +187,9 @@ truth commandsystem::IsForRegionListItem(int iIndex){
     vLF.push_back(&WieldInLeftArm);
     vLF.push_back(&WieldInRightArm);
     vLF.push_back(&Zap);
+#ifdef WIZARD
     vLF.push_back(&Polymorph);
+#endif
     return true;
   }();
   for(int i=0;i<vLF.size();i++){
@@ -222,7 +224,9 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
     vLF.push_back(&WieldInLeftArm);
     vLF.push_back(&WieldInRightArm);
     vLF.push_back(&Zap);
+#ifdef WIZARD
     vLF.push_back(&Polymorph);
+#endif
     return true;
   }();
   for(int i=0;i<vLF.size();i++){
@@ -858,7 +862,13 @@ truth commandsystem::Read(character* Char)
   }
 
   item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to read?"), 0, &item::IsReadable);
-  if(Item)game::DisableAutoPlayMode(); // stops auto question timeout that was preventing reading at all
+
+#ifdef WIZARD
+  // stops auto question timeout that was preventing reading at all
+  if(Item)
+    game::DisableAutoPlayMode();
+#endif
+
   return Item && Char->ReadItem(Item);
 }
 
