@@ -6588,7 +6588,7 @@ void petrusswife::BeTalkedTo()
 
 void guard::BeTalkedTo()
 {
-  if(!GetConfig() == EMISSARY || GetRelation(PLAYER) == HOSTILE)
+  if(!(GetConfig() == EMISSARY) || GetRelation(PLAYER) == HOSTILE)
   {
     if(GetPos().IsAdjacent(PLAYER->GetPos()) && !(GetRelation(PLAYER) == HOSTILE))
     {
@@ -7568,6 +7568,8 @@ truth harvan::SpecialEnemySightedReaction(character* Char)
   }
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s screams at you in a violent rage.", CHAR_NAME(DEFINITE));
+
+  return true;
 }
 
 void lordregent::BeTalkedTo()
