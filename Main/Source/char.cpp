@@ -484,8 +484,9 @@ cchar* character::GetNormalDeathMessage() const
     "done in @k", "defeated @k", "struck down @k", "offed @k", "mowed down @k",
     "taken down @k", "sent to the grave @k", "destroyed @k", "executed @k",
     "slaughtered @k", "annihilated @k", "finished @k", "neutralized @k",
-    "obliterated @k", "snuffed @k", "done away with @k", "put to death @k" };
-  return killed_by[RAND() % 27];
+    "obliterated @k", "snuffed @k", "done away with @k", "put to death @k",
+    "released of this mortal coil @k", "taken apart @k", "unmade @k" };
+  return killed_by[RAND() % 30];
 }
 
 festring character::GetGhostDescription() const
@@ -1218,6 +1219,13 @@ void character::GetAICommand()
 
     if(FollowLeader(GetLeader()))
       return;
+  }
+
+  if(!IsPlayer() && CanBeSeenByPlayer() && !RAND_N(50))
+  {
+    // Make NPCs sometimes talk to the player on their own. Hostile enemies will
+    // make threats, friendly creatures will just chat.
+    BeTalkedTo();
   }
 
   if(CheckForEnemies(true, true, true))

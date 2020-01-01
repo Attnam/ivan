@@ -676,12 +676,15 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      11,
+      14,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "@Dd snorts.",
       "@Dd spits on the ground.",
       "\"...\"",
       "\"Hmph.\"",
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
       "\"Anything you say can be used against you.\"",
       "\"Put that weapon away before you hurt someone!\"",
       "\"Don't even think of breaking rules.\"",
@@ -762,12 +765,23 @@ guard
     ClothColor = rgb16(100, 100, 100);
     FriendlyReplies =
     {
-      5,
+      10,
       "@Dd says gravely: \"You don't have a life. Get it as a shop guard.\"",
       "@Dd seems very suspicious. \"Don't even think of stealing anything.\"",
       "\"Yes, this is a dangerous place to work, but our boss pays us well.\"",
+      "\"Go fiddling with any locks around here, we're going to have a real problem.\"",
+      "\"I find your hand in my pocket, I'm going to cut it off. Your hand, not my pocket.\"",
+      "\"I know your kind, always sneaking about. Won't fool me!\"",
+      "\"Hands to yourself, thief! Oh, sorry, you came to buy something?\"",
+      "\"Your gold is welcome here.\"",
       "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't make any rash moves here.\"",
       "\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"Not very intelligent, are you?\"",
+      "\"Ah, you have a death wish.\"";
     }
   }
 
@@ -1180,6 +1194,76 @@ shopkeeper
       "\"I still have friends up in the temple. You won't escape!\"",
       "\"You'll die and then I'll sell your corpse to the necromancers!\"";
     }
+  }
+
+  Config BLACK_MARKET;
+  {
+    DefaultName = "One-eyed Sam";
+    Adjective = "black";
+    NameSingular = "marketeer";
+    DefaultDexterity = 25;
+    DefaultAgility = 20;
+    AttributeBonus = 75;
+    TotalSize = 180;
+    DefaultMoney = 30000;
+    Helmet = STAR_METAL helmet(HELM_OF_TELEPATHY) { Enchantment = 3; }
+    Amulet = DIAMOND amulet(AMULET_OF_LIFE_SAVING);
+    BodyArmor = STAR_METAL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Cloak = GOSSAMER cloak(CLOAK_OF_FLYING) { Enchantment = 3; }
+    Belt = GOSSAMER belt(BELT_OF_REGENERATION) { Enchantment = 3; }
+    RightWielded = STAR_METAL DIAMOND bansheesickle { Enchantment = 6; }
+    LeftWielded = STAR_METAL DIAMOND weepblade { Enchantment = 6; }
+    RightRing = DIAMOND ring(RING_OF_TELEPORT_CONTROL);
+    LeftRing = ring(RING_OF_SPEED); /* unique artifact for her */
+    RightGauntlet = GOSSAMER gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+    RightBoot = GOSSAMER boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+    KnownCWeaponSkills = { 3, UNARMED, KICK, SMALL_SWORDS; }
+    CWeaponSkillHits = { 3, 500, 500, 2000; }
+    RightSWeaponSkillHits = 1000;
+    LeftSWeaponSkillHits = 1000;
+    Sex = FEMALE;
+    FleshMaterial = ORC_FLESH;
+    /* BloodMaterial = BLACK_BLOOD; */ /* TODO: change once orcish blood is implemented */
+    ClassStates = GAS_IMMUNITY|INFRA_VISION;
+    HeadBitmapPos = 112, 240;
+    TorsoBitmapPos = 32, 16;
+    ArmBitmapPos = 80, 176;
+    LegBitmapPos = 0, 48;
+    HairColor = rgb16(210, 5, 5);
+    SkinColor = rgb16(48, 48, 48);
+    EyeColor = rgb16(200, 200, 0);
+    ClothColor = rgb16(181, 210, 220);
+    CapColor = rgb16(66, 66, 66);
+    GauntletColor = rgb16(66, 66, 66);
+    BootColor = rgb16(66, 66, 66);
+    WieldedPosition = -1, -1;
+    UndeadVersions = false;
+    PanicLevel = 0;
+    CriticalModifier = 4;
+    FireResistance = 30;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
+    PoisonResistance = 5;
+    AcidResistance = 5;
+    FriendlyReplies =
+    {
+      6,
+      "\"My wares are not stolen, just... appropriated.\"",
+      "\"Don't mind the blood on some of my wares, I'm sure it will wash off easily.\"",
+      "\"Overpriced? What do you mean, overpriced?!\"",
+      "\"You may well need something from this shop in the future.\"",
+      "@Dd complains about cleaning the blood after shoplifters.",
+      "\"I have only the finest goods for sale!\"";
+    }
+    HostileReplies =
+    {
+      4,
+      "\"Fool! No one messes with the Guild and lives!\"",
+      "\"I'm really looking forward to inheriting all your possessions!\"",
+      "@Dd mentions how much @pp dislikes non-paying customers.",
+      "\"You don't want to pay in gold? You're going to pay in blood!\"";
+    }
+    Inventory = { 2, holybook(MELLIS), DIAMOND EBONY_WOOD pickaxe { Enchantment = -1; } }
   }
 }
 
@@ -2782,9 +2866,11 @@ golem
   PanicLevel = 0;
   HostileReplies = /* No quotes! (golem engraves) */
   {
-    3,
+    5,
     "GOLEM KILL, GOLEM THEN RETURN",
     "GOLEM KILL ALL HUMANS",
+    "MASTER WANTED, UNDEAD OR ALIVE",
+    "HAVE YOU SEEN MY MASTER",
     "GOLEM NEED MASTER";
   }
   FriendlyReplies =
@@ -3533,37 +3619,10 @@ slave
   DefaultMoney = 0;
   FriendlyReplies = /* used only if the slave has been bought */
   {
-    33,
+    6,
     "\"Whatever the master wants.\"",
     "\"What if we're ambushed in a dungeon like this?\"",
     "\"Will you make me a gladiator? I've heard they have all the fame and women!\"",
-    "\"I once was a professor of philosophy, back in Tweraif, you know?\"",
-    "\"Errare humanum est.\"",
-    "\"Asinus manebis in saecula saeculorum.\"",
-    "\"Cuius regio, eius religion.\"",
-    "\"Faber suae quisque fortunae. *snicker*\"",
-    "\"Fortes fortuna adiuvat.\"",
-    "\"Historia magistra vitae.\"",
-    "\"Hominem te esse, memento.\"",
-    "\"Homo doctus in se semper divitias habet.\"",
-    "\"Honesta quaedam scelera successus facit.\"",
-    "\"In vino veritas, in aqua sanitas.\"",
-    "\"Malo periculosam libertatem quam quietum servitium.\"",
-    "\"Militia est vita hominis super terram.\"",
-    "\"Nondum omnium dierum sol occidit.\"",
-    "\"Omnis vita supplicium est.\"",
-    "\"Optima philosophia meditatio est mortis.\"",
-    "\"Post nubia phoebus...\"",
-    "\"Quo usque tandem?\"",
-    "\"Scientia est potentia.\"",
-    "\"Stultorum Mater sempiter gravida.\"",
-    "\"Te audire non possum. Musa sapientum fixa est in aure.\"",
-    "\"Temeritas est damnare, quod nescias.\"",
-    "\"Vae victis!\"",
-    "\"Quidquid latine dictum sit, altum videtur.\"",
-    "\"Vita non est vivere sed valere vita est.\"",
-    "\"Mors ultima linea rerum.\"",
-    "\"Of course I speak the Old Tongue. I also know Ancient Elvish, High and Low Dwarven, a bit of Draconic, plus five dialects of Orcish.\"",
     "\"Work work work all day long. No, that was not a complaint! Don't punish!\"",
     "\"I love all my masters. At least when the whip is being washed.\"",
     "\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
@@ -3883,6 +3942,7 @@ housewife
   TotalVolume = 70000;
   TotalSize = 160;
   CanRead = true;
+  CanBeGenerated = false;
   NameSingular = "housewife";
   NamePlural = "housewives";
   /* RightWielded overridden */
@@ -3895,13 +3955,12 @@ housewife
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
-    7,
+    6,
     "\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
     "\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
     "\"Petrus' wives are so arrogant towards us working class ones. Grr...\"",
     "\"Don't think too much, the Cardinals can hear you.\"",
-    "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
   }
   ScienceTalkPossibility = 20;
@@ -3919,7 +3978,6 @@ housewife
 
   Config CULTIST;
   {
-    CanBeGenerated = false;
     AttributeBonus = 10;
     NameSingular = "cultist";
     TorsoBitmapPos = 48, 352;
@@ -4222,8 +4280,9 @@ zombie
   /* HostileReplies overridden */
   FriendlyReplies =
   {
-    2,
+    3,
     "\"Need brain but you too stoopid!\"",
+    "\"May I interest you in the idea of forfeiting the ownership of your brain in my favor?\"",
     "\"Brraaaaaaaaiiiiiiinnnz!!!\"";
   }
   DeathMessage = "@Dd is slain (again).";
@@ -4371,10 +4430,11 @@ ghost
   BaseEmitation = rgb24(110, 110, 130);
   HostileReplies =
   {
-    4,
+    5,
     "@Dd moans.",
     "@Dd wails.",
     "@Dd attempts to spook you.",
+    "\"Thou shalt be one of us, soon!\"",
     "\"Boo!\"";
   }
   FriendlyReplies =
@@ -5867,8 +5927,9 @@ snake
   TorsoSpecialColor = rgb16(200, 200, 0); /* RattleColor */
   HostileReplies =
   {
-    2,
+    3,
     "@Dd hisses.",
+    "\"You sssmell deliciousss!\"",
     "@Dd rattles!";
   }
   FriendlyReplies == "@Dd hisses in a friendly manner.";

@@ -4,7 +4,7 @@ project(ivan CXX C)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 56)
+set(VERSION_MINOR 57)
 set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
 #set(VERSION_PATCH 0)
 #set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
@@ -52,6 +52,12 @@ elseif(WIN32)
   # Switching to std::chrono should not be hard, but it's not a topic for this pull request.
   add_definitions(-D_USE_32BIT_TIME_T)
 endif(UNIX)
+
+# In visual studio 2017, add an option to hide the console window (useful where debugging is not intended - i.e. releases)
+if(MSVC AND MSVC_HIDE_CONSOLE_WINDOW)
+  # Hide the console window in visual studio projects
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
 
 if(WIZARD)
   add_definitions(-DWIZARD)

@@ -17,7 +17,7 @@
 
 #include "festring.h"
 
-#define DEVCMDMSG(fmt,x...) ADD_MESSAGE(" > " fmt,x);
+#define DEVCMDMSG(fmt,x,...) ADD_MESSAGE(" > " fmt,x);
 
 typedef void (*callcmd)(std::string);
 

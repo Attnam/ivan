@@ -88,6 +88,17 @@ underwatertunnelexit
   NativeGTerrainType = JUNGLE;
 }
 
+blackmarket
+{
+  BitmapPos = 64, 64;
+  NameStem = "old, decrepit building";
+  UsesLongArticle = true;
+  AttachedDungeon = BLACK_MARKET;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
 locationAA
 {
   BitmapPos = 0, 64;
@@ -329,7 +340,7 @@ locationAV
   NativeGTerrainType = STEPPE;
 }
 
-locationAW
+xinrochtomb
 {
   BitmapPos = 0, 64;
   NameStem = "sombre and forbidding mausoleum";

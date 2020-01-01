@@ -77,6 +77,10 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(blackmarket, owterrain)
+{
+};
+
 OWTERRAIN(locationAA, owterrain)
 {
 };
@@ -166,7 +170,7 @@ OWTERRAIN(locationAV, owterrain)
 {
 };
 
-OWTERRAIN(locationAW, owterrain)
+OWTERRAIN(xinrochtomb, owterrain)
 {
 };
 

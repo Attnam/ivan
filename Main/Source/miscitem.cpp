@@ -4053,3 +4053,59 @@ col16 skeletonkey::GetOutlineColor(int Frame) const
   }
   return TRANSPARENT_COLOR;
 }
+
+void key::Break(character* Breaker, int)
+{
+  if(!CanBeBroken())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
+
+  if(Breaker && IsOnGround())
+  {
+    room* Room = GetRoom();
+
+    if(Room)
+      Room->HostileAction(Breaker);
+  }
+  if(PLAYER->Equips(this))
+    game::AskForKeyPress(CONST_S("Key broken! [press any key to continue]"));
+
+  RemoveFromSlot();
+  SendToHell();
+}
+
+void locationmap::FinishReading(character* Reader)
+{
+  if(Reader->IsPlayer())
+  {
+    /*
+     * Note that read command cannot be used in wilderness, so we don't need to
+     * special case the code below. If we ever let the player read in wilderness,
+     * change it to take that into account.
+     */
+
+    game::LoadWorldMap();
+    v2 NewPos = game::GetWorldMap()->GetEntryPos(0, GetConfig());
+
+    switch (GetConfig())
+    {
+      case BLACK_MARKET:
+      {
+        game::GetWorldMap()->GetWSquare(NewPos)->ChangeOWTerrain(blackmarket::Spawn());
+        break;
+      }
+      /* Add new locations here. */
+    }
+
+    game::GetWorldMap()->RevealEnvironment(NewPos, 1);
+    game::SaveWorldMap();
+
+    ADD_MESSAGE("The map reveals to you a secret site. You quickly commit the location to memory as the map burns up.");
+  }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+}
