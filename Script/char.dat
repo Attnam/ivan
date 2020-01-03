@@ -595,7 +595,7 @@ farmer
     FriendlyReplies =
     {
       10,
-      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
       "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
@@ -1167,7 +1167,7 @@ guard
       "\"We must free crown prince Artorius from the clutches of that wretched Lord Regent.\"",
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
-      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
       "\"Everyone wants to know what really happened to the old king.\"",
       "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a king again.\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
@@ -3544,33 +3544,27 @@ spider
     PanicLevel = 50;
     ClassStates = ETHEREAL_MOVING|TELEPORT|INVISIBLE|ESP;
   }
-}
-
-goldspider /* spider-> */
-{
-  DefaultArmStrength = 18;
-  DefaultAgility = 26;
-  DefaultEndurance = 18;
-  DefaultPerception = 26;
-  DefaultIntelligence = 8;
-  DefaultWillPower = 14;
-  DefaultWisdom = 14;
-  DefaultCharisma = 8;
-  DefaultMana = 14;
-  AttachedGod = INFUSCOR;
-  IsAbstract = true;
-  IsCatacombCreature = false;
-  BaseBiteStrength = 400;
-  CWeaponSkillHits == 150;
-  TotalVolume = 5000;
-  TotalSize = 50;
 
   Config GIANT_GOLD;
   {
-    /* Defined this way because of how spider::GetAICommand() works. */
+    DefaultArmStrength = 18;
+    DefaultAgility = 26;
+    DefaultEndurance = 18;
+    DefaultPerception = 26;
+    DefaultIntelligence = 8;
+    DefaultWillPower = 14;
+    DefaultWisdom = 14;
+    DefaultCharisma = 8;
+    DefaultMana = 14;
     Adjective = "giant gold";
     SkinColor = rgb16(224, 224, 0);
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 150;
+    AttachedGod = INFUSCOR;
+    TotalVolume = 5000;
+    TotalSize = 50;
     Frequency = 1;
+    IsCatacombCreature = false;
   }
 }
 
@@ -4505,7 +4499,7 @@ housewife
     FriendlyReplies =
     {
       10,
-      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"",
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
       "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
       "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
@@ -6953,11 +6947,11 @@ cossack
       "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
       "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
       "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
-      "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
+      "\"You heard about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
       "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
       "\"Everyone wants to know what really happened to the old king.\"",
       "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a good king again.\"",
-      "\"We're all talking about the old king's murder. How could the Lord Regent get away with it?\"";
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"";
     }
     HostileReplies == "@Dd screams obscenities.";
     DeathMessage = "@Dd falls shouting: \"For Aslona!";

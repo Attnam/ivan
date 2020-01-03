@@ -631,8 +631,7 @@
 #define GIANT 2
 #define ARANEA 3
 #define PHASE 4
-
-#define GIANT_GOLD 3
+#define GIANT_GOLD 5
 
 #define IMPRISONED_HUNTER 1
 

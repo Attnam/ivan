@@ -865,7 +865,7 @@ truth commandsystem::Read(character* Char)
 
 #ifdef WIZARD
   // stops auto question timeout that was preventing reading at all
-  if(Item)
+  if(Item && game::GetAutoPlayMode())
     game::DisableAutoPlayMode();
 #endif
 

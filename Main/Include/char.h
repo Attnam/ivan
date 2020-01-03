@@ -985,6 +985,7 @@ class character : public entity, public id
   void TerminateGoingTo();
   virtual truth IsSpy() const { return false; }
   virtual truth IsKing() const { return false; }
+  virtual truth IsLarge() const { return false; }
   truth CheckForFood(int);
   truth CheckForFoodInSquare(v2);
   virtual truth CheckIfSatiated() { return GetNP() > SATIATED_LEVEL; }

@@ -967,43 +967,39 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
     return false;
 }
 
-truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
+truth spider::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour || Critical)
   {
-    Char->BeginTemporaryState(POISONED, GetConfig() == LARGE ? 80 + RAND_N(40) : 400 + RAND_N(200));
-    return true;
-  }
-  else
-    return false;
-}
-
-truth goldspider::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex,
-                                    int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
-{
-  if(!BlockedByArmour || Critical)
-  {
-    bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
-
-    if(BodyPart && BodyPart->IsMaterialChangeable())
+    if(GetConfig() == GIANT_GOLD)
     {
-      festring Desc;
-      BodyPart->AddName(Desc, UNARTICLED);
+      bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
 
-      // Instead of a cockatrice turning you to stone, gold spider will turn you to gold!
-      delete BodyPart->SetMainMaterial(MAKE_MATERIAL(GOLD));
-
-      if(Victim->IsPlayer())
+      if(BodyPart && BodyPart->IsMaterialChangeable())
       {
-        Desc << " tingles painfully";
-        ADD_MESSAGE("Your %s.", Desc.CStr());
-      }
-      else if(Victim->CanBeSeenByPlayer())
-      {
-        Desc << " vibrates and changes into gold";
-        ADD_MESSAGE("%s's %s.", Victim->CHAR_DESCRIPTION(DEFINITE), Desc.CStr());
-      }
+        festring Desc;
+        BodyPart->AddName(Desc, UNARTICLED);
 
+        // Instead of a cockatrice turning you to stone, gold spider will turn you to gold!
+        delete BodyPart->SetMainMaterial(MAKE_MATERIAL(GOLD));
+
+        if(Victim->IsPlayer())
+        {
+          Desc << " tingles painfully";
+          ADD_MESSAGE("Your %s.", Desc.CStr());
+        }
+        else if(Victim->CanBeSeenByPlayer())
+        {
+          Desc << " vibrates and changes into gold";
+          ADD_MESSAGE("%s's %s.", Victim->CHAR_DESCRIPTION(DEFINITE), Desc.CStr());
+        }
+
+        return true;
+      }
+    }
+    else
+    {
+      Victim->BeginTemporaryState(POISONED, GetConfig() == LARGE ? 80 + RAND_N(40) : 400 + RAND_N(200));
       return true;
     }
   }

@@ -3235,7 +3235,8 @@ void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
   }else if(v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)){ //bottom edge
     bNearEC=true;iCycleCodeFallBack=4; //top right horiz
   }
-  if(bNearEC)bAboveHead=true;
+  if(bNearEC && iCode==1)
+    bAboveHead=true;
 
   if(bDynamic && bAboveHead && !bPositionQuestionMode){ // will not be above head in bPositionQuestionMode
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);

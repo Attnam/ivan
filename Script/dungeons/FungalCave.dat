@@ -768,11 +768,11 @@ Dungeon FUNGAL_CAVE;
     }
   }
 
-  RandomLevel 0:3;
+  RandomLevel 1:3;
   {
-    Square, Random HAS_NO_OTERRAIN;
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
     {
-      Character = goldspider(GIANT_GOLD);
+      Character = spider(GIANT_GOLD);
     }
   }
 }

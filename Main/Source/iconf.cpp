@@ -65,7 +65,7 @@ stringoption ivanconfig::FantasyNamePattern("FantasyNamePattern",
                                                      << "template, wrap it in brackets. For example, to reverse \"sV'i\" as\n"
                                                      << "a whole use \"~<sV'i>\". The template \"~sV'i\" will only reverse"
                                                      << "the initial syllable.",*/
-                                          "", // TODO: this above
+                                          "Set a pattern for the random fantasy name generator. See MANUAL for further information and pattern examples.", // TODO: this above
                                           "!ss !sV",
                                           &configsystem::NormalStringDisplayer,
                                           &FantasyNameChangeInterface);

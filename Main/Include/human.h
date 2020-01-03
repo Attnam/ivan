@@ -452,7 +452,7 @@ CHARACTER(zombie, humanoid)
   virtual void BeTalkedTo();
   virtual truth BodyPartIsVital(int) const;
   virtual void CreateBodyParts(int);
-  virtual truth AllowSpoil() const { return GetConfig() == ZOMBIE_OF_KHAZ_ZADM; }
+  virtual truth AllowSpoil() const { return GetConfig() != ZOMBIE_OF_KHAZ_ZADM; }
   void SetDescription(cfestring What) { Description = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

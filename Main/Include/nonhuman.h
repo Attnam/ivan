@@ -367,7 +367,9 @@ CHARACTER(largecreature, nonhumanoid)
   virtual int GetUnconsciousSymbolSquareIndex() const { return 2; }
   virtual truth PlaceIsIllegal(v2, v2) const;
   truth PartCanMoveOn(const lsquare*) const;
+  virtual truth IsLarge() const { return true; }
  protected:
+  virtual truth CanVomit() const { return false; }
   virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
   virtual void LoadSquaresUnder();
@@ -505,12 +507,6 @@ CHARACTER(fusanga, largecreature)
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
-};
-
-CHARACTER(goldspider, spider)
-{
- protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 #endif

@@ -349,6 +349,12 @@ truth item::Polymorph(character* Polymorpher, character* Wielder)
 
     item* NewItem = protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true);
     int EquipSlot = GetEquipmentIndex();
+
+    if(Wielder->IsPlayer())
+      ADD_MESSAGE("Your %s polymorphs into %s.", CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s's %s polymorphs into %s.", Wielder->CHAR_NAME(DEFINITE), CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+
     RemoveFromSlot();
     SendToHell();
 
@@ -371,6 +377,7 @@ truth item::Polymorph(character* Polymorpher, character* Wielder)
       case RIGHT_BOOT_INDEX: Wielder->SetRightBoot(NewItem); break;
       case LEFT_BOOT_INDEX: Wielder->SetLeftBoot(NewItem); break;
       */
+      default: Wielder->ReceiveItemAsPresent(NewItem); break;
     }
 
     game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
