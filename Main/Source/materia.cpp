@@ -196,7 +196,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       break;
     }
    case EFFECT_POLYJUICE: Char->PolymorphRandomly(Amount, 999999, Amount * 10); break;
-   case EFFECT_PUKE: Char->VomitAtRandomDirection(Amount); break;
+   //case EFFECT_PUKE: Char->VomitAtRandomDirection(Amount); break;
    case EFFECT_SICKNESS: Char->ReceiveSickness(Amount); break;
    case EFFECT_PHASE: Char->BeginTemporaryState(ETHEREAL_MOVING, Amount); break;
    case EFFECT_ACID_GAS: Char->SpillFluid(0, liquid::Spawn(SULPHURIC_ACID, Amount)); break;

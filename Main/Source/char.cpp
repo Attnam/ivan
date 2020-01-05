@@ -12300,12 +12300,13 @@ cchar* character::GetRunDescriptionLine(int I) const
 
 void character::VomitAtRandomDirection(int Amount)
 {
-  if(game::IsInWilderness())
+  /* Lacks support of multitile monsters */
+  if(game::IsInWilderness() || IsLarge() || Amount <= 0)
     return;
 
-  /* Lacks support of multitile monsters */
-
-  v2 Possible[9];
+  v2 Possible[9] = { GetPos(), GetPos(), GetPos(),
+                     GetPos(), GetPos(), GetPos(),
+                     GetPos(), GetPos(), GetPos() };
   int Index = 0;
 
   for(int d = 0; d < 9; ++d)
