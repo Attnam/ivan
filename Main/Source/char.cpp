@@ -12810,21 +12810,19 @@ truth character::CanTameWithDulcis(const character* Tamer) const
   if(GetAttachedGod() == DULCIS)
     return true;
 
+  if(!IgnoreDanger())
+    TamingDifficulty = Max(TamingDifficulty, int(10 * GetRelativeDanger(Tamer)));
+  else
+    TamingDifficulty = Max(TamingDifficulty, (10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1)));
+
+  TamingDifficulty = Max(TamingDifficulty, GetAttribute(WILL_POWER));
+
   int Modifier = Tamer->GetAttribute(WISDOM) + Tamer->GetAttribute(CHARISMA);
 
   if(Tamer->IsPlayer())
     Modifier += game::GetGod(DULCIS)->GetRelation() / 20;
   else if(Tamer->GetAttachedGod() == DULCIS)
     Modifier += 50;
-
-  if(TamingDifficulty == 0)
-  {
-    if(!IgnoreDanger())
-      TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
-    else
-      TamingDifficulty = 10 * GetHPRequirementForGeneration()
-                         / Max(Tamer->GetHP(), 1);
-  }
 
   return Modifier >= TamingDifficulty * 3;
 }
@@ -12836,40 +12834,50 @@ truth character::CanTameWithLyre(const character* Tamer) const
   if(TamingDifficulty == NO_TAMING)
     return false;
 
-  if(TamingDifficulty == 0)
-  {
-    if(!IgnoreDanger())
-      TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
-    else
-      TamingDifficulty = 10 * GetHPRequirementForGeneration()
-                         / Max(Tamer->GetHP(), 1);
-  }
+  if(!IgnoreDanger())
+    TamingDifficulty = Max(TamingDifficulty, int(10 * GetRelativeDanger(Tamer)));
+  else
+    TamingDifficulty = Max(TamingDifficulty, (10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1)));
 
-  return Tamer->GetAttribute(CHARISMA) >= TamingDifficulty;
+  TamingDifficulty = Max(TamingDifficulty, GetAttribute(WILL_POWER));
+
+  int Modifier = Tamer->GetAttribute(MANA) + Tamer->GetAttribute(CHARISMA);
+
+  return Modifier >= TamingDifficulty * 2;
 }
 
 truth character::CanTameWithScroll(const character* Tamer) const
 {
   int TamingDifficulty = GetTamingDifficulty();
-  return (TamingDifficulty != NO_TAMING
-          && (TamingDifficulty == 0
-              || Tamer->GetAttribute(INTELLIGENCE) * 4
-              + Tamer->GetAttribute(CHARISMA)
-              >= TamingDifficulty * 5));
+
+  if(TamingDifficulty == NO_TAMING)
+    return false;
+
+  /*
+  if(!IgnoreDanger())
+    TamingDifficulty = Max(TamingDifficulty, int(10 * GetRelativeDanger(Tamer)));
+  else
+    TamingDifficulty = Max(TamingDifficulty, (10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1)));
+  */
+
+  TamingDifficulty = Max(TamingDifficulty, GetAttribute(WILL_POWER));
+
+  int Modifier = Tamer->GetAttribute(INTELLIGENCE) * 4 + Tamer->GetAttribute(CHARISMA);
+
+  return Modifier >= TamingDifficulty * 5;
 }
 
 truth character::CanTameWithResurrection(const character* Tamer) const
 {
-        int TamingDifficulty = GetTamingDifficulty();
+  int TamingDifficulty = GetTamingDifficulty();
 
-        if (TamingDifficulty == NO_TAMING)
-                return false;
-        if (TamingDifficulty == 0)
-                return true;
+  if(TamingDifficulty == NO_TAMING)
+    return false;
 
-        return (Tamer->GetAttribute(CHARISMA) >= TamingDifficulty / 2);
-        //      || Tamer->GetAttribute(CHARISMA) + WisIntAvg >= (2 * TamingDifficulty) / 3);
-                // Alternate formula 2/3 * TamingDifficulty <= CHA + (WIS + INT) / 2
+  TamingDifficulty = Max(TamingDifficulty, GetAttribute(WILL_POWER));
+
+  return Tamer->GetAttribute(CHARISMA) >= TamingDifficulty / 2;
+  // Alternate formula 2/3 * TamingDifficulty <= CHA + (WIS + INT) / 2
 }
 
 truth character::CheckSadism()
