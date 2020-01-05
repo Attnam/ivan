@@ -472,6 +472,7 @@ Dungeon FUNGAL_CAVE;
     CanGenerateBone = false;
     LOSModifier = 48;
     FillSquare = COAL solidterrain(GROUND), COAL earth;
+    LevelMessage = "You shudder. The scent of magic and death is in the air.";
 
     RoomDefault
     {
@@ -502,7 +503,7 @@ Dungeon FUNGAL_CAVE;
 
     Square, Random;
     {
-      Character = darkmage(ELDER);
+      Character = darkmage(BATTLE_MAGE);
     }
 
     Room

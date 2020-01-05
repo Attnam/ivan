@@ -636,6 +636,7 @@ Dungeon GOBLIN_FORT;
     FillSquare = SHALE solidterrain(GROUND), SLADE earth;
     TunnelSquare = SHALE solidterrain(GROUND), 0;
     BackGroundType = BLUE_FRACTAL;
+    LevelMessage = "You hear the hubbub of many goblinish voices.";
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {

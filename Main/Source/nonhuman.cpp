@@ -978,10 +978,15 @@ truth spider::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex,
       if(BodyPart && BodyPart->IsMaterialChangeable())
       {
         festring Desc;
+        int CurrentHP = BodyPart->GetHP();
         BodyPart->AddName(Desc, UNARTICLED);
 
         // Instead of a cockatrice turning you to stone, gold spider will turn you to gold!
         delete BodyPart->SetMainMaterial(MAKE_MATERIAL(GOLD));
+
+        // Here changing material would revert all damage done, but we don't want that.
+        CurrentHP = Min(CurrentHP, BodyPart->GetHP());
+        BodyPart->SetHP(CurrentHP);
 
         if(Victim->IsPlayer())
         {

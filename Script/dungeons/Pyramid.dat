@@ -350,6 +350,7 @@ Dungeon PYRAMID;
     FillSquare = SUPER_CONCRETE solidterrain(GROUND), SUPER_CONCRETE wall(BRICK_FINE);
     TunnelSquare = SUPER_CONCRETE solidterrain(GROUND), 0;
     BackGroundType = GRAY_FRACTAL;
+    LevelMessage = "You feel a sudden pang of pain in the back of your brain.";
 
     RoomDefault
     {

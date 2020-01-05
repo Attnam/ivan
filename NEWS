@@ -59,6 +59,7 @@ Fixes:
 * Let monsters also benefit from Detecting status effect.
 * Fix sitting on fountains and drinking from non-water fountains.
 * Fix AI not using equipped zappable items.
+* Make taming/possessing more powerful creatures scale correctly.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of
