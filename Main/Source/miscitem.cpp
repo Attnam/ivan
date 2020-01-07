@@ -3844,11 +3844,11 @@ alpha ullrbone::GetOutlineAlpha(int Frame) const
   return 50 + (Frame * (31 - Frame) >> 1);
 }
 
-material* trinket::RemoveMaterial(material* Material)
+material* fish::RemoveMaterial(material* Material)
 {
   if(GetConfig() == DEAD_FISH)
   {
-    item* Bones = trinket::Spawn(BONE_FISH);
+    item* Bones = fish::Spawn(BONE_FISH);
     DonateSlotTo(Bones);
     DonateIDTo(Bones);
     SendToHell();
@@ -3858,55 +3858,58 @@ material* trinket::RemoveMaterial(material* Material)
     return item::RemoveMaterial(Material);
 }
 
-truth trinket::Necromancy(character*)
+truth fish::Necromancy(character*)
 {
   if(GetConfig() == BONE_FISH)
   {
-    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    GetSlot()->AddFriendItem(fish::Spawn(DEAD_FISH));
     RemoveFromSlot();
     SendToHell();
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
-truth trinket::RaiseTheDead(character*)
+truth fish::RaiseTheDead(character*)
 {
+  // TODO: Spawn a fish creature if done on WATER liquidterrain.
+  ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
+
   if(GetConfig() == BONE_FISH)
   {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
-    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    GetSlot()->AddFriendItem(fish::Spawn(DEAD_FISH));
     RemoveFromSlot();
     SendToHell();
     return true;
   }
-  if(GetConfig() == DEAD_FISH)
-  {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
-    return false;
-  }
-  else
-    return false;
+
+  return false;
 }
 
 col16 trinket::GetMaterialColorB(int) const
 {
-  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(87, 59, 12); }
-  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(200, 0, 0); }
-  if(GetConfig() == SMALL_CLOCK) { return MakeRGB16(124, 50, 16); }
-  if(GetConfig() == LARGE_CLOCK) { return MakeRGB16(124, 50, 16); }
-  else { return MakeRGB16(0, 0, 0); }
+  switch (GetConfig())
+  {
+    case POTTED_CACTUS: return MakeRGB16(87, 59, 12);
+    case POTTED_PLANT: return MakeRGB16(200, 0, 0);
+    case SMALL_CLOCK: return MakeRGB16(124, 50, 16);
+    case LARGE_CLOCK: return MakeRGB16(124, 50, 16);
+    default: return MakeRGB16(0, 0, 0);
+  }
 }
 
 col16 trinket::GetMaterialColorC(int) const
 {
-  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(0, 160, 0); }
-  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(0, 160, 0); }
-  else { return MakeRGB16(0, 0, 0); }
+  switch (GetConfig())
+  {
+    case POTTED_CACTUS: return MakeRGB16(0, 160, 0);
+    case POTTED_PLANT: return MakeRGB16(0, 160, 0);
+    default: return MakeRGB16(0, 0, 0);
+  }
 }
 
-truth trinket::CatWillCatchAndConsume(ccharacter* Kitty) const
+truth fish::CatWillCatchAndConsume(ccharacter* Kitty) const
 {
   return GetConfig() == DEAD_FISH &&
          GetConsumeMaterial(Kitty)->GetConfig() == SARDINE &&

@@ -248,7 +248,7 @@ Dungeon ASLONA_CASTLE;
           D = DEEP_BRONZE door(BARDOOR);
           H = olterraincontainer(SHELF)
           {
-            ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, trinket(DEAD_FISH) { Times = 5:15; }, carrot { Times = 0:3; } }
+            ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, fish(DEAD_FISH) { Times = 5:15; }, carrot { Times = 0:3; } }
           }
           W = olterraincontainer(SHELF)
           {
@@ -348,7 +348,7 @@ Dungeon ASLONA_CASTLE;
           i == trinket(POTTED_PLANT);
           I == trinket(POTTED_CACTUS);
           h == itemcontainer(SMALL_CHEST) { Parameters = LOCKED; ItemsInside == Random { Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } }
-          H == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, sausage { Times = 0:10; }, trinket(DEAD_FISH) { Times = 0:3; } } }
+          H == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, sausage { Times = 0:10; }, fish(DEAD_FISH) { Times = 0:3; } } }
           j == trinket(SMALL_CLOCK);
           J == OCTIRON SAPPHIRE wondersmellstaff { Enchantment = 2; }
           k == EMERALD BRASS sharpaxe { Enchantment = 2; }

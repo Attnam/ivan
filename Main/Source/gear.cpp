@@ -1272,6 +1272,7 @@ truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
         ADD_MESSAGE("The sickle shrieks at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
+    game::CallForAttention(Enemy->GetPos(), 100);
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
   }
@@ -1920,4 +1921,64 @@ void chastitybelt::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, t
     if(IsLocked())
       Entry << ", locked";
     Entry << ']';
+}
+
+void chastitybelt::PostConstruct()
+{
+  lockablebelt::PostConstruct();
+  SetIsLocked(RAND_2);
+}
+
+void pica::Save(outputfile& SaveFile) const
+{
+  meleeweapon::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void pica::Load(inputfile& SaveFile)
+{
+  meleeweapon::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void pica::FinalProcessForBone()
+{
+  meleeweapon::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+int pica::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+    return BaseCooldown / log10(Attribute);
+
+  return BaseCooldown / 0.20;
+}
+
+truth pica::Zap(character* Zapper, v2, int Direction)
+{
+  if(!IsBroken() && (!LastUsed || game::GetTick() - LastUsed >= GetCooldown(50, Zapper)))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(MANA, 50, 1 << 10);
+
+    for(int i = 0; i < (RAND_N(Max(GetEnchantment(), 1)) + 1); i++)
+    {
+      meleeweapon* ToBeThrown = meleeweapon::Spawn(DAGGER);
+      ToBeThrown->InitMaterials(MAKE_MATERIAL(STAR_METAL), MAKE_MATERIAL(MOON_SILVER), true);
+      ToBeThrown->SetEnchantment(GetEnchantment());
+      ToBeThrown->SetLifeExpectancy(50, Zapper->GetAttribute(MANA));
+      Zapper->ReceiveItemAsPresent(ToBeThrown);
+
+      ToBeThrown->Fly(Zapper, Direction, Zapper->GetAttribute(MANA),
+                      ToBeThrown->IsWeapon(Zapper) && !ToBeThrown->IsBroken());
+    }
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
 }

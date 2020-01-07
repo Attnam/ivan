@@ -747,14 +747,18 @@ ITEM(cauldron, materialcontainer)
 
 ITEM(trinket, item)
 {
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorC(int) const;
+};
+
+ITEM(fish, item)
+{
  public:
   virtual material* RemoveMaterial(material* Material);
   virtual truth Necromancy(character*);
   virtual truth RaiseTheDead(character*);
   virtual truth CatWillCatchAndConsume(ccharacter*) const;
- protected:
-  virtual col16 GetMaterialColorB(int) const;
-  virtual col16 GetMaterialColorC(int) const;
 };
 
 ITEM(gastrap, itemtrap<materialcontainer>)

@@ -1670,7 +1670,7 @@ meleeweapon
     Roundness = 10;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 16;
-    EnchantmentPlusChance = 5;
+    EnchantmentPlusChance = 20;
     DamageFlags = SLASH|PIERCE;
     PriceIsProportionalToEnchantment = true;
     IsMaterialChangeable = false;
@@ -1686,7 +1686,7 @@ meleeweapon
     Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
-    EnchantmentPlusChance = 20;
+    EnchantmentPlusChance = 50;
   }
 
   Config KATANA;
@@ -7437,45 +7437,6 @@ trinket
     DescriptiveInfo = "It needs watering.";
   }
 
-  Config DEAD_FISH;
-  {
-    Category = FOOD;
-    DefaultSize = 30;
-    DefaultMainVolume = 250;
-    Possibility = 250;
-    HasSecondaryMaterial = false;
-    BitmapPos = 80, 336;
-    FormModifier = 25;
-    StrengthModifier = 75;
-    Roundness = 15;
-    Adjective = "dead";
-    NameSingular = "fish";
-    /* one more "fish" to avoid conflicts with "fish bone" */
-    Alias = { 2, "fish", "sardine"; }
-    MainMaterialConfig == SARDINE;
-    AttachedGod = SEGES;
-    AllowedDungeons = { 7,
-                        ASLONA_CASTLE, REBEL_CAMP, FUNGAL_CAVE, GOBLIN_FORT, PYRAMID,
-                        MONDEDR, IRINOX; }
-    DescriptiveInfo = "Dead fish, dead fish, lovely lovely dead fish! Eat them up! Yum!";
-  }
-
-  Config BONE_FISH;
-  {
-    DefaultSize = 30;
-    DefaultMainVolume = 150;
-    HasSecondaryMaterial = false;
-    BitmapPos = 96, 336;
-    FormModifier = 25;
-    StrengthModifier = 75;
-    Adjective = "fish";
-    NameSingular = "skeleton";
-    Alias = { 2, "fish bone", "fishbone"; }
-    MainMaterialConfig == BONE;
-    Roundness = 15;
-    AttachedGod = SCABIES;
-  }
-
   Config SMALL_CLOCK;
   {
     DefaultSize = 50;
@@ -7510,6 +7471,47 @@ trinket
     AttachedGod = ATAVUS;
     IsTwoHanded = true;
     CanBeGeneratedInContainer = false;
+  }
+}
+
+fish
+{
+  Category = MISC;
+  IsAbstract = true;
+  CanBeBroken = false;
+  WieldedBitmapPos = 176, 144;
+  DefaultSize = 30;
+  FormModifier = 25;
+  StrengthModifier = 75;
+  Roundness = 15;
+
+  Config DEAD_FISH;
+  {
+    Category = FOOD;
+    DefaultMainVolume = 250;
+    Possibility = 250;
+    BitmapPos = 80, 336;
+    Adjective = "dead";
+    NameSingular = "fish";
+    /* one more "fish" to avoid conflicts with "fish bone" */
+    Alias = { 2, "fish", "sardine"; }
+    MainMaterialConfig == SARDINE;
+    AttachedGod = SEGES;
+    AllowedDungeons = { 7,
+                        ASLONA_CASTLE, REBEL_CAMP, FUNGAL_CAVE, GOBLIN_FORT, PYRAMID,
+                        MONDEDR, IRINOX; }
+    DescriptiveInfo = "Dead fish, dead fish, lovely lovely dead fish! Eat them up! Yum!";
+  }
+
+  Config BONE_FISH;
+  {
+    DefaultMainVolume = 150;
+    BitmapPos = 96, 336;
+    Adjective = "fish";
+    NameSingular = "skeleton";
+    Alias = { 2, "fish bone", "fishbone"; }
+    MainMaterialConfig == BONE;
+    AttachedGod = SCABIES;
   }
 }
 
@@ -7874,5 +7876,45 @@ magestaff /* meleeweapon-> */
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     GearStates = 0;
+  }
+}
+
+pica
+{
+  DefaultSize = 40;
+  Possibility = 1;
+  DefaultMainVolume = 25;
+  DefaultSecondaryVolume = 25;
+  WeaponCategory = SMALL_SWORDS;
+  BitmapPos = 48, 256;
+  WieldedBitmapPos = 160, 288;
+  FormModifier = 75;
+  StrengthModifier = 80;
+  Adjective = "notched";
+  NameSingular = "throwing knife";
+  PostFix = "named Pica";
+  MainMaterialConfig == STAR_METAL;
+  SecondaryMaterialConfig == MOON_SILVER;
+  BaseEnchantment = 1;
+  Roundness = 60;
+  Price = 500;
+  AttachedGod = CLEPTIA;
+  DamageFlags = PIERCE;
+  ArticleMode = FORCE_THE;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  Alias == "Pica";
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 48, 288;
+    WieldedBitmapPos = 176, 288;
+    EnchantmentPlusChance = 15;
   }
 }

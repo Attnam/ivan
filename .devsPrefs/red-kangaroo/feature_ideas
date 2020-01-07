@@ -1,0 +1,182 @@
+* zombie town
+* valpurium mine
+* penguins who perform anti-sci-talk
+* taxidermy!
+* smurfs with hammer and sickle
+
+* body part damage
+  * crits can cut off pieces:
+   head  -> eyes
+   torso -> breasts (females only)
+   groin -> nuts (males only)
+
+
+Features
+========
+* wellspring
+* fence
+* gravestone
+
+* saplings for all trees
+
+Rooms
+-----
+* animal zoo
+* graveyard
+* orcish barracks
+* swamp/flooded room
+* lost library
+* garden
+ * grass, trees, fountain
+* dilapidated armory
+* daemon pit
+* fungus farm
+* chameleon zoo
+
+Items
+=====
+* scroll of harden and change can be used on secondary material
+* wand of locking/opening
+* cage trap
+* scythe of reaping
+* mattock of tremors (causes earthquakes)
+* flail
+
+* Saal'thul gets increased damage per enemy disabler (unconsc, conf, stuck etc.)
+* charging/charged <- NOPE, would require passing user as arg
+* mutagen
+* Turox can be zapped
+* weapon that drains stamina, causing Fainting
+* lore books/scrolls
+* buckler
+ * glove slot shield
+* rusty items can poison
+* cloak of magic (rare recharging)
+* wand of asphalt rain
+* axe of cleaving (battle-axe)
+* robe
+* demon armor (rF)
+
+rogue's ring of rapid retreat
+* invis, haste, teleportitis
+scroll of war
+* summons mirrored valpurium battle-axe +10
+
+wand of fear
+wand of (cloud, poison? - venom, raw magic? - wonder)
+
+tunic (under chainmail)
+expensive camera
+vacuum cleaner
+flamethrower
+baby bottle
+gigantic potatoe
+
+bow + arrow
+sling
+
+* artifact portable anvil of Loricatus, for crafting
+* artifact katana "Razor Wind", as vacuum blade in CLIVAN
+
+* weird trinkets for someone's collection (quest items)
+  * the vaccum cleaner, camera and flamethrower
+
+* Per penalty for full helmets
+* horn of blasting (knockback)
+* scroll of random material
+* shield of displacement (teleport attacker)
+
+* amulet of psychic protection (MindBlanked)
+  * blocks telepathy and psi damage
+  * immunity to confusion and knockout
+
+scroll of forestry
+* transforms nearby terrain into grass, including water and such
+* creates several trees, mostly pines and banana trees
+
+wand of opening
+* unlocks and opens doors
+* removes or untraps bear traps
+
+magical staves
+* Recharge times when not equipped almost double.
+* Generally this counter is decreased by one per turn.
+* If an item is equipped the counter is decreased by an extra turn.
+* If you attack, it is decreased by an extra turn.
+* If you hit, it is decreased by an extra turn.
+* If you hit critically, it is decreased by an extra turn.
+* If you kill the monster, it is decreased by an extra turn.
+
+Monsters
+========
+drang knight
+ twin spears
+ twin hammers
+
+* huldra
+
+dwarves
+* can be paid to follow you (see CLIVANT human.cpp assassin::BeTalkedTo)
+* several types:
+   dual hammers
+   war hammer and shield
+   battle axe + thrown axes
+   grenadier
+   rookie kamikaze
+
+* mushrooms can talk to you if you have ESP
+* reaper
+   only torso and groin vital
+   necromancer cloak + skull
+   flesh material: wraith bone (can regenerate)
+   scythe, cloak
+   ethereal, teleporting
+* dark spirit knight
+* leper knight
+* orc hornblower
+   random horn for SpecialEnemySightedReaction
+* flying fish
+* ancient golem
+   can equip
+   oil for blood
+* dark daemon
+   liquid darkness vomit
+* blood daemon
+   oree stats -50%
+
+Uniques
+-------
+souldrinker Jorr Al Nah the exalted necromancer
+* DRAIN insetad of magic missile
+* conjure miasma -> random gas
+* summon bone golems, ghosts
+
+Pristina the half-dragon priestess
+* nod to DS, so has cloak of invisibility and a scythe
+* the only high priestess of Valpurus ever, now censured to ever exist
+
+Fusanga the massive magical mushroom matriarch
+* buffs as mystic frog, plus spawns as Jenny
+
+cult leader
+* as female cultist, but randomly scythe of terror, oxid, or good enchantment
+* only spawned in room on altar to Morty, with cultists
+
+kobold storyteller
+* female, Mondedr
+* Valpurus killed Mortifer, from his blood daemons, from him Curse of Undeath
+Hime the masterless swordswoman
+* wields katana and a short sword
+
+Coe-Nan the barbarian
+
+kobold matriarch
+* largecreature
+
+* fallen valpurist
+* the great white hunter
+
+Materials
+=========
+* dolphin flesh increases int
+* ommel vomit grants huge nutrition

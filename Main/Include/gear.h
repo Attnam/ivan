@@ -383,6 +383,8 @@ ITEM(chastitybelt, lockablebelt)
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual truth CanBeEquipped(int) const;
   virtual truth CanBeUnEquipped(int) const;
+ protected:
+  virtual void PostConstruct();
 };
 
 ITEM(darkaxe, meleeweapon)
@@ -512,6 +514,20 @@ ITEM(masamune, meleeweapon)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual truth IsMasamune() const { return true; }
+};
+
+ITEM(pica, meleeweapon)
+{
+ public:
+  pica() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
+ protected:
+  ulong LastUsed;
 };
 
 #endif

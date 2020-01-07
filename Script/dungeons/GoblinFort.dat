@@ -881,8 +881,8 @@ Dungeon GOBLIN_FORT;
 
         Types
         {
-          c = largecat { Inventory == trinket(BONE_FISH) { Chance = 50; } }
-          L = lion { Inventory == trinket(DEAD_FISH) { Chance = 50; } }
+          c = largecat { Inventory == fish(BONE_FISH) { Chance = 50; } }
+          L = lion { Inventory == fish(DEAD_FISH) { Chance = 50; } }
           X = lion { Inventory == scrollofenchantarmor; }
           Y = lion { Inventory == scrollofenchantweapon; }
         }
