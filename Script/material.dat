@@ -5423,7 +5423,7 @@ liquid
     Flexibility = 45;
     AttachedGod = SCABIES;
     RustModifier = 150;
-    Acidicity = 75;
+    Acidicity = 50;
     ConsumeWisdomLimit = 6;
     PriceModifier = 100;
     InteractionFlags = Base|AFFECT_INSIDE;

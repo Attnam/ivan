@@ -505,6 +505,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(GhostCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
+  ADD_MEMBER(IsUndead);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
   ADD_MEMBER(AllowedDungeons);
 }

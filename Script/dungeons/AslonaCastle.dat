@@ -658,10 +658,8 @@ Dungeon ASLONA_CASTLE;
       Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         Character = angel(SEGES) { Inventory = { 3, wand(WAND_OF_MIRRORING),
-                                                    Random { Category = AMULET|RING|SCROLL|WAND; },
-                                                    Random { Category = AMULET|RING|SCROLL|WAND; }
-                                               }
-                                 }
+                                                    Random { Times = 2:5; Category = AMULET|RING|SCROLL|WAND|TOOL; MinPrice = 250; },
+                                                    key(HEART_SHAPED_LOCK); } }
       }
 
       Square, Pos 0,4;

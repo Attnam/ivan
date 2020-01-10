@@ -713,6 +713,7 @@ Dungeon UNDER_WATER_TUNNEL;
         Character = lobhse;
       }
 
+      /* Rewards */
       Square, Random;
       {
         Items == SPIDER_SILK bodyarmor(PLATE_MAIL);
@@ -720,7 +721,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
       Square, Random;
       {
-        Items == taiaha(BROKEN);
+        Items == taiaha { Enchantment = 2; }
       }
     }
   }

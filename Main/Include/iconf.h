@@ -55,6 +55,8 @@ class ivanconfig
   static truth IsXBRZScale() { return XBRZScale.Value; }
   static truth IsAutoPickupThrownItems() { return AutoPickupThrownItems.Value; }
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
+  static truth UseDescriptiveHP() { return DescriptiveHP.Value; }
+  static truth GetNoPet() { return StartWithNoPet.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetStartingFontGfx() { return iStartingFontGfx; }
@@ -206,6 +208,8 @@ class ivanconfig
   static truthoption LookZoom;
   static truthoption XBRZScale;
   static truthoption AutoPickupThrownItems;
+  static truthoption DescriptiveHP;
+  static truthoption StartWithNoPet;
 
   static cycleoption SaveGameSortMode;
   static cycleoption DistLimitMagicMushrooms;

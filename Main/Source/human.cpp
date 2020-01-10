@@ -7698,7 +7698,7 @@ void lordregent::SpecialBodyPartSeverReaction()
   {
     if(CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s prays to Seges before disappearing. You feel the sudden presence of enemies.", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s prays to Seges. You feel the sudden presence of enemies.", CHAR_NAME(DEFINITE));
     }
 
     // Summons allies and then teleports away.

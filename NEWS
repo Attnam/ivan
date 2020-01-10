@@ -32,9 +32,12 @@ Changes:
 * Some items now have descriptions, accessed by 'F1' command.
 * Better help for crafting actions.
 * Prepare help for config options.
+* Add options to start with no pet and to use health descriptions.
 * Add alternate door traps.
 * Prevent very dumb creatures from using wands.
 * You cannot unequip locked chastity belt.
+* Update README and add MANUAL.
+* You can look at an enemy for a rough estimation of their health.
 
 Fixes:
 * Decos no longer lets you steal from him.
@@ -60,6 +63,7 @@ Fixes:
 * Fix sitting on fountains and drinking from non-water fountains.
 * Fix AI not using equipped zappable items.
 * Make taming/possessing more powerful creatures scale correctly.
+* Make vinegar slightly weaker.
 
 Aslona:
 * A new main quest will see you trying to bring peace back to the kingdom of

@@ -1884,8 +1884,15 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     else if((game::GetAslonaStoryState() == 5 || game::GetRebelStoryState() == 5)
             && game::GetStoryState() == 3)
     {
-      festring MsgBut = CONST_S("greatly helped the %s in the civil war of Aslona, but was ", game::GetAslonaStoryState() == 5 ? "royalists" : "rebels");
+      festring Whom;
+      if(game::GetAslonaStoryState() == 5)
+        Whom = "royalists";
+      else
+        Whom = "rebels";
+
+      festring MsgBut = "fought in the civil war of Aslona on the side of " + Whom + ", but was ";
       festring NewMsg = MsgBut << Msg;
+
       AddScoreEntry(NewMsg, 2, true);
     }
     else
@@ -4718,7 +4725,15 @@ void character::DisplayInfo(festring& Msg)
   else
   {
     Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is "
-        << GetStandVerb() << " here. " << GetPersonalPronoun().CapitalizeCopy();
+        << GetStandVerb() << " here. ";
+
+    if(PLAYER->GetAttribute(WISDOM) > 10)
+    {
+      Msg << GetPersonalPronoun().CapitalizeCopy() << " is "
+          << GetHitPointDescription() << ". ";
+    }
+
+    Msg << GetPersonalPronoun().CapitalizeCopy();
     cchar* Separator1 = GetAction() ? "," : " and";
     cchar* Separator2 = " and";
 
@@ -6146,8 +6161,31 @@ void character::DrawPanel(truth AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wt   %d kg", GetTotalCharacterWeight());
   ++PanelPosY;
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
-               IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  if(ivanconfig::UseDescriptiveHP())
+  {
+    // Display health level description.
+    festring DescHP = GetHitPointDescription().CapitalizeCopy().CStr();
+
+    if(DescHP.GetSize() > 11)
+    {
+      // Description doesn't fit on the sidebar, so split it on two lines.
+      festring Desc2;
+      festring::SplitString(DescHP, Desc2, 11);
+
+      FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
+                   IsInBadCondition() ? RED : WHITE, "%s", Desc2.CStr());
+      FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
+                   IsInBadCondition() ? RED : WHITE, " %s", DescHP.CStr());
+    }
+    else
+      FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
+                   IsInBadCondition() ? RED : WHITE, "%s", DescHP.CStr());
+  }
+  else // Normal numeric HP.
+  {
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
+                 IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  }
   ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Gold: %ld", GetMoney());
   ++PanelPosY;
@@ -7464,7 +7502,8 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Hit points: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Hit points: ") + GetHP() + "/" + GetMaxHP() + " (" + GetHitPointDescription() + ")",
+                        IsInBadCondition() ? RED : LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
   Info.AddEntry(CONST_S("Body parts:"), LIGHT_GRAY);
@@ -13153,4 +13192,62 @@ truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
   game::GetGod(CLEPTIA)->AdjustRelation(50);
 
   return (1 + RAND() % 100 < normalized_chance);
+}
+
+festring character::GetHitPointDescription() const
+{
+  float Health = (float)GetHP() / (float)GetMaxHP();
+  festring Desc = "bugged";
+
+  if(TorsoIsAlive())
+  {
+    if(Health == 1.0)
+      Desc = IsPlayer() ? "unharmed" : "not hurt"; // Reads better in look message.
+    else if(Health >= 0.95)
+      Desc = "bruised";
+    else if(Health >= 0.8)
+      Desc = "lightly wounded";
+    else if(Health >= 0.7)
+      Desc = "wounded";
+    else if(Health >= 0.5)
+      Desc = "heavily wounded";
+    else if(Health >= 0.3)
+      Desc = "severely wounded";
+    else if(Health >= 0.1)
+      Desc = "mortally wounded";
+    else if(Health > 0.0)
+      Desc = "almost dead";
+    else if(Health <= 0.0)
+      Desc = "dead";
+  }
+  else // Unliving creatures
+  {
+    if(Health == 1.0)
+      Desc = "undamaged";
+    else if(Health >= 0.95)
+      Desc = "scratched";
+    else if(Health >= 0.8)
+      Desc = "lightly damaged";
+    else if(Health >= 0.7)
+      Desc = "damaged";
+    else if(Health >= 0.5)
+      Desc = "heavily damaged";
+    else if(Health >= 0.3)
+      Desc = "severely damaged";
+    else if(Health >= 0.1)
+      Desc = "extremely damaged";
+    else if(Health > 0.0)
+      Desc = "almost destroyed";
+    else if(Health <= 0.0)
+      Desc = "destroyed";
+  }
+
+  // Do not describe humanoids with missing limbs as "unharmed".
+  if(!HasAllBodyParts() && Health >= 0.9)
+    Desc = "crippled";
+
+  if(IsUndead())
+    Desc = "dead";
+
+  return Desc;
 }

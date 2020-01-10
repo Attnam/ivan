@@ -32,52 +32,19 @@ stringoption ivanconfig::DefaultName(     "DefaultName",
                                           &DefaultNameChangeInterface);
 stringoption ivanconfig::FantasyNamePattern("FantasyNamePattern",
                                           "Random name generator pattern",
-                                          /*festring() << "Set a pattern for the random fantasy name generator. When you start\n"
-                                                     << "a game with no pre-set name, the generator will create a name based\n"
-                                                     << "on this pattern. The letters s, v, V, c, B, C, i, m, M, D, and d\n"
-                                                     << "represent different types of random replacements. Everything else\n"
-                                                     << "is produced literally.\n\n"
-                                                     << "  s - generic syllable\n"
-                                                     << "  v - vowel\n"
-                                                     << "  c - consonant\n"
-                                                     << "  B - consonant or consonant combination suitable for beginning a word\n"
-                                                     << "  C - consonant or consonant combination suitable anywhere in a word\n"
-                                                     << "  i - insult\n"
-                                                     << "  m - mushy name\n"
-                                                     << "  M - mushy name ending\n"
-                                                     << "  D - consonant suited for a stupid person's name\n"
-                                                     << "  d - syllable suited for a stupid person's name (begins with a vowel)\n\n"
-                                                     << "All characters between parenthesis () are produced literally. For example,\n"
-                                                     << "the pattern \"s(dim)\", produces a random generic syllable followed by\n"
-                                                     << "\"dim\".\n"
-                                                     << "Characters between angle brackets <> produce patterns from the table above.\n"
-                                                     << "Imagine the entire pattern is wrapped in one of these.\n"
-                                                     << "In both types of groupings, a vertical bar | denotes a random choice.\n"
-                                                     << "Empty groups are allowed. For example, \"(foo|bar)\" produces either\n"
-                                                     << "\"foo\" or \"bar\". The pattern \"<c|v|>\" produces a constant, vowel,\n"
-                                                     << "or nothing at all.\n"
-                                                     << "An exclamation point ! means to capitalize the component that follows\n"
-                                                     << "it. For example, \"!(foo)\" will produce \"Foo\" and \"v!s\" will\n"
-                                                     << "produce a lowercase vowel followed by a capitalized syllable, like\n"
-                                                     << "\"eRod\".\n"
-                                                     << "A tilde ~ means to reverse the letters of the component that follows\n"
-                                                     << "it. For example, \"~(foo)\" will produce \"oof\". To reverse an entire\n"
-                                                     << "template, wrap it in brackets. For example, to reverse \"sV'i\" as\n"
-                                                     << "a whole use \"~<sV'i>\". The template \"~sV'i\" will only reverse"
-                                                     << "the initial syllable.",*/
                                           "Set a pattern for the random fantasy name generator. See MANUAL for further information and pattern examples.", // TODO: this above
                                           "!ss !sV",
                                           &configsystem::NormalStringDisplayer,
                                           &FantasyNameChangeInterface);
 stringoption ivanconfig::DefaultPetName(  "DefaultPetName",
                                           "Starting pet's default name",
-                                          "",
+                                          "Choose a name for your puppy.",
                                           CONST_S("Kenny"),
                                           &configsystem::NormalStringDisplayer,
                                           &DefaultPetNameChangeInterface);
 stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
                                           "Highlight color of selected entry",
-                                          "",
+                                          "Choose the RGB code of a color used to highlight the selected entry in a menu.",
                                           "8,8,8",
                                           &configsystem::NormalStringDisplayer,
                                           &SelectedBkgColorChangeInterface,
@@ -132,22 +99,22 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* Window width in pixels (min 640)",
-                                          "",
+                                          "* Window width in pixels",
+                                          "Choose the width of the game window, with a minimum of 640 pixels. Requires restarting the game to take effect.",
                                           800, //default will be vanilla, but mininum still can be 640
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* Window height in pixels (min 480)",
-                                          "",
+                                          "* Window height in pixels",
+                                          "Choose the height of the game window, with a minimum of 480 pixels. Requires restarting the game to take effect.",
                                           600, //default will be vanilla, but mininum still can be 480
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
 numberoption ivanconfig::StackListPageLength("StackListPageLength",
-                                          "Page length in entries for non-selectable lists",
-                                          "",
+                                          "Page length in entries for non-selectable menus",
+                                          "Choose how many entries will be displayed per page for non-selectable menus, such as when viewing your inventory. Note that selecting too many entries for the height of your screen may result in the menu being drawn partially off-screen.",
                                           stack::GetDefaultPageLength(),
                                           &StackListPageLengthDisplayer,
                                           &StackListPageLengthChangeInterface,
@@ -177,11 +144,11 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
                                           "Auto pick up thrown weapons",
-                                          "",
+                                          "Automatically annotate any thrown weapon and pick it up without loosing a turn when you step on its square.",
                                           true);
 truthoption ivanconfig::TransparentMapLM( "TransparentMapLM",
                                           "Show transparent map in look mode",
-                                          "",
+                                          "Show transparent map of the whole level when in look mode.",
                                           true);
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           "Import old savegames (v131 up, experimental)",
@@ -189,7 +156,7 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           false);
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "Wait until neutral NPCs move from your path",
-                                          "",
+                                          "When you try to move in a direction that is blocked by a neutral NPC, skip turns until the path is clear. Will not skip turns if the NPC doesn't move from their square, or if there are hostiles nearby.",
                                           false);
 truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
@@ -234,6 +201,14 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
 truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
                                           "Enhanced message review mode after death",
                                           "",
+                                          false);
+truthoption ivanconfig::DescriptiveHP(    "DescriptiveHP",
+                                          "Use health level descriptions",
+                                          "Display description of your relative health rather than numeric value of your hit points.",
+                                          false);
+truthoption ivanconfig::StartWithNoPet(   "StartWithNoPet",
+                                          "Start with no pet",
+                                          "Do not start the game with a puppy.",
                                           false);
 cycleoption ivanconfig::MemorizeEquipmentMode("MemorizeEquipmentMode",
                                           "NPCs restore equipped items after polymorph",
@@ -650,7 +625,7 @@ truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
   festring String;
   if(O)String<<O->Value;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new RGB color (8 to 200 for each value), or leave empty to disable:"),
+  if(iosystem::StringQuestion(String, CONST_S("Set new RGB color (8 to 200 for each value, default \"8,8,8\"), or leave empty to disable:"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
@@ -1057,6 +1032,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DefaultName);
   configsystem::AddOption(fsCategory,&FantasyNamePattern);
   configsystem::AddOption(fsCategory,&DefaultPetName);
+  configsystem::AddOption(fsCategory,&StartWithNoPet);
   configsystem::AddOption(fsCategory,&AutoSaveInterval);
   configsystem::AddOption(fsCategory,&AltAdentureInfo);
 
@@ -1068,6 +1044,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+  configsystem::AddOption(fsCategory,&DescriptiveHP);
   configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);

@@ -872,10 +872,14 @@ truth game::Init(cfestring& loadBaseName)
       DefaultChangeMaterial.Empty();
       DefaultDetectMaterial.Empty();
       Player->GetStack()->AddItem(encryptedscroll::Spawn());
-      character* Doggie = dog::Spawn();
-      Doggie->SetTeam(GetTeam(0));
-      GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-      Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+
+      if(!ivanconfig::GetNoPet())
+      {
+        character* Doggie = dog::Spawn();
+        Doggie->SetTeam(GetTeam(0));
+        GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+        Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+      }
       WizardMode = false;
       SeeWholeMapCheatMode = MAP_HIDDEN;
       GoThroughWallsCheat = false;

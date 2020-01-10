@@ -288,6 +288,7 @@ character
   GhostCopyMaterials = false;
   CanBeGeneratedOnlyInTheCatacombs = false;
   IsAlcoholic = false;
+  IsUndead = false;
   IsImmuneToWhipOfThievery = false;
   AllowedDungeons == ALL_DUNGEONS; /* example: AllowedDungeons = { 2, UNDER_WATER_TUNNEL, ELPURI_CAVE; } */
 }
@@ -2610,6 +2611,7 @@ skeleton
   IsExtraFragile = true;
   CanChoke = false;
   IsCatacombCreature = true;
+  IsUndead = true;
   UndeadVersions = false;
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
@@ -3430,6 +3432,7 @@ dog /* canine-> */
     IgnoreDanger = true;
     CanChoke = false;
     IsCatacombCreature = true;
+    IsUndead = true;
     UndeadVersions = false;
     CreateUndeadConfigurations = true;
     UndeadAttributeModifier = 75;
@@ -4778,6 +4781,7 @@ zombie
   WieldedPosition = -1, -2;
   IsExtraFragile = true;
   IsCatacombCreature = true;
+  IsUndead = true;
   CreateUndeadConfigurations = true;
   UndeadVersions = false;
   UndeadAttributeModifier = 75;
@@ -4982,6 +4986,7 @@ ghost
   CanBeGenerated = true;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
+  IsUndead = true;
   UndeadVersions = false;
   IsAbstract = true;
   CanUseEquipment = false;
@@ -5668,6 +5673,7 @@ vampire
   CanRead = true;
   UndeadVersions = false;
   IsCatacombCreature = true;
+  IsUndead = true;
   StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
   AllowedDungeons = { 3, ATTNAM, XINROCH_TOMB, PYRAMID; }
@@ -9021,6 +9027,7 @@ archangel
   {
     DefaultName = "Erado";
     IsSadist = true;
+    IsUndead = true;
     Helmet = OMMEL_BONE skull;
     RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 2; }
     LeftWielded = PSYPHER OCTIRON meleeweapon(SICKLE) { Enchantment = 4; }
