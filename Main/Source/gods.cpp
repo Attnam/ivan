@@ -128,11 +128,14 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
+  truth DidHelp = false;
+
   if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
   {
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
     game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
     PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    DidHelp = true;
   }
 
   // Give a little attribute experience (Cha already given by Dulcis and not Wis,
@@ -162,11 +165,12 @@ void sophos::PrayGoodEffect()
     }
 
     ADD_MESSAGE("%s whispers %s secret to you.", GetName(), SecretType);
+    DidHelp = true;
   }
-  else
-  {
+
+  if(!DidHelp)
     ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
-  }
+
   return;
 }
 
@@ -511,7 +515,7 @@ void silva::PrayGoodEffect()
       );
 
     lsquare* Square = PLAYER->GetLSquareUnder();
-    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 200 + RAND() % 400));
+    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 400 + RAND() % 800));
     Square->LiquidRain(Beam, WATER);
 
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");

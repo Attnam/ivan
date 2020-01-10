@@ -6992,6 +6992,7 @@ cossack
     HostileReplies == "@Dd screams obscenities.";
     DeathMessage = "@Dd falls shouting: \"For Aslona!";
     AttachedGod = SEGES;
+    Inventory == Random { Category = WAND; Times = 0:2; }
   }
 }
 

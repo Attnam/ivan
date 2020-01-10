@@ -637,6 +637,8 @@ CHARACTER(orc, humanoid)
 
 CHARACTER(cossack, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(bananagrower, humanoid)

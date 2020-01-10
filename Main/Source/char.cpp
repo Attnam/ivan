@@ -1881,6 +1881,13 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       festring NewMsg = MsgBut << Msg;
       AddScoreEntry(NewMsg, 2, true);
     }
+    else if((game::GetAslonaStoryState() == 5 || game::GetRebelStoryState() == 5)
+            && game::GetStoryState() == 3)
+    {
+      festring MsgBut = CONST_S("greatly helped the %s in the civil war of Aslona, but was ", game::GetAslonaStoryState() == 5 ? "royalists" : "rebels");
+      festring NewMsg = MsgBut << Msg;
+      AddScoreEntry(NewMsg, 2, true);
+    }
     else
       AddScoreEntry(Msg);
 

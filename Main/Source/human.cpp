@@ -6826,6 +6826,14 @@ void goblin::GetAICommand()
   humanoid::GetAICommand();
 }
 
+void cossack::GetAICommand()
+{
+  if(CheckAIZapOpportunity())
+    return;
+
+  humanoid::GetAICommand();
+}
+
 void werewolfwolf::GetAICommand()
 {
   if(GetConfig() == DRUID && !RAND_N(4))
@@ -7552,24 +7560,22 @@ void harvan::BeTalkedTo()
 
 truth harvan::SpecialEnemySightedReaction(character* Char)
 {
-  if(!Char->IsPlayer())
+  if(!Char->IsPlayer() || GetPos().IsAdjacent(Char->GetPos()))
     return false;
 
-  if(GetHP() > (GetMaxHP() / 2))
+  if(GetHP() > (GetMaxHP() / 2) && !RAND_N(10))
   {
     if(CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s bows his head in a quick prayer to Legifer.", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s screams at you: \"Get over here!\"", CHAR_NAME(DEFINITE));
     }
     else
-      ADD_MESSAGE("You sense a small miracle about to happen.");
+      ADD_MESSAGE("\"Get over here!\"");
 
     Char->TeleportNear(this);
   }
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s screams at you in a violent rage.", CHAR_NAME(DEFINITE));
 
-  return true;
+  return false;
 }
 
 void lordregent::BeTalkedTo()

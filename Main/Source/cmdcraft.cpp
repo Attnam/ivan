@@ -795,11 +795,12 @@ struct recipe{
       calcToolTurns(rpd,iMult);
 
       if(!recipe::findOLT(rpd,WORK_BENCH)){
-        ADD_MESSAGE("There is no workbench here, this will take longer."); //it is good to measure, hold tight, has a good height etc...
+        ADD_MESSAGE("As you lack a workbench, it will take a while."); //it is good to measure, hold tight, has a good height etc...
         rpd.iBaseTurnsToFinish *= 3;
       }
     }else{
-      ADD_MESSAGE("You have no carving tool good enough to work on the requested material."); //it is good to measure, hold tight, has a good height etc...
+      //ADD_MESSAGE("You have no carving tool good enough to work on the requested material.");
+      // Already covered by failToolMsg()
       rpd.bAlreadyExplained=true;
     }
 
@@ -1089,8 +1090,15 @@ struct recipe{
         if(CI.iReqCfg==INGOT)
           fsIngTpNm = "ingot";
         else
-          fsIngTpNm = std::string(typeid(T).name()).substr(1).c_str(); //TODO demangling simple like that may give weird text one day if other types are added
-        ADD_MESSAGE("There is not enough %ss to craft it.",fsIngTpNm.CStr());
+        {
+          // TODO:
+          //  demangling simple like that may give weird text one day if other types are added
+          //  This is way too confusing, just use generic "material" and rework later.
+          //fsIngTpNm = std::string(typeid(T).name()).substr(1).c_str();
+          fsIngTpNm = "material";
+        }
+
+        ADD_MESSAGE("You don't have enough %ss.",fsIngTpNm.CStr());
       }
 
     if(reqVol<=0)
@@ -1239,7 +1247,7 @@ struct recipe{
 struct srpCutWeb : public recipe{
   virtual void fillInfo(){
     init("cut","a web");
-    desc << "Cut a web down. Much safer than tearing it down, especially if you use a cutting tool.";
+    desc << "Cut a web down. Much safer than tearing it down, especially if you use a cutting tool. You might still get stuck, though.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1512,7 +1520,7 @@ struct srpChair : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a chair");
-    desc << fsDescBASE;
+    desc << "Create a chair to rest your tired legs. You will need a hammer or some other blunt tool.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1530,7 +1538,7 @@ struct srpAnvil : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","an anvil");
-    desc << "Create an anvil using ingots. You must be near a forge.\n " << fsDescBASE;
+    desc << "Create an anvil for further crafting, using ingots. You must be near a forge.\n " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -2214,12 +2222,10 @@ struct srpForgeItem : public recipe{
   }
 
   virtual bool work(recipedata& rpd){DBGLN;
-    //////////////// let user type the item name
+    // let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
-//    if(rpd.itSpawn!=NULL) // this is important to grant the cleanup
-//      ABORT("item to be crafted should be NULL %d %s %s",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr(),rpd.dbgInfo().CStr());
+    item* itSpawn;
 
-    item* itSpawn = NULL;
     for(;;){
       festring Temp;
       Temp << Default;DBG4(Default.CStr(),Default.GetSize(),Temp.CStr(),Temp.GetSize()); // to let us fix previous instead of having to fully type it again
@@ -2234,7 +2240,7 @@ struct srpForgeItem : public recipe{
 
       itSpawn = protosystem::CreateItemToCraft(Temp);DBGLN;
 
-      if(itSpawn!=NULL){DBGLN;
+      if(itSpawn){DBGLN;
         if(craftcore::canBeCrafted(itSpawn)){DBG4("SendingToHellRejectedCraftItem",itSpawn->GetID(),itSpawn->GetNameSingular().CStr(),itSpawn);
           rpd.itSpawnType = CIT_PROTOTYPE;
           rpd.fsItemSpawnSearchPrototype = Temp;
@@ -2263,11 +2269,12 @@ struct srpForgeItem : public recipe{
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO: This message ends up being rather confusing.
+    /* This message ends up being rather confusing.
     if(Default == itSpawn->GetName(INDEFINITE)) //TODO compare for EQUAL ignoring case
       ADD_MESSAGE("Now you need the materials to create a %s.",itSpawn->GetName(INDEFINITE).CStr());
     else
       ADD_MESSAGE("Now you need the materials to create a %s as you would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr());
+    */
 
     long lVolM = itSpawn->GetMainMaterial()->GetVolume();
     if(lVolM==0)
@@ -2338,7 +2345,7 @@ struct srpForgeItem : public recipe{
       }
     }
     if(!bM){
-      ADD_MESSAGE("You will craft it later...");
+      ADD_MESSAGE("You don't have the materials to craft a %s.", Default.CStr());
       rpd.bAlreadyExplained=true;
       craftcore::SendToHellSafely(itSpawn);
       return false;
@@ -2522,7 +2529,7 @@ struct srpForgeItem : public recipe{
 
     if(bMissingTools){
       rpd.itTool=rpd.itTool2=NULL; //to make it easy to check/inform, wont start if missing one anyway
-      failToolMsg(rpd,"the required tool(s)");
+      failToolMsg(rpd,"tool");
       craftcore::SendToHellSafely(itSpawn);
       return false;
     }
@@ -2570,7 +2577,7 @@ struct srpFluidsBASE : public recipe{
     ///////////// tool ////////////////
     rpd.itTool = FindTool(rpd, DAGGER);
     if(rpd.itTool==NULL){
-      failToolMsg(rpd,"a dagger");
+      failToolMsg(rpd,"dagger");
       return false;
     }
 
@@ -2942,7 +2949,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
   }DBGLN;
 
-  ADD_MESSAGE("Your chosen crafting action is to %s %s.",prp->action.CStr(),prp->name.CStr());
+  //ADD_MESSAGE("Your chosen crafting action is to %s %s.",prp->action.CStr(),prp->name.CStr());
   bool bDummy = prp->work(rpd); //bDummy(fied) as there is more detailed fail status from rpd bools
 
   //TODO these messages are generic, therefore dont look good... improve it
@@ -3293,7 +3300,8 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
  * - one rock into smaller ones
  * - one organic
  */
-void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
+void crafthandle::GradativeCraftOverride(recipedata& rpd)
+{DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
     ABORT("incompatible gradative mode and ingredients count %lu",rpd.ingredientsIDs.size());
 
@@ -3357,9 +3365,11 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
 
   if(spawnedVol==matMRemVol)
     DestroyIngredients(rpd); //cant be left with 0 volume
-  else
-  if(spawnedVol>matMRemVol) //the total calc being precise, and leaving a tiny remaining lump behind, this will never happen, just in case something is changed...
-    ABORT("lump volume would become negative (if not unsigned long) or 0 as %lu > %l",spawnedVol,matMRemVol);
+  else if(spawnedVol>matMRemVol) // Can happen with sol stone, TODO something about it but don't crash.
+  {
+    ADD_MESSAGE("Your work disappears in a puff of logic!");
+    DestroyIngredients(rpd);
+  }
   else
     matM->SetVolume(matMRemVol-spawnedVol); //the remaining volume becomes the action control/limit
 
