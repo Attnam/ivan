@@ -336,16 +336,16 @@ void scrollofbodyswitch::FinishReading(character* Reader)
     }
     else
     {
-      ADD_MESSAGE("Your mind is not strong enough for the transfer! The scroll turns to dust.");
+      ADD_MESSAGE("For a moment you feel very much like %s, but your mind is not strong enough for the transfer! The scroll turns to dust.", ToPossess->CHAR_NAME(INDEFINITE));
+      Reader->Hostility(ToPossess);
     }
     RemoveFromSlot();
     SendToHell();
   }
   else
-  {
     ADD_MESSAGE("There's no one to possess, %s!", game::Insult());
-    return;
-  }
+
+  return;
 }
 
 truth wand::Apply(character* Terrorist)

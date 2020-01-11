@@ -66,11 +66,7 @@ or anything else regarding the game.
 3. Credits
 
 
-You can use Ctrl+F to quickly find the appropriate heading by searching for:
-  % HeadingName
-
-
-
+Use Ctrl+F to find the appropriate heading by searching for: "% HeadingName"
 
 
 
@@ -137,7 +133,7 @@ Q: Why is my save deleted when I die?
 A: Like the creators of other roguelikes, we think this makes gaming much
    more exciting, since you must take full responsibility of all your
    actions. You have only one chance to live or die. Also, we agree that
-   "normal" saveloading is OK for games which remain the same in all gaming
+   "normal" save-loading is OK for games which remain the same in all gaming
    sessions, since in these you are not meant to really die as replaying
    everything in exactly the same way would be annoying. But the same does
    not apply to games with a multitude of random areas and events like IVAN;
@@ -199,8 +195,8 @@ A: Mace is far too big for hitting small creatures. Do you really kill
 Q: What do marks like L+, C-- mean in the pray menu?
 A: All gods have a property that tells whether they are supporters of Law
    or Chaos or if they are Neutral. This is however too general description
-   so the plusses and minuses tell of slight differences between the gods.
-   Eg Valpurus has the letters L++ this means that Valpurus is extremely
+   so the pluses and minuses tell of slight differences between the gods.
+   Eg. Valpurus has the letters L++ this means that Valpurus is extremely
    lawful, when Sophos has the letters L-, which in turn means that Sophos
    is lawful, but still leaning a bit towards neutrality and even chaos.
 
@@ -240,23 +236,21 @@ A: The DOS binary is compiled using DJGPP, so you need a DPMI server to run
 
 Q: I've found a bug. What should I do?
 A: Write a small description on how the bug occurred and if possible even
-   how we could replicate it, and send this information by email to
-   ivan-support@googlegroups.com. You can also report this bug on our
+   how we could replicate it, and report this bug on our GitHub page or the
    forum:
 
+     https://github.com/Attnam/ivan
      http://attnam.com
 
-   You should mention your full name so we can credit you at the end of the
-   AUTHORS file, if you are the first to discover this bug.
+   You should mention your full name so we can credit you , if you are the first
+   to discover this bug.
 
 Q: I've got a great idea to make IVAN better! What should I do?
 A: Post the idea on our forum (see above). You will be credited if we
    implement the feature, it's non-trivial, and you're first to suggest it.
 
 Q: I'm a programmer willing to help you. What should I do?
-A: Join us on Github!
-
-     https://github.com/Attnam/ivan
+A: Join us on GitHub!
 
    Contributions are welcome. Fork the repository and then once you have
    made and tested your changes, submit a pull request. It will be reviewed
@@ -264,12 +258,27 @@ A: Join us on Github!
 
    See .customs.emacs file for the official Ivan C++ Programming Style.
 
-Q: Will there be Russian/Chinese/Esperato/etc. version?
+Q: Will there be a Russian/Chinese/Esperato/etc. version?
 A: No, unless you make it.
 
 Q: How do I buy and sell stuff in shops?
+A: Pick items up to buy them, and drop what you want to sell.
 
 Q: What do the weapon and armor stats mean?
+A: Let's see:
+
+     an adamantine short sword covered in blood +6 [1000g, DAM 9-16,
+     extremely accurate, almost unbreakable, skill 16/0]
+
+   This short sword is made of adamantine, covered in blood, enchanted up to +6,
+   weights 1000 grams, has the given damage range, is very accurate and very
+   durable, and your skill with the weapon category is 16, while your
+   accustomization with this specific sword is 0.
+
+     a phoenix feather armor of great health +7 [1000g, AV 13]
+
+   This armor of great health is made of phoenix feather material,
+   enchanted up to +7, weights 1000 grams, and has Armor Value (AV) of 13.
 
 Q: Help, I still have no idea what am I doing!
 A: In this case, you might like our wiki:

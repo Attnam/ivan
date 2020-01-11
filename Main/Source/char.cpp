@@ -6184,7 +6184,7 @@ void character::DrawPanel(truth AnimationDraw) const
   else // Normal numeric HP.
   {
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
-                 IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+                 IsInBadCondition() ? RED : WHITE, "HP: %d/%d", GetHP(), GetMaxHP());
   }
   ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Gold: %ld", GetMoney());
@@ -13250,4 +13250,9 @@ festring character::GetHitPointDescription() const
     Desc = "dead";
 
   return Desc;
+}
+
+truth character::WillGetTurnSoon() const
+{
+  return GetAP() >= 900;
 }

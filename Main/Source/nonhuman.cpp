@@ -2790,13 +2790,13 @@ void mindworm::PsiAttack(character* Victim)
 
 void bat::GetAICommand()
 {
-  if(!IsRetreating() &&
-     GetPos().IsAdjacent(PLAYER->GetPos()) &&
-     !RAND_N(7))
+  if(!IsRetreating() && PLAYER->WillGetTurnSoon() &&
+     GetPos().IsAdjacent(PLAYER->GetPos()) && !RAND_4)
   {
-    // Bats sometimes move randomly, flitting even away from the player, so they
-    // have a chance to surround him, or he must chase after them.
-    if(MoveRandomly())
+    // Bats sometimes move away from the player.
+    SetGoingTo((GetPos() << 1) - PLAYER->GetPos());
+
+    if(MoveTowardsTarget(true))
       return;
   }
 
@@ -2817,9 +2817,11 @@ void invisiblestalker::GetAICommand()
       EditAP(-1000);
       return;
     }
-    else if(!IsRetreating() && !RAND_N(7))
+    else if(!IsRetreating() && PLAYER->WillGetTurnSoon() && !RAND_4)
     {
-      if(MoveRandomly())
+      SetGoingTo((GetPos() << 1) - PLAYER->GetPos());
+
+      if(MoveTowardsTarget(true))
         return;
     }
   }

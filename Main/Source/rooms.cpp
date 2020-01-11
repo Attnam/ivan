@@ -65,8 +65,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
       else
         Price = 0;
     }
-
-    if(GetMaster()->GetConfig() == BLACK_MARKET)
+    else if(GetMaster()->GetConfig() == BLACK_MARKET)
     {
       Price *= 4;
     }
@@ -173,6 +172,13 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
 
   long Price = ForSale->GetTruePrice() * Amount
                * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+
+  // Decrease the selling price of very expensive items sold in black market.
+  if(GetMaster()->GetConfig() == BLACK_MARKET)
+  {
+    float NewPrice = (float)Price * (100000 / (1000 + (float)Price)) / 100;
+    Price = int(NewPrice);
+  }
 
   if(!Customer->IsPlayer())
   {

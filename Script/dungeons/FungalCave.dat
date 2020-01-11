@@ -501,11 +501,6 @@ Dungeon FUNGAL_CAVE;
       Times = 1:2;
     }
 
-    Square, Random;
-    {
-      Character = darkmage(BATTLE_MAGE);
-    }
-
     Room
     {
       Size = 11,7;
@@ -517,6 +512,11 @@ Dungeon FUNGAL_CAVE;
       Square, Pos 5,3;
       {
         Items == weepobsidian;
+      }
+
+      Square, Random;
+      {
+        Character = darkmage(BATTLE_MAGE);
       }
     }
   }

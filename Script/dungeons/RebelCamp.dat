@@ -301,7 +301,7 @@ Dungeon REBEL_CAMP;
           e == Random { MinPrice = 10; Category = FOOD|POTION; }
           u == Random { MinPrice = 200; Category = WAND|TOOL; }
           v == Random { MinPrice = 500; Category = SCROLL|TOOL; }
-          s = { 2, locationmap(BLACK_MARKET), wand(WAND_OF_STRIKING); }
+          s = { 2, belt(BELT_OF_CARRYING), wand(WAND_OF_STRIKING); }
         }
       }
       {

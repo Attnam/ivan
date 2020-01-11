@@ -845,12 +845,13 @@ Dungeon GOBLIN_FORT;
                                                              loaf { Times = 2:4; },
                                                              sausage { Times = 1:6; } } }
           x = olterraincontainer(SHELF) { ItemsInside == Random { Category = SCROLL|BOOK; Times = 1:3; } }
+          X = olterraincontainer(SHELF) { ItemsInside == locationmap(BLACK_MARKET); }
         }
       }
       {
         .===.===.
         .........
-        .=x=.=x=.
+        .=xX.=x=.
         .........
         .===.===.
       }
