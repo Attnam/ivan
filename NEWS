@@ -28,24 +28,28 @@ Changes:
 * Land mines can now be sometimes defused if you levitate over and pick them up.
 * Willpower now protects against some hostile magic.
 * Add autopick regex.
-* An option to show info about gods now remembers the god's last reaction to prayer.
-* Some items now have descriptions, accessed by 'F1' command.
-* Better help for crafting actions.
-* Prepare help for config options.
+* Add an option to show info about gods, displaying their last reaction to prayer.
+* Better 'F1' command in menus.
+  * Some items now have descriptions.
+  * Better help for crafting actions.
+  * New help for config options.
 * Add options to start with no pet and to use health descriptions.
 * Add alternate door traps.
 * Prevent very dumb creatures from using wands.
 * You cannot unequip locked chastity belt.
 * Update README and add MANUAL.
-* You can look at an enemy for a rough estimation of their health.
+* A wise player can look at an enemy for a rough estimation of their health.
+* Add day/night cycle to all above-ground locations.
+* Enable weather effects for more above-ground locations.
+* Let monsters also benefit from Detecting status effect.
+* Coffins now generate with grave goods and do something when you steal from them.
 
 Fixes:
 * Decos no longer lets you steal from him.
 * You can no longer leave the Black Market through walls.
+* Slightly nerf Black Market.
 * Display Willpower in wizard mode secrets.
 * Running in wilderness now correctly takes stamina.
-* Add day/night cycle to all above-ground locations.
-* Enable weather effects for more above-ground locations.
 * Fix some quest messages not being saved as already displayed.
 * Reveal gas traps when you step on them.
 * Fix several places where panic immunity or disease immunity was not respected.
@@ -57,12 +61,12 @@ Fixes:
 * Prevent building features in owned rooms.
 * Explosive liquids can no longer be used to douse flames.
 * Wands of webbing were not causing hostility.
-* Fix horns of fear causing panic without checking the panic level of the victim.
+* Fix horns of fear causing panic without checking the panic resistance of the victim.
 * Remove redundant messages from auto map notes.
-* Let monsters also benefit from Detecting status effect.
 * Fix sitting on fountains and drinking from non-water fountains.
 * Fix AI not using equipped zappable items.
 * Make taming/possessing more powerful creatures scale correctly.
+* Fix a bug where boots were not correctly considered for kicking effects.
 * Assorted minor fixes and balancing.
 
 Aslona:

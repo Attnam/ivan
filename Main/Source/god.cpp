@@ -303,7 +303,7 @@ cfestring god::PrintRelation() const
   }
 
   ADD_MESSAGE("%s %s %s", GetName(), fsIs, VerbalRelation);
-  
+
   festring fsLKR;
   fsLKR<<GetName()<<" "<<fsWas<<" "<<VerbalRelation;
   return fsLKR;
@@ -557,7 +557,7 @@ void god::Save(outputfile& SaveFile) const
 
 void god::Load(inputfile& SaveFile)
 {
-  SaveFile >> Relation >> Timer >> Known >> LastPray; 
+  SaveFile >> Relation >> Timer >> Known >> LastPray;
   if(game::GetCurrentSavefileVersion()>=134){
     SaveFile >> fsLastKnownRelation;
   }

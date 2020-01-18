@@ -1677,7 +1677,7 @@ meleeweapon
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
-    DescriptiveInfo = "A thin blade inscribed with countless, softly glowing runes. They seems to be thirstily drinking in any enchantments you present to them.";
+    DescriptiveInfo = "A thin blade inscribed with countless, softly glowing runes. They seem to be thirstily drinking in any enchantments you present to them.";
     Price = 500;
   }
 
@@ -1817,7 +1817,7 @@ holybanana /* materialcontainer->banana-> */
   IsValuable = true;
   CanBePiled = false;
   IsMaterialChangeable = false;
-  DescriptiveInfo = "Oily Orpiv was an explorer turned merchant. His  commercial empire began its rise when on one expedition, he discovered a small village that never had to deal with the hardships of agriculture because of a seeming miraculous crop. Oily Orpiv had discovered the banana. Being a follower of Mellis, he saw the monetary potential in this new fruit, subjugated the people and turned them into a highly efficient banana production facility. He turned a quick profit that he soon used as investment for further business ventures. It is said that Oily Orpiv saved the third banana he ever saw (he ate the first and sold the second, claiming it was the first one) as a keepsake. When later in his life he became the champion of Mellis, this banana was imbued with powers both beneficial and deadly by Oily Orpiv's appreciative patron.";
+  DescriptiveInfo = "Oily Orpiv was an explorer turned merchant. His commercial empire began its rise when on one expedition, he discovered a small village that never had to deal with the hardships of agriculture because of a seemingly miraculous crop. Oily Orpiv had discovered the banana. Being a follower of Mellis, he saw the monetary potential in this new fruit, subjugated the people and turned them into a highly efficient banana production facility. He made a quick profit that he soon used as investment for further business ventures. It is said that Oily Orpiv saved the third banana he ever saw (he ate the first and sold the second, claiming it was the first one) as a keepsake. When later in his life he became the champion of Mellis, this banana was imbued with powers both beneficial and deadly by Oily Orpiv's appreciative patron.";
 }
 
 justifier /* meleeweapon-> */
@@ -3210,6 +3210,7 @@ stone
     Price = 100;
     MainMaterialConfig == OBSIDIAN;
     IsValuable = true;
+    IsDestroyable = false;
     TeleportPriority = 2000;
     Alias = { 0; }
     DescriptiveInfo = "This rock seems to be floating just above the ground.";
@@ -3221,6 +3222,18 @@ stone
     Possibility = 10;
     NameSingular = "ingot";
     IsValuable = true;
+    MainMaterialConfig = { 35,
+                           VALPURIUM, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL,
+                           PLATINUM, DARK_GOLD, ELECTRUM, IRIDIUM, PALLADIUM, CHROME,
+                           TITANITE, STAINLESS_STEEL, PLASTIC_STEEL, DURALLOY,
+                           VITRELLOY, URANIUM, SOLARIUM, NEUTRONIUM, ARCANITE,
+                           OCCULTUM, ILLITHIUM, METEORIC_STEEL, UKKU_STEEL, ADAMANT,
+                           SOUL_STEEL, BLOOD_STEEL, WHITE_STEEL, UR_STEEL; }
+    MaterialConfigChances = { 35,
+                              1, 200, 75, 25, 5, 300, 250, 100, 75, 25, 5, 50, 50, 50,
+                              30, 20, 10, 5, 20, 15, 10, 5, 15, 10, 5, 100, 15, 150,
+                              150, 75, 5, 200, 200, 200, 75; }
     Alias == "metal";
     DescriptiveInfo = "Useful in crafting.";
   }
@@ -3464,7 +3477,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 7;
+    Possibility = 10;
     PostFix = "of fire resistance";
     Price = 500;
     FireResistance = 15;
@@ -3473,7 +3486,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 3;
+    Possibility = 5;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -3486,7 +3499,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 5;
+    Possibility = 10;
     PostFix = "of electricity resistance";
     Price = 500;
     ElectricityResistance = 15;
@@ -3495,7 +3508,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 2;
+    Possibility = 5;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -3926,7 +3939,7 @@ boot /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   DescriptiveInfo = "Protection for your legs.";
-  Alias = { 3, "boots", "shoes", "moccasins"; }
+  Alias = { 4, "boots", "shoes", "moccasins", "greaves"; }
 
   Config BROKEN;
   {
@@ -3964,7 +3977,7 @@ boot /* armor-> */
 
   Config BOOT_OF_STRENGTH;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 125;
     PostFix = "of strength";
     AffectsLegStrength = true;
@@ -3979,7 +3992,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     AffectsLegStrength = false;
     Price = 10;
     EnchantmentPlusChance = 4;
@@ -3989,7 +4001,7 @@ boot /* armor-> */
 
   Config BOOT_OF_AGILITY;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 125;
     PostFix = "of agility";
     AffectsAgility = true;
@@ -4005,7 +4017,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     AffectsAgility = false;
     Price = 25;
     EnchantmentPlusChance = 4;
@@ -4039,7 +4050,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     MainMaterialConfig = { 30,
                            COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
                            FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
@@ -4051,6 +4061,26 @@ boot /* armor-> */
                               5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                               15, 50, 10, 5; }
     EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
+  }
+
+  Config BOOT_OF_DISPLACEMENT;
+  {
+    Possibility = 5;
+    StrengthModifier = 125;
+    PostFix = "of displacement";
+    Price = 50;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|BOOT_OF_DISPLACEMENT;
+  {
+    DefaultSize = 30;
+    FormModifier = 30;
+    BitmapPos = 80, 368;
+    Price = 10;
+    EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
     BootBitmapPos = 16, 512;
   }
@@ -4155,7 +4185,7 @@ gauntlet /* armor-> */
 
   Config GAUNTLET_OF_STRENGTH;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 110;
     PostFix = "of strength";
     AffectsArmStrength = true;
@@ -4180,7 +4210,7 @@ gauntlet /* armor-> */
 
   Config GAUNTLET_OF_DEXTERITY;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 110;
     PostFix = "of dexterity";
     AffectsDexterity = true;
@@ -4373,6 +4403,7 @@ belt /* armor-> */
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
     Alias == "strength";
+    DescriptiveInfo = "Was it made by giants, for giants, or from giants?";
   }
 
   Config BROKEN|BELT_OF_GIANT_STRENGTH;
@@ -4426,6 +4457,7 @@ belt /* armor-> */
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
     Alias == "regeneration";
+    DescriptiveInfo = "Makes you ready to get at it again much faster than normal.";
   }
 
   Config BROKEN|BELT_OF_REGENERATION;
@@ -5527,7 +5559,7 @@ helmet
     AttachedGod = INFUSCOR;
     EnchantmentPlusChance = 2;
     Alias = { 3, "helmet of ESP", "helm of ESP", "cap of ESP"; }
-    DescriptiveInfo = "Purportedly, the helmet of telepathy was invented by witch-queen Yala, who was looking for a way to read the thoughts of her manservant and thus dispose of any with dirty fantasies. According to her memoirs, the enchantments were an utter failure as she never found a way to decipher the detected thoughts. She later decided to dispatch all her servants and use skeletons instead. However, the Society of Adventuring Gentlemen recognized the value in her research and cheaply bought the magical patent. They turned a quick profit on helmets alerting a cautious delver to any lurking dangers even through closed doors.";
+    DescriptiveInfo = "Purportedly, the helmet of telepathy was invented by witch-queen Yala, who was looking for a way to read the thoughts of her manservants and thus dispose of any with dirty fantasies. According to her memoirs, the enchantments were an utter failure as she never found a way to decipher the detected thoughts. She later decided to dispatch all her servants and use skeletons instead. However, the Society of Adventuring Gentlemen recognized the value in her research and cheaply bought the magical patent. They turned a quick profit on helmets alerting a cautious delver to any lurking dangers even through closed doors.";
   }
 
   Config BROKEN|HELM_OF_TELEPATHY;
@@ -5708,7 +5740,7 @@ helmet
                            IRON, STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
                            BLOOD_IRON, BLOOD_STEEL, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
     MaterialConfigChances = { 100,
-                              15, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
+                              150, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
                               25, 50, 5, 3, 1, 5, 100, 50, 50, 5, 5, 5, 10, 75, 5,
                               15, 5, 25, 15, 30, 20, 100, 50, 40, 50, 60, 75, 25, 30,
                               40, 50, 60, 30, 40, 5, 50, 60, 75, 25, 10, 1, 50, 10,
@@ -6961,6 +6993,7 @@ firstbornchild
   Adjective = "first-born";
   AttachedGod = SILVA;
   CanBeBurned = false;
+  DescriptiveInfo = "Stinky and scared.";
 
   Config MALE;
   {
@@ -7908,6 +7941,7 @@ pica
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
+  DescriptiveInfo = "There was once a thief who challenged a god to a wager: If she can steal the very Moon from the sky, he will turn over his divinity. She won.";
   Alias == "Pica";
 
   Config BROKEN;

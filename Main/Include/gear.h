@@ -253,7 +253,6 @@ ITEM(boot, armor)
   virtual long GetPrice() const;
   virtual truth IsBoot(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
-  virtual truth IsKicking() const;
 };
 
 ITEM(gauntlet, armor)

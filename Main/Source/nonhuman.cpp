@@ -2460,7 +2460,8 @@ void spider::GetAICommand()
 
   if(NearestChar)
   {
-    if(NearestChar->IsStuck() || GetConfig() >= ARANEA)
+    if(NearestChar->IsStuck() || GetConfig() == ARANEA ||
+       (GetConfig() == PHASE && !CanBeSeenBy(NearestChar)))
       SetGoingTo(NearestChar->GetPos());
     else
       SetGoingTo((Pos << 1) - NearestChar->GetPos());
@@ -2791,7 +2792,7 @@ void mindworm::PsiAttack(character* Victim)
 void bat::GetAICommand()
 {
   if(!IsRetreating() && PLAYER->WillGetTurnSoon() &&
-     GetPos().IsAdjacent(PLAYER->GetPos()) && !RAND_4)
+     GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     // Bats sometimes move away from the player.
     SetGoingTo((GetPos() << 1) - PLAYER->GetPos());
@@ -2817,7 +2818,7 @@ void invisiblestalker::GetAICommand()
       EditAP(-1000);
       return;
     }
-    else if(!IsRetreating() && PLAYER->WillGetTurnSoon() && !RAND_4)
+    else if(!IsRetreating() && PLAYER->WillGetTurnSoon())
     {
       SetGoingTo((GetPos() << 1) - PLAYER->GetPos());
 

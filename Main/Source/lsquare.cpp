@@ -2939,6 +2939,15 @@ truth lsquare::Necromancy(const beamdata& Beam)
       if(Character->DrinkMagic(Beam))
         return false;
     }
+    else if(Character->IsUndead())
+    {
+      if(Character->IsPlayer())
+        ADD_MESSAGE("Your dead flesh knits itself.");
+      else if(Character->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s looks deader than dead.", Character->CHAR_NAME(DEFINITE));
+
+      Character->RestoreLivingHP();
+    }
   }
 
   return GetStack()->Necromancy(Beam.Owner);

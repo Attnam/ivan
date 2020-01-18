@@ -238,6 +238,8 @@ OLTERRAIN(coffin, olterraincontainer)
   virtual v2 GetBitmapPos(int Frame) const
   { return Opened ? GetOpenBitmapPos(Frame) : olterraincontainer::GetBitmapPos(Frame); }
   virtual void GenerateGhost(lsquare*);
+  virtual void GenerateUndead();
+  virtual void PostConstruct();
   truth Opened;
 };
 

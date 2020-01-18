@@ -1044,7 +1044,7 @@ struct recipe{
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
 //            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
-            item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_LUMP);
+            item* lumpR = craftcore::PrepareRemains(rpd,matM);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);

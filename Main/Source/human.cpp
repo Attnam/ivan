@@ -2374,11 +2374,12 @@ void humanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 void humanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
 {
   leg* KickLeg = RAND_2 ? GetRightLeg() : GetLeftLeg();
+  item* Boot = KickLeg->GetBoot();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
   EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(LEG_STRENGTH)), false);
 
-  if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(),
+  if(Square->BeKicked(this, Boot, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(),
                       RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
   {
     KickLeg->EditExperience(LEG_STRENGTH, 75, 1 << 9);
@@ -6851,6 +6852,34 @@ truth humanoid::CheckAIZapOpportunity()
     return character::CheckAIZapOpportunity();
 }
 
+truth imp::SpecialEnemySightedReaction(character* Char)
+{
+  if(GetPos().IsAdjacent(Char->GetPos()))
+  {
+    if((StateIsActivated(PANIC) || IsInBadCondition()) && !RAND_4)
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s shrieks!", CHAR_NAME(DEFINITE));
+
+      TeleportRandomly(true);
+      return true;
+    }
+    else
+      return false;
+  }
+
+  if(GetHP() > (GetMaxHP() / 2) && !RAND_N(20))
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s chortles.", CHAR_NAME(DEFINITE));
+
+    TeleportNear(Char);
+    return true;
+  }
+
+  return false;
+}
+
 truth crimsonimp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction,
                                     truth BlockedByArmour, truth Critical, int DoneDamage)
 {
@@ -7471,7 +7500,7 @@ void harvan::BeTalkedTo()
         if(game::GetRebelStoryState() == 5)
         {
           Msg = CONST_S("helped the rebels to an overwhelming victory");
-          AddScoreEntry(Msg, 3, false);
+          AddScoreEntry(Msg, 4, false);
         }
         else
         {
@@ -7619,7 +7648,7 @@ void lordregent::BeTalkedTo()
         if(game::GetAslonaStoryState() == 5)
         {
           Msg = CONST_S("helped the royalists to an overwhelming victory");
-          AddScoreEntry(Msg, 3, false);
+          AddScoreEntry(Msg, 4, false);
         }
         else
         {

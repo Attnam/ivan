@@ -516,7 +516,6 @@ class item : public object
   virtual truth IsRuneSword() const { return false; }
   virtual truth IsMuramasa() const { return false; }
   virtual truth IsMasamune() const { return false; }
-  virtual truth IsKicking() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;

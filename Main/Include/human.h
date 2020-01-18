@@ -527,6 +527,8 @@ CHARACTER(xinrochghost, ghost)
 
 CHARACTER(imp, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
 };
 
 CHARACTER(crimsonimp, imp)

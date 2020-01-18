@@ -240,41 +240,80 @@ void altar::StepOn(character* Stepper)
 
 truth throne::SitOn(character* Sitter)
 {
+  if(!Sitter->IsPlayer())
+    return false;
+
   Sitter->EditAP(-1000);
 
-  if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
+  if(GetLSquareUnder()->GetDungeonIndex() == ATTNAM && GetLSquareUnder()->GetLevelIndex() == 0)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt be Our Champion first!\"");
-    return true;
-  }
+    if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt be Our Champion first!\"");
+      return true;
+    }
 
-  if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
-  {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt wear Our shining armor first!\"");
-    return true;
-  }
+    if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt wear Our shining armor first!\"");
+      return true;
+    }
 
-  if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
-  {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt surpass thy predecessor first!\"");
-    return true;
-  }
+    if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt surpass thy predecessor first!\"");
+      return true;
+    }
 
-  if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      game::PlayVictoryMusic();
+      game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
+                               "\"MORTAL! THOU HAST SURPASSED PETRUS, AND PLEASED US GREATLY DURING THY ADVENTURES!\n"
+                               "WE HEREBY TITLE THEE AS OUR NEW HIGH PRIEST!\"\n\nYou are victorious!"));
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("became the new high priest of the Great Frog");
+      PLAYER->AddScoreEntry(Msg, 5, false);
+      game::End(Msg);
+      return true;
+    }
+  }
+  else if(GetLSquareUnder()->GetDungeonIndex() == ASLONA_CASTLE)
   {
-    game::PlayVictoryMusic();
-    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
-                             "\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\n"
-                             "We hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
-    game::GetCurrentArea()->SendNewDrawRequest();
-    game::DrawEverything();
-    PLAYER->ShowAdventureInfo();
-    festring Msg = CONST_S("became the new high priest of the Great Frog");
-    PLAYER->AddScoreEntry(Msg, 5, false);
-    game::End(Msg);
+    if(GetLSquareUnder()->GetLevelIndex() == 0)
+    {
+      if(Sitter->HasMuramasa() && Sitter->HasMasamune() && Sitter->GetBloodMaterial() == BLUE_BLOOD)
+      {
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("You feel strangely judged for a moment, but then you raise Asamarum and E-numa sa-am\n"
+                                 "above your head, and the castle submits to your reign. One by one, people trickle to\n"
+                                 "the throne room, until the gathered crowd start chanting and cheering:\n\n"
+                                 "\"Long live the king!\"\n\nYou are victorious!"));
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("usurped the throne of Aslona");
+        PLAYER->AddScoreEntry(Msg, 4, false);
+        game::End(Msg);
+        return true;
+      }
+      else if(Sitter->HasMuramasa() || Sitter->HasMasamune())
+      {
+        ADD_MESSAGE("You have a strange vision of the very castle walls shuddering in disdain and disgust.");
+        game::GetGod(SEGES)->CreateAngel(game::GetTeam(ASLONA_TEAM), 10000);
+        game::GetGod(SEGES)->AdjustRelation(-50);
+      }
+      else
+        ADD_MESSAGE("\"What do you think you're doing?! Get out!\"");
+    }
+    else
+      ADD_MESSAGE("You don't have to go.");
+
     return true;
   }
 
@@ -1465,15 +1504,18 @@ truth coffin::Open(character* Opener)
   truth Success = olterraincontainer::Open(Opener);
   if(Success)
   {
+    ADD_MESSAGE("You feel a horrible cruse spreading.");
     game::DoEvilDeed(25);
+    /* TODO: This function awaits repair.
     for(int c = 0; c < RAND_N(10); ++c)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
       {
-        //GenerateGhost(GetLevel()->GetLSquare(Pos)); // This function awaits repair
+        GenerateGhost(GetLevel()->GetLSquare(Pos));
       }
-    }
+    }*/
+    GenerateUndead();
   }
 
   Opened = false;
@@ -1485,21 +1527,23 @@ truth coffin::Open(character* Opener)
 
 void coffin::Break()
 {
+  GenerateUndead();
+  /* TODO: This function awaits repair.
   for(int c = 0; c < 9; ++c)
   {
     lsquare* Neighbour = GetLSquareUnder()->GetNeighbourLSquare(c);
 
     if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
     {
-      //GenerateGhost(Neighbour); // This function awaits repair
+      GenerateGhost(Neighbour);
     }
-  }
+  }*/
   olterraincontainer::Break();
 }
 
 void coffin::GenerateGhost(lsquare* Square)
 {
-/*
+/* TODO: Fix this!
   v2 Pos = Square->GetPos();
   character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -1515,6 +1559,44 @@ void coffin::GenerateGhost(lsquare* Square)
     }
   }
 */
+}
+
+void coffin::GenerateUndead()
+{
+  for(int c = 0; c < game::GetTeams(); ++c)
+    for(character* p : game::GetTeam(c)->GetMember())
+      if(!p->IsEnabled() && p->GetMotherEntity()
+         && p->GetMotherEntity()->Exists())
+      {
+        character* Zombie = p->GetMotherEntity()->TryNecromancy(0);
+
+        if(Zombie && Zombie->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s is raised back to cursed undead life.", Zombie->CHAR_NAME(DEFINITE));
+      }
+}
+
+void coffin::PostConstruct()
+{
+  // Some grave goods to make the players steal from the dead.
+  long ItemNumber = RAND() % 6;
+
+  for(int c = 0; c < ItemNumber; ++c)
+  {
+    item* NewItem = protosystem::BalancedCreateItem();
+    long Volume = NewItem->GetVolume();
+
+    if(NewItem->HandleInPairs())
+      Volume <<= 1;
+
+    if(NewItem->CanBeGeneratedInContainer()
+       && (GetStorageVolume() - GetContained()->GetVolume()) >= Volume)
+    {
+      GetContained()->AddItem(NewItem);
+      NewItem->SpecialGenerationHandler();
+    }
+    else
+      delete NewItem;
+  }
 }
 
 void barwall::Break()

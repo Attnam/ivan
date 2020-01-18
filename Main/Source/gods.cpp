@@ -145,7 +145,7 @@ void sophos::PrayGoodEffect()
     cchar* SecretType;
     int Experience = Min(200, Max(50, GetRelation() / 4));
 
-    switch(RAND() % 2)
+    switch(RAND() % 3)
     {
       case 0:
        SecretType = "an ancient";
@@ -509,7 +509,7 @@ void silva::PrayGoodEffect()
     beamdata Beam
       (
         0,
-        CONST_S("drowned by the showers of ") + GetName(),
+        CONST_S("drowned by the tears of ") + GetName(),
         YOURSELF,
         0
       );
@@ -1167,7 +1167,7 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your follwers.
+  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your followers.
   {
     for(int c = 0; c < game::GetTeams(); ++c)
       if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -1354,11 +1354,27 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
+  // Blood for the god of blood!
+  if(!RAND_4 || Relation == 1000)
+  {
+    beamdata Beam
+      (
+        0,
+        CONST_S("drowned by the blood of ") + GetName(),
+        YOURSELF,
+        0
+      );
+    lsquare* Square = PLAYER->GetLSquareUnder();
+    Square->LiquidRain(Beam, BLOOD);
+  }
+
+  // A little bit of healing, but only usable when panicked.
   if(PLAYER->StateIsActivated(PANIC))
   {
-    ADD_MESSAGE("\"Fight, you lousy coward!\"", GetName());
+    ADD_MESSAGE("%s snarls: \"Fight, you lousy coward!\"", GetName());
     PLAYER->DeActivateTemporaryState(PANIC);
-    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 5);
+    PLAYER->BeginTemporaryState(REGENERATION, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
+    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
     return;
   }
 
@@ -1435,6 +1451,7 @@ void cruentus::PrayGoodEffect()
     ADD_MESSAGE("Cruentus recommends you to his master, Mortifer.");
     game::GetGod(MORTIFER)->AdjustRelation(100);
   }
+  return;
 }
 
 void cruentus::PrayBadEffect()

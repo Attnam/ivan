@@ -1345,8 +1345,8 @@ Dungeon ATTNAM;
     LevelMessage = "You hear rhythmic chanting of some profane ritual: \"Ia! Ia! Khaz-zadm fhtagn!\"";
     DifficultyBase = 100;
     DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = 0;
-    EnchantmentMinusChanceDelta = 0;
+    ItemMinPriceBase = 100;
+    ItemMinPriceDelta = 10;
 
     Square, Random NOT_IN_ROOM|ATTACHABLE;
     {

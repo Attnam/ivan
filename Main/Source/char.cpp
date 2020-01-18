@@ -296,7 +296,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorph Locked",
-    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginPolymorphLockMessage,
     &character::PrintEndPolymorphLockMessage,
     0,
@@ -326,7 +326,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Teleport Locked",
-    SECRET,
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginTeleportLockMessage,
     &character::PrintEndTeleportLockMessage,
     0,
@@ -356,7 +356,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Parasite (mindworm)",
-    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
+    SECRET|(RANDOMIZABLE&~(DUR_PERMANENT|SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginMindwormedMessage,
     &character::PrintEndMindwormedMessage,
     0,
@@ -3854,15 +3854,21 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, v2 HitPos
    case HAS_HIT:
    case HAS_BLOCKED:
    case DID_NO_DAMAGE:
-    if(IsEnabled() && (!CheckBalance(KickDamage) || (Boot && Boot->IsKicking())))
+    if(IsEnabled())
     {
-      if(IsPlayer())
-        ADD_MESSAGE("The kick throws you off balance.");
-      else if(Kicker->IsPlayer())
-        ADD_MESSAGE("The kick throws %s off balance.", CHAR_DESCRIPTION(DEFINITE));
+      if(Boot && (Boot->GetConfig() == BOOT_OF_DISPLACEMENT) && Kicker->Displace(this, true))
+        return;
 
-      v2 FallToPos = GetPos() + game::GetMoveVector(Direction);
-      FallTo(Kicker, FallToPos);
+      if(!CheckBalance(KickDamage) || (Boot && (Boot->GetConfig() == BOOT_OF_KICKING)))
+      {
+        if(IsPlayer())
+          ADD_MESSAGE("The kick throws you off balance.");
+        else if(Kicker->IsPlayer())
+          ADD_MESSAGE("The kick throws %s off balance.", CHAR_DESCRIPTION(DEFINITE));
+
+        v2 FallToPos = GetPos() + game::GetMoveVector(Direction);
+        FallTo(Kicker, FallToPos);
+      }
     }
   }
 }
@@ -4727,7 +4733,7 @@ void character::DisplayInfo(festring& Msg)
     Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is "
         << GetStandVerb() << " here. ";
 
-    if(PLAYER->GetAttribute(WISDOM) > 10)
+    if(PLAYER->GetAttribute(WISDOM) > 11)
     {
       Msg << GetPersonalPronoun().CapitalizeCopy() << " is "
           << GetHitPointDescription() << ". ";

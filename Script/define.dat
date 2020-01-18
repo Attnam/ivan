@@ -836,6 +836,7 @@
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
 #define BOOT_OF_KICKING 3
+#define BOOT_OF_DISPLACEMENT 4
 
 #define GAUNTLET_OF_STRENGTH 1
 #define GAUNTLET_OF_DEXTERITY 2
@@ -963,9 +964,9 @@
 
 #define LARGE 1
 #define GIANT 2
-#define ARANEA 3
-#define PHASE 4
-#define GIANT_GOLD 5
+#define PHASE 3
+#define GIANT_GOLD 4
+#define ARANEA 5
 
 #define IMPRISONED_HUNTER 1
 

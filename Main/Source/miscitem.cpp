@@ -2332,7 +2332,7 @@ truth horn::Apply(character* Blower)
           {
             if(Audience->IsPlayer())
               ADD_MESSAGE("Your wounds are healed.");
-            else if(CanBeSeenByPlayer())
+            else if(Audience->CanBeSeenByPlayer())
               ADD_MESSAGE("%s looks sound and hale again.", Audience->CHAR_NAME(DEFINITE));
 
             Audience->RestoreLivingHP();
@@ -4179,7 +4179,7 @@ void weepobsidian::Be()
 {
   stone::Be();
 
-  if(Exists())
+  if(Exists() && !game::IsInWilderness())
   {
     if(!RAND_N(1000))
     {

@@ -156,7 +156,7 @@ Dungeon UNDER_WATER_TUNNEL;
           Parameters = LOCKED;
           ItemsInside = { 3, Random { MinPrice = 300; Chance = 75; Category = WEAPON|SHIELD; },
                              Random { MinPrice = 300; Chance = 75; Category = HELMET|CLOAK|BODY_ARMOR|GAUNTLET|BELT|BOOT; },
-                             Random { Category = FOOD|POTION|VALUABLE; }
+                             Random { Category = WAND|RING|POTION; }
                         }
         }
         Character = golem(BAMBOO_WOOD);

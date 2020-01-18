@@ -1082,7 +1082,7 @@ Dungeon GOBLIN_FORT;
     }
   }
 
-  RandomLevel 0:4;
+  RandomLevel 1:4;
   {
     Square, Random HAS_NO_OTERRAIN;
     {

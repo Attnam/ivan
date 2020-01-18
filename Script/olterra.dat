@@ -989,7 +989,7 @@ monsterportal
 
 coffin /* olterrain->decoration->olterraincontainer */
 {
-  Walkability = ETHEREAL;
+  Walkability = ANY_MOVE;
   DigMessage = "You smash the coffin into pieces. The spirits are not happy.";
   CanBeDestroyed = true;
   MainMaterialConfig == FIR_WOOD;
