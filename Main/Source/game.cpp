@@ -6286,6 +6286,9 @@ truth game::PolymorphControlKeyHandler(int Key, festring& String)
         Entry << " (" << Req << ')';
         int Int = Player->GetAttribute(INTELLIGENCE);
         List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
+        List.SetLastEntryHelp(festring() << "You can only intentionally polymorph into creatures that you have already "
+                                         << "encountered during your adventure. In addition to that, you need a certain"
+                                         << "amount of Intelligence to successfully control the transformation.");
       }
     }
 

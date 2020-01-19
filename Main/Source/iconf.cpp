@@ -368,8 +368,16 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value==0)
+  if(O->Value == 0)
     Entry << "everywhere";
+  else if(O->Value == 1)
+    Entry << "close";
+  else if(O->Value == 2)
+    Entry << "near";
+  else if(O->Value == 3)
+    Entry << "medium";
+  else if(O->Value == 4)
+    Entry << "far";
   else
     Entry << O->Value;
 }

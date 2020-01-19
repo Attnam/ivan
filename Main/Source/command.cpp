@@ -952,6 +952,10 @@ truth commandsystem::ShowKeyLayout(character*)
       Buffer << GetCommand(c)->GetKey();
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
+      List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                       << "commands are only accessible in wizard mode. Note that the game "
+                                       << "distinguishes between lowercase and uppercase letters, so if you are "
+                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
     }
 
   if(game::WizardModeIsActive())
@@ -1832,6 +1836,10 @@ truth commandsystem::ShowWeaponSkills(character* Char)
         List.AddEntry(Buffer, LIGHT_GRAY);
 
       Something = true;
+
+      List.SetLastEntryHelp(festring() << "Your proficiency with individual weapon categories and accustomization "
+                                       << "with the currently wielded weapons. Note that should you neglect training "
+                                       << "your skills for too long, they might start slowly decreasing in level.");
     }
   }
 

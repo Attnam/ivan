@@ -7323,7 +7323,7 @@ void aslonawizard::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveNuke();
+        PLAYER->RemoveNuke(this);
         ADD_MESSAGE("%s beams: \"Yes! Thank you, thank you! With this, we can blow the rebels to tiny bits, we can end the war!\"", CHAR_NAME(DEFINITE));
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
@@ -7436,7 +7436,7 @@ void aslonapriest::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveWeepObsidian();
+        PLAYER->RemoveWeepObsidian(this);
         ADD_MESSAGE("%s says: \"Wonderful! Let me get to work right away.\"", CHAR_NAME(DEFINITE));
         game::SetAslonaStoryState(game::GetAslonaStoryState() + 1);
         return;
@@ -7516,7 +7516,7 @@ void harvan::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the thaumic bomb? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveNuke();
+        PLAYER->RemoveNuke(this);
         ADD_MESSAGE("\"So this is the fate Lord Regent had planned for me and my people. Thank you for saving all of our lives, %s.\"",
                     PLAYER->GetAssignedName().CStr());
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
@@ -7527,7 +7527,7 @@ void harvan::BeTalkedTo()
     {
       if(game::TruthQuestion(CONST_S("Turn in the weeping obsidian? [y/N]"), REQUIRES_ANSWER))
       {
-        PLAYER->RemoveWeepObsidian();
+        PLAYER->RemoveWeepObsidian(this);
         ADD_MESSAGE("\"The royalists are starting to feel their isolation in the castle, it would seem. Sooner or later, they will loose their strength to oppose us.\"");
         game::SetRebelStoryState(game::GetRebelStoryState() + 1);
         return;

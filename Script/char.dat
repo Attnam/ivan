@@ -10110,6 +10110,7 @@ aslonacaptain /* guard-> */
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
   PanicLevel = 5;
+  CriticalModifier = 4;
   TamingDifficulty = NO_TAMING;
   BloodMaterial = BLUE_BLOOD;
   IsUnique = true;
@@ -10255,7 +10256,6 @@ harvan
   RightSWeaponSkillHits = 500;
   LeftSWeaponSkillHits = 200;
   PanicLevel = 0;
-  CriticalModifier = 4;
   TamingDifficulty = NO_TAMING;
   TotalVolume = 120000;
   TotalSize = 195;

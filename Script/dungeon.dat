@@ -126,8 +126,8 @@ Team XINROCH_TOMB_KAMIKAZE_DWARF_TEAM;
 Team PRISONER_TEAM;
 {
   Relation 1, UNCARING;
-  Relation 17, FRIEND;
-  Relation 18, FRIEND;
+  /*Relation 17, FRIEND;
+  Relation 18, FRIEND;*/
   KillEvilness = 100;
 }
 

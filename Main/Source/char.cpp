@@ -356,7 +356,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Parasite (mindworm)",
-    SECRET|(RANDOMIZABLE&~(DUR_PERMANENT|SRC_MUSHROOM|SRC_GOOD)),
+    SECRET|DUR_TEMPORARY|SRC_FOUNTAIN,
     &character::PrintBeginMindwormedMessage,
     &character::PrintEndMindwormedMessage,
     0,
@@ -2141,14 +2141,14 @@ truth character::HasNuke() const
   return combineequipmentpredicates()(this, &item::IsNuke, 1);
 }
 
-truth character::RemoveNuke()
+truth character::RemoveNuke(character* ToWhom)
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsNuke())
     {
       item* Item = *i;
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
 
@@ -2159,7 +2159,7 @@ truth character::RemoveNuke()
     if(Item && Item->IsNuke())
     {
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
   }
@@ -2176,14 +2176,14 @@ truth character::HasWeepObsidian() const
   return combineequipmentpredicates()(this, &item::IsWeepObsidian, 1);
 }
 
-truth character::RemoveWeepObsidian()
+truth character::RemoveWeepObsidian(character* ToWhom)
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsWeepObsidian())
     {
       item* Item = *i;
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
 
@@ -2194,7 +2194,7 @@ truth character::RemoveWeepObsidian()
     if(Item && Item->IsWeepObsidian())
     {
       Item->RemoveFromSlot();
-      Item->SendToHell();
+      ToWhom->ReceiveItemAsPresent(Item);
       return true;
     }
   }
@@ -4871,7 +4871,11 @@ void character::TeleportRandomly(truth Intentional)
 
   if(StateIsActivated(TELEPORT_LOCK))
   {
-    ADD_MESSAGE("You flicker for a second.");
+    if(IsPlayer())
+      ADD_MESSAGE("You flicker for a second.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s flickers for a second.", CHAR_NAME(DEFINITE));
+
     return;
   }
 
@@ -11455,6 +11459,8 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
         Entry << (GetBodyPartOfEquipment(c) ? "-" : "can't use");
         List.AddEntry(Entry, LIGHT_GRAY, 20, game::AddToItemDrawVector(itemvector()));
       }
+
+      List.SetLastEntryHelp(festring() << "Your equipped arms and armor.");
     }
 
     game::DrawEverythingNoBlit();

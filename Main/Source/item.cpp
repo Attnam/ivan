@@ -527,12 +527,10 @@ void item::SetLabel(cfestring& What)
 
 void item::AddName(festring& Name, int Case) const
 {
-  if(label.GetSize())
-    Name << label << " "; //this way user can decide how it should look, with or w/o delimiters and which ones
-//    Name << "{"<<label<<"}" << " ";
-//    Name << "#"<<label << " ";
-
   object::AddName(Name,Case);
+
+  if(label.GetSize())
+    Name << " inscribed " << label;
 }
 
 void item::Save(outputfile& SaveFile) const
