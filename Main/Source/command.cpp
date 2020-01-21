@@ -78,59 +78,60 @@ command* commandsystem::Command[] =
 {
   0,
 
-  /* Sort according to description */
+  /* Sort according to relaiton and assumed frequency of use */
 
-  new command(&Apply, "apply item", 'a', 'a', 'a', false),
-  new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
-  new command(&Talk, "chat", 'C', 'C', 'C', false),
-  new command(&Close, "close", 'c', 'c', 'c', false),
-  new command(&Craft, "craft", 'f', 'F', 'f', false),
-  new command(&Dip, "dip into liquid", '!', '!', '!', false),
-  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
-  new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
-  new command(&Drop, "drop item", 'd', 'd', 'd', true),
-  new command(&Eat, "eat", 'e', 'e', 'e', true),
-  new command(&WhatToEngrave, "engrave message", 'G', 'G', 'G', false),
-  new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
+  new command(&NOP, "wait a turn", '.', '.', '.', true),
   new command(&Go, "go / fastwalk", 'g', 'g', 'g', false),
   new command(&GoDown, "go down / enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
-  new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
-  new command(&Kick, "kick", 'k', 'K', 'K', false),
+  new command(&PickUp, "pick up item", ',', ',', ',', false),
+  new command(&Drop, "drop item", 'd', 'd', 'd', true),
+  new command(&Throw, "throw item", 't', 't', 't', false),
+  new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
+  new command(&ShowInventory, "inventory menu", 'i', 'i', 'i', true),
+  new command(&Apply, "apply item", 'a', 'a', 'a', false),
+  new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
+  new command(&Zap, "zap a wand", 'z', 'z', 'z', false),
+  new command(&Read, "read", 'r', 'r', 'r', false),
+  new command(&Eat, "eat", 'e', 'e', 'e', true),
+  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
+  new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
+  new command(&Dip, "dip into liquid", '!', '!', '!', false),
+  new command(&Open, "open", 'o', 'O', 'o', false),
+  new command(&Close, "close", 'c', 'c', 'c', false),
+  new command(&Search, "search", 's', 's', 's', false),
   new command(&Look, "look around", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
+  new command(&WhatToEngrave, "engrave / inscribe", 'G', 'G', 'G', false),
+  new command(&Talk, "chat", 'C', 'C', 'C', false),
+  new command(&Craft, "craft", 'f', 'F', 'f', false),
   new command(&AssignName , "name team members", 'n', 'n', 'N', false),
+  new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
-  new command(&Open, "open", 'o', 'O', 'o', false),
-  new command(&PickUp, "pick up item", ',', ',', ',', false),
-  new command(&Pray, "pray", 'p', 'p', 'p', false),
-  new command(&Quit, "quit and abandon", 'Q', 'Q', 'Q', true),
-  new command(&Read, "read", 'r', 'r', 'r', false),
+  new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
+  new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
   new command(&Save, "save and quit", 'S', 'S', 'S', true),
+  new command(&Quit, "quit and abandon", 'Q', 'Q', 'Q', true),
+  new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', '+', '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', '-', '-', true),
   new command(&ShowConfigScreen, "show options menu", '\\', '\\', '\\', true),
-  new command(&ShowInventory, "show inventory", 'i', 'i', 'i', true),
   new command(&ShowKeyLayout, "show key layout", '?', '?', '?', true),
-  new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
-  new command(&Search, "search", 's', 's', 's', false),
-  new command(&Sit, "sit down", '_', '_', '_', false),
+  new command(&WieldInRightArm, "wield in right hand", 'w', 'w', 'w', true),
+  new command(&WieldInLeftArm, "wield in left hand", 'W', 'W', 'W', true),
   new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
   new command(&SwapWeaponsCfg, "swapping menu", 'X', 'X', 'X', false),
-  new command(&Throw, "throw item", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
+  new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
-  new command(&NOP, "wait a turn", '.', '.', '.', true),
-  new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
-  new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
+
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation (Ctrl+ to access console commands)", '`', '`', '`', true),
+  new command(&WizardMode, "wizard mode activation (Ctrl+ for console)", '`', '`', '`', true),
 #else
   new command(&DevConsCmd, "access console commands", '`', '`', '`', true), //works w/o Ctrl in this case
 #endif
-  new command(&Zap, "zap wand", 'z', 'z', 'z', false),
 
 #ifdef WIZARD
 
@@ -945,6 +946,32 @@ truth commandsystem::ShowKeyLayout(character*)
   List.AddDescription(CONST_S("Key       Description"));
   festring Buffer;
 
+  // Movement keys
+  switch(ivanconfig::GetDirectionKeyMap())
+  {
+   case DIR_NORM: // Normal
+   {
+     List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("4 6        or use arrow keys and"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("123        Home, End, PgUp, PgDn"), LIGHT_GRAY);
+     break;
+   }
+   case DIR_ALT: // Alternative
+   {
+     List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("u o"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("jkl"), LIGHT_GRAY);
+     break;
+   }
+   case DIR_HACK: // Nethack
+   {
+     List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("h l"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("bjn"), LIGHT_GRAY);
+     break;
+   }
+  }
+
   for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
     {
@@ -1029,8 +1056,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   while(!(Key == KEY_ESC || Key == ' '))
   {
     if(!bEngraveMapNote)
-      Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
-                                         "'.' square, 'i' inventory, ESC exits"));
+      Key = game::AskForKeyPress(CONST_S("Do you want to (.) engrave a square, or inscribe an (i)tem? [. or i, ESC exits]"));
 
     int iLSqrLimit=80;
     if(bEngraveMapNote)
