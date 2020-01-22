@@ -1881,19 +1881,19 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       festring NewMsg = MsgBut << Msg;
       AddScoreEntry(NewMsg, 2, true);
     }
-    else if((game::GetAslonaStoryState() == 5 || game::GetRebelStoryState() == 5)
-            && game::GetStoryState() == 3)
+    else if(Max(game::GetAslonaStoryState(), game::GetRebelStoryState()) >= 4) // At least two of the three quests.
     {
       festring Whom;
-      if(game::GetAslonaStoryState() == 5)
+      if(game::GetAslonaStoryState() > game::GetRebelStoryState())
         Whom = "royalists";
       else
         Whom = "rebels";
 
       festring MsgBut = "fought in the civil war of Aslona on the side of " + Whom + ", but was ";
       festring NewMsg = MsgBut << Msg;
+      int Bonus = Max(game::GetAslonaStoryState(), game::GetRebelStoryState()) - 2;
 
-      AddScoreEntry(NewMsg, 2, true);
+      AddScoreEntry(NewMsg, Bonus, true);
     }
     else
       AddScoreEntry(Msg);
@@ -9126,6 +9126,13 @@ void character::SetBodyPart(int I, bodypart* What)
 
 truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb, truth nibbling)
 {
+  if(Item->IsQuestItem() || !Item->IsDestroyable(this))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You cannot eat that!");
+    return false;
+  }
+
   if(IsPlayer()
      && HasHadBodyPart(Item)
      && !game::TruthQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))

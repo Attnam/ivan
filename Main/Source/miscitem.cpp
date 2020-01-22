@@ -1102,7 +1102,22 @@ truth key::Apply(character* User)
         }
       }
 
-      if(User->GetStack()->SortedItems(User, &item::HasLock))
+      truth HasLockableItem = User->GetStack()->SortedItems(User, &item::HasLock);
+      if(!HasLockableItem)
+      {
+        for(int c = 0; c < User->GetEquipments(); ++c)
+        {
+          item* Equipment = User->GetEquipment(c);
+
+          if(Equipment && Equipment->HasLock(User))
+          {
+            HasLockableItem = true;
+            break;
+          }
+        }
+      }
+
+      if(HasLockableItem)
       {
         if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
           Key = 'i';

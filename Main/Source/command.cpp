@@ -105,7 +105,7 @@ command* commandsystem::Command[] =
   new command(&WhatToEngrave, "engrave / inscribe", 'G', 'G', 'G', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
   new command(&Craft, "craft", 'f', 'F', 'f', false),
-  new command(&AssignName , "name team members", 'n', 'n', 'N', false),
+  new command(&AssignName, "name team members", 'n', 'n', 'N', false),
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
@@ -1164,7 +1164,7 @@ truth commandsystem::Pray(character* Char)
         desc << game::GetGod(c)->GetCompleteDescription();
         if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(c)->GetLastKnownRelation();
         Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
-        Panthenon.SetLastEntryHelp(game::GetGod(c)->GetDescription()); //using F1 is the correct way for this
+        Panthenon.SetLastEntryHelp(festring() << game::GetGod(c)->GetName() << ", the " << game::GetGod(c)->GetDescription());
         Known[Index++] = c;
       }
   }
@@ -1172,7 +1172,7 @@ truth commandsystem::Pray(character* Char)
     if(game::GetGod(DivineMaster)->IsKnown())
     {
       Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
-      Panthenon.SetLastEntryHelp(game::GetGod(DivineMaster)->GetDescription());
+      Panthenon.SetLastEntryHelp(festring() << game::GetGod(DivineMaster)->GetName() << ", the " << game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
     else

@@ -119,6 +119,7 @@ struct itemdatabase : public databasebase
   truth CanBeEnchanted;
   truth IsQuestItem;
   truth IsGoodWithPlants;
+  truth IsGoodWithUndead;
   truth CreateLockConfigurations;
   truth CanBePickedUp;
   truth HasSecondaryMaterial;
@@ -410,6 +411,7 @@ class item : public object
   virtual DATA_BASE_VALUE_WITH_PARAMETER(v2, WieldedBitmapPos, int);
   DATA_BASE_TRUTH(IsQuestItem);
   DATA_BASE_TRUTH(IsGoodWithPlants);
+  DATA_BASE_TRUTH(IsGoodWithUndead);
   DATA_BASE_TRUTH(CanBePickedUp);
   DATA_BASE_VALUE(int, CoverPercentile);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, TorsoArmorBitmapPos, int);

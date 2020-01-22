@@ -3629,6 +3629,7 @@ ass
   AutomaticallySeen = true;
   WillCarryItems = true;
   BloodMaterial = GLOWING_BLOOD;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
 }
 
 communist /* Ivan */
@@ -4765,6 +4766,7 @@ zombie
   NameSingular = "zombie";
   CanBeGenerated = true;
   Sex = UNDEFINED;
+  ConsumeFlags = CT_MEAT;
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
   /* HostileReplies overridden */
@@ -5101,15 +5103,17 @@ imp
   CanBeGenerated = true;
   Sex = UNDEFINED;
   AttackStyle = USE_ARMS|USE_HEAD;
+  ConsumeFlags = CT_METAL|CT_MINERAL|CT_LIQUID|CT_PLASTIC;
   KnownCWeaponSkills = { 2, UNARMED, BITE; }
   CWeaponSkillHits = { 2, 50, 50; }
   PanicLevel = 0;
   BaseUnarmedStrength = 300;
   BaseBiteStrength = 500;
-  UsesNutrition = false;
+  VomittingIsUnhealthy = false;
   ClassStates = GAS_IMMUNITY|FEARLESS;
   CanChoke = false;
   UndeadVersions = false;
+  IsSadist = true;
   FriendlyReplies =
   {
     6,
@@ -5134,6 +5138,8 @@ imp
     "@Dd grins maniacally.",
     "@Dd grins sadistically.";
   }
+  Inventory = { 2, potion { SecondaryMaterial = ASPHALT; Chance = 50; },
+                   potion { SecondaryMaterial = QUICK_SILVER; Chance = 50; } }
 }
 
 crimsonimp /* imp-> */
@@ -5144,6 +5150,7 @@ crimsonimp /* imp-> */
   Adjective = "crimson";
   FleshMaterial = SULFUR;
   BloodMaterial = NAPALM;
+  VomitMaterial = NAPALM;
   AttachedGod = CRUENTUS;
   FireResistance = 1000;
   DeathMessage = "@Dd dies in a gout of hellfire.";
@@ -5157,6 +5164,7 @@ mirrorimp /* imp-> */
   Adjective = "mirror";
   FleshMaterial = GLASS;
   BloodMaterial = LIQUID_FEAR;
+  VomitMaterial = LIQUID_FEAR;
   AttachedGod = INFUSCOR;
   EnergyResistance = 100;
   PoisonResistance = 100;
@@ -5664,6 +5672,7 @@ vampire
   BaseBiteStrength = 800;
   CanBeWished = false;
   ClassStates = HASTE|INFRA_VISION|VAMPIRISM;
+  ConsumeFlags = CT_LIQUID; /* Could limit that further to only blood. */
   PanicLevel = 0;
   FleshMaterial = VAMPIRE_FLESH;
   AttachedGod = MORTIFER;
@@ -6303,6 +6312,7 @@ unicorn
   TotalSize = 200;
   NameSingular = "unicorn";
   AttackStyle = USE_LEGS|USE_HEAD;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
   BaseKickStrength = 700;
   BaseBiteStrength = 350;
   CanBeGenerated = true;
@@ -6526,6 +6536,7 @@ buffalo
   AttachedGod = SILVA;
   Frequency = 2500;
   IsEnormous = true;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
 }
 
 snake
@@ -8003,6 +8014,7 @@ twoheadedmoose
   CanKick = true;
   DangerModifier = 50;
   IsEnormous = true;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
 }
 
 magpie
@@ -8619,7 +8631,7 @@ sumowrestler
   ArmBitmapPos = 64, 336;
   LegBitmapPos = 16, 176;
   TamingDifficulty = NO_TAMING;
-  HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this)\"";
+  HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this.)\"";
   AttachedGod = SILVA;
   KnownCWeaponSkills = { 2, UNARMED, KICK; }
   CWeaponSkillHits = { 2, 1000, 1000; }
@@ -9441,7 +9453,7 @@ mindworm
     DefaultIntelligence = 20;
     DefaultWillPower = 20;
     NameSingular = "mind worm hatchling";
-    Frequency = 500;
+    Frequency = 100;
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 10;
     ScienceTalkWisdomModifier = 5;
@@ -9454,7 +9466,7 @@ mindworm
     DefaultIntelligence = 35;
     DefaultWillPower = 35;
     NameSingular = "mind worm boil";
-    Frequency = 1500;
+    Frequency = 500;
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 100;
     ScienceTalkWisdomModifier = 50;

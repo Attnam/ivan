@@ -210,7 +210,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
 material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
+
+  if(Eater->StateIsActivated(VAMPIRISM) && (GetCategoryFlags() & IS_BLOOD))
+  {
+    Amount *= 10; // Vampires are nourished by blood.
+  }
   Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
+
   if(Amount && Volume)
   {
     if(DisablesPanicWhenConsumed() && Eater->TemporaryStateIsActivated(PANIC))

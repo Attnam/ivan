@@ -2644,10 +2644,12 @@ truth corpse::SuckSoul(character* Soul, character* Summoner)
 
 double arm::GetTypeDamage(ccharacter* Enemy) const
 {
-  if(!GetWielded() || !GetWielded()->IsGoodWithPlants() || !Enemy->IsPlant())
-    return Damage;
-  else
+  if(GetWielded() &&
+     ((GetWielded()->IsGoodWithPlants() && Enemy->IsPlant()) ||
+      (GetWielded()->IsGoodWithUndead() && Enemy->IsUndead())))
     return Damage * 1.5;
+  else
+    return Damage;
 }
 
 void largetorso::Draw(blitdata& BlitData) const
@@ -3750,9 +3752,10 @@ col16 lobhsetorso::GetMaterialColorD(int Frame) const
   return MakeRGB16(220 - (Modifier >> 2), 220 - (Modifier >> 1), 0);
 }
 
-truth bodypart::IsDestroyable(ccharacter*) const
+truth bodypart::IsDestroyable(ccharacter* Eater) const
 {
-  return !Master || !Master->BodyPartIsVital(GetBodyPartIndex());
+  return !Master || Master->IsDead() || (Master == Eater) ||
+         !Master->BodyPartIsVital(GetBodyPartIndex());
 }
 
 truth bodypart::DamageTypeCanScar(int Type)

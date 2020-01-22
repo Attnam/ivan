@@ -595,6 +595,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(WieldedBitmapPos);
   ADD_MEMBER(IsQuestItem);
   ADD_MEMBER(IsGoodWithPlants);
+  ADD_MEMBER(IsGoodWithUndead);
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(CanBePickedUp);
   ADD_MEMBER(CoverPercentile);

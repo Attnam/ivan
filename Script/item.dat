@@ -102,7 +102,8 @@ item
   /* Obligatory: AttachedGod */
   WieldedBitmapPos = 176, 0;
   IsQuestItem = false;
-  IsGoodWithPlants = true;
+  IsGoodWithPlants = false;
+  IsGoodWithUndead = false;
   CreateLockConfigurations = false; /* Can't be overridden by Configs */
   CanBePickedUp = true;
   /* Obligatory if helmet: CoverPercentile */
@@ -873,6 +874,7 @@ meleeweapon
     Roundness = 20;
     IsTwoHanded = true;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 320;
     EnchantmentPlusChance = 15;
@@ -1433,6 +1435,7 @@ meleeweapon
                               100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 16;
     EnchantmentPlusChance = 20;
@@ -6187,6 +6190,7 @@ gorovitsweapon
     Roundness = 20;
     IsTwoHanded = true;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     BaseEnchantment = 3;
     Price = 250;
     AttachedGod = LORICATUS;
@@ -6212,6 +6216,7 @@ gorovitsweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 176, 32;
     DamageFlags = SLASH;
+    IsGoodWithPlants = true;
   }
 
   Config GOROVITS_SCIMITAR;
@@ -6351,6 +6356,7 @@ thunderhammer /* meleeweapon-> */
   Roundness = 20;
   IsTwoHanded = true;
   CanBeUsedBySmith = true;
+  IsGoodWithUndead = true;
   Price = 500;
   BaseEmitation = rgb24(130, 130, 130);
   AttachedGod = LORICATUS;

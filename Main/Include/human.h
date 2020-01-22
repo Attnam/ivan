@@ -157,7 +157,7 @@ CHARACTER(humanoid, character)
   virtual int GetAttributeAverage() const;
   virtual truth CanVomit() const;
   virtual truth CheckApply() const;
-  virtual truth CanForceVomit() const { return TorsoIsAlive() && HasAUsableArm(); }
+  virtual truth CanForceVomit() const { return CanVomit() && HasAUsableArm(); }
   virtual truth IsTransparent() const;
   virtual void ModifySituationDanger(double&) const;
   virtual int RandomizeTryToUnStickBodyPart(ulong) const;
@@ -529,6 +529,9 @@ CHARACTER(imp, humanoid)
 {
  public:
   virtual truth SpecialEnemySightedReaction(character*);
+ protected:
+  virtual truth CanVomit() const { return true; }
+  virtual void PostConstruct();
 };
 
 CHARACTER(crimsonimp, imp)
@@ -775,6 +778,7 @@ CHARACTER(siren, humanoid)
   virtual void GetAICommand();
   virtual truth MoveRandomly();
  protected:
+  virtual void PostConstruct();
   virtual truth TryToSing();
 };
 

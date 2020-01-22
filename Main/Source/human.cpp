@@ -1329,34 +1329,54 @@ void librarian::BeTalkedTo()
 
     break;
    case 1:
-    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState())
       ADD_MESSAGE("\"Thou art going to fight Elpuri? Beware! It is a powerful enemy. Other monsters "
                   "are very vulnerable if surrounded by thy party, but not that beast, for it may "
                   "slay a horde of thy friends at once with its horrendous tail attack.\"");
+    else if(game::GetXinrochTombStoryState())
+      ADD_MESSAGE("\"Thou art going to delve into the Tomb of Xinroch? Beware, for it is a place of horrific darkness and abundant necromancy.\"");
+    /*else if(game::GetAslonaStoryState())
+      ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");*/
     else
       ADD_MESSAGE("\"Thou shalt remember: Scientia est potentia.\"");
 
     break;
    case 2:
-    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState())
       ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");
+    else if(game::GetXinrochTombStoryState())
+      ADD_MESSAGE("\"The Tomb of Xinroch is a chilling place. It is said that a whole cavern of magical ice can be found when wandering its tunnels.\"");
+    /*else if(game::GetAslonaStoryState())
+      ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");*/
     else
       ADD_MESSAGE("\"Shh! Thou shalt be silent in the library.\"");
 
     break;
    case 3:
-    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState())
       ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thy precious items.\"");
+    else if(game::GetXinrochTombStoryState())
+      ADD_MESSAGE("\"The Tomb of Xinroch is guarded by fanatical dark knights that once followed Xinroch and swore to protect him even in death.\"");
+    /*else if(game::GetAslonaStoryState())
+      ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");*/
     else
       ADD_MESSAGE("\"Dost thou not smell all the knowledge floating around here?\"");
 
     break;
    case 4:
-    ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can upgrade thy weapons' materials.\"");
+    if(!RAND_2)
+      ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can upgrade thy weapons' materials.\"");
+    else
+      ADD_MESSAGE("\"It is said that Atavus, the god of support and charity, may bolster thy defenses.\"");
+
     break;
    case 5:
-    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState())
       ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
+    /*else if(game::GetXinrochTombStoryState())
+      ADD_MESSAGE("\"The Tomb of Xinroch is guarded by fanatical dark knights that once followed Xinroch and swore to protect him even in death.\"");
+    else if(game::GetAslonaStoryState())
+      ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");*/
     else
       ADD_MESSAGE("\"In this book they talk about Mortifer, the great chaos god. He hates us "
                   "mortals more than anything and will respond only to Champions of Evil.\"");
@@ -1376,16 +1396,24 @@ void librarian::BeTalkedTo()
                 "Thou shouldst not engage it in melee but rather kill it from afar.\"");
     break;
    case 9:
-    if(game::GetPetrus() && game::GetGloomyCaveStoryState() == 1)
+    if(game::GetPetrus() && game::GetGloomyCaveStoryState())
       ADD_MESSAGE("\"Thou art not alone in thy attempt to defeat Elpuri. A brave "
                   "adventurer called Ivan also diveth into its cave not long ago.\"");
+    /*else if(game::GetXinrochTombStoryState())
+      ADD_MESSAGE("\"The Tomb of Xinroch is guarded by fanatical dark knights that once followed Xinroch and swore to protect him even in death.\"");
+    else if(game::GetAslonaStoryState())
+      ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");*/
     else
       ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers. But thou "
                   "must remember: unlike lawfuls, they shall not help thee when things go bad.\"");
 
     break;
    case 10:
-    ADD_MESSAGE("\"If a man cannot choose, he ceases to be a man.\"");
+    if(!RAND_2)
+      ADD_MESSAGE("\"If a man cannot choose, he ceases to be a man.\"");
+    else
+      ADD_MESSAGE("\"It is said that Cruentus, the god of bloodshed, may empower thy weapons.\"");
+
     break;
    case 11:
     ADD_MESSAGE("%s sighs: \"The censorship laws in this town are really too strict...\"",
@@ -5965,6 +5993,7 @@ void tailor::BeTalkedTo()
 void veterankamikazedwarf::PostConstruct()
 {
   kamikazedwarf::PostConstruct();
+
   ivantime Time;
   game::GetTime(Time);
   int Modifier = Time.Day - KAMIKAZE_INVISIBILITY_DAY_MIN;
@@ -5973,6 +6002,37 @@ void veterankamikazedwarf::PostConstruct()
      || (Modifier > 0
          && RAND_N(KAMIKAZE_INVISIBILITY_DAY_MAX - KAMIKAZE_INVISIBILITY_DAY_MIN) < Modifier))
     GainIntrinsic(INVISIBLE);
+}
+
+void imp::PostConstruct()
+{
+  humanoid::PostConstruct();
+
+  ivantime Time;
+  game::GetTime(Time);
+  int Modifier = Time.Day - KAMIKAZE_INVISIBILITY_DAY_MIN;
+
+  if(Time.Day >= KAMIKAZE_INVISIBILITY_DAY_MAX
+     || (Modifier > 0
+         && RAND_N(KAMIKAZE_INVISIBILITY_DAY_MAX - KAMIKAZE_INVISIBILITY_DAY_MIN) < Modifier))
+    GainIntrinsic(INVISIBLE);
+}
+
+void siren::PostConstruct()
+{
+  humanoid::PostConstruct();
+
+  if(GetConfig() != AMBASSADOR_SIREN)
+  {
+    ivantime Time;
+    game::GetTime(Time);
+    int Modifier = Time.Day - KAMIKAZE_INVISIBILITY_DAY_MIN;
+
+    if(Time.Day >= KAMIKAZE_INVISIBILITY_DAY_MAX
+       || (Modifier > 0
+           && RAND_N(KAMIKAZE_INVISIBILITY_DAY_MAX - KAMIKAZE_INVISIBILITY_DAY_MIN) < Modifier))
+      GainIntrinsic(INVISIBLE);
+  }
 }
 
 truth humanoid::IsTransparent() const
@@ -6868,7 +6928,7 @@ truth imp::SpecialEnemySightedReaction(character* Char)
       return false;
   }
 
-  if(GetHP() > (GetMaxHP() / 2) && !RAND_N(20))
+  if(GetHP() > (GetMaxHP() / 2) && !RAND_N(10))
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s chortles.", CHAR_NAME(DEFINITE));
@@ -7210,11 +7270,15 @@ int gasghoul::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
 
   if(Return != HAS_DODGED && Return != HAS_BLOCKED && GetLSquareUnder()->IsFlyable())
   {
-    if(IsPlayer())
+    if(Enemy->IsPlayer())
       ADD_MESSAGE("%s releases a cloud of fumes as you strike %s.", CHAR_DESCRIPTION(DEFINITE), GetObjectPronoun().CStr());
-    else if(CanBeSeenByPlayer())
+    else if(IsPlayer())
+      ADD_MESSAGE("You release a cloud of fumes as %s strikes you.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    else if(CanBeSeenByPlayer() && Enemy->CanBeSeenByPlayer())
       ADD_MESSAGE("%s releases a cloud of fumes as %s strikes %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE),
                                                                     GetObjectPronoun().CStr());
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s releases a cloud of fumes as something strikes %s.", CHAR_DESCRIPTION(DEFINITE), GetObjectPronoun().CStr());
 
     int GasMaterial[] = { MUSTARD_GAS, SKUNK_SMELL, ACID_GAS, FIRE_GAS };
 

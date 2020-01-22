@@ -31,7 +31,7 @@ material
   /* Obligatory: Color */
   PriceModifier = 0;
   Emitation = 0;
-  NutritionValue = 0;
+  NutritionValue = 10;
   ConsumeWisdomLimit = NO_LIMIT;
   /* Obligatory: NameStem */
   /* NameStem by default: AdjectiveStem */
@@ -1870,6 +1870,7 @@ solid
     StrengthValue = 75;
     ConsumeType = CT_METAL;
     Density = 19100;
+    NutritionValue = 2000;
     Color = rgb16(27, 226, 21);
     Emitation = rgb24(50, 160, 50);
     PriceModifier = 1500;
@@ -1891,6 +1892,7 @@ solid
     StrengthValue = 95;
     ConsumeType = CT_METAL;
     Density = 40000;
+    NutritionValue = 4000;
     Color = rgb16(236, 255, 0);
     Emitation = rgb24(160, 160, 100);
     PriceModifier = 2500;
@@ -1912,6 +1914,7 @@ solid
     StrengthValue = 115;
     ConsumeType = CT_METAL;
     Density = 100000;
+    NutritionValue = 8000;
     Color = rgb16(70, 173, 212);
     Emitation = rgb24(70, 120, 160);
     PriceModifier = 5000;
@@ -4181,6 +4184,7 @@ solid
 
 organic /* Substances that spoil but are not flesh. */
 {
+  NutritionValue = 20;
   SpoilModifier = 10000;
   BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
 
@@ -4928,7 +4932,7 @@ liquid
     StrengthValue = 50;
     Flexibility = 50;
     Density = 50;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(220, 30, 220);
     Emitation = rgb24(139, 0, 139);
@@ -4948,7 +4952,7 @@ liquid
   {
     StrengthValue = 1;
     Density = 50;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(153, 50, 204);
     NameStem = "warp fluid";
@@ -4964,7 +4968,7 @@ liquid
   {
     StrengthValue = 1;
     Density = 50;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(255, 20, 147);
     NameStem = "polymorphine";
@@ -5366,7 +5370,7 @@ liquid
   {
     StrengthValue = 1;
     Density = 10;
-    NutritionValue = 1;
+    NutritionValue = -100;
     RustModifier = 0;
     Color = rgb16(0, 0, 0);
     NameStem = "liquid darkness";
@@ -5383,7 +5387,7 @@ liquid
   {
     StrengthValue = 1;
     Density = 10;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(40, 80, 40);
     NameStem = "liquid fear";
@@ -5401,7 +5405,7 @@ liquid
   {
     StrengthValue = 5;
     Density = 2300;
-    NutritionValue = 0;
+    NutritionValue = 10000;
     Color = rgb16(40, 43, 42);
     NameStem = "asphalt";
     Flexibility = 25;
@@ -5410,6 +5414,7 @@ liquid
     Hotness = 10;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
+    ConsumeType = CT_MINERAL;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -5770,7 +5775,7 @@ liquid
     Alpha = 150;
     AttachedGod = SCABIES;
     Effect = EFFECT_POISON;
-    EffectStrength = 200;
+    EffectStrength = 500;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
     CommonFlags = Base|CAN_BE_WISHED;
   }
@@ -5779,6 +5784,7 @@ liquid
   {
     StrengthValue = 30;
     Density = 11500;
+    NutritionValue = 5000;
     Flexibility = 40;
     RustModifier = 0;
     PriceModifier = 750;
@@ -5790,8 +5796,6 @@ liquid
     IntelligenceRequirement = 11;
     Alpha = 175;
     AttachedGod = NEFAS;
-    Effect = EFFECT_POISON;
-    EffectStrength = 500;
     CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
     CommonFlags = Base|IS_VALUABLE|CAN_BE_WISHED;
   }
