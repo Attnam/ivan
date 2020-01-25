@@ -180,15 +180,15 @@ truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           false);
 truthoption ivanconfig::ShowGodInfo(      "ShowGodInfo",
                                           "Show extra info about gods when praying",
-                                          "",
+                                          "Remember the last response to a prayer for each god.",
                                           false);
 truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
                                           "Center camera on player after exiting look mode",
-                                          "",
+                                          "Always center the displayed region of the dungeon back on player after exiting look mode.",
                                           false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
-                                          "",
+                                          "Display a warning prompt when you encounter an unusually dangerous monster.",
                                           true);
 truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
                                           "Drop food leftovers automatically",
@@ -238,26 +238,26 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleChanger);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           "* Select font",
-                                          "",
+                                          "Select your favorite from the available fonts.",
                                           1, 3, //from 1 to 3 (three options available)
                                           &FontGfxDisplayer,
                                           &FontGfxChangeInterface,
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           "Breeders' active range",
-                                          "",
-                                          0, 4,
+                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively.",
+                                          0, 5,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "Sort savegame files by dungeon IDs",
-                                          "",
+                                          "Savegame selection menu will be sorted according to the chosen criterion.",
                                           0, 4,
                                           &SaveGameSortModeDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &SaveGameSortModeChanger);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
-                                          "Silhouette scaling factor (1 to disable)",
-                                          "",
+                                          "Silhouette scaling factor",
+                                          "Select scaling factor for silhouette, 1x to disable (no scaling).",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
                                           &SilhouetteScaleDisplayer,
                                           &SilhouetteScaleChangeInterface,
@@ -274,16 +274,16 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "",
+                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
-                                          "",
+                                          "Automatically try to open doors when you walk into them, and don't ask for the target of close/apply actions when only one viable target is present.",
                                           true);
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "Be nice to pets",
-                                          "",
+                                          "Don't let your sadistic tendencies hurt your pets.",
                                           true);
 cycleoption ivanconfig::AltListItemPos(   "AltListItemPos",
                                           "Use alternative position of stretched lists",
@@ -291,7 +291,7 @@ cycleoption ivanconfig::AltListItemPos(   "AltListItemPos",
                                           0, 3,
                                           &AltListItemPosDisplayer);
 numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
-                                          "List width for previous option",
+                                          "List width for alternative stretched lists",
                                           "",
                                           game::getDefaultItemsListWidth(),
                                           &AltListItemWidthDisplayer,
@@ -299,7 +299,7 @@ numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
                                           &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
                                           "Volume",
-                                          "",
+                                          "Select volume for sound effects and game music.",
                                           127,
                                           &VolumeDisplayer,
                                           &VolumeChangeInterface,
@@ -320,7 +320,7 @@ cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           &GraphicsScaleChanger);
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "Full screen mode",
-                                          "",
+                                          "Display the game in full screen mode.",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
@@ -334,15 +334,15 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects",
-                                          "",
+                                          "Use sound effects and game music.",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "Show game turn on message log",
-                                          "",
+                                          "Add a game turn number to each action described in the message log.",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
                                           "* Use outlined graphics",
-                                          "",
+                                          "The game graphics will be outlined in black for better differentiation.",
                                           false);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }

@@ -4848,6 +4848,7 @@ gas
     HardenedMaterial = SULPHURIC_ACID;
     Effect = EFFECT_ACID_GAS;
     EffectStrength = 25;
+    Acidicity = 50;
     BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }
@@ -4862,6 +4863,7 @@ gas
     HardenedMaterial = NAPALM;
     Effect = EFFECT_FIRE_GAS;
     EffectStrength = 50;
+    Hotness = 75;
     BreatheMessage = "It burns!";
     StepInWisdomLimit = 3;
   }

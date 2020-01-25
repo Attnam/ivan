@@ -842,7 +842,7 @@ class character : public entity, public id
   void SignalBurnLevelChange();
   virtual truth UseMaterialAttributes() const = 0;
   truth IsPolymorphed() const { return Flags & C_POLYMORPHED; }
-  truth IsInBadCondition() const { return HP * 3 < MaxHP; }
+  truth IsInBadCondition() const;
   truth IsInBadCondition(int HP) const { return HP * 3 < MaxHP; }
   int GetCondition() const;
   void UpdatePictures();

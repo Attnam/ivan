@@ -814,13 +814,13 @@ leg::~leg()
 
 truth corpse::IsDestroyable(ccharacter* Char) const
 {
-  for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+  /*for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
   {
     bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
 
     if(BodyPart && !BodyPart->IsDestroyable(Char))
       return false;
-  }
+  }*/
 
   return true;
 }
@@ -2644,10 +2644,14 @@ truth corpse::SuckSoul(character* Soul, character* Summoner)
 
 double arm::GetTypeDamage(ccharacter* Enemy) const
 {
-  if(GetWielded() &&
-     ((GetWielded()->IsGoodWithPlants() && Enemy->IsPlant()) ||
-      (GetWielded()->IsGoodWithUndead() && Enemy->IsUndead())))
-    return Damage * 1.5;
+  if(GetWielded())
+  {
+    if((GetWielded()->IsGoodWithPlants() && Enemy->IsPlant()) ||
+       (GetWielded()->IsGoodWithUndead() && Enemy->IsUndead()))
+      return Damage * 1.5;
+    else if(HasSadistWeapon() && Enemy->IsMasochist())
+      return Damage * 0.75;
+  }
   else
     return Damage;
 }
@@ -3752,10 +3756,9 @@ col16 lobhsetorso::GetMaterialColorD(int Frame) const
   return MakeRGB16(220 - (Modifier >> 2), 220 - (Modifier >> 1), 0);
 }
 
-truth bodypart::IsDestroyable(ccharacter* Eater) const
+truth bodypart::IsDestroyable(ccharacter*) const
 {
-  return !Master || Master->IsDead() || (Master == Eater) ||
-         !Master->BodyPartIsVital(GetBodyPartIndex());
+  return !Master || !Master->BodyPartIsVital(GetBodyPartIndex());
 }
 
 truth bodypart::DamageTypeCanScar(int Type)

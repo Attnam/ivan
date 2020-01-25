@@ -6208,7 +6208,7 @@ void character::DrawPanel(truth AnimationDraw) const
 
   ivantime Time;
   game::GetTime(Time);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Day %d", Time.Day);
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Day  %d", Time.Day);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Time %d:%s%d", Time.Hour,
                                                                                       Time.Min < 10 ? "0" : "",
                                                                                       Time.Min);
@@ -13213,10 +13213,28 @@ truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
   return (1 + RAND() % 100 < normalized_chance);
 }
 
+truth character::IsInBadCondition() const
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(BodyPart && BodyPartIsVital(c) &&
+      ((BodyPart->GetHP() * 3 < BodyPart->GetMaxHP()) ||
+       (BodyPart->GetHP() == 1) && (BodyPart->GetMaxHP() > 1)))
+      return true;
+  }
+
+  return HP * 3 < MaxHP;
+}
+
 festring character::GetHitPointDescription() const
 {
   float Health = (float)GetHP() / (float)GetMaxHP();
   festring Desc = "bugged";
+
+  // Do not describe humanoids with missing limbs as "unharmed".
+  if(!HasAllBodyParts() || IsInBadCondition())
+    Health *= 0.75;
 
   if(TorsoIsAlive())
   {
@@ -13260,10 +13278,6 @@ festring character::GetHitPointDescription() const
     else if(Health <= 0.0)
       Desc = "destroyed";
   }
-
-  // Do not describe humanoids with missing limbs as "unharmed".
-  if(!HasAllBodyParts() && Health >= 0.9)
-    Desc = "crippled";
 
   if(IsUndead())
     Desc = "dead";

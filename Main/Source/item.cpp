@@ -380,7 +380,8 @@ truth item::Polymorph(character* Polymorpher, character* Wielder)
       default: Wielder->ReceiveItemAsPresent(NewItem); break;
     }
 
-    game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
+    if(Wielder->IsPlayer())
+      game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
     return true;
   }
 }

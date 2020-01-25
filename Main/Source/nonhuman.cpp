@@ -567,7 +567,13 @@ void nonhumanoid::CalculateBiteAttackInfo()
 
 void dog::BeTalkedTo()
 {
-  if(RAND_N(5))
+  if(StateIsActivated(CONFUSED))
+  {
+    ADD_MESSAGE("%s looks a bit confused: \"Meow.\"", CHAR_NAME(DEFINITE));
+    return;
+  }
+
+  if(GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     if(GetRelation(PLAYER) != HOSTILE)
     {
@@ -575,20 +581,21 @@ void dog::BeTalkedTo()
       cchar* Reply;
 
       if(GetHP() << 1 > GetMaxHP())
-        Reply = Last ? "barks happily" : "wags its tail happily";
+        Reply = Last ? "barks happily" : "wags its tail";
       else
         Reply = Last ? "yelps" : "howls";
 
       ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), Reply);
       Last = !Last;
     }
+    else if(!RAND_N(100))
+      ADD_MESSAGE("%s scoffs at you: \"Can't you understand I can't speak?\"", CHAR_NAME(DEFINITE));
     else
-      character::BeTalkedTo();
+      ADD_MESSAGE("%s snarls at you.", CHAR_NAME(DEFINITE));
+    return;
   }
-  else if(RAND_N(5) && GetPos().IsAdjacent(PLAYER->GetPos()))
-    ADD_MESSAGE("\"Can't you understand I can't speak?\"");
-  else
-    ADD_MESSAGE("\"Meow.\"");
+
+  character::BeTalkedTo();
 }
 
 void dog::CreateCorpse(lsquare* Square)

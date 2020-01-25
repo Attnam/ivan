@@ -6583,7 +6583,7 @@ snake
 
   Config RED_SNAKE;
   {
-    Adjective = "carmine";
+    Adjective = "garnet";
     SkinColor = rgb16(130, 0, 0);
     Frequency = 2000;
   }
@@ -9337,6 +9337,7 @@ siren
     SkinColor = rgb16(153, 204, 255);
     HairColor = rgb16(51, 51, 255);
     TorsoMainColor = rgb16(153, 204, 255);
+    ClassStates = SWIMMING;
   }
 
   Config RED_SIREN;
@@ -9344,6 +9345,7 @@ siren
     SkinColor = rgb16(255, 51, 51);
     HairColor = rgb16(255, 255, 255);
     TorsoMainColor = rgb16(255, 51, 51);
+    ClassStates = REGENERATION;
   }
 
   Config PINK_SIREN;
@@ -9351,6 +9353,7 @@ siren
     SkinColor = rgb16(240, 200, 201);
     HairColor = rgb16(255, 51, 153);
     TorsoMainColor = rgb16(240, 200, 201);
+    ClassStates = DETECTING;
   }
 
   Config HISPANIC_SIREN;
@@ -9375,12 +9378,13 @@ siren
     IsUnique = true;
     CanBeCloned = false;
     IsPolymorphable = false;
-    TamingDifficulty = 40;
+    TamingDifficulty = NO_TAMING;
+    ClassStates = HASTE|FEARLESS;
     DefaultName = "Elianise";
     NameSingular = "elven ambassador";
     PostFix = "of the Dark Forest";
     Cloak = NYMPH_HAIR cloak { Enchantment = 4; }
-    /* RightWielded = charmlyre; */
+    RightWielded = charmlyre;
     FriendlyReplies =
     {
       7,
