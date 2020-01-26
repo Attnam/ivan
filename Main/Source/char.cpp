@@ -12609,7 +12609,7 @@ truth character::ForgetRandomThing()
       return false;
 
     int RandomGod = RAND_N(Known.size());
-    Known.at(RAND_N(Known.size()))->SetIsKnown(false);
+    Known.at(RandomGod)->SetIsKnown(false);
     ADD_MESSAGE("You forget how to pray to %s.",
                 Known.at(RandomGod)->GetName());
     return true;
@@ -12677,7 +12677,7 @@ truth character::ReceiveSirenSong(character* Siren)
     ChangeTeam(Siren->GetTeam());
 
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s seems to be totally brainwashed by %s's melodies.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
     else
       ADD_MESSAGE("You hear a beautiful song.");
 
@@ -12700,10 +12700,7 @@ truth character::ReceiveSirenSong(character* Siren)
         ADD_MESSAGE("You hear a beautiful song.");
 
       if(Siren->GetConfig() == AMBASSADOR_SIREN)
-      {
         Siren->TeleportRandomly(true);
-        ADD_MESSAGE("%s disappears!", Siren->CHAR_NAME(DEFINITE));
-      }
     }
     else
     {
@@ -13192,15 +13189,14 @@ int character::GetAdjustedStaminaCost(int BaseCost, int Attribute)
 
 truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
 {
+  if(!IsPlayer())
+    return RAND_2; // Plain 50% chance for monsters.
+
   double perception_check;
   if(Shopkeeper)
-  {
     perception_check = 100 - (1000 / (10 + Shopkeeper->GetAttribute(PERCEPTION)));
-  }
   else
-  {
     perception_check = 0;
-  }
 
   double base_chance = 100 - (100000 / (2000 + game::GetGod(CLEPTIA)->GetRelation()));
   double size_mod = std::pow(0.99999, ((ToSteal->GetWeight() * ToSteal->GetSize()) / GetAttribute(ARM_STRENGTH)));
@@ -13220,7 +13216,7 @@ truth character::IsInBadCondition() const
     bodypart* BodyPart = GetBodyPart(c);
     if(BodyPart && BodyPartIsVital(c) &&
       ((BodyPart->GetHP() * 3 < BodyPart->GetMaxHP()) ||
-       (BodyPart->GetHP() == 1) && (BodyPart->GetMaxHP() > 1)))
+      ((BodyPart->GetHP() == 1) && (BodyPart->GetMaxHP() > 1))))
       return true;
   }
 

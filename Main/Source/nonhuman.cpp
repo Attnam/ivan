@@ -2956,6 +2956,9 @@ void fusanga::GetAICommand()
   {
     int NumberOfMushrooms = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s radiates strange magic.", CHAR_NAME(DEFINITE));
+
     for(int i = 0; i < NumberOfMushrooms; i++)
     {
       character* NewShroom;
@@ -2971,8 +2974,6 @@ void fusanga::GetAICommand()
       NewShroom->SetTeam(GetTeam());
       NewShroom->PutTo(GetLevel()->GetRandomSquare(NewShroom));
 
-      if(CanBeSeenByPlayer())
-        ADD_MESSAGE("%s radiates strange magic.", CHAR_NAME(DEFINITE));
       if(NewShroom->CanBeSeenByPlayer())
         ADD_MESSAGE("%s sprouts from the ground.", NewShroom->CHAR_NAME(INDEFINITE));
     }

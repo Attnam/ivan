@@ -4002,6 +4002,7 @@ solid
     AttachedGod = INFUSCOR;
     HardenedMaterial = BRIM_STONE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config BRIM_STONE;
@@ -4015,6 +4016,7 @@ solid
     AttachedGod = INFUSCOR;
     SoftenedMaterial = SULFUR;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   /* Clays */

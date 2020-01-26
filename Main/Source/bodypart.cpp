@@ -2652,8 +2652,8 @@ double arm::GetTypeDamage(ccharacter* Enemy) const
     else if(HasSadistWeapon() && Enemy->IsMasochist())
       return Damage * 0.75;
   }
-  else
-    return Damage;
+
+  return Damage;
 }
 
 void largetorso::Draw(blitdata& BlitData) const
