@@ -4697,7 +4697,7 @@ ring
   Config RING_OF_SPEED;
   {
     Possibility = 0; /* Artifact held by One-eyed Sam the black marketeer. */
-    PostFix = "of great speed";
+    PostFix = "of ludicrous speed";
     MainMaterialConfig == QUICK_SILVER;
     Price = 2500;
     AttachedGod = CLEPTIA;

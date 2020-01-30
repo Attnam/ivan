@@ -812,19 +812,6 @@ leg::~leg()
   delete GetBoot();
 }
 
-truth corpse::IsDestroyable(ccharacter* Char) const
-{
-  /*for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-  {
-    bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-    if(BodyPart && !BodyPart->IsDestroyable(Char))
-      return false;
-  }*/
-
-  return true;
-}
-
 long corpse::GetTruePrice() const
 {
   long Price = 0;

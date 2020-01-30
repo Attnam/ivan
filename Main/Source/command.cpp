@@ -357,7 +357,7 @@ truth commandsystem::Open(character* Char)
           Key = 'i';
         else
           Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
-                                             "[press a direction key, space or i]"));
+                                             "[press a direction key, space or 'i']"));
 
         if(Key == 'i')
         {
@@ -391,7 +391,7 @@ truth commandsystem::Open(character* Char)
 
       if(OpenableItems)
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
-                                           "[press a direction key, space or i]"));
+                                           "[press a direction key, space or 'i']"));
       else
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
                                            "[press a direction key or space]"));
@@ -464,7 +464,7 @@ truth commandsystem::Close(character* Char)
         return SquareWithThingToClose->Close(Char);
       else
       {
-        int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+        int Dir = game::DirectionQuestion(CONST_S("What do you wish to close? [press a direction key]"), false);
 
         if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
           return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
@@ -472,7 +472,7 @@ truth commandsystem::Close(character* Char)
     }
     else
     {
-      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close? [press a direction key]"), false);
 
       if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
         return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
@@ -947,11 +947,18 @@ truth commandsystem::ShowKeyLayout(character*)
   festring Buffer;
 
   // Movement keys
+  // TODO: Better way to handle F1 help text. Needs to be assigned only to the first
+  // line because this is non-selectable list, but unfortunately has to be assigned
+  // immediately after setting the first line through SetLastEntryHelp()
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
    {
      List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("4 6        or use arrow keys and"), LIGHT_GRAY);
      List.AddEntry(CONST_S("123        Home, End, PgUp, PgDn"), LIGHT_GRAY);
      break;
@@ -959,6 +966,10 @@ truth commandsystem::ShowKeyLayout(character*)
    case DIR_ALT: // Alternative
    {
      List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("u o"), LIGHT_GRAY);
      List.AddEntry(CONST_S("jkl"), LIGHT_GRAY);
      break;
@@ -966,6 +977,10 @@ truth commandsystem::ShowKeyLayout(character*)
    case DIR_HACK: // Nethack
    {
      List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("h l"), LIGHT_GRAY);
      List.AddEntry(CONST_S("bjn"), LIGHT_GRAY);
      break;
@@ -979,10 +994,6 @@ truth commandsystem::ShowKeyLayout(character*)
       Buffer << GetCommand(c)->GetKey();
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
-      List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                       << "commands are only accessible in wizard mode. Note that the game "
-                                       << "distinguishes between lowercase and uppercase letters, so if you are "
-                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
     }
 
   if(game::WizardModeIsActive())
@@ -1029,9 +1040,9 @@ truth commandsystem::Look(character* Char)
   }
 
   if(!game::IsInWilderness())
-    Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
+    Msg = CONST_S("Direction keys move cursor; examine (i)tems or a (c)haracter; ESC exits.");
   else
-    Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
+    Msg = CONST_S("Direction keys move cursor; examine a (c)haracter; ESC exits.");
 
   v2 pos = Char->GetPosSafely();
   if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
@@ -1056,7 +1067,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   while(!(Key == KEY_ESC || Key == ' '))
   {
     if(!bEngraveMapNote)
-      Key = game::AskForKeyPress(CONST_S("Do you want to (.) engrave a square, or inscribe an (i)tem? [. or i, ESC exits]"));
+      Key = game::AskForKeyPress(CONST_S("Do you want to (.) engrave a square, or inscribe an (i)tem? ['.' or 'i', ESC exits]"));
 
     int iLSqrLimit=80;
     if(bEngraveMapNote)
@@ -1605,7 +1616,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
         if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. (F1 help)"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
+          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. [press F1 for help]"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
             KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
 
         if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
