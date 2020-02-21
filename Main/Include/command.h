@@ -43,6 +43,7 @@ class commandsystem
   static truth IsForRegionListItem(int iIndex);
   static truth IsForRegionSilhouette(int iIndex);
   static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
+  static void PlayerDiedWeaponSkills();
   static void SaveSwapWeapons(outputfile& SaveFile);
   static void LoadSwapWeapons(inputfile& SaveFile);
   static void ClearSwapWeapons();

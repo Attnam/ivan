@@ -3237,10 +3237,10 @@ void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Mod
         if(Master->IsPlayer())
         {
           cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
-          ADD_MESSAGE("Caustic %s dissolves your %s.", MName.CStr(), TName);
+          ADD_MESSAGE("Acidous %s dissolves your %s.", MName.CStr(), TName);
         }
         else
-          ADD_MESSAGE("Caustic %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
+          ADD_MESSAGE("Acidous %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
       }
 
       Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);

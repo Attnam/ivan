@@ -306,8 +306,8 @@ scrollbaroption ivanconfig::Volume(       "Volume",
                                           &VolumeChanger,
                                           &VolumeHandler);
 cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
-                                          "Select MIDI output device",
-                                          "",
+                                          "Use MIDI soundtrack",
+                                          "Select an output device for the game music, or disable soundtrack.",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
@@ -334,7 +334,7 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects",
-                                          "Use sound effects and game music.",
+                                          "Use sound effects for combat, explosions and more.",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "Show game turn on message log",
@@ -559,7 +559,7 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   else
   {
      audio::ChangeMIDIOutputDevice(0);
-     Entry << CONST_S("No output device");
+     Entry << CONST_S("no");
   }
 }
 
@@ -1098,7 +1098,6 @@ void ivanconfig::Initialize()
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
-  configsystem::AddOption(fsCategory,&Volume);
 
   std::vector<std::string> DeviceNames;
   int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
@@ -1110,6 +1109,7 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(fsCategory,&MIDIOutputDevice);
+  configsystem::AddOption(fsCategory,&Volume);
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);

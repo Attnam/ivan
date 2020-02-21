@@ -296,7 +296,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorph Locked",
-    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL|DUR_PERMANENT)),
     &character::PrintBeginPolymorphLockMessage,
     &character::PrintEndPolymorphLockMessage,
     0,
@@ -326,12 +326,12 @@ statedata StateData[STATES] =
     0
   }, {
     "Teleport Locked",
-    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL|DUR_PERMANENT)),
     &character::PrintBeginTeleportLockMessage,
     &character::PrintEndTeleportLockMessage,
     0,
     0,
-    &character::TeleportLockHandler,
+    0,
     0,
     0
   }, {
@@ -7485,16 +7485,6 @@ void character::PrintEndTeleportLockMessage() const
     ADD_MESSAGE("Your mind soars far and wide.");
 }
 
-void character::TeleportLockHandler()
-{
-  if (StateIsActivated(TELEPORT_LOCK))
-  {
-    EditTemporaryStateCounter(TELEPORT_LOCK, 1);
-    if (GetTemporaryStateCounter(TELEPORT_LOCK) < 1000)
-      EditTemporaryStateCounter(TELEPORT_LOCK, 1);
-  }
-}
-
 void character::DisplayStethoscopeInfo(character*) const
 {
   game::RegionListItemEnable(false);
@@ -9369,13 +9359,13 @@ void character::ShowAdventureInfoAlt() const
 #ifdef WIZARD
     int Answer =
      game::KeyQuestion(
-       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook, (x) cheat look or [ESC]/(n)othing?"),
-         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'x','X', 'N','n', KEY_ESC); //default answer 'z' is ignored
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (s)tats, (l)ook around or (n)othing?"), // ESC implicit
+         'z', 13, 'i','I', 'm','M', 'k','K', 's', 'S', 'l','L', 'x','X', 'n','N', KEY_ESC); //default answer 'z' is ignored
 #else
     int Answer =
      game::KeyQuestion(
-       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
-         'z', 11, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (s)tats, (l)ook around or (n)othing?"), // ESC implicit
+         'z', 11, 'i','I', 'm','M', 'k','K', 's', 'S', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
 #endif
 
     if(Answer == 'i' || Answer == 'I'){
@@ -9391,7 +9381,10 @@ void character::ShowAdventureInfoAlt() const
     }else if(Answer == 'l' || Answer == 'L'){
       commandsystem::PlayerDiedLookMode();
 #endif
-    }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
+}else if(Answer == 's' || Answer == 'S'){
+  DisplayStethoscopeInfo(NULL);
+  commandsystem::PlayerDiedWeaponSkills();
+}else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
       return;
     }
   }

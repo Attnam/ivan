@@ -1504,7 +1504,7 @@ truth coffin::Open(character* Opener)
   truth Success = olterraincontainer::Open(Opener);
   if(Success)
   {
-    ADD_MESSAGE("You feel a horrible cruse spreading.");
+    ADD_MESSAGE("You feel a horrible curse spreading.");
     game::DoEvilDeed(25);
     /* TODO: This function awaits repair.
     for(int c = 0; c < RAND_N(10); ++c)

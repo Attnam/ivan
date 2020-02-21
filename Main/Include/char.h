@@ -753,7 +753,6 @@ class character : public entity, public id
   void PrintEndDiseaseImmunityMessage() const;
   void PrintBeginTeleportLockMessage() const;
   void PrintEndTeleportLockMessage() const;
-  void TeleportLockHandler();
   virtual void DisplayStethoscopeInfo(character*) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;

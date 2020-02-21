@@ -319,16 +319,18 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 
 /* ConsumeTypes */
 
-#define CT_FRUIT 1
-#define CT_MEAT 2
-#define CT_METAL 4
-#define CT_MINERAL 8
-#define CT_LIQUID 16
-#define CT_BONE 32
-#define CT_PROCESSED 64
-#define CT_MISC_ORGANIC 128
-#define CT_PLASTIC 256
-#define CT_GAS 512
+#define CT_FRUIT (1 << 0)
+#define CT_MEAT (1 << 1)
+#define CT_METAL (1 << 2)
+#define CT_MINERAL (1 << 3)
+#define CT_LIQUID (1 << 4)
+#define CT_BONE (1 << 5)
+#define CT_PROCESSED (1 << 6)
+#define CT_MISC_PLANT (1 << 7)
+#define CT_MISC_ANIMAL (1 << 8)
+#define CT_PLASTIC (1 << 9)
+#define CT_GAS (1 << 10)
+#define CT_MAGIC (1 << 11)
 
 /* Possible square positions for item. The first four are used for items
    on walls */

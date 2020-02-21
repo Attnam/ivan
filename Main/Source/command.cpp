@@ -2391,3 +2391,8 @@ truth commandsystem::IssueCommand(character* Char)
 
   return game::CommandQuestion();
 }
+
+void commandsystem::PlayerDiedWeaponSkills()
+{
+  commandsystem::ShowWeaponSkills(PLAYER);
+}

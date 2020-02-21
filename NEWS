@@ -69,6 +69,7 @@ Fixes:
 * Fix AI not using equipped zappable items.
 * Make taming/possessing more powerful creatures scale correctly.
 * Fix a bug where boots were not correctly considered for kicking effects.
+* Fix teleport lock from non-equipment sources never timing out.
 * Assorted minor fixes and balancing.
 
 Aslona:

@@ -2302,6 +2302,7 @@ frog
     "@Dd jumps up and down in an enlightened trance.",
     "@Dd goes \"Ribbit! Ribbit!\" full of transcendent delight.";
   }
+  DeathMessage = "@Dd croaks and is no more.";
   NameSingular = "frog";
   IsAbstract = true;
   AttackStyle = USE_HEAD;
@@ -2340,7 +2341,6 @@ frog
     ScienceTalkWisdomModifier = 5;
     ScienceTalkIntelligenceRequirement = 10;
     ScienceTalkWisdomRequirement = 5;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -2371,7 +2371,6 @@ frog
     ScienceTalkWisdomModifier = 10;
     ScienceTalkIntelligenceRequirement = 15;
     ScienceTalkWisdomRequirement = 10;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -2404,7 +2403,6 @@ frog
     ScienceTalkWisdomModifier = 25;
     ScienceTalkIntelligenceRequirement = 20;
     ScienceTalkWisdomRequirement = 15;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -3344,6 +3342,7 @@ wolf /* canine-> */
   ClassStates = INFRA_VISION;
   FleshMaterial = WOLF_FLESH;
   AttachedGod = SILVA;
+  DeathMessage = "@Dd howls one last time and dies.";
 
   Config DIRE;
   {
@@ -3629,7 +3628,7 @@ ass
   AutomaticallySeen = true;
   WillCarryItems = true;
   BloodMaterial = GLOWING_BLOOD;
-  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 communist /* Ivan */
@@ -3870,6 +3869,7 @@ bear
   DeathMessage = "@Dd groans terribly and falls dead to the ground.";
   AttachedGod = SILVA;
   IsAbstract = true;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE|CT_MISC_PLANT|CT_MISC_ANIMAL;
 
   Config PANDA_BEAR;
   {
@@ -3882,6 +3882,7 @@ bear
     TorsoBitmapPos = 192, 16;
     DeathMessage = "@Dd groans terribly and falls dead to the ground. You feel really bad for endangering this species.";
     Frequency = 100;
+    ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT;
   }
 
   Config BLACK_BEAR;
@@ -4766,7 +4767,7 @@ zombie
   NameSingular = "zombie";
   CanBeGenerated = true;
   Sex = UNDEFINED;
-  ConsumeFlags = CT_MEAT;
+  ConsumeFlags = CT_MEAT|CT_LIQUID|CT_BONE;
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
   /* HostileReplies overridden */
@@ -5201,6 +5202,7 @@ bat
     "@Dd chirps.",
     "@Dd squeaks.";
   }
+  DeathMessage = "@Dd chirps one last time and dies.";
   TotalSize = 20;
   SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
@@ -5243,6 +5245,7 @@ nerfbat /* bat-> */
   Adjective = "nurphe";
   IgnoreDanger = true;
   AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
+  AttackWisdomLimit = 12;
 }
 
 fruitbat /* bat-> */
@@ -6307,12 +6310,13 @@ unicorn
     "@Dd whinnies.",
     "@Dd whickers.";
   }
+  DeathMessage = "@Dd neighs one last time and dies.";
   TotalVolume = 100000;
   TorsoBitmapPos = 544, 0;
   TotalSize = 200;
   NameSingular = "unicorn";
   AttackStyle = USE_LEGS|USE_HEAD;
-  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
   BaseKickStrength = 700;
   BaseBiteStrength = 350;
   CanBeGenerated = true;
@@ -6536,7 +6540,7 @@ buffalo
   AttachedGod = SILVA;
   Frequency = 2500;
   IsEnormous = true;
-  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 snake
@@ -6562,6 +6566,7 @@ snake
     "@Dd rattles!";
   }
   FriendlyReplies == "@Dd hisses in a friendly manner.";
+  DeathMessage = "@Dd hisses one last time and dies.";
   TotalSize = 250;
   NameSingular = "snake";
   AttackStyle = USE_HEAD;
@@ -6971,7 +6976,7 @@ cossack
       "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"";
     }
     HostileReplies == "@Dd screams obscenities.";
-    DeathMessage = "@Dd falls shouting: \"For Aslona!";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!\"";
     AttachedGod = SEGES;
   }
 
@@ -7007,7 +7012,7 @@ cossack
       "\"We all believe Harvan will lead us to victory. But we can't let it go to his head, right? Heh heh.\"";
     }
     HostileReplies == "@Dd screams obscenities.";
-    DeathMessage = "@Dd falls shouting: \"For Aslona!";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!\"";
     AttachedGod = SEGES;
     Inventory == Random { Category = WAND; Times = 0:2; }
   }
@@ -8014,7 +8019,7 @@ twoheadedmoose
   CanKick = true;
   DangerModifier = 50;
   IsEnormous = true;
-  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_ORGANIC|CT_PROCESSED;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 magpie
@@ -8802,6 +8807,7 @@ blinkdog
   AttachedGod = SOPHOS;
   DangerModifier = 50;
   FleshMaterial = BLINK_DOG_FLESH;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE|CT_MAGIC;
 }
 
 veterankamikazedwarf
@@ -9283,6 +9289,7 @@ siren
     "\"Hello, sailor!\"";
     "\"I'm singing in the rain... Oh wait...\"";
   }
+  DeathMessage = "@Dd stops singing once and for all.";
 
   /* if somebody really wants to J_Kahvi has provided
      detailed discussion of nipple and pubic hair

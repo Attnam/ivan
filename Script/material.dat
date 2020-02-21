@@ -611,7 +611,7 @@ solid
   Config LINEN_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 150;
     Color = rgb16(255, 236, 139);
     NameStem = "linen cloth";
@@ -628,7 +628,7 @@ solid
   Config HEMP_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 150;
     Color = rgb16(80, 80, 176);
     NameStem = "hemp cloth";
@@ -645,7 +645,7 @@ solid
   Config WOOL_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 250;
     Color = rgb16(250, 240, 230);
     NameStem = "wool cloth";
@@ -662,7 +662,7 @@ solid
   Config FELT;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 250;
     Color = rgb16(111, 74, 37);
     NameStem = "felt";
@@ -678,7 +678,7 @@ solid
   Config FABRIC;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 200;
     Color = rgb16(176, 0, 0);
     NameStem = "expensive fabric";
@@ -696,7 +696,7 @@ solid
   Config ELF_CLOTH;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 300;
     Color = rgb16(39, 119, 20);
     NameStem = "elven cloth";
@@ -714,7 +714,7 @@ solid
   Config NYMPH_HAIR;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(100, 100, 200);
     NameStem = "nymph hair";
@@ -731,7 +731,7 @@ solid
   Config OMMEL_HAIR;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 400;
     Color = rgb16(160, 0, 0);
     NameStem = "ommel hair";
@@ -750,7 +750,7 @@ solid
   Config TROLL_WOOL;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(233, 216, 180);
     NameStem = "troll wool";
@@ -768,7 +768,7 @@ solid
   Config ANGEL_HAIR;
   {
     StrengthValue = 140;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(200, 200, 0);
     NameStem = "angel hair";
@@ -788,7 +788,7 @@ solid
   Config SPIDER_SILK;
   {
     StrengthValue = 180;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(160, 160, 160);
     NameStem = "spider silk";
@@ -807,7 +807,7 @@ solid
   Config GOSSAMER;
   {
     StrengthValue = 220;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 200;
     Color = rgb16(191, 62, 255);
     NameStem = "gossamer";
@@ -826,7 +826,7 @@ solid
   Config SPIRIT_CLOTH;
   {
     StrengthValue = 260;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 50;
     Color = rgb16(154, 50, 205);
     Emitation = rgb24(100, 100, 160);
@@ -847,7 +847,7 @@ solid
   Config HUMAN_SKIN;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 600;
     Color = rgb16(255, 193, 193);
     NameStem = "human skin";
@@ -863,7 +863,7 @@ solid
   Config WOLF_SKIN;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1500;
     Color = rgb16(168, 147, 125);
     NameStem = "wolf pelt";
@@ -880,7 +880,7 @@ solid
   Config BEAR_SKIN;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(247, 247, 247);
     NameStem = "polar bear fur";
@@ -897,7 +897,7 @@ solid
   Config SNAKE_SKIN;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(143, 188, 143);
     NameStem = "snake skin";
@@ -914,7 +914,7 @@ solid
   Config CROCODILE_SKIN;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(110, 139, 61);
     NameStem = "crocodile skin";
@@ -933,7 +933,7 @@ solid
   Config BASILISK_SKIN;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1000;
     Color = rgb16(0, 205, 102);
     NameStem = "basilisk skin";
@@ -952,7 +952,7 @@ solid
   Config NAGA_SKIN;
   {
     StrengthValue = 90;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(127, 255, 0);
     NameStem = "naga scale";
@@ -971,7 +971,7 @@ solid
   Config WYVERN_HIDE;
   {
     StrengthValue = 120;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1500;
     Color = rgb16(84, 139, 84);
     NameStem = "wyvern hide";
@@ -990,7 +990,7 @@ solid
   Config HYDRA_HIDE;
   {
     StrengthValue = 140;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(78, 238, 148);
     NameStem = "hydra hide";
@@ -1009,7 +1009,7 @@ solid
   Config LEATHER;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(111, 64, 37);
     NameStem = "leather";
@@ -1026,7 +1026,7 @@ solid
   Config BLACK_LEATHER;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(40, 40, 40);
     NameStem = "black leather";
@@ -1043,7 +1043,7 @@ solid
   Config HARDENED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 50, 30);
     NameStem = "hardened leather";
@@ -1060,7 +1060,7 @@ solid
   Config BOILED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(80, 50, 30);
     NameStem = "boiled leather";
@@ -1077,7 +1077,7 @@ solid
   Config QUILTED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 70, 30);
     NameStem = "quilted leather";
@@ -1094,7 +1094,7 @@ solid
   Config STUDDED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 50, 0);
     NameStem = "studded leather";
@@ -1111,7 +1111,7 @@ solid
   Config TROLL_HIDE;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(128, 100, 32);
     NameStem = "troll hide";
@@ -1128,7 +1128,7 @@ solid
   Config IMP_HIDE;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(100, 0, 0);
     NameStem = "imp hide";
@@ -1145,7 +1145,7 @@ solid
   Config DRAGON_HIDE;
   {
     StrengthValue = 160;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2500;
     Color = rgb16(160, 60, 32);
     NameStem = "dragon hide";
@@ -1164,7 +1164,7 @@ solid
   Config OUROBOROS_HIDE;
   {
     StrengthValue = 240;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 3000;
     Color = rgb16(205, 102, 0);
     NameStem = "ouroboros hide";
@@ -1185,7 +1185,7 @@ solid
   Config OSTRICH_FEATHER;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(185, 176, 161);
     NameStem = "ostrich feather";
@@ -1202,7 +1202,7 @@ solid
   Config HARPY_FEATHER;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 400;
     Color = rgb16(210, 180, 140);
     NameStem = "harpy feather";
@@ -1219,7 +1219,7 @@ solid
   Config GRIFFON_FEATHER;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(218, 165, 32);
     NameStem = "griffon feather";
@@ -1236,7 +1236,7 @@ solid
   Config PHOENIX_FEATHER;
   {
     StrengthValue = 80;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 200;
     Color = rgb16(220, 220, 0);
     NameStem = "phoenix feather";
@@ -1255,7 +1255,7 @@ solid
   Config STYMPHALIAN_FEATHER;
   {
     StrengthValue = 150;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(150, 100, 50);
     NameStem = "stymphalian feather";
@@ -1274,7 +1274,7 @@ solid
   Config GOLDEN_EAGLE_FEATHER;
   {
     StrengthValue = 300;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 100;
     Color = rgb16(80, 80, 176);
     NameStem = "golden eagle feather";
@@ -1293,7 +1293,7 @@ solid
   Config SEA_WEED;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(46, 139, 87);
     NameStem = "seaweed";
@@ -1309,7 +1309,7 @@ solid
   Config FISH_SCALE;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 600;
     Color = rgb16(193, 205, 193);
     NameStem = "fish scale";
@@ -1325,7 +1325,7 @@ solid
   Config MERMAID_HAIR;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 200;
     Color = rgb16(0, 191, 255);
     NameStem = "mermaid hair";
@@ -1342,7 +1342,7 @@ solid
   Config SELKIE_SKIN;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1000;
     Color = rgb16(119, 136, 153);
     NameStem = "selkie skin";
@@ -1359,7 +1359,7 @@ solid
   Config SEA_SERPENT_SCALE;
   {
     StrengthValue = 115;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1100;
     Color = rgb16(0, 0, 139);
     NameStem = "sea serpent scale";
@@ -1378,7 +1378,7 @@ solid
   Config KRAKEN_HIDE;
   {
     StrengthValue = 150;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1300;
     Color = rgb16(205, 155, 155);
     NameStem = "kraken hide";
@@ -1397,7 +1397,7 @@ solid
   Config LEVIATHAN_HIDE;
   {
     StrengthValue = 175;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1700;
     Color = rgb16(112, 128, 144);
     NameStem = "leviathan hide";
@@ -1417,7 +1417,7 @@ solid
   Config DREAM_CLOTH;
   {
     StrengthValue = 55;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(255, 20, 147);
     NameStem = "dream cloth";
@@ -1436,7 +1436,7 @@ solid
   Config RAINBOW_CLOTH;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(135, 206, 250);
     NameStem = "rainbow cloth";
@@ -1455,7 +1455,7 @@ solid
   Config SHADOW_CLOTH;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(138, 121, 93);
     NameStem = "shadow cloth";
@@ -2153,7 +2153,7 @@ solid
   Config GRASS;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(32, 110, 32);
     NameStem = "grass";
@@ -2171,7 +2171,7 @@ solid
   Config DARK_GRASS;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(75, 100, 75);
     NameStem = "grass";
@@ -2189,7 +2189,7 @@ solid
   Config MYCELIUM;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(47, 79, 79);
     NameStem = "mycelium";
@@ -2206,7 +2206,7 @@ solid
   Config LEAF;
   {
     StrengthValue = 3;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(0, 160, 0);
     NameStem = "leaf";
@@ -2222,7 +2222,7 @@ solid
   Config PALM_LEAF;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(0, 160, 0);
     NameStem = "palm leaf";
@@ -2238,7 +2238,7 @@ solid
   Config WITCH_BARK;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(128, 128, 0);
     NameStem = "witchbark";
@@ -2255,7 +2255,7 @@ solid
   Config DARK_PETAL;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 300;
     Color = rgb16(0, 60, 0);
     NameStem = "dark petal";
@@ -2273,7 +2273,7 @@ solid
   Config STEEL_LEAF;
   {
     StrengthValue = 90;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 900;
     Color = rgb16(143, 188, 143);
     NameStem = "steeleaf";
@@ -2291,7 +2291,7 @@ solid
   Config CHLOROPHYTE;
   {
     StrengthValue = 125;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 1200;
     Color = rgb16(118, 169, 18);
     NameStem = "chlorophyte";
@@ -2311,7 +2311,7 @@ solid
   Config PAPYRUS;
   {
     StrengthValue = 3;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "papyrus";
@@ -2328,7 +2328,7 @@ solid
   Config PARCHMENT;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "parchment";
@@ -2345,7 +2345,7 @@ solid
   Config VELLUM;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "vellum";
@@ -2362,7 +2362,7 @@ solid
   Config PAPER_BOARD;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 900;
     Color = rgb16(222, 222, 222);
     NameStem = "paperboard";
@@ -2381,7 +2381,7 @@ solid
   Config FUNGI_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 200;
     Color = rgb16(133, 99, 99);
     NameStem = "fungiwood";
@@ -2398,7 +2398,7 @@ solid
   Config SPRUCE_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 450;
     Color = rgb16(0, 89, 96);
     NameStem = "spruce wood";
@@ -2416,7 +2416,7 @@ solid
   Config SYCAMORE_WOOD;
   {
     StrengthValue = 32;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(102, 51, 0);
     NameStem = "sycamore wood";
@@ -2434,7 +2434,7 @@ solid
   Config ELM_WOOD;
   {
     StrengthValue = 40;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(130, 82, 1);
     NameStem = "elm wood";
@@ -2453,7 +2453,7 @@ solid
   Config ASH_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 850;
     Color = rgb16(159, 150, 136);
     NameStem = "ash wood";
@@ -2472,7 +2472,7 @@ solid
   Config CYPRESS_WOOD;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(166, 128, 100);
     NameStem = "cypress wood";
@@ -2492,7 +2492,7 @@ solid
   Config HOLLY_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 750;
     Color = rgb16(163, 105, 95);
     NameStem = "holly wood";
@@ -2510,7 +2510,7 @@ solid
   Config YEW_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(147, 95, 86);
     NameStem = "yew wood";
@@ -2528,7 +2528,7 @@ solid
   Config BEECH_WOOD;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 650;
     Color = rgb16(87, 51, 32);
     NameStem = "beech wood";
@@ -2546,7 +2546,7 @@ solid
   Config BAMBOO_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 400;
     Color = rgb16(83, 226, 86);
     NameStem = "bamboo";
@@ -2564,7 +2564,7 @@ solid
   Config MAHOGANY_WOOD;
   {
     StrengthValue = 55;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 850;
     Color = rgb16(103, 10, 10);
     NameStem = "mahogany wood";
@@ -2585,7 +2585,7 @@ solid
   Config BALSA_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 250;
     Color = rgb16(160, 108, 50);
     NameStem = "balsa wood";
@@ -2603,7 +2603,7 @@ solid
   Config PINE_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 400;
     Color = rgb16(208, 108, 42);
     NameStem = "pine wood";
@@ -2621,7 +2621,7 @@ solid
   Config FIR_WOOD;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(140, 96, 48);
     NameStem = "fir wood";
@@ -2639,7 +2639,7 @@ solid
   Config BIRCH_WOOD;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(130, 70, 32);
     NameStem = "birch wood";
@@ -2657,7 +2657,7 @@ solid
   Config OAK_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(124, 50, 16);
     NameStem = "oak wood";
@@ -2676,7 +2676,7 @@ solid
   Config TEAK_WOOD;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 750;
     Color = rgb16(80, 40, 30);
     NameStem = "teak wood";
@@ -2695,7 +2695,7 @@ solid
   Config EBONY_WOOD;
   {
     StrengthValue = 65;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 1000;
     Color = rgb16(48, 48, 48);
     NameStem = "ebony wood";
@@ -2717,7 +2717,7 @@ solid
   Config KAURI_WOOD;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(140, 92, 42);
     NameStem = "kauri wood";
@@ -2738,7 +2738,7 @@ solid
   Config RATA_WOOD;
   {
     StrengthValue = 155;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(166, 44, 24);
     NameStem = "rata wood";
@@ -2759,7 +2759,7 @@ solid
   Config SIDGURE_WOOD; /* magical mango world-tree wood */
   {
     StrengthValue = 225;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(198, 110, 46);
     NameStem = "sidgure wood";
@@ -2935,7 +2935,7 @@ solid
   Config WAX;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 900;
     Color = rgb16(240, 238, 176);
     NameStem = "wax";
@@ -3306,7 +3306,7 @@ solid
   Config AMBER;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MINERAL; /* Or CT_MISC_ORGANIC? */
+    ConsumeType = CT_MINERAL; /* Or CT_MISC_ANIMAL? */
     Density = 1100;
     Color = rgb16(255, 191, 0);
     NameStem = "amber";
@@ -4195,7 +4195,7 @@ organic /* Substances that spoil but are not flesh. */
   Config PLANT_FIBER;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(111, 64, 37);
     NameStem = "plant fiber";
@@ -4211,7 +4211,7 @@ organic /* Substances that spoil but are not flesh. */
   Config MUTANT_PLANT_FIBER;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(111, 64, 37);
     NameStem = "mutant plant fiber";
@@ -4228,7 +4228,7 @@ organic /* Substances that spoil but are not flesh. */
   Config BANANA_PEEL;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(224, 224, 0);
     NameStem = "banana peel";
@@ -4667,7 +4667,7 @@ organic /* Substances that spoil but are not flesh. */
   Config RESIDUUM;
   {
     StrengthValue = 250;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 10000;
     Color = rgb16(107, 255, 251);
     NameStem = "residuum";
