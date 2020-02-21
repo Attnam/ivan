@@ -1349,6 +1349,26 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
+  // Blood for the god of blood!
+  if(!RAND_4 || Relation == 1000)
+  {
+    beamdata Beam
+      (
+        0,
+        CONST_S("drowned by the blood of ") + GetName(),
+        YOURSELF,
+        0
+      );
+    lsquare* Square = PLAYER->GetLSquareUnder();
+    Square->LiquidRain(Beam, BLOOD);
+
+    if(PLAYER->HasHead())
+      ADD_MESSAGE("A torrential rain of blood descends on your head.");
+    else
+      ADD_MESSAGE("A rain of blood drizzles all around you.");
+  }
+
+  // A little bit of healing, but only usable when panicked.
   if(PLAYER->StateIsActivated(PANIC))
   {
     ADD_MESSAGE("\"Fight, you lousy coward!\"", GetName());

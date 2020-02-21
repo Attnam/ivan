@@ -1859,6 +1859,9 @@ void humanoid::SwitchToCraft(recipedata rpd)
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
+  if(IsPlayer())
+    ADD_MESSAGE("You start digging.");
+    
   dig* Dig = dig::Spawn(this);
 
   if(GetRightArm())
