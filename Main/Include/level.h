@@ -97,7 +97,7 @@ struct explosion
 struct beamdata
 {
   beamdata(character*, cfestring&, int, ulong);
-  beamdata(character*, cfestring&, v2, col16, int, int, int, ulong);
+  beamdata(character*, cfestring&, v2, col16, int, int, int, ulong, item*);
   character* Owner;
   festring DeathMsg;
   v2 StartPos;
@@ -106,6 +106,7 @@ struct beamdata
   int Direction;
   int Range;
   ulong SpecialParameters;
+  item* Wand;
 };
 
 inline beamdata::beamdata
@@ -130,7 +131,8 @@ inline beamdata::beamdata
   int BeamEffect,
   int Direction,
   int Range,
-  ulong SpecialParameters
+  ulong SpecialParameters,
+  item* Wand
 ) :
 Owner(Owner),
 DeathMsg(DeathMsg),
@@ -139,7 +141,8 @@ BeamColor(BeamColor),
 BeamEffect(BeamEffect),
 Direction(Direction),
 Range(Range),
-SpecialParameters(SpecialParameters)
+SpecialParameters(SpecialParameters),
+Wand(Wand)
 { }
 
 struct maze

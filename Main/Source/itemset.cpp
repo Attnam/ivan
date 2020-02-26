@@ -26,6 +26,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 
 #include <algorithm>
 #include <ctime>
+#include <cmath>
 
 #include "char.h"
 #include "message.h"

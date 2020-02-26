@@ -77,6 +77,26 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(aslonacastle, owterrain)
+{
+};
+
+OWTERRAIN(rebelcamp, owterrain)
+{
+};
+
+OWTERRAIN(goblinfort, owterrain)
+{
+};
+
+OWTERRAIN(fungalcave, owterrain)
+{
+};
+
+OWTERRAIN(pyramid, owterrain)
+{
+};
+
 OWTERRAIN(blackmarket, owterrain)
 {
 };

@@ -505,6 +505,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(GhostCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
+  ADD_MEMBER(IsUndead);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
   ADD_MEMBER(AllowedDungeons);
 }
@@ -594,6 +595,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(WieldedBitmapPos);
   ADD_MEMBER(IsQuestItem);
   ADD_MEMBER(IsGoodWithPlants);
+  ADD_MEMBER(IsGoodWithUndead);
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(CanBePickedUp);
   ADD_MEMBER(CoverPercentile);
@@ -620,6 +622,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BreakMsg);
   ADD_MEMBER(IsSadistWeapon);
   ADD_MEMBER(AllowedDungeons);
+  ADD_MEMBER(DescriptiveInfo);
 }
 
 template <class type>
@@ -743,6 +746,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(StepInWisdomLimit);
   ADD_MEMBER(RustModifier);
   ADD_MEMBER(Acidicity);
+  ADD_MEMBER(Hotness);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
   ADD_MEMBER(SoftenedMaterial);

@@ -22,7 +22,7 @@ if(UNIX)
 
   if(BUILD_MAC_APP)
     install(DIRECTORY Graphics Script Music Sound DESTINATION "ivan")
-    install(FILES AUTHORS COPYING INSTALL LICENSING NEWS README README.md DESTINATION "docs")
+    install(FILES COPYING INSTALL LICENSING NEWS MANUAL README.md DESTINATION "docs")
     add_definitions(-DMAC_APP)
   else()
     install(DIRECTORY Graphics Script Music Sound DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
@@ -40,7 +40,7 @@ if(UNIX)
 
 elseif(WIN32)
   install(DIRECTORY Graphics Script Music Sound DESTINATION "ivan")
-  install(FILES AUTHORS COPYING INSTALL LICENSING NEWS README README.md DESTINATION "ivan")
+  install(FILES COPYING INSTALL LICENSING NEWS MANUAL README.md DESTINATION "ivan")
   add_definitions(-DWIN32)
 
   if(MINGW)

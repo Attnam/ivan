@@ -178,8 +178,16 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
 
       std::stringstream ss(fsInOut.CStr());
       std::string line;
-      while(std::getline(ss,line,'\n')) //TODO limit also by line length based on screen width
-        afsHelpDialog.push_back(festring(line.c_str()));
+      std::vector<festring> afs;
+      festring fsLine;
+      while(std::getline(ss,line,'\n')){ //      if(fsInOut.Find('\n',0)!=festring::NPos){ 
+        afs.clear();
+        fsLine=line.c_str();
+        festring::SplitString(fsLine,afs,80,0); //TODO limit line length based on fontWidth vs screenWidth 
+        for(int i=0;i<afs.size();i++){
+          afsHelpDialog.push_back(festring(afs[i]));
+        }
+      }
 
       graphics::BlitDBToScreen();DBGLN;
 

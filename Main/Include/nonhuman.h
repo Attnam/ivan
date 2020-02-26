@@ -81,6 +81,7 @@ CHARACTER(nonhumanoid, character)
 CHARACTER(frog, nonhumanoid)
 {
  public:
+  virtual truth IsFrog() const { return true; }
   virtual truth MoveRandomly() { return MoveRandomlyInRoom(); }
 };
 
@@ -106,8 +107,16 @@ CHARACTER(mommo, nonhumanoid)
   virtual void GetAICommand();
 };
 
+CHARACTER(feline, nonhumanoid)
+{
+ public:
+  virtual truth Catches(item*);
+};
+
 CHARACTER(canine, nonhumanoid)
 {
+ public:
+  virtual truth Catches(item*);
 };
 
 CHARACTER(wolf, canine)
@@ -119,7 +128,6 @@ CHARACTER(wolf, canine)
 CHARACTER(dog, canine)
 {
  public:
-  virtual truth Catches(item*);
   virtual void BeTalkedTo();
  protected:
   virtual void CreateCorpse(lsquare*);
@@ -137,7 +145,7 @@ CHARACTER(spider, nonhumanoid)
   virtual bodypart* MakeBodyPart(int) const;
 };
 
-CHARACTER(jackal, nonhumanoid)
+CHARACTER(jackal, canine)
 {
 };
 
@@ -158,6 +166,8 @@ CHARACTER(dolphin, nonhumanoid)
 
 CHARACTER(bat, nonhumanoid)
 {
+ public:
+  virtual void GetAICommand();
  protected:
   virtual bodypart* MakeBodyPart(int) const;
 };
@@ -168,7 +178,20 @@ CHARACTER(vampirebat, bat)
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
-CHARACTER(largecat, nonhumanoid)
+CHARACTER(nerfbat, bat)
+{
+ protected:
+  virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
+};
+
+CHARACTER(fruitbat, bat)
+{
+ public:
+  virtual void GetAICommand();
+  virtual truth IsRetreating() const;
+};
+
+CHARACTER(largecat, feline)
 {
  public:
   largecat() : Lives(7) { }
@@ -196,7 +219,7 @@ CHARACTER(unicorn, nonhumanoid)
   void MonsterTeleport(cchar*);
 };
 
-CHARACTER(lion, nonhumanoid)
+CHARACTER(lion, feline)
 {
 };
 
@@ -317,6 +340,8 @@ CHARACTER(skunk, nonhumanoid)
 
 CHARACTER(invisiblestalker, nonhumanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(largecreature, nonhumanoid)
@@ -342,7 +367,9 @@ CHARACTER(largecreature, nonhumanoid)
   virtual int GetUnconsciousSymbolSquareIndex() const { return 2; }
   virtual truth PlaceIsIllegal(v2, v2) const;
   truth PartCanMoveOn(const lsquare*) const;
+  virtual truth IsLarge() const { return true; }
  protected:
+  virtual truth CanVomit() const { return false; }
   virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
   virtual void LoadSquaresUnder();
@@ -359,6 +386,7 @@ CHARACTER(elpuri, largecreature)
   virtual truth SpecialEnemySightedReaction(character*);
   virtual truth MustBeRemovedFromBone() const;
   virtual truth TryToRiseFromTheDead();
+  virtual truth IsFrog() const { return true; }
  protected:
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
@@ -444,13 +472,19 @@ CHARACTER(mysticfrog, frog)
 CHARACTER(lobhse, largecreature)
 {
  public:
+  lobhse() : TurnsExisted(0) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void Bite(character*, v2, int, truth = false);
   virtual truth IsSpider() const { return true; }
+  virtual void FinalProcessForBone();
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
   virtual bodypart* MakeBodyPart(int) const;
+  long TurnsExisted;
 };
 
 CHARACTER(mindworm, nonhumanoid)
@@ -460,4 +494,19 @@ CHARACTER(mindworm, nonhumanoid)
   virtual truth TryToImplantLarvae(character*);
   virtual void PsiAttack(character*);
 };
+
+CHARACTER(fusanga, largecreature)
+{
+ public:
+  virtual col16 GetSkinColor() const;
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void SpecialTurnHandler() { UpdatePictures(); }
+  virtual truth IsMushroom() const { return true; }
+ protected:
+  virtual truth AllowExperience() const { return false; }
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+  virtual truth MustBeRemovedFromBone() const;
+};
+
 #endif

@@ -1,0 +1,439 @@
+'
+                       ██▓▄▄▄█████▓▓█████  ██▀███
+                      ▓██▒▓  ██▒ ▓▒▓█   ▀ ▓██ ▒ ██▒
+                      ▒██▒▒ ▓██░ ▒░▒███   ▓██ ░▄█ ▒
+                      ░██░░ ▓██▓ ░ ▒▓█  ▄ ▒██▀▀█▄
+                      ░██░  ▒██▒ ░ ░▒████▒░██▓ ▒██▒
+                      ░▓    ▒ ░░   ░░ ▒░ ░░ ▒▓ ░▒▓░
+                       ▒ ░    ░     ░ ░  ░  ░▒ ░ ▒░
+                       ▒ ░  ░         ░     ░░   ░
+                       ░              ░  ░  ░
+
+    ██▒   █▓▓█████  ██░ ██ ▓█████  ███▄ ▄███▓▓█████  ███▄    █   ██████
+   ▓██░   █▒▓█   ▀ ▓██░ ██▒▓█   ▀ ▓██▒▀█▀ ██▒▓█   ▀  ██ ▀█   █ ▒██    ▒
+    ▓██  █▒░▒███   ▒██▀▀██░▒███   ▓██    ▓██░▒███   ▓██  ▀█ ██▒░ ▓██▄
+     ▒██ █░░▒▓█  ▄ ░▓█ ░██ ▒▓█  ▄ ▒██    ▒██ ▒▓█  ▄ ▓██▒  ▐▌██▒  ▒   ██▒
+      ▒▀█░  ░▒████▒░▓█▒░██▓░▒████▒▒██▒   ░██▒░▒████▒▒██░   ▓██░▒██████▒▒
+      ░ ▐░  ░░ ▒░ ░ ▒ ░░▒░▒░░ ▒░ ░░ ▒░   ░  ░░░ ▒░ ░░ ▒░   ▒ ▒ ▒ ▒▓▒ ▒ ░
+      ░ ░░   ░ ░  ░ ▒ ░▒░ ░ ░ ░  ░░  ░      ░ ░ ░  ░░ ░░   ░ ▒░░ ░▒  ░ ░
+        ░░     ░    ░  ░░ ░   ░   ░      ░      ░      ░   ░ ░ ░  ░  ░
+         ░     ░  ░ ░  ░  ░   ░  ░       ░      ░  ░         ░       ░
+        ░
+
+     ▄▄▄      ▓█████▄     ███▄    █ ▓█████  ▄████▄  ▓█████  ███▄ ▄███▓
+    ▒████▄    ▒██▀ ██▌    ██ ▀█   █ ▓█   ▀ ▒██▀ ▀█  ▓█   ▀ ▓██▒▀█▀ ██▒
+    ▒██  ▀█▄  ░██   █▌   ▓██  ▀█ ██▒▒███   ▒▓█    ▄ ▒███   ▓██    ▓██░
+    ░██▄▄▄▄██ ░▓█▄   ▌   ▓██▒  ▐▌██▒▒▓█  ▄ ▒▓▓▄ ▄██▒▒▓█  ▄ ▒██    ▒██
+     ▓█   ▓██▒░▒████▓    ▒██░   ▓██░░▒████▒▒ ▓███▀ ░░▒████▒▒██▒   ░██▒
+     ▒▒   ▓▒█░ ▒▒▓  ▒    ░ ▒░   ▒ ▒ ░░ ▒░ ░░ ░▒ ▒  ░░░ ▒░ ░░ ▒░   ░  ░
+      ▒   ▒▒ ░ ░ ▒  ▒    ░ ░░   ░ ▒░ ░ ░  ░  ░  ▒    ░ ░  ░░  ░      ░
+      ░   ▒    ░ ░  ░       ░   ░ ░    ░   ░           ░   ░      ░
+          ░  ░   ░                ░    ░  ░░ ░         ░  ░       ░
+               ░                           ░
+
+Fellow adventurer, turn back while you can! For here begins the roguelike
+Iter Vehemens ad Necem, a Violent Road to Death. If you choose to travel along
+it, you will dive into countless exciting adventures to gain items of great
+magic, attain powerful equipment made of mysterious materials, bathe in
+the blessings of mighty gods and recruit loyal allies of various shapes and
+sizes. Unfortunately, along the way you will also often be dangerously injured,
+poisoned, catch numerous diseases, lose several limbs and transform into
+manifold different kinds of pitiful creatures in the darkest depths of hostile
+dungeons. And, at the end of the road, you are bound to perish in a most
+gruesome and painful way.
+
+Don't say we didn't warn you.
+
+
+
+Iter Vehemens ad Necem (IVAN) is a graphical roguelike game which currently
+runs on Windows, DOS, Linux, and OS X. It features advanced body part and
+material handling, multi-colored lighting and, above all, deep game play.
+
+This is a fan continuation of IVAN by members of the Cathedral of Attnam forum.
+Join us on Attnam.com for news, updates, discussion of planned features,
+or anything else regarding the game.
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% Table of Contents %
+%%%%%%%%%%%%%%%%%%%%%
+
+1. FAQ
+
+2. Random Name Generator Patterns
+
+3. Credits
+
+
+Use Ctrl+F to find the appropriate heading by searching for: "% HeadingName"
+
+
+
+%%%%%%%
+% FAQ %
+%%%%%%%
+
+Q: There are hundreds of roguelikes out there and they are all the same.
+   Why would I want to try out IVAN?
+A: Listing might be the most convenient way to answer this question:
+
+   Body part system:
+     Remember Monty Python and the Holy Grail? All body parts in IVAN have
+     separate armors and separate hit points. After you've found your first
+     good weapons, you will be able to reduce some monsters to helpless
+     torsos by mutilating them frivolously! The game rewards brutality by
+     showing its results graphically. Brutality can also be applied to you,
+     though, so it's best to have a remedy available in case of a lost limb.
+
+   Material and equipment system:
+     Unlike any other roguelike, there is a certain definition in IVAN for,
+     say, a longsword. However, the material of a longsword can be anything
+     at all. If you have been lucky enough to get a scroll of change material,
+     you will be able to turn your 'iron longsword' to a 'mithril longsword',
+     but also to a 'bread longsword' if you, for some reason, wanted to eat
+     a bread that is shaped like a longsword (I'm not saying it's a good idea,
+     but it's not impossible). Another example: you might also want to turn your
+     'leather boots of strength +1' to much stronger 'phoenix feather boots
+     of strength +1'. Besides allowing you to upgrade your equipment in
+     a fresh way, the material system makes it possible for the game engine to
+     easily generate lots of different objects in the dungeons for your use and
+     amusement.
+
+   Graphic effects:
+     IVAN has advanced graphics more than comparable to many modern roguelikes.
+     "But graphics are useless in a roguelike!" you might exclaim. You would
+     probably reconsider such an opinion when following a wounded and panicked
+     monster according to its trail of blood. Besides that, you'll face
+     dynamically generated and animated flames, smoke, auras, weather effects,
+     explosions, sources of colored light, water and much more.
+
+   General gameplay:
+     IVAN brings gameplay issues further than most roguelikes, while still
+     remaining easy to play. Besides the bodypart system and the material and
+     equipment system there are such curiosities as 2x2 monsters, wandering
+     mercenaries and slaves which you can recruit/buy, smiths and tailors who
+     can repair broken equipment, and monsters which are able to reproduce.
+     The game also features many different deities ranging from chaotic to
+     neutral and lawful. Each god has its own specialities and altars, and
+     you will be able to affect your own alignment by the way you play.
+     And on the top of all that, IVAN's storyline will keep you pumped with
+     its unique events!
+
+Q: Help, I have no idea what am I doing!
+A: IVAN works pretty much in the same way as other roguelikes. The player
+   controls a character, which moves and attacks from the direction keys.
+   All other commands can be found by pressing '?' key in the game.
+
+Q: What does "Iter Vehemens ad Necem" mean?
+A: It's Latin and means "Violent Road to Death". For most players, that's
+   a perfect description of the typical game.
+
+Q: Why is my save deleted when I die?
+A: Like the creators of other roguelikes, we think this makes gaming much
+   more exciting, since you must take full responsibility of all your
+   actions. You have only one chance to live or die. Also, we agree that
+   "normal" save-loading is OK for games which remain the same in all gaming
+   sessions, since in these you are not meant to really die as replaying
+   everything in exactly the same way would be annoying. But the same does
+   not apply to games with a multitude of random areas and events like IVAN;
+   the whole fun is trying again and again in everchanging environment,
+   encountering stranger and more complex situations and becoming better
+   and better in tackling them.
+
+Q: Can't you reconsider your opinion about saveloading?
+A: No. There are the two things we swore never to do when starting the
+   project: discarding permadeath and making IVAN a 3D action game. Don't
+   bother us about this question anymore.
+
+Q: Not even as an "easy" game option? Pretty please?
+A: Shut up.
+
+Q: What do these strange markings like Dex, Agi mean in the right sidebar?
+A:
+   AStr = Arm Strength   Increases melee and thrown damage.
+   LStr = Leg Strength   Increases carrying capacity and kicking damage.
+   Dex  = Dexterity      Increases attack speed and accuracy.
+   Agi  = Agility        Increases movement speed and dodging ability.
+   End  = Endurance      Increases maximum health points and healing rate.
+   Per  = Perception     Increases sight range, accuracy and dodging ability.
+   Int  = Intelligence   Increases your ability to read and use magic scrolls.
+   Will = Willpower      Increases resistance to mental effects and magic.
+   Wis  = Wisdom         Increases your ability to deal with the gods.
+   Cha  = Charisma       Increases your ability to haggle and make deals.
+   Mana = Mana           Increases your ability to use magical items.
+
+   If there are two numbers visible after these the first is the attribute
+   after bonuses and penalties obtained from your equipment or some other
+   temporary reason. The second number shows the base attribute without the
+   said modifications. If there is no net-bonus or net-minus, only the base
+   attribute is shown.
+
+   If the first number is green, then it has increased a short while ago and
+   if it is red it has decreased.
+
+   Ht   = Height         Your height in centimetres, or length of body for
+                         animals. Increases your health points, but also your
+                         enemies' chance to hit you.
+   Wt   = Weight         Your weight in kilograms.
+
+   HP   = Health Points  The sum of your body parts' health.
+
+   Gold                  The amount of money you have.
+   Day & Time            The in-game time you have spent in this playthrough.
+   Turn                  The number of turns (commands which take time) you have
+                         used in this playthrough.
+
+Q: I had 20 HP, but I still died. Is this a bug?
+A: No, this is not a bug. You will die (at least in human form) if the HP of
+   your groin, torso or head reach 0.
+
+Q: Why do I always miss spiders with my trusty iron mace?
+A: Mace is far too big for hitting small creatures. Do you really kill
+   spiders with such enormous objects in real life?
+
+Q: What do marks like L+, C-- mean in the pray menu?
+A: All gods have a property that tells whether they are supporters of Law
+   or Chaos or if they are Neutral. This is however too general description
+   so the pluses and minuses tell of slight differences between the gods.
+   Eg. Valpurus has the letters L++ this means that Valpurus is extremely
+   lawful, when Sophos has the letters L-, which in turn means that Sophos
+   is lawful, but still leaning a bit towards neutrality and even chaos.
+
+Q: I just lost a leg. How do I get it back?
+A: Priests, gods, certain potions and magical items may help you.
+
+Q: How is score calculated?
+A: First the kills of the player and his pets are merged to a single
+   list. Then for every monster type, the score is calculated with the
+   following formula:
+
+     Score = sqrt(a) * b * b
+
+   sqrt(a) = Square root of the number of killed monsters of this type.
+   b = Sum of the attributes of a typical monster of this type.
+
+   The individual scores of the monster types are then added together.
+
+   You also get a high bonus for winning, depending on your victory type
+   (the score is multiplied by 2, 3, 4 or 5).
+
+Q: Why does time pass so fast in the game?
+A: Who has said the a day is as long in IVAN's world as on Earth?
+
+Q: How can I compile IVAN source code?
+A: See INSTALL.
+
+Q: I am a Linux / OS X user. Why can't I access the wizard (cheat) mode?
+A: The wizard mode functions aren't compiled by default. Change
+   the environment variable CXXFLAGS to -DWIZARD and recompile.
+
+Q: I am a DOS user. When I try to run IVAN, I get the message "Load error:
+   no DPMI - Get csdpmi\b.zip".
+A: The DOS binary is compiled using DJGPP, so you need a DPMI server to run
+   it. One should have been provided along with IVAN, but if that's not the
+   case, download it from www.delorie.com.
+
+Q: I've found a bug. What should I do?
+A: Write a small description on how the bug occurred and if possible even
+   how we could replicate it, and report this bug on our GitHub page or the
+   forum:
+
+     https://github.com/Attnam/ivan
+     http://attnam.com
+
+   You should mention your full name so we can credit you , if you are the first
+   to discover this bug.
+
+Q: I've got a great idea to make IVAN better! What should I do?
+A: Post the idea on our forum (see above). You will be credited if we
+   implement the feature, it's non-trivial, and you're first to suggest it.
+
+Q: I'm a programmer willing to help you. What should I do?
+A: Join us on GitHub!
+
+   Contributions are welcome. Fork the repository and then once you have
+   made and tested your changes, submit a pull request. It will be reviewed
+   by one of the admins as soon as possible.
+
+   See .customs.emacs file for the official Ivan C++ Programming Style.
+
+Q: Will there be a Russian/Chinese/Esperato/etc. version?
+A: No, unless you make it.
+
+Q: How do I buy and sell stuff in shops?
+A: Pick items up to buy them, and drop what you want to sell.
+
+Q: What do the weapon and armor stats mean?
+A: Let's see:
+
+     an adamantine short sword covered in blood +6 [1000g, DAM 9-16,
+     extremely accurate, almost unbreakable, skill 16/0]
+
+   This short sword is made of adamantine, covered in blood, enchanted up to +6,
+   weights 1000 grams, has the given damage range, is very accurate and very
+   durable, and your skill with the weapon category is 16, while your
+   accustomization with this specific sword is 0.
+
+     a phoenix feather armor of great health +7 [1000g, AV 13]
+
+   This armor of great health is made of phoenix feather material,
+   enchanted up to +7, weights 1000 grams, and has Armor Value (AV) of 13.
+
+Q: Help, I still have no idea what am I doing!
+A: In this case, you might like our wiki:
+
+     https://attnam.com/wiki/Main_Page
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Random Name Generator Patterns %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Set a pattern for the random fantasy name generator. When you start
+a game with no pre-set name, the generator will create a name based
+on this pattern. The letters s, v, V, c, B, C, i, m, M, D, and d
+represent different types of random replacements. Everything else
+is produced literally.
+
+  s - generic syllable
+  v - vowel
+  c - consonant
+  B - consonant or consonant combination suitable for beginning a word
+  C - consonant or consonant combination suitable anywhere in a word
+  i - insult
+  m - mushy name
+  M - mushy name ending
+  D - consonant suited for a stupid person's name
+  d - syllable suited for a stupid person's name (begins with a vowel)
+
+All characters between parenthesis () are produced literally. For example,
+the pattern "s(dim)", produces a random generic syllable followed by "dim".
+
+Characters between angle brackets <> produce patterns from the table above.
+Imagine the entire pattern is wrapped in one of these.
+
+In both types of groupings, a vertical bar | denotes a random choice.
+Empty groups are allowed. For example, "(foo|bar)" produces either
+"foo" or "bar". The pattern "<c|v|>" produces a constant, vowel, or
+nothing at all.
+
+An exclamation point ! means to capitalize the component that follows
+it. For example, "!(foo)" will produce "Foo" and "v!s" will produce a
+lowercase vowel followed by a capitalized syllable, like "eRod".
+
+A tilde ~ means to reverse the letters of the component that follows
+it. For example, "~(foo)" will produce "oof". To reverse an entire
+template, wrap it in brackets. For example, to reverse "sV'i" as
+a whole use "~<sV'i>". The template "~sV'i" will only reverse
+the initial syllable.
+
+
+%%%%%%%%%%%
+% Credits %
+%%%%%%%%%%%
+
+OldDev
+======
+
+Master Programmer
+(implemented most of the bugs)
+------------------------------
+
+Timo Kiviluoto
+
+Apprentice Programmer, PR Guy, Porter
+(made some of the bugs, but they're
+all really features, or OS's fault)
+-------------------------------------
+
+Heikki Sairanen
+
+Head Graphics Designer
+(drew all the heads)
+----------------------
+
+Tuukka Virtaperko
+
+
+NewDev
+======
+
+See on GitHub:
+
+  https://github.com/Attnam/ivan/graphs/contributors
+
+
+Other
+=====
+
+Additional coders
+-----------------
+
+In order of importance:
+
+Ilari Kaartinen
+Alex Mooney
+Mark Schreiber
+Miles Bader
+Perttu Luukko
+Niko Kosonen
+
+Additional graphics
+-------------------
+
+In order of importance:
+
+Frederic "blob" Tarabout
+Vesa Peltonen
+Corey Martin
+
+Level design
+------------
+
+Corey Martin
+
+Authors of RNG
+--------------
+
+Takuji Nishimura
+Makoto Matsumoto
+
+Author of the font
+------------------
+
+Shawn Hargreaves's Allegro
+ - A game programming library
+
+Idea providers and bug hunters
+------------------------------
+
+In alphabetical order:
+
+Atte Aholainen
+Chris Allcock
+Brian Angeletti
+Laurent Birtz
+Christian Harms
+Matt Howe
+Ilari Kaartinen
+Wojciech Kaczmarek
+Henri Kiviluoto
+Thomas Klausner
+Niko Kosonen
+Perttu Luukko
+Corey Martin
+Janne Miettinen
+Kari Pahula
+Vesa Peltonen
+Philip Rawson
+Will Riley
+Renne Sairanen
+Adam Joseph Robert Walker Smith III
+Norvell Spearman
+Konstantin Stupnik
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FREE SOFTWARE FOREVER!

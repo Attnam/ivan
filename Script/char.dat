@@ -32,6 +32,7 @@ character
   DefaultEndurance = 0;
   DefaultPerception = 0;
   DefaultIntelligence = 0;
+  DefaultWillPower = 10;
   DefaultWisdom = 0;
   DefaultCharisma = 0;
   DefaultMana = 0;
@@ -275,7 +276,6 @@ character
   RunDescriptionLineTwo = "";
   VomittingIsUnhealthy = true;
   AllowPlayerToChangeEquipment = true;
-  DefaultWillPower = 10;
   TamingDifficulty = 0;
   IsSadist = false;
   IsMasochist = false;
@@ -288,6 +288,7 @@ character
   GhostCopyMaterials = false;
   CanBeGeneratedOnlyInTheCatacombs = false;
   IsAlcoholic = false;
+  IsUndead = false;
   IsImmuneToWhipOfThievery = false;
   AllowedDungeons == ALL_DUNGEONS; /* example: AllowedDungeons = { 2, UNDER_WATER_TUNNEL, ELPURI_CAVE; } */
 }
@@ -337,6 +338,7 @@ playerkind
   DefaultEndurance = 10;
   DefaultPerception = 10;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -362,6 +364,7 @@ petrus
   DefaultEndurance = 40;
   DefaultPerception = 40;
   DefaultIntelligence = 40;
+  DefaultWillPower = 40;
   DefaultWisdom = 40;
   DefaultCharisma = 40;
   DefaultMana = 40;
@@ -398,6 +401,7 @@ petrus
   DefaultName = "Petrus";
   DeathMessage = "The high priest disappears in a bright light and only his left nut is left behind.";
   /* Replies overridden */
+  /* BloodMaterial specifically *not* BLUE_BLOOD, as Petrus is of humble parentage */
   AttachedGod = VALPURUS;
   BodyPartsDisappearWhenSevered = true;
   CanBeConfused = false;
@@ -419,6 +423,7 @@ farmer
   DefaultEndurance = 20;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -487,7 +492,7 @@ farmer
 
   Config CULTIST;
   {
-    CanBeGenerated = false;
+    CanBeGenerated = true;
     AttributeBonus = 10;
     NameSingular = "cultist";
     TorsoBitmapPos = 48, 352;
@@ -537,6 +542,7 @@ farmer
     }
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(CRUENTUS) { Chance = 10; }, wand(WAND_OF_NECROMANCY) { Chance = 10; } }
+    AllowedDungeons == XINROCH_TOMB;
   }
 
   Config CRAZED_FARMER;
@@ -560,6 +566,7 @@ farmer
     IsSadist = true;
     UndeadVersions = false;
     CanBeGenerated = true;
+    Frequency = 1000;
     ClassStates = CONFUSED;
     DeathMessage = "@Dd laughs and sobs and screams and dies.";
     HostileReplies =
@@ -582,6 +589,26 @@ farmer
     }
     Inventory == wand(WAND_OF_RESURRECTION);
   }
+
+  Config REBEL_CAMP;
+  {
+    NameSingular = "rebel";
+    FriendlyReplies =
+    {
+      10,
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"What?\"",
+      "\"These necromancer twins give me the creeps. Why do we even associate with such types?\"",
+      "@Dd boasts about @sp farmstead back home.";
+    }
+    ScienceTalkPossibility = 0;
+  }
 }
 
 guard
@@ -593,6 +620,7 @@ guard
   DefaultEndurance = 20;
   DefaultPerception = 25;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 10;
@@ -720,7 +748,7 @@ guard
 
   Config PATROL;
   {
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
+    Helmet = IRON helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
     Cloak = BEAR_SKIN cloak;
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
@@ -823,7 +851,7 @@ guard
   {
     AttributeBonus = 60;
     TotalVolume = 120000;
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
+    Helmet = ILLITHIUM helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
     Amulet = amulet(AMULET_OF_ESP);
     BodyArmor = ILLITHIUM bodyarmor(PLATE_MAIL) { Enchantment = 3; }
     Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_FIRE_RESISTANCE);
@@ -840,7 +868,7 @@ guard
     PanicLevel = 5;
     TamingDifficulty = NO_TAMING;
     IsUnique = true;
-    DefaultName = "Sir Haedlac Galladon VII";
+    DefaultName = "Sir Haedlac Galladon VII"; /* Galahad */
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
@@ -994,12 +1022,12 @@ guard
     ClothColor = rgb16(128, 128, 128);
     HeadBitmapPos = 96, 368;
     Helmet = 0;
-    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    BodyArmor = HEPATIZON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
     RightWielded = OCTIRON EMERALD meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
-    LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
-    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
-    RightBoot = BRASS boot { Enchantment = 2; }
-    DefaultName = "Sir Lancelyn";
+    LeftWielded = OCTIRON shield { Enchantment = 2; }
+    RightGauntlet = HEPATIZON gauntlet { Enchantment = 2; }
+    RightBoot = HEPATIZON boot { Enchantment = 2; }
+    DefaultName = "Sir Lancelyn"; /* Lancelot */
     NameSingular = "emissary";
     PostFix = "of Aslona";
     CWeaponSkillHits = { 2, 500, 500; }
@@ -1012,7 +1040,7 @@ guard
     CanBeCloned = false;
     IsPolymorphable = false;
     UndeadVersions = false;
-    TamingDifficulty = 25;
+    TamingDifficulty = NO_TAMING;
     AttachedGod = CRUENTUS;
     BloodMaterial = BLUE_BLOOD;
     FriendlyReplies =
@@ -1022,7 +1050,7 @@ guard
       "\"I've heard other emissaries were sent from Aslona even to goblin lands to negotiate assistance.\"",
       "\"After the old king was assassinated and the Rebellion started, Aslona lost much of its former power.\"",
       "\"I will see the Rebellion crushed and every last rebel executed for their crimes!\"",
-      "\"My king is young and inexperienced; his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
+      "\"Lord Regent is doing his best, but his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
       "\"Bandits are roving free through the forests of Aslona; you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
       "\"My father was a trusted general of the old king, and the first one to meet with the rebel army on a battlefield after the regicide. Alas, he was betrayed by his slave-soldiers and murdered along with all of his loyal knights.\"",
       "\"I see a representative of the orcish freeholds arrived. Don't trust him! Those orcish vultures would love to feast on the carcass of Aslona, but I won't let that happen.\"",
@@ -1038,6 +1066,117 @@ guard
       "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
     }
   }
+
+  Config CASTLE;
+  {
+    Helmet = DEEP_BRONZE helmet(FULL_HELMET);
+    BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(HALBERD);
+    Adjective = "castle";
+    KnownCWeaponSkills = { 2, POLE_ARMS, KICK; }
+    CWeaponSkillHits = { 2, 100, 100; }
+    RightSWeaponSkillHits = 10;
+    LeftSWeaponSkillHits = 10;
+    PanicLevel = 25;
+    ClothColor = rgb16(120, 80, 40);
+    FriendlyReplies =
+    {
+      22,
+      "@Dd says gravely: \"I think we're all in for some hard times.\"",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
+      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of prince Artorius as well.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"The roads near the Castle are safer now, thanks to Lord Regent. He's an example for us all.\"",
+      "\"Damn the rebel scum! We should hunt them down and hang them from the castle walls.\"",
+      "\"I've heard the orc are stirring now, too. We should have burned down the freeholds when we had a chance.\"",
+      "\"The guard duty here in the castle is usually a dull affair. Near the borders, though, things are a bit more challenging, and one can make a name for oneself.\"",
+      "\"Kings have been assassinated before, but this time... I don't know. It's different.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Can you believe that the bastard Black-cloak managed to sneak into the very king's rooms?!\"",
+      "\"If you've got to travel, by Seges, stay on the roads! The wilderness just isn't safe. We've had sightings of bandits, goblins and even undead!\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
+      "\"I understand that the treasury is empty, but begging for help in Attnam seems like a bad idea.\"",
+      "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
+    }
+  }
+
+  Config ROYAL;
+  {
+    AttributeBonus = 40;
+    Helmet = BRASS helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = BRASS OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = BRASS shield { Enchantment = 2; }
+    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
+    RightBoot = BRASS boot { Enchantment = 2; }
+    RightRing = ring(RING_OF_INFRA_VISION);
+    LeftRing = ring(RING_OF_POISON_RESISTANCE);
+    Adjective = "royal";
+    CWeaponSkillHits = { 2, 500, 500; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    PanicLevel = 10;
+    TamingDifficulty = 30;
+    TotalVolume = 80000;
+    ClothColor = rgb16(181, 166, 66);
+    FriendlyReplies =
+    {
+      10,
+      "@Dd says gravely: \"The king's death was a harsh lesson for all of us. We failed in our duty. It must not happen again.\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"Kings have been assassinated before, but this time... I don't know. It's different.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
+      "\"I understand that the treasury is empty, but begging for help in Attnam seems like a bad idea.\"",
+      "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
+    }
+  }
+
+  Config REBEL;
+  {
+    Helmet = DEEP_BRONZE helmet(FULL_HELMET);
+    BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = DEEP_BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD);
+    LeftWielded = DEEP_BRONZE shield;
+    Adjective = "rebel";
+    CWeaponSkillHits = { 2, 200, 200; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    PanicLevel = 5;
+    ClothColor = rgb16(120, 80, 40);
+    FriendlyReplies =
+    {
+      18,
+      "@Dd says gravely: \"I think we're all in for some hard times.\"",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free crown prince Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
+      "\"Everyone wants to know what really happened to the old king.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a king again.\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
+      "\"You hear about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"";
+    }
+  }
 }
 
 shopkeeper
@@ -1049,6 +1188,7 @@ shopkeeper
   DefaultEndurance = 20;
   DefaultPerception = 30;
   DefaultIntelligence = 25;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 30;
   DefaultMana = 10;
@@ -1141,7 +1281,7 @@ shopkeeper
       "@Dd sighs: \"I wonder why I have so few customers these days...\"",
       "\"The topmost reason why I work here is that the monsters devour tax collectors.\"",
       "\"Elpuri, eh? Folks say he hatched as a light frog in the Cathedral of Attnam. Yet his voracious appetite quickly set him apart. He ate and grew until his swollen bulk dwarfed even the largest of the giant dark frogs.\"",
-      "\"I've heard that Elpuri once was the favourite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
+      "\"I've heard that Elpuri once was the favorite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
       "\"After being renounced by Petrus, Elpuri fled the Cathedral and found refuge here in these caves, where he bides his time to build an army of dark frogs and strike back against the high priest.\"",
       "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster than they could flood and torment the world.\"",
       "\"The monsters don't really bother me, no. Not even they are stupid enough to want to be on the bad side of the Guild.\"",
@@ -1223,7 +1363,7 @@ shopkeeper
     LeftSWeaponSkillHits = 1000;
     Sex = FEMALE;
     FleshMaterial = ORC_FLESH;
-    /* BloodMaterial = BLACK_BLOOD; */ /* TODO: change once orcish blood is implemented */
+    BloodMaterial = BLACK_BLOOD;
     ClassStates = GAS_IMMUNITY|INFRA_VISION;
     HeadBitmapPos = 112, 240;
     TorsoBitmapPos = 32, 16;
@@ -1265,6 +1405,39 @@ shopkeeper
     }
     Inventory = { 2, holybook(MELLIS), DIAMOND EBONY_WOOD pickaxe { Enchantment = -1; } }
   }
+
+  Config REBEL_CAMP;
+  {
+    AttributeBonus = 50;
+    HeadBitmapPos = 96, 0;
+    TorsoBitmapPos = 48, 80;
+    ClothColor = rgb16(75, 83, 32);
+    Helmet = HEPATIZON helmet { Enchantment = 3; }
+    Cloak = NYMPH_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 3; }
+    BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 3; }
+    Belt = HEPATIZON belt(BELT_OF_REGENERATION) { Enchantment = 3; }
+    RightWielded = HEPATIZON darkaxe { Enchantment = 3; }
+    LeftWielded = HEPATIZON shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+    RightRing = ring(RING_OF_INFRA_VISION);
+    LeftRing = ring(RING_OF_POISON_RESISTANCE);
+    RightGauntlet = SELKIE_SKIN gauntlet { Enchantment = 3; }
+    RightBoot = SELKIE_SKIN boot { Enchantment = 3; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
+    CWeaponSkillHits = { 2, 1000, 1000; }
+    RightSWeaponSkillHits = 500;
+    LeftSWeaponSkillHits = 500;
+    DefaultName = "Gustaff";
+    NameSingular = "quartermaster";
+    FriendlyReplies =
+    {
+      4,
+      "@Dd sighs: \"Business is slow these days, with the civil war and stuff.\"",
+      "@Dd smiles: \"If you need money fast, I will buy your stuff. No problem.\"",
+      "\"Harvan is a sneaky one. Kind of makes you wonder what he's up to.\"",
+      "\"Lots of rats in this camp. Lots of children, too. Of course, I prefer the taste of rats.\"";
+    }
+    Inventory = { 2, holybook(MELLIS), HEPATIZON EBONY_WOOD pickaxe { Enchantment = 3; } }
+  }
 }
 
 priest
@@ -1301,6 +1474,7 @@ priest
     DefaultEndurance = 15;
     DefaultPerception = 24;
     DefaultIntelligence = 15;
+    DefaultWillPower = 20;
     DefaultWisdom = 25;
     DefaultCharisma = 20;
     DefaultMana = 20;
@@ -1363,6 +1537,7 @@ priest
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 20;
+    DefaultWillPower = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
     DefaultMana = 25;
@@ -1375,6 +1550,7 @@ priest
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     AttachedGod = SILVA;
+    BloodMaterial = PLANT_SAP;
     DefaultName = "Florea";
     NameSingular = "priestess";
     PostFix = "of Silva";
@@ -1408,6 +1584,7 @@ priest
     DefaultEndurance = 14;
     DefaultPerception = 24;
     DefaultIntelligence = 25;
+    DefaultWillPower = 25;
     DefaultWisdom = 25;
     DefaultCharisma = 20;
     DefaultMana = 25;
@@ -1421,6 +1598,7 @@ priest
     HairColor = rgb16(64, 0, 64);
     EyeColor = rgb16(128, 0, 64);
     AttachedGod = INFUSCOR;
+    BloodMaterial = MAGIC_LIQUID;
     DefaultName = "Praecantrix";
     NameSingular = "priestess";
     PostFix = "of Infuscor";
@@ -1462,6 +1640,7 @@ priest
     DefaultEndurance = 30;
     DefaultPerception = 35;
     DefaultIntelligence = 25;
+    DefaultWillPower = 35;
     DefaultWisdom = 37;
     DefaultCharisma = 55;
     DefaultMana = 30;
@@ -1552,6 +1731,8 @@ priest
       "tradition", "knightly orders", "heraldry", "quests", "genealogy";
     }
   }
+
+  /* Config SEGES: see aslonapriest */
 }
 
 oree
@@ -1563,6 +1744,7 @@ oree
   DefaultEndurance = 25;
   DefaultPerception = 30;
   DefaultIntelligence = 30;
+  DefaultWillPower = 40;
   DefaultWisdom = 20;
   DefaultCharisma = 3;
   DefaultMana = 30;
@@ -1632,6 +1814,7 @@ darkknight
   DefaultEndurance = 22;
   DefaultPerception = 25;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -1974,6 +2157,7 @@ ennerbeast
   DefaultEndurance = 20;
   DefaultPerception = 12;
   DefaultIntelligence = 1;
+  DefaultWillPower = 12;
   DefaultWisdom = 1;
   DefaultCharisma = 1;
   DefaultMana = 0;
@@ -2000,7 +2184,7 @@ ennerbeast
   PanicLevel = 75;
   FleshMaterial = ENNER_BEAST_FLESH;
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
-  Inventory = { 2, trinket(DEAD_FISH) { Times = 1:10; }, horn; }
+  Inventory = { 2, fish(DEAD_FISH) { Times = 1:10; }, horn; }
   IsUnique = true;
   HostileReplies =
   {
@@ -2040,6 +2224,7 @@ ennerchild
   DefaultEndurance = 14;
   DefaultPerception = 14;
   DefaultIntelligence = 1;
+  DefaultWillPower = 8;
   DefaultWisdom = 1;
   DefaultCharisma = 40;
   DefaultMana = 0;
@@ -2092,6 +2277,7 @@ ennerchild
     DefaultAgility = 15;
     DefaultEndurance = 15;
     DefaultPerception = 16;
+    DefaultWillPower = 14;
     Sex = FEMALE;
     NameSingular = "girl";
     FriendlyReplies =
@@ -2116,6 +2302,7 @@ frog
     "@Dd jumps up and down in an enlightened trance.",
     "@Dd goes \"Ribbit! Ribbit!\" full of transcendent delight.";
   }
+  DeathMessage = "@Dd croaks and is no more.";
   NameSingular = "frog";
   IsAbstract = true;
   AttackStyle = USE_HEAD;
@@ -2135,6 +2322,7 @@ frog
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 15;
+    DefaultWillPower = 15;
     DefaultWisdom = 20;
     DefaultCharisma = 5;
     DefaultMana = 20;
@@ -2153,7 +2341,6 @@ frog
     ScienceTalkWisdomModifier = 5;
     ScienceTalkIntelligenceRequirement = 10;
     ScienceTalkWisdomRequirement = 5;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -2164,6 +2351,7 @@ frog
     DefaultEndurance = 15;
     DefaultPerception = 30;
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     DefaultWisdom = 25;
     DefaultCharisma = 4;
     DefaultMana = 25;
@@ -2183,7 +2371,6 @@ frog
     ScienceTalkWisdomModifier = 10;
     ScienceTalkIntelligenceRequirement = 15;
     ScienceTalkWisdomRequirement = 10;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -2194,6 +2381,7 @@ frog
     DefaultEndurance = 20;
     DefaultPerception = 36;
     DefaultIntelligence = 25;
+    DefaultWillPower = 25;
     DefaultWisdom = 30;
     DefaultCharisma = 3;
     DefaultMana = 30;
@@ -2215,7 +2403,6 @@ frog
     ScienceTalkWisdomModifier = 25;
     ScienceTalkIntelligenceRequirement = 20;
     ScienceTalkWisdomRequirement = 15;
-    FriendlyReplies == "@Dd croaks happily.";
     IsCatacombCreature = true;
   }
 
@@ -2226,6 +2413,7 @@ frog
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 5;
+    DefaultWillPower = 20;
     DefaultWisdom = 30;
     DefaultCharisma = 15;
     DefaultMana = 20;
@@ -2251,6 +2439,7 @@ frog
     DefaultEndurance = 15;
     DefaultPerception = 36;
     DefaultIntelligence = 10;
+    DefaultWillPower = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 20;
     DefaultMana = 25;
@@ -2277,6 +2466,7 @@ frog
     DefaultEndurance = 20;
     DefaultPerception = 36;
     DefaultIntelligence = 15;
+    DefaultWillPower = 30;
     DefaultWisdom = 40;
     DefaultCharisma = 25;
     DefaultMana = 30;
@@ -2307,6 +2497,7 @@ billswill
   DefaultEndurance = 5;
   DefaultPerception = 27;
   DefaultIntelligence = 2;
+  DefaultWillPower = 20;
   DefaultWisdom = 2;
   DefaultCharisma = 5;
   DefaultMana = 10;
@@ -2418,6 +2609,7 @@ skeleton
   IsExtraFragile = true;
   CanChoke = false;
   IsCatacombCreature = true;
+  IsUndead = true;
   UndeadVersions = false;
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
@@ -2488,7 +2680,7 @@ skeleton
     }
     FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
     DeathMessage = "As @Dd crumples into a heap of bones, you hear an echoing whisper: \"We shall meet again...\"";
-    AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+    AllowedDungeons = { 7, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
   }
 }
 
@@ -2501,6 +2693,7 @@ goblin
   DefaultEndurance = 12;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 5;
@@ -2730,7 +2923,36 @@ goblin
     EnergyResistance = 30;
     TamingDifficulty = 20;
     UndeadVersions = false;
-    /* TODO: Special dialogue. */
+    /* Gus is just a bit odd. */
+    HostileReplies =
+    {
+      10,
+      "@Dd seems to be deep in thoughts.",
+      "\"Can a paladin kill baby orcs?\"",
+      "\"Must a paladin never stab a man in the back?\"",
+      "\"Must laws be upheld with no reason or logic?\"",
+      "\"Is saying you love someone always good?\"",
+      "\"Can a king like me be lawful?\"",
+      "\"Is it chaotic to refuse an order to kill an innocent man?\"",
+      "\"Can you be born evil? If so, are you compelled to do evil, regardless of its utility?\"",
+      "\"Is being nailed to things good?\"",
+      "\"Is everything not forbidden compulsory?\"";
+    }
+    FriendlyReplies =
+    {
+      10,
+      "@Dd seems to be deep in thoughts.",
+      "\"Can a paladin kill baby orcs?\"",
+      "\"Must a paladin never stab a man in the back?\"",
+      "\"Must laws be upheld with no reason or logic?\"",
+      "\"Is saying you love someone always good?\"",
+      "\"Can a king like me be lawful?\"",
+      "\"Is it chaotic to refuse an order to kill an innocent man?\"",
+      "\"Can you be born evil? If so, are you compelled to do evil, regardless of its utility?\"",
+      "\"Is being nailed to things good?\"",
+      "\"Is everything not forbidden compulsory?\"";
+    }
+    DeathMessage = "@Dd passed on, @pp ceased to be, @pp expired and went to meet @sp maker. @Pp is an ex-king!";
   }
 }
 
@@ -2797,6 +3019,7 @@ mommo
     DefaultAgility = 4;
     DefaultPerception = 9;
     DefaultIntelligence = 3;
+    DefaultWillPower = 3;
     DefaultWisdom = 3;
     DefaultCharisma = 4;
     TotalVolume = 150000;
@@ -2817,6 +3040,7 @@ mommo
     DefaultAgility = 2;
     DefaultPerception = 9;
     DefaultIntelligence = 2;
+    DefaultWillPower = 2;
     DefaultWisdom = 2;
     DefaultCharisma = 3;
     TotalVolume = 300000;
@@ -2831,6 +3055,48 @@ mommo
     FleshMaterial = BROWN_SLIME;
     VomitMaterial = BROWN_SLIME;
   }
+
+  Config  BLOAT;
+  {
+    DefaultArmStrength = 2;
+    DefaultAgility = 2;
+    DefaultPerception = 9;
+    DefaultIntelligence = 1;
+    DefaultWillPower = 1;
+    DefaultWisdom = 1;
+    DefaultCharisma = 2;
+    TotalVolume = 100000;
+    TorsoBitmapPos = 192, 0;
+    TotalSize = 50;
+    Adjective = "bloated";
+    Frequency = 1000;
+    CanHear = false;
+    BloodMaterial = VOMIT;
+    FleshMaterial = VOMIT;
+    VomitMaterial = VOMIT;
+  }
+
+  Config MAGMA;
+  {
+    DefaultArmStrength = 5;
+    DefaultAgility = 5;
+    DefaultPerception = 8;
+    DefaultIntelligence = 3;
+    DefaultWillPower = 3;
+    DefaultWisdom = 3;
+    DefaultCharisma = 5;
+    TotalVolume = 250000;
+    TorsoBitmapPos = 176, 0;
+    TotalSize = 100;
+    Adjective = "smouldering";
+    HPRequirementForGeneration = 150;
+    DayRequirementForGeneration = 15;
+    Frequency = 500;
+    BloodMaterial = LAVA;
+    FleshMaterial = LAVA;
+    VomitMaterial = LAVA;
+    FireResistance = 1000;
+  }
 }
 
 golem
@@ -2842,6 +3108,7 @@ golem
   DefaultEndurance = 0; /* has no effect */
   DefaultPerception = 12;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 5;
   DefaultMana = 5;
@@ -2899,7 +3166,7 @@ golem
   IsEnormous = true;
   CanChoke = false;
   UndeadVersions = false;
-  AllowedDungeons = { 2, XINROCH_TOMB, ELPURI_CAVE; }
+  AllowedDungeons = { 5, XINROCH_TOMB, ELPURI_CAVE, GOBLIN_FORT, PYRAMID, DARK_FOREST; }
 
   Config VALPURIUM;
   {
@@ -2945,6 +3212,86 @@ golem
     Adjective = "acidous blood";
     AttachedGod = CRUENTUS;
   }
+
+  /* Catacomb golems */
+  Config HUMAN_NAIL;
+  {
+    Adjective = "human nail";
+    IsCatacombCreature = true;
+    AttachedGod = SCABIES;
+  }
+
+  Config BONE;
+  {
+    Adjective = "bone";
+    IsCatacombCreature = true;
+    AttachedGod = INFUSCOR;
+  }
+
+  Config WRAITH_BONE;
+  {
+    Adjective = "wraith bone";
+    IsCatacombCreature = true;
+    AttachedGod = INFUSCOR;
+  }
+
+  Config HUMAN_SKIN;
+  {
+    Adjective = "human skin";
+    IsCatacombCreature = true;
+    AttachedGod = SCABIES;
+  }
+
+  Config PETRIFIED_DARK;
+  {
+    Adjective = "petrified darkness";
+    IsCatacombCreature = true;
+    AttachedGod = MORTIFER;
+  }
+
+  Config BLOOD;
+  {
+    Adjective = "blood";
+    IsCatacombCreature = true;
+    AttachedGod = CRUENTUS;
+  }
+
+  /* The following golems are only summoned by wizards. */
+
+  Config EVIL_WONDER_STAFF_VAPOUR;
+  {
+    CanBeGenerated = false;
+    Adjective = "mysterious red gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config MAGIC_VAPOUR;
+  {
+    CanBeGenerated = false;
+    Adjective = "raw vapourized magic";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config MUSTARD_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "mustard gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config SLEEPING_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "sleeping gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config TELEPORT_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "warp gas";
+    AttachedGod = INFUSCOR;
+  }
 }
 
 canine
@@ -2953,21 +3300,14 @@ canine
   ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
   AttackStyle = USE_HEAD;
   KnownCWeaponSkills == BITE;
-}
+  HostileReplies =
+  {
+    3,
+    "@Dd lets out a hostile howl.",
+    "@Dd barks in fury.",
+    "@Dd growls madly.";
 
-wolf
-{
-  DefaultArmStrength = 10;
-  DefaultAgility = 25;
-  DefaultEndurance = 10;
-  DefaultPerception = 24;
-  DefaultIntelligence = 7;
-  DefaultWisdom = 5;
-  DefaultCharisma = 10;
-  DefaultMana = 0;
-  TotalVolume = 40000;
-  TorsoBitmapPos = 224, 0;
-  HostileReplies == "@Dd growls madly.";
+  }
   FriendlyReplies =
   {
     5,
@@ -2977,6 +3317,21 @@ wolf
     "@Dd whines.",
     "@Dd barks.";
   }
+}
+
+wolf /* canine-> */
+{
+  DefaultArmStrength = 10;
+  DefaultAgility = 25;
+  DefaultEndurance = 10;
+  DefaultPerception = 24;
+  DefaultIntelligence = 7;
+  DefaultWillPower = 5;
+  DefaultWisdom = 5;
+  DefaultCharisma = 10;
+  DefaultMana = 0;
+  TotalVolume = 40000;
+  TorsoBitmapPos = 224, 0;
   TotalSize = 100;
   /* SkinColor overridden */
   NameSingular = "wolf";
@@ -2987,21 +3342,34 @@ wolf
   ClassStates = INFRA_VISION;
   FleshMaterial = WOLF_FLESH;
   AttachedGod = SILVA;
+  DeathMessage = "@Dd howls one last time and dies.";
+
+  Config DIRE;
+  {
+    AttributeBonus = 50;
+    TotalVolume = 120000;
+    TotalSize = 150;
+    Adjective = "dire";
+    TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
+    BaseBiteStrength = 900;
+    CWeaponSkillHits == 600;
+    AllowedDungeons == DARK_FOREST;
+  }
 }
 
-dog
+dog /* canine-> */
 {
   DefaultArmStrength = 5;
   DefaultAgility = 15;
   DefaultEndurance = 8;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 15;
   DefaultMana = 0;
   TotalVolume = 20000;
   TorsoBitmapPos = 240, 16;
-  HostileReplies == "@Dd barks in fury.";
   /* FriendlyReplies overridden */
   TotalSize = 70;
   SkinColor = rgb16(111, 74, 37);
@@ -3013,7 +3381,7 @@ dog
   FleshMaterial = DOG_FLESH;
   AttachedGod = SILVA;
   Alias == "dog";
-  DeathMessage = "@Dd is killed.";
+  DeathMessage = "@Dd is killed. You feel sad for a moment, but then it passes.";
   ScienceTalkAdjectiveAttribute =
   {
     16,
@@ -3063,6 +3431,7 @@ dog
     IgnoreDanger = true;
     CanChoke = false;
     IsCatacombCreature = true;
+    IsUndead = true;
     UndeadVersions = false;
     CreateUndeadConfigurations = true;
     UndeadAttributeModifier = 75;
@@ -3071,7 +3440,7 @@ dog
     Adjective = "skeleton";
     BaseBiteStrength = 800;
     CWeaponSkillHits == 80;
-    AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+    AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, PYRAMID; }
     Frequency = 2000;
   }
 }
@@ -3082,6 +3451,8 @@ spider
   BloodMaterial = SPIDER_BLOOD;
   CanOpen = false;
   SkinColor = rgb16(64, 64, 100);
+  TorsoMainColor = rgb16(30, 30, 30);
+  TorsoBitmapPos = 256, 0;
   NameSingular = "spider";
   AttackStyle = USE_HEAD;
   CanBeGenerated = true;
@@ -3094,8 +3465,9 @@ spider
   IsImmuneToStickiness = true;
   DangerModifier = 25;
   IsAbstract = true;
-  TorsoMainColor = rgb16(30, 30, 30);
   IsCatacombCreature = true;
+  HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
+  FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
 
   Config LARGE;
   {
@@ -3104,6 +3476,7 @@ spider
     DefaultEndurance = 4;
     DefaultPerception = 9;
     DefaultIntelligence = 3;
+    DefaultWillPower = 3;
     DefaultWisdom = 3;
     DefaultCharisma = 4;
     Adjective = "large";
@@ -3123,53 +3496,93 @@ spider
     DefaultEndurance = 12;
     DefaultPerception = 15;
     DefaultIntelligence = 4;
+    DefaultWillPower = 4;
     DefaultWisdom = 4;
     DefaultCharisma = 5;
     Adjective = "giant";
-    TorsoBitmapPos = 256, 0;
     BaseBiteStrength = 400;
     CWeaponSkillHits == 50;
     TotalVolume = 5000;
     TotalSize = 50;
-    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
-    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
   }
 
   Config ARANEA;
   {
-    DefaultArmStrength = 20;
+    DefaultArmStrength = 18;
     DefaultAgility = 26;
     DefaultEndurance = 18;
     DefaultPerception = 26;
-    DefaultIntelligence = 4;
-    DefaultWisdom = 4;
-    DefaultCharisma = 5;
+    DefaultIntelligence = 8;
+    DefaultWillPower = 14;
+    DefaultWisdom = 14;
+    DefaultCharisma = 8;
     Adjective = "aranea";
-    TorsoBitmapPos = 256, 0;
+    SkinColor = rgb16(100, 64, 64);
     BaseBiteStrength = 400;
-    CWeaponSkillHits == 50;
+    CWeaponSkillHits == 150;
     TotalVolume = 5000;
     TotalSize = 50;
     Frequency = 0;
-    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
-    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
+  }
+
+  Config PHASE;
+  {
+    DefaultArmStrength = 20;
+    DefaultAgility = 24;
+    DefaultEndurance = 20;
+    DefaultPerception = 20;
+    DefaultIntelligence = 24;
+    DefaultWillPower = 8;
+    DefaultWisdom = 8;
+    DefaultCharisma = 14;
+    DefaultMana = 14;
+    Adjective = "phase";
+    SkinColor = rgb16(64, 100, 64);
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 150;
+    TotalVolume = 5000;
+    TotalSize = 50;
+    Frequency = 10;
+    PanicLevel = 50;
+    ClassStates = ETHEREAL_MOVING|TELEPORT|INVISIBLE|ESP;
+  }
+
+  Config GIANT_GOLD;
+  {
+    DefaultArmStrength = 18;
+    DefaultAgility = 26;
+    DefaultEndurance = 18;
+    DefaultPerception = 26;
+    DefaultIntelligence = 8;
+    DefaultWillPower = 14;
+    DefaultWisdom = 14;
+    DefaultCharisma = 8;
+    DefaultMana = 14;
+    Adjective = "giant gold";
+    SkinColor = rgb16(224, 224, 0);
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 150;
+    AttachedGod = INFUSCOR;
+    TotalVolume = 5000;
+    TotalSize = 50;
+    Frequency = 1;
+    IsCatacombCreature = false;
   }
 }
 
-jackal
+jackal /* canine-> */
 {
   DefaultArmStrength = 3;
   DefaultAgility = 12;
   DefaultEndurance = 6;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 7;
   DefaultMana = 0;
   TotalVolume = 15000;
   TorsoBitmapPos = 304, 0;
-  HostileReplies == "@Dd howls in fury.";
-  FriendlyReplies == "@Dd howls happily.";
   TotalSize = 80;
   SkinColor = rgb16(255, 255, 255);
   NameSingular = "jackal";
@@ -3189,6 +3602,7 @@ ass
   DefaultEndurance = 15;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -3214,6 +3628,7 @@ ass
   AutomaticallySeen = true;
   WillCarryItems = true;
   BloodMaterial = GLOWING_BLOOD;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 communist /* Ivan */
@@ -3225,6 +3640,7 @@ communist /* Ivan */
   DefaultEndurance = 30;
   DefaultPerception = 18;
   DefaultIntelligence = 7;
+  DefaultWillPower = 18;
   DefaultWisdom = 6;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -3285,7 +3701,7 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
-    "\"@Nu gone through spacetime portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
+    "\"@Nu gone through space-time portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
     "\"You can always find party in Lunethia. But in Soviet Russia, Party can always find you!\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
     "\"Lenin want @nu kill capitalists!\"";
@@ -3319,6 +3735,7 @@ hunter
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 5;
@@ -3436,6 +3853,7 @@ bear
   DefaultEndurance = 20;
   DefaultPerception = 15;
   DefaultIntelligence = 8;
+  DefaultWillPower = 8;
   DefaultWisdom = 10;
   DefaultCharisma = 15;
   DefaultMana = 0;
@@ -3451,6 +3869,7 @@ bear
   DeathMessage = "@Dd groans terribly and falls dead to the ground.";
   AttachedGod = SILVA;
   IsAbstract = true;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE|CT_MISC_PLANT|CT_MISC_ANIMAL;
 
   Config PANDA_BEAR;
   {
@@ -3463,6 +3882,7 @@ bear
     TorsoBitmapPos = 192, 16;
     DeathMessage = "@Dd groans terribly and falls dead to the ground. You feel really bad for endangering this species.";
     Frequency = 100;
+    ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT;
   }
 
   Config BLACK_BEAR;
@@ -3533,6 +3953,7 @@ dolphin
   DefaultEndurance = 10;
   DefaultPerception = 30;
   DefaultIntelligence = 100;
+  DefaultWillPower = 30;
   DefaultWisdom = 100;
   DefaultCharisma = 30;
   DefaultMana = 0;
@@ -3551,6 +3972,7 @@ dolphin
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
   HasALeg = false;
+  IsAbstract = true;
   FleshMaterial = DOLPHIN_FLESH;
   AttachedGod = SOPHOS;
   ForceVomitMessage = "You push your fin down to your throat and vomit.";
@@ -3605,6 +4027,7 @@ slave
   DefaultEndurance = 20;
   DefaultPerception = 15;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 20;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -3642,6 +4065,7 @@ petrusswife
   DefaultEndurance = 7;
   DefaultPerception = 21;
   DefaultIntelligence = 8;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 80;
   DefaultMana = 20;
@@ -3700,7 +4124,7 @@ petrusswife
       "\"You met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
       "\"I wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
     }
-    DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
+    DeathMessage = "With a calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
     ScienceTalkIntelligenceModifier = 25;
     ScienceTalkWisdomModifier = 25;
     ScienceTalkIntelligenceRequirement = 20;
@@ -3794,6 +4218,7 @@ petrusswife
     HairColor = rgb16(48, 40, 8);
     ClothColor = rgb16(119,136,153);
     HeadBitmapPos = 112, 0;
+    DefaultWillPower = 25;
     PostFix = "number 3";
     FriendlyReplies =
     {
@@ -3817,6 +4242,7 @@ petrusswife
       "hunting", "horses", "steppe", "trapping", "sharpshooting",
       "combat", "traditions", "storytelling", "freedom", "boredom";
     }
+    BloodMaterial = BLUE_BLOOD;
   }
 
   Config 4;
@@ -3886,6 +4312,7 @@ petrusswife
     ClothColor = rgb16(119,136,153);
     BeltColor = rgb16(105,105,105);
     HeadBitmapPos = 112, 0;
+    DefaultWillPower = 5;
     Adjective = "re-educated";
     ArticleMode = 0;
     FriendlyReplies =
@@ -3915,6 +4342,7 @@ petrusswife
       "hunting", "horses", "steppe", "trapping", "sharpshooting",
       "combat", "traditions", "storytelling", "freedom", "boredom";
     }
+    BloodMaterial = BLUE_BLOOD;
   }
 }
 
@@ -3927,6 +4355,7 @@ housewife
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 10;
@@ -4031,6 +4460,64 @@ housewife
     }
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(INFUSCOR) { Chance = 10; }, HUMAN_FLESH lump; }
+    CanBeGenerated = true;
+    AllowedDungeons == XINROCH_TOMB;
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    NameSingular = "maid";
+    NamePlural = "maids";
+    LegMainColor = rgb16(0, 191, 255);
+    FriendlyReplies =
+    {
+      14,
+      "\"A master sorcerer like Myrddin inevitably outlives all his peers. It must be a lonely existence.\"",
+      "\"I hear Myrddin is quite a mage. Of course, it's not like he'd bother to stop to talk to you when he ventures into the castle.\"",
+      "\"I went to the chapel yesterday, but that kamikaze dwarf was sitting there. He makes me nervous, so I figured I'd come back another time.\"",
+      "\"I don't know if Senex ever leaves the chapel. That man works day and night to take care of all of us.\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor prince Artorius. He's too young to inherit a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the crown prince and this country in their hour of need.\"",
+      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of prince Artorius as well.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"The roads near the Castle are safer now, thanks to Lord Regent. He's an example for us all.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Can you believe that the bastard Black-cloak managed to sneak into the very king's rooms?!\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
+      "@Dd chatters.";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"You will hang for this!\"",
+      "\"Guards! Guards!\"",
+      "@Dd screams for help.";
+    }
+    ScienceTalkPossibility = 0;
+  }
+
+  Config REBEL_CAMP;
+  {
+    NameSingular = "rebel";
+    NamePlural = "rebels";
+    FriendlyReplies =
+    {
+      10,
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
+      "\"Is there anywhere in the camp where you can avoid rats? Disease spreading little nuisances.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Aiding an escaping slave is theft, and a crime. That was always the law.\"", /* What, you thought they were the good guys? :) */
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"What?\"",
+      "\"These necromancer twins give me the creeps. Why do we even associate with such types?\"",
+      "@Dd boasts about @sp farmstead back home.";
+    }
+    HostileReplies == "\"I will smack you down, young man!\"";
+    ScienceTalkPossibility = 0;
+    IsExtraCoward = false;
   }
 }
 
@@ -4043,6 +4530,7 @@ femaleslave
   DefaultEndurance = 10;
   DefaultPerception = 18;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 25;
   DefaultCharisma = 25;
   DefaultMana = 5;
@@ -4083,6 +4571,7 @@ femaleslave
     DefaultAgility = 15;
     DefaultEndurance = 15;
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     DefaultWisdom = 30;
     DefaultCharisma = 20;
     NameSingular = "servant";
@@ -4128,6 +4617,7 @@ femaleslave
     DefaultDexterity = 15;
     DefaultAgility = 20;
     DefaultIntelligence = 25;
+    DefaultWillPower = 15;
     DefaultWisdom = 30;
     HairColor = rgb16(51, 51, 255);
     TorsoMainColor = rgb16(255, 0, 0);
@@ -4194,6 +4684,7 @@ librarian
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 30;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 10;
   DefaultMana = 20;
@@ -4260,6 +4751,7 @@ zombie
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 3;
   DefaultMana = 0;
@@ -4275,6 +4767,7 @@ zombie
   NameSingular = "zombie";
   CanBeGenerated = true;
   Sex = UNDEFINED;
+  ConsumeFlags = CT_MEAT|CT_LIQUID|CT_BONE;
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
   /* HostileReplies overridden */
@@ -4291,6 +4784,7 @@ zombie
   WieldedPosition = -1, -2;
   IsExtraFragile = true;
   IsCatacombCreature = true;
+  IsUndead = true;
   CreateUndeadConfigurations = true;
   UndeadVersions = false;
   UndeadAttributeModifier = 75;
@@ -4310,6 +4804,7 @@ zombie
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 7;
+    DefaultWillPower = 20;
     DefaultWisdom = 15;
     DefaultCharisma = 5;
     HeadBitmapPos = 112, 160; /* all dwarves have beards, no exceptions */
@@ -4406,6 +4901,34 @@ zombie
   }
 }
 
+gasghoul /* zombie-> */
+{
+  DefaultDexterity = 10;
+  DefaultAgility = 12;
+  CapColor = rgb16(27, 226, 21); /* eyes */
+  SkinColor = rgb16(120, 70, 40);
+  ClothColor = rgb16(125, 125, 125);
+  HeadBitmapPos = 112, 512; /* broken gas mask */
+  NameSingular = "gas-ghoul";
+  DangerModifier = 150;
+  PanicLevel = 20;
+  HPRequirementForGeneration = 60;
+  DayRequirementForGeneration = 4;
+  IsExtraFragile = false;
+  CreateUndeadConfigurations = false;
+  UndeadVersions = false;
+  FriendlyReplies =
+  {
+    3,
+    "\"War... never... changes...\"",
+    "\"How sweet and honourable it is to die for one's country...\"",
+    "\"No more... Never more...\"";
+  }
+  DeathMessage = "@Dd is put to rest.";
+  Inventory == gasgrenade { Chance = 10; }
+  AllowedDungeons == PYRAMID;
+}
+
 ghost
 {
   DefaultArmStrength = 8;
@@ -4415,6 +4938,7 @@ ghost
   DefaultEndurance = 8;
   DefaultPerception = 24;
   DefaultIntelligence = 15;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 15;
@@ -4465,6 +4989,7 @@ ghost
   CanBeGenerated = true;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
+  IsUndead = true;
   UndeadVersions = false;
   IsAbstract = true;
   CanUseEquipment = false;
@@ -4490,6 +5015,7 @@ xinrochghost
   DefaultEndurance = 30;
   DefaultPerception = 36;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 30;
@@ -4563,12 +5089,10 @@ imp
 {
   DefaultPerception = 15;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 5;
-  DefaultMana = 10;
-  EyeColor = rgb16(200, 200, 0);
-  ClothColor = rgb16(111, 74, 37);
-  HairColor = rgb16(100, 0, 0);
+  DefaultMana = 15;
   HeadBitmapPos = 96, 16;
   TorsoBitmapPos = 48, 112;
   ArmBitmapPos = 64, 32;
@@ -4576,22 +5100,21 @@ imp
   TotalVolume = 40000;
   TotalSize = 100;
   NameSingular = "imp";
-  UsesLongArticle = true;
+  IsAbstract = true;
   CanBeGenerated = true;
   Sex = UNDEFINED;
   AttackStyle = USE_ARMS|USE_HEAD;
+  ConsumeFlags = CT_METAL|CT_MINERAL|CT_LIQUID|CT_PLASTIC;
   KnownCWeaponSkills = { 2, UNARMED, BITE; }
   CWeaponSkillHits = { 2, 50, 50; }
-  PanicLevel = 75;
+  PanicLevel = 0;
   BaseUnarmedStrength = 300;
   BaseBiteStrength = 500;
-  FleshMaterial = SULFUR;
-  UsesNutrition = false;
-  AttachedGod = MORTIFER;
-  ClassStates = GAS_IMMUNITY;
-  FireResistance = 1000;
+  VomittingIsUnhealthy = false;
+  ClassStates = GAS_IMMUNITY|FEARLESS;
   CanChoke = false;
   UndeadVersions = false;
+  IsSadist = true;
   FriendlyReplies =
   {
     6,
@@ -4616,6 +5139,39 @@ imp
     "@Dd grins maniacally.",
     "@Dd grins sadistically.";
   }
+  Inventory = { 2, potion { SecondaryMaterial = ASPHALT; Chance = 50; },
+                   potion { SecondaryMaterial = QUICK_SILVER; Chance = 50; } }
+}
+
+crimsonimp /* imp-> */
+{
+  EyeColor = rgb16(200, 200, 0);
+  ClothColor = rgb16(111, 74, 37);
+  HairColor = rgb16(100, 0, 0);
+  Adjective = "crimson";
+  FleshMaterial = SULFUR;
+  BloodMaterial = NAPALM;
+  VomitMaterial = NAPALM;
+  AttachedGod = CRUENTUS;
+  FireResistance = 1000;
+  DeathMessage = "@Dd dies in a gout of hellfire.";
+}
+
+mirrorimp /* imp-> */
+{
+  EyeColor = rgb16(160, 35, 160);
+  ClothColor = rgb16(0, 71, 171);
+  HairColor = rgb16(180, 180, 255);
+  Adjective = "mirror";
+  FleshMaterial = GLASS;
+  BloodMaterial = LIQUID_FEAR;
+  VomitMaterial = LIQUID_FEAR;
+  AttachedGod = INFUSCOR;
+  EnergyResistance = 100;
+  PoisonResistance = 100;
+  ElectricityResistance = 100;
+  AcidResistance = 100;
+  DeathMessage = "@Dd dies in a frozen explosion of glass.";
 }
 
 bat
@@ -4625,6 +5181,7 @@ bat
   DefaultEndurance = 8;
   DefaultPerception = 24;
   DefaultIntelligence = 7;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -4645,6 +5202,7 @@ bat
     "@Dd chirps.",
     "@Dd squeaks.";
   }
+  DeathMessage = "@Dd chirps one last time and dies.";
   TotalSize = 20;
   SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
@@ -4662,7 +5220,7 @@ bat
   IsCatacombCreature = true;
 }
 
-vampirebat
+vampirebat /* bat-> */
 {
   DefaultArmStrength = 4;
   TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
@@ -4672,8 +5230,34 @@ vampirebat
   TotalVolume = 1200;
   TotalSize = 30;
   SkinColor = rgb16(64, 64, 96);
-  NameSingular = "vampire bat";
-  AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+  Adjective = "vampire";
+  AllowedDungeons = { 5, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE, PYRAMID, DARK_FOREST; }
+}
+
+nerfbat /* bat-> */
+{
+  DefaultArmStrength = 3;
+  DefaultIntelligence = 12;
+  DefaultMana = 20;
+  TorsoSpecialColor = rgb16(128, 0, 128); /* EyeColor */
+  SkinColor = rgb16(175, 150, 175);
+  Frequency = 500;
+  Adjective = "nurphe";
+  IgnoreDanger = true;
+  AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
+  AttackWisdomLimit = 12;
+}
+
+fruitbat /* bat-> */
+{
+  DefaultEndurance = 10;
+  TorsoSpecialColor = rgb16(180, 180, 180); /* EyeColor */
+  SkinColor = rgb16(190, 130, 64);
+  Frequency = 500;
+  Adjective = "fruit";
+  IgnoreDanger = true;
+  IsCatacombCreature = false;
+  AllowedDungeons = { 3, GOBLIN_FORT, FUNGAL_CAVE, DARK_FOREST; }
 }
 
 mistress
@@ -4685,6 +5269,7 @@ mistress
   DefaultEndurance = 20;
   DefaultPerception = 30;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 40;
   DefaultMana = 10;
@@ -4900,6 +5485,7 @@ werewolfhuman
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -4950,6 +5536,7 @@ werewolfwolf
   DefaultEndurance = 25;
   DefaultPerception = 24;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -5040,6 +5627,7 @@ vampire
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -5087,6 +5675,7 @@ vampire
   BaseBiteStrength = 800;
   CanBeWished = false;
   ClassStates = HASTE|INFRA_VISION|VAMPIRISM;
+  ConsumeFlags = CT_LIQUID; /* Could limit that further to only blood. */
   PanicLevel = 0;
   FleshMaterial = VAMPIRE_FLESH;
   AttachedGod = MORTIFER;
@@ -5096,9 +5685,10 @@ vampire
   CanRead = true;
   UndeadVersions = false;
   IsCatacombCreature = true;
+  IsUndead = true;
   StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
-  AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
+  AllowedDungeons = { 3, ATTNAM, XINROCH_TOMB, PYRAMID; }
 }
 
 kobold
@@ -5110,6 +5700,7 @@ kobold
   DefaultEndurance = 9;
   DefaultPerception = 12;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -5127,12 +5718,22 @@ kobold
   NameSingular = "kobold";
   CanBeGenerated = true;
   Sex = UNDEFINED;
+  ClassStates = SEARCHING;
   RightWielded = BALSA_WOOD BALSA_WOOD meleeweapon(SPEAR);
   KnownCWeaponSkills == POLE_ARMS;
   CWeaponSkillHits == 5;
   RightSWeaponSkillHits = 0;
   PanicLevel = 75;
   FleshMaterial = KOBOLD_FLESH;
+  HostileReplies =
+  {
+    5,
+    "@Dd grunts angrily.",
+    "@Dd yells at the top of @sp lungs.",
+    "@Dd makes vulgar gestures in your general direction.",
+    "@Dd eyes you warily.",
+    "@Dd screams: \"You killed all my friends!\"";
+  }
   DeathMessage = "@Dd dies yelling like a tortured hyena.";
   StandVerb = "skulking";
   AttachedGod = CRUENTUS;
@@ -5212,6 +5813,14 @@ kobold
       "\"The mind is everything. What you think you become.\"",
       "\"Peace comes from within. Do not seek it without.\"";
     }
+    HostileReplies =
+    {
+      4,
+      "@Dd snarls: \"You murderer!\"",
+      "@Dd frowns: \"I cannot let you terrorize my kind any longer.\"",
+      "\"Die, you widowmaker!\"",
+      "\"How many of my kin have you slaughtered?!\"";
+    }
   }
 
   Config ASSASSIN;
@@ -5281,6 +5890,7 @@ gibberling
   DefaultEndurance = 10;
   DefaultPerception = 15;
   DefaultIntelligence = 4;
+  DefaultWillPower = 4;
   DefaultWisdom = 4;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -5385,18 +5995,11 @@ gibberling
   }
 }
 
-largecat
+feline
 {
-  DefaultArmStrength = 4;
-  DefaultAgility = 35;
-  DefaultEndurance = 10;
-  DefaultPerception = 21;
-  DefaultIntelligence = 10;
-  DefaultWisdom = 10;
-  DefaultCharisma = 20;
-  DefaultMana = 0;
-  TotalVolume = 15000;
-  TorsoBitmapPos = 496, 0;
+  IsAbstract = true;
+  AttackStyle = USE_HEAD;
+  KnownCWeaponSkills == BITE;
   HostileReplies =
   {
     4,
@@ -5407,23 +6010,37 @@ largecat
   }
   FriendlyReplies =
   {
-    7,
+    8,
     "@Dd mews.",
     "@Dd purrs.",
     "@Dd weaves between your legs.",
     "@Dd kneads you with its paws. Ouch!",
     "@Dd yowls.",
+    "@Dd says: \"Nyah.\"",
     "You pet @dd.",
     "@Dd headbutts you playfully.";
   }
+}
+
+largecat /* feline-> */
+{
+  DefaultArmStrength = 4;
+  DefaultAgility = 35;
+  DefaultEndurance = 10;
+  DefaultPerception = 21;
+  DefaultIntelligence = 10;
+  DefaultWillPower = 15;
+  DefaultWisdom = 10;
+  DefaultCharisma = 20;
+  DefaultMana = 0;
+  TotalVolume = 15000;
+  TorsoBitmapPos = 496, 0;
   TotalSize = 60;
   SkinColor = rgb16(50, 50, 50);
   Adjective = "large";
   NameSingular = "cat";
-  AttackStyle = USE_HEAD;
   BaseBiteStrength = 600;
   CanBeGenerated = true;
-  KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
   ClassStates = INFRA_VISION;
   FleshMaterial = CAT_FLESH;
@@ -5438,6 +6055,7 @@ largerat
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -5483,6 +6101,7 @@ angel
   DefaultEndurance = 25;
   DefaultPerception = 35;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
@@ -5588,6 +6207,7 @@ kamikazedwarf
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 30;
   DefaultWisdom = 5;
   DefaultCharisma = 10;
   DefaultMana = 10;
@@ -5645,6 +6265,7 @@ mammoth
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -5677,6 +6298,7 @@ unicorn
   DefaultEndurance = 10;
   DefaultPerception = 18;
   DefaultIntelligence = 25;
+  DefaultWillPower = 20;
   DefaultWisdom = 20;
   DefaultCharisma = 30;
   DefaultMana = 25;
@@ -5688,11 +6310,13 @@ unicorn
     "@Dd whinnies.",
     "@Dd whickers.";
   }
+  DeathMessage = "@Dd neighs one last time and dies.";
   TotalVolume = 100000;
   TorsoBitmapPos = 544, 0;
   TotalSize = 200;
   NameSingular = "unicorn";
   AttackStyle = USE_LEGS|USE_HEAD;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
   BaseKickStrength = 700;
   BaseBiteStrength = 350;
   CanBeGenerated = true;
@@ -5739,6 +6363,7 @@ genie
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 20;
+  DefaultWillPower = 25;
   DefaultWisdom = 25;
   DefaultCharisma = 20;
   DefaultMana = 50;
@@ -5785,27 +6410,24 @@ genie
   UndeadVersions = false;
 }
 
-lion
+lion /* feline-> */
 {
   DefaultArmStrength = 20;
   DefaultAgility = 25;
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 7;
+  DefaultWillPower = 7;
   DefaultWisdom = 15;
   DefaultCharisma = 20;
   DefaultMana = 0;
   TotalVolume = 100000;
   TorsoBitmapPos = 576, 0;
-  HostileReplies == "@Dd growls furiously.";
-  FriendlyReplies == "@Dd growls happily.";
   TotalSize = 200;
   SkinColor = rgb16(200, 200, 112);
   NameSingular = "lion";
-  AttackStyle = USE_HEAD;
   BaseBiteStrength = 800;
   CanBeGenerated = true;
-  KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 200;
   FleshMaterial = LION_FLESH;
   DeathMessage = "@Dd growls and is slain.";
@@ -5820,14 +6442,22 @@ carnivorousplant
   DefaultEndurance = 7;
   DefaultPerception = 6;
   DefaultIntelligence = 3;
+  DefaultWillPower = 1;
   DefaultWisdom = 2;
   DefaultCharisma = 3;
   DefaultMana = 0;
   CanOpen = false;
   TotalVolume = 20000;
   TorsoBitmapPos = 0, 16;
-  HostileReplies == "@Dd is silent.";
-  FriendlyReplies == "@Dd is silent.";
+  HostileReplies =
+  {
+    4,
+    "@Dd is silent in a hostile manner.",
+    "@Dd rustles @sp leaves.",
+    "@Dd sways.",
+    "@Dd drools."; /* It's carnivorous, after all. */
+  }
+  FriendlyReplies == "@Dd is silent in a firendly manner.";
   TotalSize = 100;
   Adjective = "carnivorous";
   NameSingular = "plant";
@@ -5885,6 +6515,7 @@ buffalo
   DefaultEndurance = 20;
   DefaultPerception = 24;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -5909,6 +6540,7 @@ buffalo
   AttachedGod = SILVA;
   Frequency = 2500;
   IsEnormous = true;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 snake
@@ -5918,6 +6550,7 @@ snake
   DefaultEndurance = 10;
   DefaultPerception = 9;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -5933,8 +6566,8 @@ snake
     "@Dd rattles!";
   }
   FriendlyReplies == "@Dd hisses in a friendly manner.";
+  DeathMessage = "@Dd hisses one last time and dies.";
   TotalSize = 250;
-  SkinColor = rgb16(130, 0, 0);
   NameSingular = "snake";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 500;
@@ -5944,13 +6577,35 @@ snake
   CWeaponSkillHits == 100;
   ClassStates = INFRA_VISION;
   HasALeg = false;
+  IsAbstract = true;
   FleshMaterial = SNAKE_FLESH;
   DangerModifier = 75;
   CanOpen = false;
   AttachedGod = MELLIS;
   AutomaticallySeen = true;
   RunDescriptionLineOne = "Slithering";
-  RunDescriptionLineTwo = "very fast";
+  RunDescriptionLineTwo = " very fast";
+
+  Config RED_SNAKE;
+  {
+    Adjective = "garnet";
+    SkinColor = rgb16(130, 0, 0);
+    Frequency = 2000;
+  }
+
+  Config GREEN_SNAKE;
+  {
+    Adjective = "viridian";
+    SkinColor = rgb16(0, 130, 0);
+    Frequency = 6000;
+  }
+
+  Config BLUE_SNAKE;
+  {
+    Adjective = "cerulean";
+    SkinColor = rgb16(0, 0, 130);
+    Frequency = 2000;
+  }
 }
 
 orc
@@ -5962,6 +6617,7 @@ orc
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 7;
+  DefaultWillPower = 4;
   DefaultWisdom = 6;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -5988,6 +6644,7 @@ orc
   RightSWeaponSkillHits = 20;
   LeftSWeaponSkillHits = 20;
   ClassStates = GAS_IMMUNITY|INFRA_VISION;
+  BloodMaterial = BLACK_BLOOD;
   PanicLevel = 50;
   HostileReplies =
   {
@@ -6191,6 +6848,7 @@ orc
   {
     AttributeBonus = 60;
     DefaultWisdom = 19;
+    DefaultWillPower = 15;
     HairColor = rgb16(224, 224, 0);
     ClothColor = rgb16(224, 224, 0);
     BeltColor = rgb16(176, 0, 0);
@@ -6200,7 +6858,7 @@ orc
     TorsoBitmapPos = 48, 32;
     ArmBitmapPos = 80, 16;
     LegBitmapPos = 0, 224;
-    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
+    Helmet = GOLD helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
     Cloak = FABRIC cloak { Enchantment = 2; }
     BodyArmor = GOLD bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
     Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
@@ -6252,6 +6910,7 @@ cossack
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 7;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -6275,7 +6934,7 @@ cossack
   RightGauntlet = WOLF_SKIN gauntlet;
   RightBoot = WOLF_SKIN boot;
   PanicLevel = 10;
-  DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
+  DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!\"";
   HostileReplies == "@Dd shouts wildly: \"For Tataria!\"";
   AttachedGod = SILVA;
   FriendlyReplies =
@@ -6286,6 +6945,76 @@ cossack
     "\"What, why have I no horse? Er, I lost it in poker.\"",
     "\"I followed Ivan through some weird portal and ended up in this land. At least no creditors can find me.\"",
     "\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"";
+  }
+
+  Config REBEL_SOLDIER;
+  {
+    ClothColor = rgb16(75, 83, 32);
+    CapColor = rgb16(220, 0, 0);
+    TotalVolume = 70000;
+    TotalSize = 170;
+    NameSingular = "rebel soldier";
+    Helmet = BRONZE helmet;
+    Cloak = ELF_CLOTH cloak;
+    BodyArmor = BRONZE bodyarmor(CHAIN_MAIL);
+    Belt = BLACK_LEATHER belt;
+    RightWielded = BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD);
+    RightGauntlet = BLACK_LEATHER gauntlet;
+    RightBoot = BLACK_LEATHER boot;
+    FriendlyReplies =
+    {
+      10,
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free young prince Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"I've heard some people talk about just burning the castle to the ground. Probably just talk though. Everyone's a bit on edge right now.\"",
+      "\"You heard about the scouting squad? They were caught and now they're in jail, waiting for the gallows!\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"Everyone wants to know what really happened to the old king.\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a good king again.\"",
+      "\"We're all talking about the old king's murder. How could Lord Regent get away with it?\"";
+    }
+    HostileReplies == "@Dd screams obscenities.";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!\"";
+    AttachedGod = SEGES;
+  }
+
+  Config REBEL_LIEUTENANT;
+  {
+    AttributeBonus = 20;
+    ClothColor = rgb16(75, 83, 32);
+    CapColor = rgb16(128, 0, 128);
+    TotalVolume = 80000;
+    TotalSize = 175;
+    NameSingular = "rebel lieutenant";
+    CWeaponSkillHits == 200;
+    RightSWeaponSkillHits = 150;
+    Helmet = DEEP_BRONZE helmet;
+    Cloak = ELF_CLOTH cloak { Enchantment = 2; }
+    BodyArmor = DEEP_BRONZE bodyarmor(CHAIN_MAIL);
+    Belt = BLACK_LEATHER belt;
+    RightWielded = DEEP_BRONZE CYPRESS_WOOD meleeweapon(BASTARD_SWORD) { Enchantment = 1; }
+    RightGauntlet = BLACK_LEATHER gauntlet { Enchantment = 2; }
+    RightBoot = BLACK_LEATHER boot { Enchantment = 2; }
+    FriendlyReplies =
+    {
+      10,
+      "\"Lord Regent's men think us lawless beasts. How deluded can they be?\"",
+      "\"We must free young prince Artorius from the clutches of that wretched Lord Regent.\"",
+      "\"Lord Regent didn't think anyone would stand up to his treason, but here we are.\"",
+      "\"We won't give up to Lord Regent without a fight, don't you worry.\"",
+      "\"Truth is, we don't know who was behind the old king's murder. But too much power has suddenly fallen into Lord Regent's lap.\"",
+      "\"I don't know what to think about the goblins escaping their owners. Things seem to go from bad to worse, don't they?\"",
+      "\"Lord Regent recently announced that he won't stop until slavery is outlawed. It's our right to have slaves, by the old laws!\"",
+      "\"How does Lord Regent think we'll work the fields with no slaves? Our economy is already falling and he wants to kill it completely!\"",
+      "\"I'm sure Harvan will find some way to hold the kingdom together, once the young prince is crowned and we have a good king again.\"",
+      "\"We all believe Harvan will lead us to victory. But we can't let it go to his head, right? Heh heh.\"";
+    }
+    HostileReplies == "@Dd screams obscenities.";
+    DeathMessage = "@Dd falls shouting: \"For Aslona!\"";
+    AttachedGod = SEGES;
+    Inventory == Random { Category = WAND; Times = 0:2; }
   }
 }
 
@@ -6298,6 +7027,7 @@ bananagrower
   DefaultEndurance = 15;
   DefaultPerception = 15;
   DefaultIntelligence = 20;
+  DefaultWillPower = 20;
   DefaultWisdom = 30;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -6313,7 +7043,7 @@ bananagrower
   ArmBitmapPos = 64, 64;
   LegBitmapPos = 0, 288;
   Inventory == banana { Times = 10; }
-  TamingDifficulty = NO_TAMING; /* AI will go insane if he leaves New Attnam */
+  /* AI will no longer go insane if he leaves New Attnam. */
   HostileReplies == "\"Banana POWER!\"";
   AttachedGod = SILVA;
   CanRead = true;
@@ -6348,6 +7078,7 @@ imperialist
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 35;
+  DefaultWillPower = 20;
   DefaultWisdom = 10;
   DefaultCharisma = 25;
   DefaultMana = 10;
@@ -6440,6 +7171,7 @@ imperialist
   ScienceTalkWisdomRequirement = 0;
   ScienceTalkCharismaRequirement = 15;
   IsSadist = true;
+  IsAbstract = true;
   UndeadVersions = false;
 
   Config VICE_ROY;
@@ -6612,6 +7344,7 @@ smith
   DefaultEndurance = 30;
   DefaultPerception = 15;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 15;
   DefaultMana = 10;
@@ -6619,10 +7352,7 @@ smith
   TotalSize = 190;
   NameSingular = "smith";
   Helmet = STEEL helmet { Enchantment = 1; }
-  Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
   BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
-  RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
   RightRing = ring(RING_OF_FIRE_RESISTANCE);
   LeftRing = ring(RING_OF_FIRE_RESISTANCE);
   RightBoot = STEEL boot { Enchantment = 1; }
@@ -6630,20 +7360,46 @@ smith
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 192;
-  HeadBitmapPos = 112, 160;
-  ArmBitmapPos = 64, 64;
-  LegBitmapPos = 0, 96;
-  HairColor = rgb16(200, 200, 200);
-  ClothColor = rgb16(100, 100, 100);
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
+  IsAbstract = true;
   IsNameable = false;
   CanBeCloned = false;
-  DefaultName = "Ikiros";
   TamingDifficulty = NO_TAMING;
   AttachedGod = LORICATUS;
+
+  Config ATTNAM;
+  {
+    DefaultName = "Ikiros";
+    TorsoBitmapPos = 48, 192;
+    HeadBitmapPos = 112, 160;
+    ArmBitmapPos = 64, 64;
+    LegBitmapPos = 0, 96;
+    HairColor = rgb16(200, 200, 200);
+    ClothColor = rgb16(100, 100, 100);
+    Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    DefaultName = "Khalybs";
+    TorsoBitmapPos = 48, 192;
+    HeadBitmapPos = 112, 480;
+    ArmBitmapPos = 64, 64;
+    LegBitmapPos = 0, 96;
+    HairColor = rgb16(44, 34, 43);
+    ClothColor = rgb16(100, 100, 100);
+    TotalVolume = 90000;
+    TotalSize = 200;
+    Cloak = SELKIE_SKIN cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightGauntlet = SELKIE_SKIN gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
+    LeftWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
+    Sex = FEMALE;
+  }
 }
 
 ostrich
@@ -6653,6 +7409,7 @@ ostrich
   DefaultEndurance = 10;
   DefaultPerception = 15;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -6674,7 +7431,7 @@ ostrich
   FleshMaterial = OSTRICH_FLESH;
   DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
   StandVerb = "floating";
-  TamingDifficulty = NO_TAMING; /* AI will go insane if it leaves New Attnam */
+  /* AI will no longer go insane if it leaves New Attnam */
   AttachedGod = SILVA;
   ClassStates = LEVITATION;
   AutomaticallySeen = true;
@@ -6689,6 +7446,7 @@ elder
   DefaultEndurance = 7;
   DefaultPerception = 21;
   DefaultIntelligence = 25;
+  DefaultWillPower = 30;
   DefaultWisdom = 40;
   DefaultCharisma = 20;
   DefaultMana = 20;
@@ -6747,6 +7505,7 @@ encourager
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 7;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 7;
   DefaultMana = 0;
@@ -6789,6 +7548,7 @@ chameleon
   DefaultEndurance = 12;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 8;
   DefaultWisdom = 5;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -6821,6 +7581,7 @@ floatingeye
   DefaultEndurance = 6;
   DefaultPerception = 50;
   DefaultIntelligence = 2;
+  DefaultWillPower = 2;
   DefaultWisdom = 2;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -6870,6 +7631,7 @@ eddy
   DefaultEndurance = 3;
   DefaultPerception = 12;
   DefaultIntelligence = 1;
+  DefaultWillPower = 1;
   DefaultWisdom = 1;
   DefaultCharisma = 1;
   DefaultMana = 10;
@@ -6919,6 +7681,7 @@ mushroom
   DefaultEndurance = 10;
   DefaultPerception = 5;
   DefaultIntelligence = 2;
+  DefaultWillPower = 2;
   DefaultWisdom = 2;
   DefaultCharisma = 8;
   DefaultMana = 4;
@@ -6945,17 +7708,25 @@ mushroom
   IsRooted = true;
   AllowUnconsciousness = false;
   CanChoke = false;
-  HostileReplies == "@Dd expresses @sp utter contempt for your pitiful and loathsome existence by wobbling erratically.";
+  HostileReplies =
+  {
+    4,
+    "@Dd wobbles threateningly.",
+    "@Dd suddenly seems very still.",
+    "@Dd sporulates a bit.",
+    "@Dd expresses @sp utter contempt for your pitiful and loathsome existence by wobbling erratically.";
+  }
   FriendlyReplies == "@Dd wobbles knowingly.";
 }
 
-magicmushroom
+magicmushroom /* mushroom-> */
 {
   DefaultArmStrength = 6;
   DefaultAgility = 3;
   DefaultEndurance = 20;
   DefaultPerception = 7;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 10;
   DefaultMana = 7;
@@ -6964,10 +7735,6 @@ magicmushroom
   TotalSize = 60;
   Adjective = "magical";
   NameSingular = "mushroom";
-  HasEyes = false;
-  HasHead = false;
-  HasALeg = false;
-  UsesNutrition = false;
   FleshMaterial = MAGIC_MUSHROOM_FLESH;
   SkinColor = rgb16(200, 170, 170);
   CanBeGenerated = true;
@@ -6978,7 +7745,6 @@ magicmushroom
   Frequency = 5000;
   DangerModifier = 75;
   StandVerb = "wobbling";
-  CanChoke = false;
 }
 
 darkmage
@@ -7040,6 +7806,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 21;
     DefaultIntelligence = 15;
+    DefaultWillPower = 10;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     DefaultMana = 20;
@@ -7079,6 +7846,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 30;
+    DefaultWillPower = 15;
     DefaultWisdom = 15;
     DefaultCharisma = 15;
     DefaultMana = 30;
@@ -7116,6 +7884,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 15;
     DefaultIntelligence = 45;
+    DefaultWillPower = 20;
     DefaultWisdom = 20;
     DefaultCharisma = 20;
     DefaultMana = 40;
@@ -7155,6 +7924,7 @@ darkmage
     DefaultEndurance = 15;
     DefaultPerception = 12;
     DefaultIntelligence = 60;
+    DefaultWillPower = 30;
     DefaultWisdom = 25;
     DefaultCharisma = 25;
     DefaultMana = 50;
@@ -7225,6 +7995,7 @@ twoheadedmoose
   DefaultEndurance = 15;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 3;
   DefaultMana = 0;
@@ -7248,6 +8019,7 @@ twoheadedmoose
   CanKick = true;
   DangerModifier = 50;
   IsEnormous = true;
+  ConsumeFlags = CT_FRUIT|CT_LIQUID|CT_MISC_PLANT|CT_PROCESSED;
 }
 
 magpie
@@ -7257,6 +8029,7 @@ magpie
   DefaultEndurance = 8;
   DefaultPerception = 20;
   DefaultIntelligence = 6;
+  DefaultWillPower = 4;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7291,6 +8064,7 @@ skunk
   DefaultEndurance = 9;
   DefaultPerception = 18;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 4;
   DefaultMana = 0;
@@ -7323,6 +8097,7 @@ invisiblestalker
   DefaultEndurance = 15;
   DefaultPerception = 24;
   DefaultIntelligence = 8;
+  DefaultWillPower = 7;
   DefaultWisdom = 6;
   DefaultCharisma = 5;
   DefaultMana = 0;
@@ -7356,7 +8131,7 @@ invisiblestalker
   DangerModifier = 250;
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 200;
-  ClassStates = INVISIBLE;
+  ClassStates = INVISIBLE|SEARCHING;
   BodyPartsDisappearWhenSevered = true;
   IsImmuneToStickiness = true;
 
@@ -7367,8 +8142,8 @@ invisiblestalker
     TotalSize = 100;
     CWeaponSkillHits == 500;
     NameSingular = "slayer";
-    PanicLevel = 50;
     EyeColor = rgb16(180, 0, 0);
+    ClassStates = INVISIBLE|SEARCHING|TELEPORT;
   }
 }
 
@@ -7387,6 +8162,7 @@ elpuri
   DefaultEndurance = 20;
   DefaultPerception = 42;
   DefaultIntelligence = 45;
+  DefaultWillPower = 35;
   DefaultWisdom = 35;
   DefaultCharisma = 2;
   DefaultMana = 35;
@@ -7437,6 +8213,7 @@ genetrixvesana
   DefaultEndurance = 30;
   DefaultPerception = 24;
   DefaultIntelligence = 12;
+  DefaultWillPower = 8;
   DefaultWisdom = 8;
   DefaultCharisma = 20;
   DefaultMana = 0;
@@ -7468,7 +8245,7 @@ genetrixvesana
   FriendlyReplies == "@Dd is silent.";
   ClassStates = INFRA_VISION;
   HasALeg = false;
-  SpillsBlood = false;
+  SpillsBlood = true; /* It will be more fun! */
   Sweats = false;
   StandVerb = "rooted";
   IsRooted = true;
@@ -7483,6 +8260,7 @@ hedgehog
   DefaultEndurance = 10;
   DefaultPerception = 12;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7510,6 +8288,7 @@ bunny
   DefaultEndurance = 16;
   DefaultPerception = 18;
   DefaultIntelligence = 10;
+  DefaultWillPower = 6;
   DefaultWisdom = 6;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -7580,6 +8359,7 @@ vladimir
   DefaultEndurance = 25;
   DefaultPerception = 30;
   DefaultIntelligence = 8;
+  DefaultWillPower = 12;
   DefaultWisdom = 7;
   DefaultCharisma = 15;
   DefaultMana = 0;
@@ -7617,6 +8397,7 @@ hattifattener
   DefaultEndurance = 10;
   DefaultPerception = 9;
   DefaultIntelligence = 3;
+  DefaultWillPower = 3;
   DefaultWisdom = 3;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7683,6 +8464,7 @@ necromancer
     DefaultEndurance = 15;
     DefaultPerception = 21;
     DefaultIntelligence = 15;
+    DefaultWillPower = 15;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     DefaultMana = 20;
@@ -7732,6 +8514,7 @@ necromancer
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 30;
+    DefaultWillPower = 30;
     DefaultWisdom = 15;
     DefaultCharisma = 15;
     DefaultMana = 30;
@@ -7793,6 +8576,7 @@ necromancer
     DefaultEndurance = 18;
     DefaultPerception = 22;
     DefaultIntelligence = 36;
+    DefaultWillPower = 35;
     DefaultWisdom = 20;
     DefaultCharisma = 9;
     DefaultMana = 50;
@@ -7836,6 +8620,7 @@ sumowrestler
   DefaultEndurance = 12;
   DefaultPerception = 15;
   DefaultIntelligence = 10;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -7851,7 +8636,7 @@ sumowrestler
   ArmBitmapPos = 64, 336;
   LegBitmapPos = 16, 176;
   TamingDifficulty = NO_TAMING;
-  HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this)\"";
+  HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this.)\"";
   AttachedGod = SILVA;
   KnownCWeaponSkills = { 2, UNARMED, KICK; }
   CWeaponSkillHits = { 2, 1000, 1000; }
@@ -7901,6 +8686,7 @@ tourist
     DefaultEndurance = 10;
     DefaultPerception = 15;
     DefaultIntelligence = 10;
+    DefaultWillPower = 10;
     DefaultWisdom = 7;
     DefaultCharisma = 8;
     TotalVolume = 90000;
@@ -7937,6 +8723,7 @@ tourist
     DefaultEndurance = 8;
     DefaultPerception = 21;
     DefaultIntelligence = 7;
+    DefaultWillPower = 15;
     DefaultWisdom = 10;
     DefaultCharisma = 10;
     TotalVolume = 70000;
@@ -7974,6 +8761,7 @@ tourist
     DefaultEndurance = 10;
     DefaultPerception = 18;
     DefaultIntelligence = 12;
+    DefaultWillPower = 5;
     DefaultWisdom = 5;
     DefaultCharisma = 6;
     TotalVolume = 50000;
@@ -8006,6 +8794,7 @@ blinkdog
   DefaultEndurance = 8;
   DefaultPerception = 21;
   DefaultIntelligence = 10;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 10;
   DefaultMana = 5;
@@ -8018,6 +8807,7 @@ blinkdog
   AttachedGod = SOPHOS;
   DangerModifier = 50;
   FleshMaterial = BLINK_DOG_FLESH;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE|CT_MAGIC;
 }
 
 veterankamikazedwarf
@@ -8117,7 +8907,7 @@ archangel
   Config LEGIFER;
   {
     DefaultName = "Iustitia";
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
+    Helmet = ILLITHIUM helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
     RightWielded = SUN_CRYSTAL GOLD flamingsword { Enchantment = 7; }
     LeftWielded = SUN_CRYSTAL shield { Enchantment = 7; }
@@ -8135,7 +8925,7 @@ archangel
   Config DULCIS;
   {
     DefaultName = "Amatrix";
-    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
+    Helmet = DARK_GOLD helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
     RightWielded = 0;
     LeftWielded = 0;
     KnownCWeaponSkills = { 2, UNARMED, BITE; }
@@ -8147,7 +8937,7 @@ archangel
   Config SEGES;
   {
     DefaultName = "Salubris";
-    Helmet = helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
+    Helmet = UNICORN_HORN helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
     RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
     LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, LARGE_SWORDS; }
@@ -8157,10 +8947,10 @@ archangel
   Config SOPHOS;
   {
     DefaultName = "Magus";
-    Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
+    Helmet = ARCANITE helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
     BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
     Cloak = SPIDER_SILK cloak { Enchantment = 0; }
-    RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    RightWielded = OCCULTUM OCCULTUM meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
     Belt = SPIDER_SILK belt { Enchantment = 0; }
     RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
@@ -8234,7 +9024,7 @@ archangel
   {
     DefaultName = "Sinistra";
     IsSadist = true;
-    Helmet = helmet(HELM_OF_MANA) { Enchantment = 4; }
+    Helmet = OCTIRON helmet(HELM_OF_MANA) { Enchantment = 4; }
     RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
@@ -8255,6 +9045,7 @@ archangel
   {
     DefaultName = "Erado";
     IsSadist = true;
+    IsUndead = true;
     Helmet = OMMEL_BONE skull;
     RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 2; }
     LeftWielded = PSYPHER OCTIRON meleeweapon(SICKLE) { Enchantment = 4; }
@@ -8271,35 +9062,63 @@ tailor
   DefaultEndurance = 20;
   DefaultPerception = 27;
   DefaultIntelligence = 15;
+  DefaultWillPower = 15;
   DefaultWisdom = 15;
   DefaultCharisma = 15;
   DefaultMana = 10;
-  TotalVolume = 70000;
-  TotalSize = 180;
   NameSingular = "tailor";
-  Cloak = LEATHER cloak { Enchantment = 1; }
-  BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
-  RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-  RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
   KnownCWeaponSkills == SMALL_SWORDS;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 48;
-  HeadBitmapPos = 96, 0;
-  ArmBitmapPos = 64, 16;
-  LegBitmapPos = 0, 0;
-  ClothColor = rgb16(200, 200, 200);
-  LegMainColor = rgb16(111, 64, 37);
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
+  IsAbstract = true;
   IsNameable = false;
   CanBeCloned = false;
-  DefaultName = "Mirvo";
   TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
+
+  Config ATTNAM;
+  {
+    DefaultName = "Mirvo";
+    TorsoBitmapPos = 48, 48;
+    HeadBitmapPos = 96, 0;
+    ArmBitmapPos = 64, 16;
+    LegBitmapPos = 0, 0;
+    ClothColor = rgb16(200, 200, 200);
+    LegMainColor = rgb16(111, 64, 37);
+    TotalVolume = 70000;
+    TotalSize = 180;
+    Cloak = LEATHER cloak { Enchantment = 1; }
+    BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+    RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    DefaultName = "Palea";
+    NameSingular = "seamstress";
+    HeadBitmapPos = 112, 64;
+    TorsoBitmapPos = 32, 160;
+    ArmBitmapPos = 64, 160;
+    LegBitmapPos = 0, 112;
+    HairColor = rgb16(181, 82, 57);
+    ClothColor = rgb16(0, 191, 255);
+    BeltColor = rgb16(100, 100, 200);
+    TotalVolume = 60000;
+    TotalSize = 165;
+    Cloak = MERMAID_HAIR cloak { Enchantment = 1; }
+    BodyArmor = MERMAID_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Belt = MERMAID_HAIR belt { Enchantment = 1; }
+    RightWielded = STAINLESS_STEEL meleeweapon(DAGGER) { Enchantment = 6; }
+    RightGauntlet = MERMAID_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightBoot = SELKIE_SKIN boot { Enchantment = 1; }
+    Sex = FEMALE;
+  }
 }
 
 mysticfrog
@@ -8322,6 +9141,7 @@ mysticfrog
   Config DARK;
   {
     DefaultIntelligence = 35;
+    DefaultWillPower = 35;
     DefaultWisdom = 25;
     DefaultCharisma = 6;
     BloodMaterial = DARK_FROG_BLOOD;
@@ -8346,6 +9166,7 @@ mysticfrog
   Config LIGHT;
   {
     DefaultIntelligence = 25;
+    DefaultWillPower = 30;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
     BloodMaterial = LIGHT_FROG_BLOOD;
@@ -8368,6 +9189,7 @@ lobhse
   DefaultEndurance = 40;
   DefaultPerception = 21;
   DefaultIntelligence = 5;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
@@ -8388,8 +9210,7 @@ lobhse
   AttachedGod = SCABIES;
   FleshMaterial = SICK_SPIDER_FLESH;
   BloodMaterial = SICK_BLOOD;
-  SweatMaterial = LIQUID_DARKNESS;
-  Sweats = true;
+  VomitMaterial = LIQUID_DARKNESS;
   CanOpen = false;
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
@@ -8438,6 +9259,7 @@ siren
   DefaultEndurance = 12;
   DefaultPerception = 25;
   DefaultIntelligence = 10;
+  DefaultWillPower = 10;
   DefaultWisdom = 15;
   DefaultCharisma = 50;
   DefaultMana = 5;
@@ -8467,6 +9289,7 @@ siren
     "\"Hello, sailor!\"";
     "\"I'm singing in the rain... Oh wait...\"";
   }
+  DeathMessage = "@Dd stops singing once and for all.";
 
   /* if somebody really wants to J_Kahvi has provided
      detailed discussion of nipple and pubic hair
@@ -8521,6 +9344,7 @@ siren
     SkinColor = rgb16(153, 204, 255);
     HairColor = rgb16(51, 51, 255);
     TorsoMainColor = rgb16(153, 204, 255);
+    ClassStates = SWIMMING;
   }
 
   Config RED_SIREN;
@@ -8528,6 +9352,7 @@ siren
     SkinColor = rgb16(255, 51, 51);
     HairColor = rgb16(255, 255, 255);
     TorsoMainColor = rgb16(255, 51, 51);
+    ClassStates = REGENERATION;
   }
 
   Config PINK_SIREN;
@@ -8535,6 +9360,7 @@ siren
     SkinColor = rgb16(240, 200, 201);
     HairColor = rgb16(255, 51, 153);
     TorsoMainColor = rgb16(240, 200, 201);
+    ClassStates = DETECTING;
   }
 
   Config HISPANIC_SIREN;
@@ -8547,6 +9373,7 @@ siren
   Config AMBASSADOR_SIREN;
   {
     DefaultIntelligence = 30;
+    DefaultWillPower = 30;
     DefaultWisdom = 35;
     DefaultCharisma = 75;
     HeadBitmapPos = 112, 400;
@@ -8558,12 +9385,13 @@ siren
     IsUnique = true;
     CanBeCloned = false;
     IsPolymorphable = false;
-    TamingDifficulty = 40;
+    TamingDifficulty = NO_TAMING;
+    ClassStates = HASTE|FEARLESS;
     DefaultName = "Elianise";
     NameSingular = "elven ambassador";
     PostFix = "of the Dark Forest";
     Cloak = NYMPH_HAIR cloak { Enchantment = 4; }
-    /* RightWielded = charmlyre; */
+    RightWielded = charmlyre;
     FriendlyReplies =
     {
       7,
@@ -8634,8 +9462,9 @@ mindworm
   Config HATCHLING;
   {
     DefaultIntelligence = 20;
+    DefaultWillPower = 20;
     NameSingular = "mind worm hatchling";
-    Frequency = 500;
+    Frequency = 100;
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 10;
     ScienceTalkWisdomModifier = 5;
@@ -8646,8 +9475,9 @@ mindworm
   Config BOIL;
   {
     DefaultIntelligence = 35;
+    DefaultWillPower = 35;
     NameSingular = "mind worm boil";
-    Frequency = 1500;
+    Frequency = 500;
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 100;
     ScienceTalkWisdomModifier = 50;
@@ -8665,6 +9495,7 @@ punisher
   DefaultEndurance = 15;
   DefaultPerception = 21;
   DefaultIntelligence = 15;
+  DefaultWillPower = 7;
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
@@ -8705,6 +9536,7 @@ punisher
     DefaultEndurance = 10;
     DefaultPerception = 24;
     DefaultIntelligence = 28;
+    DefaultWillPower = 10;
     DefaultWisdom = 25;
     DefaultCharisma = 30;
     Sex = FEMALE;
@@ -8766,6 +9598,7 @@ child
   DefaultEndurance = 10;
   DefaultPerception = 14;
   DefaultIntelligence = 9;
+  DefaultWillPower = 5;
   DefaultWisdom = 5;
   DefaultCharisma = 8;
   DefaultMana = 0;
@@ -8815,9 +9648,51 @@ child
     {
       3,
       "\"My sister was eaten by a wolf yesterday.\"",
-      "\"I hope I will get a doll of the high priest on Atavus day.\"",
+      "\"I hope I will get a doll on Atavus day.\"",
       "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
     }
+  }
+
+  Config KING;
+  {
+    HeadBitmapPos = 96, 415;
+    HairColor = rgb16(36, 36, 36);
+    ClothColor = rgb16(176, 0, 0);
+    DefaultName = "His Highness crown prince Artorius";
+    NameSingular = "heir";
+    PostFix = "to the throne of Aslona";
+    Cloak = FABRIC cloak { Enchantment = 1; }
+    Belt = FABRIC belt { Enchantment = 1; }
+    Sex = MALE;
+    AttachedGod = SEGES;
+    BloodMaterial = BLUE_BLOOD;
+    TamingDifficulty = 20;
+    IsUnique = true;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    CanRead = true;
+    FriendlyReplies =
+    {
+      8,
+      "\"I was just coming back home from Castle Noth when those ugly goblins attacked and took me here.\"",
+      "\"I will tell daddy to catch all the goblins and send them to the mines!\"",
+      "\"I will tell uncle Myrddin to burn this whole dungeon down with his magic!\"",
+      "\"I hope uncle Mittrars is all right. He always worries so much!\"",
+      "\"I hope uncle Efra and uncle Harvan are talking with each other again. When I last saw them they were arguing pretty badly.\"",
+      "\"I hate goblins! They are mean and stinky!\"",
+      "@Dd whines: \"Are we there yet?\"",
+      "\"I can't wait to see my daddy! I miss him so much!\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"How dare you assault a prince!\"",
+      "\"Guards! Guards!\"",
+      "@Dd screams for help.";
+    }
+    Alias == "Artorius";
   }
 }
 
@@ -8830,6 +9705,7 @@ bum
   DefaultEndurance = 25;
   DefaultPerception = 10;
   DefaultIntelligence = 6;
+  DefaultWillPower = 18;
   DefaultWisdom = 6;
   DefaultCharisma = 2;
   DefaultMana = 5;
@@ -8852,7 +9728,7 @@ bum
   PanicLevel = 0; /* too drunk */
   FriendlyReplies =
   {
-    151, /* rumors, more to come */
+    153, /* rumors, more to come */
     "\"There was this guy I used to adventure with, who nearly got killed by a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
     "\"You shouldn't leave your weapons filthy! I once had this nice adamantine sword, but some blood got on it and before I knew it, the sword was completely covered in rust.\"",
     "\"I've heard about a belt that can make you float in the air! Now that would have been useful that one time in the caves I stepped on a mine and nearly got my leg blown off.\"",
@@ -8875,7 +9751,7 @@ bum
     "\"Breaking your wands can have quite an effect, har har har. I've learned the hard way.\"",
     "\"One of my friends once told me that altars and wands of polymorph mix surprisingly well. Hm, I'll have to try for myself one day.\"",
     "\"My mama always told me, eat carrots and you'll see as well as a giant golden eagle.\"",
-    "\"Mushrooms are my favourite! They spawn so quickly you'll never run out of food! Har har har!\"",
+    "\"Mushrooms are my favorite! They spawn so quickly you'll never run out of food! Har har har!\"",
     "\"My mama always told me that fat people are not very agile and gaunt people are weak. It's best to try and stay fit, she said.\"",
     "\"Ommels, eh? Magnificent creatures. Some say they have bones harder than steel and teeth like adamant!\"",
     "\"Ommels, eh? Magnificent creatures. Some say you can even make good use of their excretions.\"",
@@ -8963,6 +9839,8 @@ bum
     "\"I've heard you can fetch a nice iron arm from the dwarves of Kharaz-arad.\"",
     "\"I once tried to pet a hedgehog and got my hand all screwed up. Tried it next time with a gauntlet, and let me tell ya, it takes the sting from their spines!\"",
     "\"You ever thrown a bone to a doggie? I love the way it makes them happy.\"",
+    "\"You ever thrown a fish to a kitty? I love the way it makes them happy.\"",
+    "\"You ever thrown a carrot to a bunny? I love the way it makes them happy.\"",
     "\"You know what I've heard? That intellectuals can get harder. Har har har.\"",
     "\"All those priests can say so many weird and foreign words... I betcha gods love listening to wise words!\"",
     "\"You know how to best get a discount in a shop, eh? Use your charms, dummy! Har har!\"",
@@ -8971,8 +9849,8 @@ bum
     "\"You came through that scary underwater tunnel, right? I've heard it's deeper than it seems. Sounds spooky, eh?\"",
     "\"I hate zombies! Dead things should stay dead and not try to bite you. I was bitten once, in the Cellar, and my arm got all inflamed and necrotic.\"",
     "\"You know how people talk about the genies locked in old oil lamps? Tavern stories and wishful legends, I tell ya!\"",
-    "\"One cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favourite sword, so he came back.\"",
-    "\"Some cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
+    "\"One Cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favorite sword, so he came back.\"",
+    "\"Some Cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
     "\"I've heard that only the dead can be safe around an enner beast! I say when you're dead, it's no longer of concern what's around you, eh?\"",
     "\"The Cathedral has impenetrable defenses with its four Cardinals scanning the thoughts of everyone, they say. Well, they still get their stuff stolen by kobolds, har har har! Those little midgets are so dumb no thoughts can be read from them! Har har!\"",
     "\"My mama told me you only need a wand of polymorph and some rocks to make a fortune. Eh, never held a wand in my hands, so what can I know?\"",
@@ -8985,7 +9863,7 @@ bum
     "\"My mama always told me, don't eat people, it's indecent. I'd say more like evil, but she always knew best.\"",
     "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
     "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
-    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stand each other?\"",
+    "\"Some priest once told me that gods can be quite jealous of their worshipers. I guess that's why they can't stand each other?\"",
     "\"When my mama took me to an altar for the first time, she made me kneel there. It makes the gods happy, she said.\"",
     "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
     "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
@@ -8993,7 +9871,7 @@ bum
     "\"They say necromancy sows Chaos into your heart. I say you have to already have some Chaos in you to even try using necromancy.\"",
     "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself with water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
     "\"I used to drink from the fountains, because it's free, but then I got all sick, so it's not always healthy. Now I drink vodka.\"",
-    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get suckud inside, right? Har har!\"",
+    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get sucked inside, right? Har har!\"",
     "\"One mage once told me that wet clothes and electricity don't mix well. Eh, it's not like I know what an electricity is, but wet clothes are uncomfortable.\"",
     "\"One mage once told me that metal armor and electricity don't mix well. I have neither armor, nor electricity, so I don't care.\"",
     "\"One mage once told me not only gods can wield thunder in their hands. I told her that's a blasphemy and she should burn at a stake.\"",
@@ -9012,6 +9890,7 @@ bum
     "\"Bad adventurer! No more living for you!\"",
     "@Dd yells gibberish in a drunken rage.";
   }
+  Alias == "hobo";
 }
 
 nihil
@@ -9056,6 +9935,7 @@ nihil
   CanRead = true;
   UndeadVersions = false;
   UsesNutrition = false;
+  IgnoreDanger = true;
   AllowPlayerToChangeEquipment = false;
   Helmet = BLACK_DIAMOND helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
   Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
@@ -9077,7 +9957,7 @@ nihil
   TotalSize = 200;
   Sex = FEMALE;
   AttachedGod = NONE;
-  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY;
+  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY|FEARLESS;
   TamingDifficulty = NO_TAMING;
   MoveType = FLY;
   StandVerb = "flying";
@@ -9093,7 +9973,8 @@ nihil
     "\"The point is there's no point.\"";
   }
   Inventory = { 8, celestialmonograph, NEUTRONIUM stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
-  DayRequirementForGeneration = 60;
+  HPRequirementForGeneration = 450;
+  DayRequirementForGeneration = 45;
 }
 
 terra
@@ -9105,6 +9986,7 @@ terra
   DefaultEndurance = 15;
   DefaultPerception = 28;
   DefaultIntelligence = 25;
+  DefaultWillPower = 25;
   DefaultWisdom = 42;
   DefaultCharisma = 35;
   DefaultMana = 55;
@@ -9121,6 +10003,7 @@ terra
   NameSingular = "elder priestess";
   PostFix = "of Silva";
   Sex = FEMALE;
+  BloodMaterial = PLANT_SAP;
   BodyArmor = RATA_WOOD bodyarmor(PLATE_MAIL) { Enchantment = 3; }
   Cloak = RAINBOW_CLOTH cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 3; }
   Belt = RATA_WOOD belt(BELT_OF_REGENERATION) { Enchantment = 3; }
@@ -9142,10 +10025,424 @@ terra
     "\"Hopefully one day, I will find an apprentice to take my place. How I wish to see Tweraif again!\"",
     "\"My vigil is long and lonely, but necessary. Lobh-se cannot be let out of her prison.\"",
     "\"Beware and avoid Lobh-se at all costs! She is the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses.\"",
-    "\"Through the millenia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
+    "\"Through the millennia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
     "\"Fortunately, Lobh-se only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty here, and she returns promptly when satiated. Still, it is becoming harder and harder to ward her off.\"",
     "\"This cave once was a magnificent garden, a bulwark against evil. But after the Attnamese invasion, the power of Silva was weakened, and darkness and strife crept in here from below.\"",
     "\"I am bound by sacred oaths to protect this shrine with my life. I remained behind when Tweraifians buried the entrance to hide this place from Attnam.\"";
   }
   DeathMessage = "@Dd dies, whispering: \"I'm sorry! I failed you, Silva.\"";
+}
+
+aslonawizard
+{
+  DefaultArmStrength = 13;
+  DefaultLegStrength = 13;
+  DefaultDexterity = 21;
+  DefaultAgility = 18;
+  DefaultEndurance = 15;
+  DefaultPerception = 8;
+  DefaultIntelligence = 35;
+  DefaultWillPower = 40;
+  DefaultWisdom = 25;
+  DefaultCharisma = 25;
+  DefaultMana = 60;
+  HeadBitmapPos = 112, 304;
+  TorsoBitmapPos = 48, 224;
+  ArmBitmapPos = 80, 64;
+  LegBitmapPos = 16, 160;
+  HairColor = rgb16(139, 69, 19);
+  EyeColor = rgb16(96, 96, 200);
+  CapColor = rgb16(112, 128, 144);
+  BeltColor = rgb16(80, 80, 80);
+  ClothColor = rgb16(128, 128, 128);
+  DefaultName = "Myrddin Wyllt";
+  Adjective = "royal";
+  NameSingular = "wizard";
+  PostFix = "of Aslona";
+  TotalVolume = 100000;
+  TotalSize = 175;
+  Helmet = SELKIE_SKIN helmet(HELM_OF_BRILLIANCE) { Enchantment = 5; }
+  Amulet = amulet(AMULET_OF_UNBREATHING);
+  BodyArmor = SELKIE_SKIN bodyarmor(PLATE_MAIL) { Enchantment = 5; }
+  Cloak = MERMAID_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+  RightWielded = MAHOGANY_WOOD SAPPHIRE meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+  RightRing = ring(RING_OF_MAGIC_RESISTANCE);
+  LeftRing = ring(RING_OF_SEARCHING);
+  RightBoot = SELKIE_SKIN boot { Enchantment = 5; }
+  Inventory == Random { MinPrice = 150; Category = WAND|SCROLL|POTION; Times = 5; }
+  KnownCWeaponSkills == BLUNT_WEAPONS;
+  CWeaponSkillHits == 200;
+  RightSWeaponSkillHits = 150;
+  LeftSWeaponSkillHits = 150;
+  BloodMaterial = MAGIC_LIQUID;
+  AttachedGod = SOPHOS;
+  ClassStates = ESP;
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 5;
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeGenerated = false;
+  UndeadVersions = false;
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
+  IsExtraFragile = false;
+  BodyPartsDisappearWhenSevered = true;
+  CanRead = true;
+  HostileReplies =
+  {
+    6,
+    "\"Abracadabra!\"",
+    "\"Hocus pocus!\"",
+    "\"Alakazam.\"",
+    "\"Sim sala bim!\"",
+    "@Dd screams: \"I shall blow thee to smithereens!\"",
+    "@Dd yells: \"Prepare to meet your maker!\"";
+  }
+  FriendlyReplies =
+  {
+    8,
+    "\"What exactly do you think I'm capable of?\"",
+    "\"Aslona isn't built on magic, but on people, on their faith.\"",
+    "\"Remember, there's always someone cleverer than yourself.\"",
+    "\"I've never studied magic or been taught... I was born like this.\"",
+    "\"Do you know how it feels, to be a monster? To be afraid of what you can do?\"",
+    "\"It is my responsibility to protect the people of this kingdom, whoever they may be.\"",
+    "\"The love that binds us is more important than the power we wield.\"",
+    "\"No young man, no matter how great, can know his destiny.\"";
+  }
+  DeathMessage = "@Dd discorporates in a puff of magic.";
+}
+
+aslonacaptain /* guard-> */
+{
+  AttributeBonus = 50;
+  TotalVolume = 120000;
+  Helmet = SEA_SERPENT_SCALE helmet(FULL_HELMET) { Enchantment = 3; }
+  Amulet = amulet(AMULET_OF_WARDING);
+  BodyArmor = SEA_SERPENT_SCALE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+  Cloak = MERMAID_HAIR cloak(CLOAK_OF_QUICKNESS) { Enchantment = 3; }
+  RightWielded = OCTIRON SAPPHIRE meleeweapon(BASTARD_SWORD) { Enchantment = 3; }
+  LeftWielded = OCTIRON shield { Enchantment = 3; }
+  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  LeftRing = ring(RING_OF_INFRA_VISION);
+  RightGauntlet = SEA_SERPENT_SCALE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+  RightBoot = SEA_SERPENT_SCALE boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+  CWeaponSkillHits = { 2, 2000, 2000; }
+  RightSWeaponSkillHits = 200;
+  LeftSWeaponSkillHits = 200;
+  PanicLevel = 5;
+  CriticalModifier = 4;
+  TamingDifficulty = NO_TAMING;
+  BloodMaterial = BLUE_BLOOD;
+  IsUnique = true;
+  DefaultName = "Lord Mittrars"; /* Tristram */
+  NameSingular = "field marshal";
+  PostFix = "of Aslona";
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  ClothColor = rgb16(0, 0, 139);
+  CanBeConfused = false;
+  FriendlyReplies =
+  {
+    5,
+    "@Dd says with a sad nod: \"This civil war, I worry that it will be the end of us all.\"",
+    "@Dd sighs with a deep sadness.",
+    "\"This will all end in tears, I'm telling you.\"",
+    "\"I knew something bad was about to happen when the dolphin looked all dejected, and then prince Artorius was abducted.\"",
+    "\"I knew something bad was about to happen when I spilled wine on my favorite cloak, and then king Othyr died.\"";
+  }
+  HostileReplies =
+  {
+    3,
+    "\"Die, you treacherous bastard!\"",
+    "\"I will crush you like a grape!\"",
+    "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
+  }
+  DeathMessage = "@Dd falls screaming: \"For Aslona!\"";
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
+  DisplacePriority = 4;
+  UndeadVersions = false;
+}
+
+aslonapriest /* priest-> */
+{
+  DefaultArmStrength = 8;
+  DefaultLegStrength = 12;
+  DefaultDexterity = 10;
+  DefaultAgility = 15;
+  DefaultEndurance = 18;
+  DefaultPerception = 14;
+  DefaultIntelligence = 20;
+  DefaultWillPower = 20;
+  DefaultWisdom = 35;
+  DefaultCharisma = 20;
+  DefaultMana = 30;
+  HairColor = rgb16(204, 204, 204);
+  EyeColor = rgb16(0, 126, 178);
+  ClothColor = rgb16(39, 119, 20);
+  HeadBitmapPos = 96, 128;
+  TorsoBitmapPos = 32, 16;
+  ArmBitmapPos = 64, 16;
+  LegBitmapPos = 0, 32;
+  TotalVolume = 80000;
+  TotalSize = 175;
+  DefaultName = "Senex";
+  PostFix = "of Seges";
+  AttachedGod = SEGES;
+  BloodMaterial = BLUE_BLOOD;
+  Helmet = HEPATIZON helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
+  Amulet = amulet(AMULET_OF_WARDING);
+  BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+  Cloak = ELF_CLOTH cloak { Enchantment = 2; }
+  Belt = ELF_CLOTH belt { Enchantment = 2; }
+  RightWielded = HEPATIZON bansheesickle { Enchantment = 3; }
+  LeftWielded = holybook(SEGES);
+  RightGauntlet = ELF_CLOTH gauntlet { Enchantment = 2; }
+  RightBoot = ELF_CLOTH boot { Enchantment = 2; }
+  KnownCWeaponSkills == SMALL_SWORDS;
+  CWeaponSkillHits == 50;
+  RightSWeaponSkillHits = 20;
+  LeftSWeaponSkillHits = 20;
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 50;
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeGenerated = false;
+  UndeadVersions = false;
+  FriendlyReplies =
+  {
+    5,
+    "\"The people have faith in Seges, and I do my best to heal and comfort them in adversity.\"",
+    "\"No wonder everyone is so cranky these days. If you had to live year-round in a cold, drafty castle like this one, you'd be cranky, too.\"",
+    "\"Was it the Black-cloak or Lord Regent who caused the old king's death? I doubt we'll ever know for sure.\"",
+    "\"I've sometimes thought I'd like to make a pilgrimage to the Cathedral of Attnam, but my duties prevent me from such extensive and dangerous travel.\"",
+    "\"There's something strange about Lord Regent.\"";
+  }
+  Inventory = { 3, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; }, Random { Category = WAND; Times = 5; } }
+}
+
+harvan
+{
+  DefaultArmStrength = 30;
+  DefaultLegStrength = 25;
+  DefaultDexterity = 30;
+  DefaultAgility = 25;
+  DefaultEndurance = 30;
+  DefaultPerception = 30;
+  DefaultIntelligence = 20;
+  DefaultWillPower = 35;
+  DefaultWisdom = 20;
+  DefaultCharisma = 35;
+  DefaultMana = 13;
+  FireResistance = 10;
+  ElectricityResistance = 10;
+  HeadBitmapPos = 96, 112;
+  TorsoBitmapPos = 48, 0;
+  ArmBitmapPos = 80, 32;
+  LegBitmapPos = 0, 240;
+  HairColor = rgb16(6, 6, 6); /* horns */
+  SkinColor = rgb16(160, 160, 160); /* arms */
+  ClothColor = rgb16(211, 211, 211);
+  WieldedPosition = -1, -1;
+  DefaultName = "Harvan Black-cloak";
+  NameSingular = "rebel leader";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  CanRead = true;
+  UndeadVersions = false;
+  Helmet = UR_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+  Amulet = amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = UR_STEEL bodyarmor(CHAIN_MAIL);
+  Cloak = SOUL_STEEL cloak(CLOAK_OF_PROTECTION) { Enchantment = 10; }
+  Belt = UR_STEEL belt(BELT_OF_CARRYING) { Enchantment = 4; }
+  RightWielded = muramasa;
+  LeftWielded = UR_STEEL shield(SHIELD_OF_FIRE_RESISTANCE) { Enchantment = 4; }
+  RightRing = ring(RING_OF_INFRA_VISION);
+  LeftRing = ring(RING_OF_POISON_RESISTANCE);
+  RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 4; }
+  KnownCWeaponSkills = { 5, LARGE_SWORDS, SHIELDS, UNARMED, KICK, BITE; }
+  CWeaponSkillHits = { 5, 2000, 2000, 2000, 1500, 1500; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 200;
+  PanicLevel = 0;
+  TamingDifficulty = NO_TAMING;
+  TotalVolume = 120000;
+  TotalSize = 195;
+  Sex = MALE;
+  AttachedGod = LEGIFER;
+  NaturalSparkleFlags = CLOTH_COLOR;
+  BloodMaterial = BLUE_BLOOD;
+  DeathMessage = "@Dd dies and the rebellion will soon follow.";
+  FriendlyReplies =
+  {
+    7,
+    "\"We are surrounded by jackals and vultures, and now Lord Peredivall drives a new wedge between the people of Aslona.\"",
+    "\"The death of old king Othyr was a great blow, but greater still is the unrest that Lord Regent brings with his controversies.\"",
+    "\"I never wished to lead, yet here I am. I will not allow Aslona to fall apart.\"",
+    "\"You cannot come to an already bad situation and expect to make it better by disturbing things further, yet this is what Lord Efra seems to be doing.\"",
+    "\"Lord Efra used to be like a brother to me. I don't know what madness possessed him to start a civil war like this.\"",
+    "\"We must end this quickly and decisively. I won't let Aslona turn its back on hundreds of years of history.\"",
+    "\"Lord Peredivall used to be the secretary of the state of Aslona. Interesting how quickly he grabbed for more power after king Othyr's death, right?\"";
+  }
+  HostileReplies =
+  {
+    3,
+    "\"So you're with him, after all.\"",
+    "\"I should have expected someone from Attnam to be nothing but a traitor.\"",
+    "\"I don!t want to kill you, but trust me that I will.\"";
+  }
+}
+
+lordregent
+{
+  DefaultArmStrength = 24;
+  DefaultLegStrength = 24;
+  DefaultDexterity = 56;
+  DefaultAgility = 56;
+  DefaultEndurance = 24;
+  DefaultPerception = 36;
+  DefaultIntelligence = 56;
+  DefaultWillPower = 24;
+  DefaultWisdom = 36;
+  DefaultCharisma = 36;
+  DefaultMana = 7;
+  AcidResistance = 10;
+  PoisonResistance = 10;
+  HeadBitmapPos = 96, 368;
+  TorsoBitmapPos = 32, 144;
+  ArmBitmapPos = 80, 176;
+  LegBitmapPos = 0, 0;
+  HairColor = rgb16(200, 0, 0); /* beard */
+  ClothColor = rgb16(0, 35, 102);
+  BeltColor = rgb16(224, 224, 0);
+  LegSpecialColor = rgb16(6, 6, 6);
+  DefaultName = "His Excellency Efra Peredivall"; /* Percival */
+  NameSingular = "Lord Regent";
+  PostFix = "of Aslona";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  CanRead = true;
+  UndeadVersions = false;
+  Helmet = HEPATIZON helmet(HELM_OF_TELEPATHY) { Enchantment = 3; }
+  Amulet = amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = SPIDER_SILK bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; }
+  Cloak = SPIDER_SILK cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 3; }
+  Belt = GOLD belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 6; }
+  RightWielded = masamune;
+  LeftWielded = OCTIRON GOLD daggerofvenom { Enchantment = 6; }
+  RightRing = ring(RING_OF_ACID_RESISTANCE);
+  LeftRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
+  RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+  RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+  KnownCWeaponSkills = { 5, LARGE_SWORDS, SMALL_SWORDS, UNARMED, KICK, BITE; }
+  CWeaponSkillHits = { 5, 5000, 5000, 2000, 1500, 1500; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 500;
+  PanicLevel = 0;
+  TamingDifficulty = NO_TAMING;
+  TotalVolume = 75000;
+  TotalSize = 155;
+  Sex = MALE;
+  AttachedGod = SEGES;
+  BloodMaterial = BLUE_BLOOD;
+  DeathMessage = "@Dd dies and the few remaining royalists will soon scatter without his lead.";
+  FriendlyReplies =
+  {
+    7,
+    "\"Change is never simple, but we must change or be left behind.\"",
+    "\"A tragedy has granted me this chance, but I will try to make sure Aslona benefits in the end.\"",
+    "\"Lord Harvan seems to think that ends justify the means. I will never stand for that.\"",
+    "\"Lord Harvan used to be like a brother to me. I don't know what madness possessed him to start a civil war like this.\"",
+    "\"The rebels don't understand that we *need* to change. The kingdom is rigid and crumbling under the weight of history, our traditions will hinder our very survival if we don't approach them with reason and not reverence.\"",
+    "\"Not only did we lost our king, but crown prince Artorius was abducted by a goblin raiding party, too!\"",
+    "\"Our history was forged from the blood and sweat of others, but never more. I cannot stand by and let our history thwart our future.\"";
+  }
+  HostileReplies =
+  {
+    3,
+    "\"I don't know what Harvan told you, but I hope it's worth dying for.\"",
+    "@Dd hisses: \"I cannot let you stop me now!\"",
+    "\"Do you really wish to see Aslona fall?\"";
+  }
+}
+
+fusanga
+{
+  DefaultArmStrength = 60;
+  DefaultAgility = 8;
+  DefaultEndurance = 60;
+  DefaultPerception = 40;
+  DefaultIntelligence = 40;
+  DefaultWisdom = 8;
+  DefaultWillPower = 60;
+  DefaultCharisma = 40;
+  DefaultMana = 60;
+  TotalVolume = 100000;
+  TotalSize = 300;
+  Adjective = "massive magical";
+  NameSingular = "mushroom";
+  DefaultName = "Sieni Fusanga";
+  TorsoBitmapPos = 128, 128;
+  TorsoMainColor = rgb16(111, 74, 60); /* the cap */
+  TorsoSpecialColor = rgb16(111, 74, 60);
+  BaseEmitation = rgb24(140, 100, 100);
+  IsNameable = false;
+  IsUnique = true;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  CanBeGenerated = false;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  UndeadVersions = false;
+  HasEyes = false;
+  HasHead = false;
+  HasALeg = false;
+  UsesNutrition = false;
+  SpillsBlood = false;
+  Sweats = false;
+  CanOpen = false;
+  IsRooted = true;
+  CanChoke = false;
+  FleshMaterial = MAGIC_MUSHROOM_FLESH;
+  AttachedGod = SCABIES;
+  ClassStates = ESP|TELEPORT_LOCK|GAS_IMMUNITY|REGENERATION;
+  /* No damage resistances, but regenerates. */
+  TamingDifficulty = NO_TAMING;
+  PanicLevel = 0;
+  BaseUnarmedStrength = 600;
+  KnownCWeaponSkills == UNARMED;
+  CWeaponSkillHits == 150;
+  StandVerb = "glowering";
+  DeathMessage = "@Dd is finally squashed.";
+  HostileReplies =
+  {
+    2,
+    "@Dd radiates loathing and contempt.",
+    "@Dd radiates danger and majesty.";
+  }
+  FriendlyReplies == "@Dd wobbles disappointedly due to the fact that you are cheating.";
+  Alias == "Fusanga";
 }

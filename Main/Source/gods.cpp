@@ -128,11 +128,14 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
+  truth DidHelp = false;
+
   if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
   {
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
     game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
     PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    DidHelp = true;
   }
 
   // Give a little attribute experience (Cha already given by Dulcis and not Wis,
@@ -142,7 +145,7 @@ void sophos::PrayGoodEffect()
     cchar* SecretType;
     int Experience = Min(200, Max(50, GetRelation() / 4));
 
-    switch(RAND() % 2)
+    switch(RAND() % 3)
     {
       case 0:
        SecretType = "an ancient";
@@ -162,11 +165,12 @@ void sophos::PrayGoodEffect()
     }
 
     ADD_MESSAGE("%s whispers %s secret to you.", GetName(), SecretType);
+    DidHelp = true;
   }
-  else
-  {
+
+  if(!DidHelp)
     ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
-  }
+
   return;
 }
 
@@ -213,6 +217,7 @@ void valpurus::PrayBadEffect()
 void legifer::PrayGoodEffect()
 {
   // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
+  // No, my bad. Inlux is an anagram of Linux, which will hopefully save us from the horrid Bill. ;)
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
   //ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
   game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),
@@ -504,14 +509,15 @@ void silva::PrayGoodEffect()
     beamdata Beam
       (
         0,
-        CONST_S("drowned by the showers of ") + GetName(),
+        CONST_S("drowned by the tears of ") + GetName(),
         YOURSELF,
         0
       );
 
     lsquare* Square = PLAYER->GetLSquareUnder();
+    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 400 + RAND() % 800));
+    Square->LiquidRain(Beam, WATER);
 
-    Square->WaterRain(Beam);
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
   }
   else if(!game::GetCurrentLevel()->IsOnGround())
@@ -1161,8 +1167,7 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  // TODO: as champion grant green slime vomit
-  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your follwers.
+  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your followers.
   {
     for(int c = 0; c < game::GetTeams(); ++c)
       if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -1349,11 +1354,27 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
+  // Blood for the god of blood!
+  if(!RAND_4 || Relation == 1000)
+  {
+    beamdata Beam
+      (
+        0,
+        CONST_S("drowned by the blood of ") + GetName(),
+        YOURSELF,
+        0
+      );
+    lsquare* Square = PLAYER->GetLSquareUnder();
+    Square->LiquidRain(Beam, BLOOD);
+  }
+
+  // A little bit of healing, but only usable when panicked.
   if(PLAYER->StateIsActivated(PANIC))
   {
-    ADD_MESSAGE("\"Fight, you lousy coward!\"", GetName());
+    ADD_MESSAGE("%s snarls: \"Fight, you lousy coward!\"", GetName());
     PLAYER->DeActivateTemporaryState(PANIC);
-    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 5);
+    PLAYER->BeginTemporaryState(REGENERATION, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
+    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
     return;
   }
 
@@ -1430,6 +1451,7 @@ void cruentus::PrayGoodEffect()
     ADD_MESSAGE("Cruentus recommends you to his master, Mortifer.");
     game::GetGod(MORTIFER)->AdjustRelation(100);
   }
+  return;
 }
 
 void cruentus::PrayBadEffect()
