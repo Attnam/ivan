@@ -63,7 +63,7 @@ bool bugfixdp::AlertConfirmFixMsg(const char* cMsg){
   fsLastAlertConfirmFixMsg<<"PROBLEM! "<<cMsg;
 
   static bool bDummyInit = [](){
-    graphics::AddDrawAboveAll(&DrawAlertConfirmFix,100000,"DrawAlertConfirmFix"); return true;}();
+    graphics::AddDrawAboveAll(&DrawAlertConfirmFix,100000,"bugfixdp::DrawAlertConfirmFix"); return true;}();
 
   if(game::IsRunning())
     ADD_MESSAGE("%s",cMsg);

@@ -248,7 +248,7 @@ festring dungeon::GetShortLevelDescription(int I)
   if(GetLevel(I)->GetLevelScript()->GetShortDescription())
     return *GetLevel(I)->GetLevelScript()->GetShortDescription();
   else
-    return *DungeonScript->GetShortDescription() + " level " + (I + 1);
+    return *DungeonScript->GetShortDescription() + " lvl " + (I + 1);
 }
 
 outputfile& operator<<(outputfile& SaveFile, const dungeon* Dungeon)

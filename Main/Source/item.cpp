@@ -54,6 +54,7 @@ truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslo
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 truth item::IsBroken() const { return GetConfig() & BROKEN; }
+truth item::IsFood() const { return DataBase->Category & FOOD; }
 cchar* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
@@ -333,6 +334,58 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
   }
 }
 
+truth item::Polymorph(character* Polymorpher, character* Wielder)
+{
+  if(!IsPolymorphable())
+    return false;
+  else if(!Wielder->Equips(this))
+    return false;
+  else
+  {
+    if(Polymorpher && Wielder)
+    {
+      Polymorpher->Hostility(Wielder);
+    }
+
+    item* NewItem = protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true);
+    int EquipSlot = GetEquipmentIndex();
+
+    if(Wielder->IsPlayer())
+      ADD_MESSAGE("Your %s polymorphs into %s.", CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s's %s polymorphs into %s.", Wielder->CHAR_NAME(DEFINITE), CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+
+    RemoveFromSlot();
+    SendToHell();
+
+    switch (EquipSlot)
+    {
+      /*
+      case HELMET_INDEX: Wielder->SetHelmet(NewItem); break;
+      case AMULET_INDEX: Wielder->SetAmulet(NewItem); break;
+      case CLOAK_INDEX: Wielder->SetCloak(NewItem); break;
+      case BODY_ARMOR_INDEX: Wielder->SetBodyArmor(NewItem); break;
+      case BELT_INDEX: Wielder->SetBelt(NewItem); break;
+      */
+      case RIGHT_WIELDED_INDEX: Wielder->SetRightWielded(NewItem); break;
+      case LEFT_WIELDED_INDEX: Wielder->SetLeftWielded(NewItem); break;
+      /*
+      case RIGHT_RING_INDEX: Wielder->SetRightRing(NewItem); break;
+      case LEFT_RING_INDEX: Wielder->SetLeftRing(NewItem); break;
+      case RIGHT_GAUNTLET_INDEX: Wielder->SetRightGauntlet(NewItem); break;
+      case LEFT_GAUNTLET_INDEX: Wielder->SetLeftGauntlet(NewItem); break;
+      case RIGHT_BOOT_INDEX: Wielder->SetRightBoot(NewItem); break;
+      case LEFT_BOOT_INDEX: Wielder->SetLeftBoot(NewItem); break;
+      */
+      default: Wielder->ReceiveItemAsPresent(NewItem); break;
+    }
+
+    if(Wielder->IsPlayer())
+      game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
+    return true;
+  }
+}
+
 /* Returns truth that tells whether the alchemical conversion really happened. */
 
 truth item::Alchemize(character* Midas, stack* CurrentStack)
@@ -475,12 +528,10 @@ void item::SetLabel(cfestring& What)
 
 void item::AddName(festring& Name, int Case) const
 {
-  if(label.GetSize())
-    Name << label << " "; //this way user can decide how it should look, with or w/o delimiters and which ones
-//    Name << "{"<<label<<"}" << " ";
-//    Name << "#"<<label << " ";
-
   object::AddName(Name,Case);
+
+  if(label.GetSize())
+    Name << " inscribed " << label;
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -1811,6 +1862,20 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
     {
       Damage += RAND() % Damage;
       ReceiveDamage(0, Damage, ACID);
+    }
+  }
+}
+
+void item::ReceiveHeat(material*, cfestring&, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 1000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
     }
   }
 }

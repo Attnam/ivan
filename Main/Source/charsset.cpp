@@ -10,6 +10,8 @@
  *
  */
 
+#include <algorithm>
+
 #include "stack.h"
 #include "message.h"
 #include "actions.h"

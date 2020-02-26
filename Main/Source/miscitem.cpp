@@ -56,6 +56,10 @@ truth backpack::IsExplosive() const { return GetSecondaryMaterial() && GetSecond
 long backpack::GetTotalExplosivePower() const
 { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
+truth nuke::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
+long nuke::GetTotalExplosivePower() const
+{ return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
+
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
 //long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
@@ -82,6 +86,14 @@ col16 charmlyre::GetMaterialColorB(int) const { return MakeRGB16(150, 130, 110);
 col16 skullofxinroch::GetOutlineColor(int) const { return MakeRGB16(180, 0, 0); }
 
 alpha skullofxinroch::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+col16 weepobsidian::GetOutlineColor(int) const { return MakeRGB16(0, 0, 180); }
+
+alpha weepobsidian::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
@@ -324,16 +336,16 @@ void scrollofbodyswitch::FinishReading(character* Reader)
     }
     else
     {
-      ADD_MESSAGE("Your mind is not strong enough for the transfer! The scroll turns to dust.");
+      ADD_MESSAGE("For a moment you feel very much like %s, but your mind is not strong enough for the transfer! The scroll turns to dust.", ToPossess->CHAR_NAME(INDEFINITE));
+      Reader->Hostility(ToPossess);
     }
     RemoveFromSlot();
     SendToHell();
   }
   else
-  {
     ADD_MESSAGE("There's no one to possess, %s!", game::Insult());
-    return;
-  }
+
+  return;
 }
 
 truth wand::Apply(character* Terrorist)
@@ -1021,6 +1033,11 @@ void mine::StepOnEffect(character* Stepper)
   if(!WillExplode(Stepper))
     return;
 
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(Stepper->IsPlayer())
   {
     cchar* SenseVerb = Stepper->CanHear() ? "hear" : "sense";
@@ -1085,7 +1102,22 @@ truth key::Apply(character* User)
         }
       }
 
-      if(User->GetStack()->SortedItems(User, &item::HasLock))
+      truth HasLockableItem = User->GetStack()->SortedItems(User, &item::HasLock);
+      if(!HasLockableItem)
+      {
+        for(int c = 0; c < User->GetEquipments(); ++c)
+        {
+          item* Equipment = User->GetEquipment(c);
+
+          if(Equipment && Equipment->HasLock(User))
+          {
+            HasLockableItem = true;
+            break;
+          }
+        }
+      }
+
+      if(HasLockableItem)
       {
         if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
           Key = 'i';
@@ -1095,9 +1127,8 @@ truth key::Apply(character* User)
 
         if(Key == 'i')
         {
-          item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want "
-                                                                    "to lock or unlock?"),
-                                                      0, &item::HasLock);
+          item* Item = User->SelectFromPossessions(CONST_S("What do you want to lock or unlock?"),
+                                                   &item::HasLock);
           return Item && Item->TryKey(this, User);
         }
       }
@@ -1206,18 +1237,34 @@ truth whistle::Apply(character* Whistler)
 
 void whistle::BlowEffect(character* Whistler)
 {
+  cchar* SoundDescription;
+  if(LastUsed && (game::GetTick() - LastUsed < GetCooldown(2000, Whistler)))
+    SoundDescription = "an interesting";
+  else
+  {
+    LastUsed = game::GetTick();
+
+    switch (RAND() % 4)
+    {
+      case 0: SoundDescription = "a shrill"; break;
+      case 1: SoundDescription = "a piercing"; break;
+      case 2: SoundDescription = "a loud"; break;
+      case 3: SoundDescription = "a strange"; break;
+    }
+  }
+
   if(Whistler->IsPlayer())
   {
     if(Whistler->CanHear())
-      ADD_MESSAGE("You produce an interesting sound.");
+      ADD_MESSAGE("You produce %s sound.", SoundDescription);
     else
       ADD_MESSAGE("You blow %s", CHAR_NAME(DEFINITE));
   }
   else if(Whistler->CanBeSeenByPlayer())
   {
     if(PLAYER->CanHear())
-      ADD_MESSAGE("%s blows %s and produces an interesting sound.",
-                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s blows %s and produces %s sound.",
+                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
     else
       ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   }
@@ -1237,7 +1284,7 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && ((game::GetTick() - LastUsed) < Whistler->GetMagicItemCooldown(2000)))
+  if(LastUsed && ((game::GetTick() - LastUsed) < GetCooldown(2000, Whistler)))
   {
     whistle::BlowEffect(Whistler);
     return;
@@ -1507,6 +1554,11 @@ beartrap::~beartrap()
 
 void beartrap::StepOnEffect(character* Stepper)
 {
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(IsActive() && !IsBroken())
   {
     int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
@@ -1743,7 +1795,8 @@ truth wand::Zap(character* Zapper, v2, int Direction)
       GetBeamEffect(),
       Direction,
       GetBeamRange(),
-      GetSpecialParameters()
+      GetSpecialParameters(),
+      this
     );
 
   (GetLevel()->*level::GetBeam(GetBeamStyle()))(Beam);
@@ -2090,18 +2143,6 @@ void itemcontainer::DrawContents(ccharacter* Char)
     i->DrawContents(Char);
 }
 
-void magicalwhistle::Save(outputfile& SaveFile) const
-{
-  whistle::Save(SaveFile);
-  SaveFile << LastUsed;
-}
-
-void magicalwhistle::Load(inputfile& SaveFile)
-{
-  whistle::Load(SaveFile);
-  SaveFile >> LastUsed;
-}
-
 int materialcontainer::GetSpoilLevel() const
 {
   return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
@@ -2130,10 +2171,18 @@ void itemcontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray
     }
 }
 
-truth mine::CheckPickUpEffect(character*)
+truth mine::CheckPickUpEffect(character* Picker)
 {
   if(WillExplode(0))
   {
+    // Allow the player to sometimes defuse the mine.
+    if(Picker-> IsPlayer() && !RAND_N(80 / Max(Picker->GetAttribute(DEXTERITY), 1)))
+    {
+      SetIsActive(false);
+      ADD_MESSAGE("You successfully defuse %s.", CHAR_NAME(DEFINITE));
+      return true;
+    }
+
     lsquare* Square = GetLSquareUnder();
 
     if(Square->CanBeSeenByPlayer(true))
@@ -2229,7 +2278,7 @@ truth horn::Apply(character* Blower)
     return false;
   }
 
-  if(!LastUsed || game::GetTick() - LastUsed >= Blower->GetMagicItemCooldown(2500))
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(2500, Blower))
   {
     LastUsed = game::GetTick();
     Blower->EditExperience(MANA, 150, 1 << 12);
@@ -2289,6 +2338,7 @@ truth horn::Apply(character* Blower)
             }
           }
           else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && !Audience->StateIsActivated(FEARLESS)
+                  && Audience->GetPanicLevel() > (RAND() % (50 - Min(PLAYER->GetAttribute(CHARISMA), 49)))
                   && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
           else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())
@@ -2297,7 +2347,7 @@ truth horn::Apply(character* Blower)
           {
             if(Audience->IsPlayer())
               ADD_MESSAGE("Your wounds are healed.");
-            else if(CanBeSeenByPlayer())
+            else if(Audience->CanBeSeenByPlayer())
               ADD_MESSAGE("%s looks sound and hale again.", Audience->CHAR_NAME(DEFINITE));
 
             Audience->RestoreLivingHP();
@@ -2374,13 +2424,13 @@ truth horn::Apply(character* Blower)
   return true;
 }
 
-void horn::Save(outputfile& SaveFile) const
+void magicalinstrument::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << LastUsed;
 }
 
-void horn::Load(inputfile& SaveFile)
+void magicalinstrument::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> LastUsed;
@@ -2537,8 +2587,13 @@ void wand::BreakEffect(character* Terrorist, cfestring& DeathMsg)
     (
       Terrorist,
       DeathMsg,
+      Pos,
+      GetBeamColor(),
+      GetBeamEffect(),
       YOURSELF,
-      GetSpecialParameters()
+      GetBeamRange(),
+      GetSpecialParameters(),
+      NULL // Not this, because it won't exist in a second.
     );
 
   for(c = 0; c < Stack.Size; ++c)
@@ -2661,7 +2716,8 @@ truth holybanana::Zap(character* Zapper, v2, int Direction)
         BEAM_FIRE_BALL,
         Direction,
         50,
-        0
+        0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -2757,21 +2813,27 @@ void itemcontainer::FinalProcessForBone()
   Contained->FinalProcessForBone();
 }
 
-void magicalwhistle::FinalProcessForBone()
-{
-  whistle::FinalProcessForBone();
-  LastUsed = 0;
-}
-
-void horn::FinalProcessForBone()
+void magicalinstrument::FinalProcessForBone()
 {
   item::FinalProcessForBone();
   LastUsed = 0;
 }
 
+int magicalinstrument::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
 truth charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed && game::GetTick() - LastUsed < Charmer->GetMagicItemCooldown(10000))
+  if(LastUsed && game::GetTick() - LastUsed < GetCooldown(10000, Charmer))
   {
     if(Charmer->IsPlayer())
     {
@@ -2847,29 +2909,6 @@ truth charmlyre::Apply(character* Charmer)
   Charmer->EditAP(-1000);
   game::CallForAttention(GetPos(), 100);
   return true;
-}
-
-void charmlyre::Save(outputfile& SaveFile) const
-{
-  item::Save(SaveFile);
-  SaveFile << LastUsed;
-}
-
-void charmlyre::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> LastUsed;
-}
-
-charmlyre::charmlyre()
-{
-  LastUsed = 0;
-}
-
-void charmlyre::FinalProcessForBone()
-{
-  item::FinalProcessForBone();
-  LastUsed = 0;
 }
 
 truth carrot::BunnyWillCatchAndConsume(ccharacter* Bunny) const
@@ -3764,14 +3803,15 @@ truth ullrbone::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	      Zapper,
-	      CONST_S("killed by ") + GetName(INDEFINITE),
-	      Zapper->GetPos(),
-	      YELLOW,
-	      BEAM_LIGHTNING,
-	      Direction,
-	      50,
-	      0
+        Zapper,
+        CONST_S("killed by ") + GetName(INDEFINITE),
+        Zapper->GetPos(),
+        YELLOW,
+        BEAM_LIGHTNING,
+        Direction,
+        50,
+        0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -3819,11 +3859,11 @@ alpha ullrbone::GetOutlineAlpha(int Frame) const
   return 50 + (Frame * (31 - Frame) >> 1);
 }
 
-material* trinket::RemoveMaterial(material* Material)
+material* fish::RemoveMaterial(material* Material)
 {
   if(GetConfig() == DEAD_FISH)
   {
-    item* Bones = trinket::Spawn(BONE_FISH);
+    item* Bones = fish::Spawn(BONE_FISH);
     DonateSlotTo(Bones);
     DonateIDTo(Bones);
     SendToHell();
@@ -3833,56 +3873,71 @@ material* trinket::RemoveMaterial(material* Material)
     return item::RemoveMaterial(Material);
 }
 
-truth trinket::Necromancy(character*)
+truth fish::Necromancy(character*)
 {
   if(GetConfig() == BONE_FISH)
   {
-    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    GetSlot()->AddFriendItem(fish::Spawn(DEAD_FISH));
     RemoveFromSlot();
     SendToHell();
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
-truth trinket::RaiseTheDead(character*)
+truth fish::RaiseTheDead(character*)
 {
+  // TODO: Spawn a fish creature if done on WATER liquidterrain.
+  ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
+
   if(GetConfig() == BONE_FISH)
   {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
-    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    GetSlot()->AddFriendItem(fish::Spawn(DEAD_FISH));
     RemoveFromSlot();
     SendToHell();
     return true;
   }
-  if(GetConfig() == DEAD_FISH)
-  {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
-    return false;
-  }
-  else
-    return false;
+
+  return false;
 }
 
 col16 trinket::GetMaterialColorB(int) const
 {
-  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(87, 59, 12); }
-  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(200, 0, 0); }
-  if(GetConfig() == SMALL_CLOCK) { return MakeRGB16(124, 50, 16); }
-  if(GetConfig() == LARGE_CLOCK) { return MakeRGB16(124, 50, 16); }
-  else { return MakeRGB16(0, 0, 0); }
+  switch (GetConfig())
+  {
+    case POTTED_CACTUS: return MakeRGB16(87, 59, 12);
+    case POTTED_PLANT: return MakeRGB16(200, 0, 0);
+    case SMALL_CLOCK: return MakeRGB16(124, 50, 16);
+    case LARGE_CLOCK: return MakeRGB16(124, 50, 16);
+    default: return MakeRGB16(0, 0, 0);
+  }
 }
 
 col16 trinket::GetMaterialColorC(int) const
 {
-  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(0, 160, 0); }
-  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(0, 160, 0); }
-  else { return MakeRGB16(0, 0, 0); }
+  switch (GetConfig())
+  {
+    case POTTED_CACTUS: return MakeRGB16(0, 160, 0);
+    case POTTED_PLANT: return MakeRGB16(0, 160, 0);
+    default: return MakeRGB16(0, 0, 0);
+  }
+}
+
+truth fish::CatWillCatchAndConsume(ccharacter* Kitty) const
+{
+  return GetConfig() == DEAD_FISH &&
+         GetConsumeMaterial(Kitty)->GetConfig() == SARDINE &&
+         !GetConsumeMaterial(Kitty)->GetSpoilLevel();
 }
 
 void gastrap::StepOnEffect(character* Stepper)
 {
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(IsActive() && !IsBroken())
   {
     if(Stepper->IsPlayer())
@@ -3892,6 +3947,14 @@ void gastrap::StepOnEffect(character* Stepper)
 
     if(Stepper->IsPlayer())
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
+
+    // Reveal the trap when we step on it.
+    int ViewerTeam = Stepper->GetTeam()->GetID();
+    if(ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end())
+    {
+      DiscoveredByTeam.insert(ViewerTeam);
+      SendNewDrawAndMemorizedUpdateRequest();
+    }
 
     if(GetSecondaryMaterial())
     {
@@ -4099,7 +4162,7 @@ void locationmap::FinishReading(character* Reader)
       /* Add new locations here. */
     }
 
-    game::GetWorldMap()->RevealEnvironment(NewPos, 1);
+    game::GetWorldMap()->RevealEnvironment(NewPos, 0);
     game::SaveWorldMap();
 
     ADD_MESSAGE("The map reveals to you a secret site. You quickly commit the location to memory as the map burns up.");
@@ -4108,4 +4171,44 @@ void locationmap::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+}
+
+truth nuke::Apply(character* Terrorist)
+{
+  if(IsExplosive())
+  {
+    if(Terrorist->IsPlayer())
+      ADD_MESSAGE("You attempt to arm %s, but you don't have the required eighteen-digit activation code.", CHAR_NAME(DEFINITE));
+    else if(Terrorist->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s fiddles with %s, but nothing seems to happen.", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+
+    return true;
+  }
+  else if(Terrorist->IsPlayer())
+    ADD_MESSAGE("%s unfortunately seems to be inoperative.", CHAR_NAME(DEFINITE));
+
+  return false;
+}
+
+void weepobsidian::Be()
+{
+  stone::Be();
+
+  if(Exists() && !game::IsInWilderness())
+  {
+    if(!RAND_N(1000))
+    {
+      beamdata Beam
+        (
+          0,
+          CONST_S("drowned by the tears of ") + CHAR_NAME(DEFINITE),
+          YOURSELF,
+          0
+        );
+      GetLSquareUnder()->LiquidRain(Beam, WATER);
+
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s releases torrential rain.", CHAR_NAME(DEFINITE));
+    }
+  }
 }

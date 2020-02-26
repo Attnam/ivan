@@ -50,7 +50,7 @@ attnam
 elpuricave
 {
   BitmapPos = 16, 48;
-  NameStem = "hideous cave entry radiating pure evil";
+  NameStem = "hideous cave entrance radiating pure evil";
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
   CanBeGenerated = false; /* Overridden by the world map generator */
@@ -88,9 +88,62 @@ underwatertunnelexit
   NativeGTerrainType = JUNGLE;
 }
 
+aslonacastle
+{
+  BitmapPos = 112, 96;
+  NameStem = "mighty seaside castle";
+  UsesLongArticle = false;
+  AttachedDungeon = ASLONA_CASTLE;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
+rebelcamp
+{
+  BitmapPos = 16, 64;
+  NameStem = "hidden camp";
+  UsesLongArticle = false;
+  AttachedDungeon = REBEL_CAMP;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = STEPPE;
+}
+
+goblinfort
+{
+  BitmapPos = 80, 96;
+  NameStem = "overgrown ruins of ancient fortress";
+  UsesLongArticle = true;
+  AttachedDungeon = GOBLIN_FORT;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+fungalcave
+{
+  BitmapPos = 32, 64;
+  NameStem = "damp and dank cave entrance";
+  AttachedDungeon = FUNGAL_CAVE;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = JUNGLE;
+}
+
+pyramid
+{
+  BitmapPos = 96, 128;
+  NameStem = "crumbling pyramid";
+  AttachedDungeon = PYRAMID;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = DESERT;
+}
+
 blackmarket
 {
-  BitmapPos = 64, 64;
+  BitmapPos = 80, 80;
   NameStem = "old, decrepit building";
   UsesLongArticle = true;
   AttachedDungeon = BLACK_MARKET;
@@ -104,7 +157,7 @@ locationAA
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = MONDEDR;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
@@ -115,7 +168,7 @@ locationAB
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = IRINOX;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
@@ -126,7 +179,7 @@ locationAC
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = DARK_FOREST;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
