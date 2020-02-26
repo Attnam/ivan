@@ -543,6 +543,7 @@ meleeweapon
     WieldedBitmapPos = 176, 112;
     Price = 250;
     DamageFlags = SLASH|BLUNT;
+    DescriptiveInfo = "Every year on the Atavus day, a humongous loaf of banana stollen is baked in the Cathedral and blessed by the high priest himself. The whole town then gathers for a feast where the stollen is cut by this very ceremonial knife and the celebrations of Atavus' charity can properly begin.";
   }
 
   Config BROKEN|GRAND_STOLLEN_KNIFE;
@@ -940,6 +941,7 @@ meleeweapon
     IsGoodWithPlants = true;
     EnchantmentPlusChance = 20;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A short, curved blade often used for weeding overgrown plants.";
   }
 
   Config BROKEN|SICKLE;
@@ -1380,6 +1382,7 @@ meleeweapon
     AttachedGod = SILVA;
     WieldedBitmapPos = 160, 304;
     EnchantmentPlusChance = 20;
+    DescriptiveInfo = "The favoured weapon of travellers, wizards and goblin monks.";
     Alias = { 2, "staff", "stave"; }
   }
 
@@ -2480,6 +2483,7 @@ nut
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
   IsSadistWeapon = true;
+  DescriptiveInfo = "This makes you feel rather uneasy in the groin region.";
 }
 
 leftnutofpetrus /* nut-> */
@@ -2504,6 +2508,7 @@ leftnutofpetrus /* nut-> */
   IsQuestItem = true;
   IsValuable = true;
   CanBeBurned = false;
+  DescriptiveInfo = "A relic of the fallen high priest.";
 }
 
 bone
@@ -2577,6 +2582,7 @@ copyofleftnutofpetrus /* nut-> */
   AttachedGod = MELLIS;
   IsValuable = false;
   IsAbstract = true;
+  DescriptiveInfo = "High priest Petrus lost his right nut in a gruesome, unfortunate accident that left it mangled beyond repair by even divine magic. His remaining nut thus became an object of veneration as the only hope for an heir to the Attnamese throne.";
 
   Config CHEAP;
   {
@@ -3349,6 +3355,7 @@ skeletonkey /* key-> */
   CanBePiled = false;
   IsValuable = true;
   BaseEmitation = rgb24(125, 125, 105);
+  DescriptiveInfo = "A rough key carved from a knucklebone of a grand dragon. The beast reportedly didn't even stir as the bone was stolen from its paw. The key is said to open any lock easily.";
 }
 
 shield /* armor-> */
@@ -4489,6 +4496,7 @@ ring
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
   CanBeBurned = false;
+  DescriptiveInfo = "A piece of jewellery imbued with arcane powers.";
 
   Config RING_OF_FIRE_RESISTANCE;
   {
@@ -5997,6 +6005,7 @@ vermis /* meleeweapon-> */
   EnchantmentPlusChance = 2;
   DamageFlags = PIERCE;
   GearStates = TELEPORT|TELEPORT_CONTROL;
+  DescriptiveInfo = "Granted power over spacetime by the blessing of Sophos, this spear allowed the scholar-knight Karl to unite many kobold tribes and start them on the Path of Enlightenment, until he stepped on a land mine and died, the kobolds promptly falling back to savagery.";
 
   Config BROKEN;
   {
@@ -6173,6 +6182,7 @@ gorovitsweapon
   IsAbstract = true;
   CanBeBurned = false;
   CanBePiled = false;
+  DescriptiveInfo = "The mystical glow of communism marks this mighty weapon as an interdimensional import from the legendary land of Soviet Russia.";
 
   Config GOROVITS_HAMMER;
   {
@@ -6416,6 +6426,7 @@ saalthul
   WieldedBitmapPos = 160, 32;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "Once upon a time, there was a thief of great skill who sought to impress his beloved goddess by deeds of ever-increasing gall and daring. Eventually, he blundered and died a horrible death, but his name and skills live forever through the sword he used to wield.";
 
   Config BROKEN;
   {
@@ -6624,6 +6635,7 @@ decosadshirt /* armor->bodyarmor-> */
   AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   Price = 0;
+  DescriptiveInfo = "Eat a banana. Be happy.";
 }
 
 filthytunic /* armor->bodyarmor-> */
@@ -6869,6 +6881,7 @@ acidshield /* armor->shield-> */
   AcidResistance = 3;
   NameSingular = "acid shield";
   Alias == "shield of spitting";
+  DescriptiveInfo = "A single caustic tear of Scabies was trapped within this shield. It shall spill its acidic sorrow upon your adversaries.";
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
