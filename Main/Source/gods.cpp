@@ -1366,6 +1366,11 @@ void cruentus::PrayGoodEffect()
       );
     lsquare* Square = PLAYER->GetLSquareUnder();
     Square->LiquidRain(Beam, BLOOD);
+
+    if(PLAYER->HasHead())
+      ADD_MESSAGE("A torrential rain of blood descends on your head.");
+    else
+      ADD_MESSAGE("A rain of blood drizzles all around you.");
   }
 
   // A little bit of healing, but only usable when panicked.
