@@ -213,6 +213,7 @@ Dungeon XINROCH_TOMB;
       FloorSquare = ASH solidterrain(SNOW_TERRAIN), 0;
       GenerateDoor = false;
       DivineMaster = INFUSCOR;
+      Type = ROOM_OWNED_AREA;
       GenerateLanterns = false;
       IsInside = false;
       GenerateWindows = false;
@@ -404,7 +405,7 @@ Dungeon XINROCH_TOMB;
           | = 0;
           % = 0;
           g = guard(TOMB_ENTRY);
-          E = guard(TOMB_ENTRY_MASTER);
+          E = guard(TOMB_ENTRY_MASTER) { Flags = IS_MASTER; }
           y = mysticfrog(DARK);
           k = kamikazedwarf(INFUSCOR);
           K = veterankamikazedwarf(INFUSCOR);
@@ -670,7 +671,7 @@ Dungeon XINROCH_TOMB;
   {
     Square, Random;
     {
-      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000; Chance = 5; }
+      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000:10000; Chance = 5; }
     }
   }
 
@@ -967,7 +968,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Pos 3,3;
       {
-        Items == cauldron { SecondaryMaterial = TROLL_BLOOD; }
+        Items == cauldron;
       }
     }
   }
@@ -1233,12 +1234,18 @@ Dungeon XINROCH_TOMB;
     Square, Random IN_ROOM;
     {
       Character = golem(ICE);
-      Times = 2:5;
+      Times = 1:4;
     }
 
     Square, Random IN_ROOM;
     {
-      Character = golem(BLUE_CRYSTAL);
+      Character = golem(SNOW);
+      Times = 1:3;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(JOTUN_ICE);
       Times = 2;
     }
 
@@ -1630,20 +1637,12 @@ Dungeon XINROCH_TOMB;
       Square, Pos 1,20;
       {
         OTerrain = stairs(STAIRS_UP);
-      }
-
-      Square, Pos 1,20;
-      {
         EntryIndex = STAIRS_UP;
       }
 
       Square, Pos 1,1;
       {
         OTerrain = stairs(STAIRS_DOWN);
-      }
-
-      Square, Pos 1,1;
-      {
         EntryIndex = STAIRS_DOWN;
       }
 

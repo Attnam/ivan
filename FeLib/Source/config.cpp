@@ -34,59 +34,58 @@ void configsystem::NormalTruthChanger(truthoption* O, truth What)
 void configsystem::NormalCycleChanger(cycleoption* O, long What)
 { O->Value = What; }
 
-configoption::configoption(cchar* Name, cchar* Description)
-: Name(Name), Description(Description) { }
+configoption::configoption(cchar* Name, cchar* Description, cchar* HelpInfo)
+: Name(Name), Description(Description), HelpInfo(HelpInfo) { }
 
 stringoption::stringoption(cchar* Name, cchar* Desc,
-                           cfestring& Value,
+                           cchar* HelpInfo, cfestring& Value,
                            void (*ValueDisplayer)(const stringoption*,
                                                   festring&),
                            truth (*ChangeInterface)(stringoption*),
                            void (*ValueChanger)(stringoption*,
                                                 cfestring&))
-: configoption(Name, Desc),
+: configoption(Name, Desc, HelpInfo),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
-numberoption::numberoption(cchar* Name, cchar* Desc, long Value,
+numberoption::numberoption(cchar* Name, cchar* Desc, cchar* HelpInfo, long Value,
                            void (*ValueDisplayer)(const numberoption*,
                                                   festring&),
                            truth (*ChangeInterface)(numberoption*),
                            void (*ValueChanger)(numberoption*, long))
-: configoption(Name, Desc),
+: configoption(Name, Desc, HelpInfo),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
-scrollbaroption::scrollbaroption(cchar* Name,
-                                 cchar* Desc, long Value,
+scrollbaroption::scrollbaroption(cchar* Name, cchar* Desc, cchar* HelpInfo, long Value,
                                  void (*ValueDisplayer)(const numberoption*,
                                                         festring&),
                                  truth (*ChangeInterface)(numberoption*),
                                  void (*ValueChanger)(numberoption*, long),
                                  void (*BarHandler)(long))
-: numberoption(Name, Desc, Value, ValueDisplayer,
+: numberoption(Name, Desc, HelpInfo, Value, ValueDisplayer,
                ChangeInterface, ValueChanger),
   BarHandler(BarHandler) { }
 
-truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
+truthoption::truthoption(cchar* Name, cchar* Desc, cchar* HelpInfo, truth Value,
                          void (*ValueDisplayer)(const truthoption*, festring&),
                          truth (*ChangeInterface)(truthoption*),
                          void (*ValueChanger)(truthoption*, truth))
-: configoption(Name, Desc),
+: configoption(Name, Desc, HelpInfo),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
-cycleoption::cycleoption(cchar* Name, cchar* Desc,
+cycleoption::cycleoption(cchar* Name, cchar* Desc, cchar* HelpInfo,
                            long Value, long CycleCount,
                            void (*ValueDisplayer)(const cycleoption*,
                                                   festring&),
                            truth (*ChangeInterface)(cycleoption*),
                            void (*ValueChanger)(cycleoption*,
                                                 long))
-: configoption(Name, Desc),
+: configoption(Name, Desc, HelpInfo),
   Value(Value), CycleCount(CycleCount),
   ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
@@ -139,7 +138,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
   int Chosen;
   truth TruthChange = false;
 
-  felist List(CONST_S("Which setting do you wish to configure? (* - req. restart)"));
+  felist List(CONST_S("Which setting do you wish to configure? (* requires restart)"));
 
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
@@ -164,6 +163,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
         Entry.Resize(iLim-1);
       Entry<<" "; //space between "columns"
       Option[c]->DisplayValue(Entry);
+      Entry.Resize(iLim+30);
 
       if(fsLastCategory!=Option[c]->fsCategory){
         List.AddEntry(Option[c]->fsCategory, WHITE, 0, NO_IMAGE, false);
@@ -171,7 +171,8 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       }
 
       List.AddEntry(Entry, LIGHT_GRAY);
-      List.SetLastEntryHelp(Option[c]->Description); //TODO show all possible values, and each value could have more details, may require cycling thru them all to get all texts...
+      // TODO: help should show all possible values with details, may require cycling thru them
+      List.SetLastEntryHelp(festring() << Option[c]->Description << "\n\n" << Option[c]->HelpInfo);
     }
 
     if(SlaveScreen && ListAttributeInitializer)

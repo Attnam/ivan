@@ -133,7 +133,7 @@ liquidterrain /* glterrain-> */
   Config POOL;
   {
     NameSingular = "pool";
-    SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
+    SitMessage = "You sit on the pool surface. Oddly enough, you sink. You feel stupid.";
   }
 
   Config UNDERGROUND_LAKE;
@@ -141,7 +141,15 @@ liquidterrain /* glterrain-> */
     UsesLongAdjectiveArticle = true;
     Adjective = "underground";
     NameSingular = "lake";
-    /*SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";*/
+    SitMessage = "You sit on the lake surface. Oddly enough, you sink. You feel stupid.";
+    UseBorderTiles = true;
+    BorderTilePriority = 10;
+  }
+
+  Config SEA;
+  {
+    NameSingular = "sea";
+    SitMessage = "You sit on the sea waves. Oddly enough, you sink. You feel stupid.";
     UseBorderTiles = true;
     BorderTilePriority = 10;
   }

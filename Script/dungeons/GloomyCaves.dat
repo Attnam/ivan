@@ -240,8 +240,8 @@ Dungeon ELPURI_CAVE;
 
         Types
         {
-          g = guard(SHOP) { Team = 5; }
-          s = shopkeeper(ELPURI_CAVE) { Team = 5; Flags = IS_MASTER; }
+          g = guard(SHOP) { Team = GUILD_TEAM; }
+          s = shopkeeper(ELPURI_CAVE) { Team = GUILD_TEAM; Flags = IS_MASTER; }
         }
       }
       {
@@ -889,7 +889,7 @@ Dungeon ELPURI_CAVE;
   Level DARK_LEVEL;
   {
     Description = "dark fortress";
-    ShortDescription = "Dark Fortress";
+    ShortDescription = "Dark Fort";
     LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
     FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
     TunnelSquare = STEEL solidterrain(FLOOR), 0;

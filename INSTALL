@@ -19,7 +19,7 @@ cd build
 cmake ..  # ".." refers to the parent directory of "build"
 make
 make install
-
+Note: This will make changes to /usr/bin, and you have to either run "sudo make install" instead, or log in as root.  
 Note: Wizard Mode is disabled by default. To enable it run:
 
 mkdir build

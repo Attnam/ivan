@@ -105,7 +105,7 @@ class gwterrain : public wterrain, public gterrain
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
   void Draw(blitdata&) const;
-  virtual int GetEntryDifficulty() const { return 10; }
+  virtual int GetEntryDifficulty() const;
   void CalculateNeighbourBitmapPoses();
   virtual int GetWalkability() const;
   DATA_BASE_TRUTH(UsesLongArticle);

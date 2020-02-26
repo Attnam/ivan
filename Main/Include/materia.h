@@ -60,6 +60,7 @@ struct materialdatabase : public databasebase
   int StepInWisdomLimit;
   int RustModifier;
   int Acidicity;
+  int Hotness;
   contentscript<item> NaturalForm;
   int HardenedMaterial;
   int SoftenedMaterial;
@@ -154,6 +155,7 @@ class material
   DATA_BASE_VALUE(int, AttachedGod);
   DATA_BASE_VALUE(int, RustModifier);
   DATA_BASE_VALUE(int, Acidicity);
+  DATA_BASE_VALUE(int, Hotness);
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
   DATA_BASE_VALUE(int, IntelligenceRequirement);
   DATA_BASE_VALUE(int, Stickiness);

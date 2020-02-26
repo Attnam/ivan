@@ -79,7 +79,6 @@ truth cloak::IsShadowVeil() const
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }
-truth boot::IsKicking() const { return (GetConfig() == BOOT_OF_KICKING); }
 
 long gauntlet::GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
 truth gauntlet::IsInCorrectSlot(int I) const { return I == RIGHT_GAUNTLET_INDEX || I == LEFT_GAUNTLET_INDEX; }
@@ -609,7 +608,8 @@ truth thunderhammer::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
         BEAM_LIGHTNING,
         Direction,
         4,
-        0
+        0,
+        this
       );
 
     GetLevel()->LightningBeam(Beam);
@@ -1233,7 +1233,8 @@ truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 2))
+  if(!IsBroken() && Enemy->IsEnabled() && !Enemy->TemporaryStateIsActivated(PANIC) &&
+     Enemy->GetPanicLevel() > (RAND() % (50 - Min(Hitter->GetAttribute(MANA), 49))))
   {
     if(Hitter)
     {
@@ -1270,6 +1271,7 @@ truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
         ADD_MESSAGE("The sickle shrieks at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
+    game::CallForAttention(Enemy->GetPos(), 100);
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
   }
@@ -1338,7 +1340,7 @@ truth sharpaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && !(Enemy->IsUnique()))
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && (!Enemy->IsUnique() || Enemy->IsPlayer()))
   {
     bodypart* ToBeSevered = Enemy->GetBodyPart(BodyPartIndex);
 
@@ -1391,7 +1393,8 @@ truth taiaha::Zap(character* Zapper, v2, int Direction)
       BEAM_STRIKE,
       Direction,
       15,
-      0
+      0,
+      this
     );
 
   (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -1409,15 +1412,15 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
-		Entry << ", " << GetBaseToHitValueDescription();
+    Entry << ", " << GetBaseToHitValueDescription();
 
-		if(!IsBroken() && !IsWhip())
+    if(!IsBroken() && !IsWhip())
       Entry << ", " << GetStrengthValueDescription();
 
-		int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
     int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-		if(CWeaponSkillLevel || SWeaponSkillLevel)
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
       Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
     if(TimesUsed == 1)
@@ -1433,7 +1436,7 @@ void taiaha::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << TimesUsed << Charges;
-	SaveFile << Enchantment;
+  SaveFile << Enchantment;
   SaveFile << SecondaryMaterial;
 }
 
@@ -1441,7 +1444,7 @@ void taiaha::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> TimesUsed >> Charges;
-	SaveFile >> Enchantment;
+  SaveFile >> Enchantment;
   LoadMaterial(SaveFile, SecondaryMaterial);
 }
 
@@ -1449,7 +1452,7 @@ void taiaha::PostConstruct()
 {
   Charges = GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1);
   TimesUsed = 0;
-	meleeweapon::PostConstruct();
+  meleeweapon::PostConstruct();
 }
 
 alpha taiaha::GetOutlineAlpha(int Frame) const
@@ -1631,27 +1634,347 @@ void unpick::FinalProcessForBone()
   LastUsed = 0;
 }
 
+int unpick::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
 truth unpick::Zap(character* Zapper, v2, int Direction)
 {
-  if(!LastUsed || game::GetTick() - LastUsed >= Zapper->GetMagicItemCooldown(1000))
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(1000, Zapper))
   {
     LastUsed = game::GetTick();
     ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
-    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+    Zapper->EditExperience(MANA, 150, 1 << 10);
 
     beamdata Beam
       (
-	      Zapper,
-	      CONST_S("killed by ") + GetName(INDEFINITE),
-	      Zapper->GetPos(),
-	      TRANSPARENT_COLOR,
-	      BEAM_WALL_CREATION,
-	      Direction,
-	      1,
-	      0
+        Zapper,
+        CONST_S("killed by ") + GetName(INDEFINITE),
+        Zapper->GetPos(),
+        TRANSPARENT_COLOR,
+        BEAM_WALL_CREATION,
+        Direction,
+        1,
+        0,
+        this
       );
 
     (GetLevel()->*level::GetBeam(SHIELD_BEAM))(Beam);
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
+}
+
+truth muramasa::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                          int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled())
+  {
+    // Special effect against lawful and neutral creatures.
+    bool IsGoodly = false;
+
+    if(Enemy->IsPlayer() && game::GetPlayerAlignment() < 0)
+      IsGoodly = true;
+    else if(!Enemy->IsPlayer())
+    {
+      switch (Enemy->GetAttachedGod())
+      {
+        case VALPURUS:
+        case LEGIFER:
+        case ATAVUS:
+        case DULCIS:
+        case SEGES:
+        case SOPHOS:
+        case SILVA:
+        case LORICATUS: IsGoodly = true; break;
+      }
+    }
+
+    if(IsGoodly)
+    {
+      if(!RAND_N(10))
+      {
+        switch (RAND() % 7)
+        {
+          case 0: Enemy->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000)); break;
+          case 1: Enemy->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500)); break;
+          case 2: Enemy->BeginTemporaryState(PARASITE_TAPE_WORM, 6000 + RAND_N(3000)); break;
+          case 3: Enemy->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200)); break;
+          case 4: Enemy->BeginTemporaryState(HICCUPS, 1000 + RAND_N(2000)); break;
+          default: Enemy->GainIntrinsic(LEPROSY); break;
+        }
+      }
+      else
+      {
+        switch (RAND() % 3)
+        {
+          case 0: Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200)); break;
+          case 1: Enemy->BeginTemporaryState(POISONED, 80 + RAND() % 40); break;
+          case 2: Enemy->BeginTemporaryState(CONFUSED, 400 + RAND_N(1000)); break;
+        }
+      }
+
+      if(Hitter)
+      {
+        if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s %s defiles %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+      else
+      {
+        if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s defiles %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+    }
+    else if(!RAND_N(4)) // Striking a chaotic creature.
+      ADD_MESSAGE("%s seems reluctant to strike %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+  }
+
+  return BaseSuccess;
+}
+
+truth masamune::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                          int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled())
+  {
+    // Special effect against chaotic creatures.
+    bool IsEvil = false;
+
+    if(Enemy->IsPlayer() && game::GetPlayerAlignment() < 0)
+      IsEvil = true;
+    else if(!Enemy->IsPlayer())
+    {
+      switch (Enemy->GetAttachedGod())
+      {
+        case MELLIS:
+        case CLEPTIA:
+        case NEFAS:
+        case SCABIES:
+        case INFUSCOR:
+        case CRUENTUS:
+        case MORTIFER: IsEvil = true; break;
+      }
+    }
+
+    if(IsEvil)
+    {
+      for(int c = 0; c < STATES; ++c)
+      {
+        // Remove most temporary status effects, leaving only some negative ones.
+        if((1 << c != SLOW) && (1 << c != POISONED) &&
+           (1 << c != PANIC) && (1 << c != CONFUSED) &&
+           (1 << c != TELEPORT_LOCK) && (1 << c != PARASITE_TAPE_WORM) &&
+           (1 << c != PARASITE_MIND_WORM))
+        {
+          Enemy->DeActivateTemporaryState(1 << c);
+
+          if(!IsEnabled())
+            break;
+        }
+      }
+
+      // Terrify the evil doer and prevent them from escaping.
+      if(!Enemy->TemporaryStateIsActivated(PANIC) && !Enemy->TemporaryStateIsActivated(FEARLESS) &&
+         Enemy->GetPanicLevel() > (RAND() % (50 - Min(Hitter->GetAttribute(MANA), 49))))
+        Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
+      if(!Enemy->TemporaryStateIsActivated(TELEPORT_LOCK))
+        Enemy->BeginTemporaryState(TELEPORT_LOCK, 200 + RAND_N(500));
+
+      if(Hitter)
+      {
+        if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s %s rebukes %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+      else
+      {
+        if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s rebukes %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      }
+    }
+    else if(!RAND_N(4)) // Striking a good creature.
+      ADD_MESSAGE("%s seems reluctant to strike %s.", CHAR_NAME(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+  }
+
+  return BaseSuccess;
+}
+
+void magestaff::Save(outputfile& SaveFile) const
+{
+  meleeweapon::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void magestaff::Load(inputfile& SaveFile)
+{
+  meleeweapon::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void magestaff::FinalProcessForBone()
+{
+  meleeweapon::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+int magestaff::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}
+
+truth magestaff::Zap(character* Zapper, v2, int Direction)
+{
+  int Cooldown;
+  switch (GetConfig())
+  {
+    case ROYAL_STAFF: Cooldown = 2500; break;
+    default: Cooldown = 1000; break;
+  }
+
+  if(!LastUsed || game::GetTick() - LastUsed >= GetCooldown(Cooldown, Zapper))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(MANA, 150, 1 << 10);
+
+    // Prepare for magical staves with different effects.
+    switch (GetConfig())
+    {
+      case ROYAL_STAFF: // Infinite polymorph, but with range of only 1.
+      {
+        beamdata Beam
+          (
+            Zapper,
+            CONST_S("killed by ") + GetName(DEFINITE) + " zapped @bk",
+            Zapper->GetPos(),
+            GetBeamColor(),
+            GetBeamEffect(),
+            Direction,
+            GetBeamRange(),
+            0,
+            this
+          );
+        (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
+        break;
+      }
+      default:
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s releases a shower of polychromatic sparks.", CHAR_NAME(DEFINITE));
+        break;
+      }
+    }
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
+}
+
+truth chastitybelt::CanBeEquipped(int I) const
+{
+  return !IsLocked();
+}
+
+truth chastitybelt::CanBeUnEquipped(int I) const
+{
+  // Worn locked chastity belt cannot be taken off.
+  return !IsInCorrectSlot(I) || !IsLocked();
+}
+
+void chastitybelt::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth ShowSpecialInfo) const
+{
+  if(Amount == 1)
+    AddName(Entry, INDEFINITE);
+  else
+  {
+    Entry << Amount << ' ';
+    AddName(Entry, PLURAL);
+  }
+
+  if(ShowSpecialInfo)
+    Entry << " [" << GetWeight() * Amount << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << ", " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue();
+    if(IsLocked())
+      Entry << ", locked";
+    Entry << ']';
+}
+
+void chastitybelt::PostConstruct()
+{
+  lockablebelt::PostConstruct();
+  SetIsLocked(RAND_2);
+}
+
+void pica::Save(outputfile& SaveFile) const
+{
+  meleeweapon::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void pica::Load(inputfile& SaveFile)
+{
+  meleeweapon::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void pica::FinalProcessForBone()
+{
+  meleeweapon::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+int pica::GetCooldown(int BaseCooldown, character* User)
+{
+  int Attribute = User->GetAttribute(MANA);
+
+  if(Attribute > 1)
+    return BaseCooldown / log10(Attribute);
+
+  return BaseCooldown / 0.20;
+}
+
+truth pica::Zap(character* Zapper, v2, int Direction)
+{
+  if(!IsBroken() && (!LastUsed || game::GetTick() - LastUsed >= GetCooldown(50, Zapper)))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(MANA, 50, 1 << 10);
+
+    for(int i = 0; i < (RAND_N(Max(GetEnchantment(), 1)) + 1); i++)
+    {
+      meleeweapon* ToBeThrown = meleeweapon::Spawn(DAGGER);
+      ToBeThrown->InitMaterials(MAKE_MATERIAL(STAR_METAL), MAKE_MATERIAL(MOON_SILVER), true);
+      ToBeThrown->SetEnchantment(GetEnchantment());
+      ToBeThrown->SetLifeExpectancy(50, Zapper->GetAttribute(MANA));
+      Zapper->ReceiveItemAsPresent(ToBeThrown);
+
+      ToBeThrown->Fly(Zapper, Direction, Zapper->GetAttribute(MANA),
+                      ToBeThrown->IsWeapon(Zapper) && !ToBeThrown->IsBroken());
+    }
   }
   else
     ADD_MESSAGE("Nothing happens.");

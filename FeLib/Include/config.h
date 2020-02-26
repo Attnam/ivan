@@ -57,7 +57,7 @@ class configsystem
 
 struct configoption
 {
-  configoption(cchar*, cchar*);
+  configoption(cchar*, cchar*, cchar*);
   virtual ~configoption() = default;
   virtual void SaveValue(std::ofstream&) const = 0;
   virtual void LoadValue(inputfile&) = 0;
@@ -65,12 +65,13 @@ struct configoption
   virtual void DisplayValue(festring&) const = 0;
   cchar* Name;
   cchar* Description;
+  cchar* HelpInfo;
   festring fsCategory;
 };
 
 struct stringoption : public configoption
 {
-  stringoption(cchar*, cchar*, cfestring&,
+  stringoption(cchar*, cchar*, cchar*, cfestring&,
                void (*)(const stringoption*, festring&)
                = &configsystem::NormalStringDisplayer,
                truth (*)(stringoption*)
@@ -91,7 +92,7 @@ struct stringoption : public configoption
 
 struct numberoption : public configoption
 {
-  numberoption(cchar*, cchar*, long,
+  numberoption(cchar*, cchar*, cchar*, long,
                void (*)(const numberoption*, festring&)
                = &configsystem::NormalNumberDisplayer,
                truth (*)(numberoption*)
@@ -112,7 +113,7 @@ struct numberoption : public configoption
 
 struct scrollbaroption : public numberoption
 {
-  scrollbaroption(cchar*, cchar*, long,
+  scrollbaroption(cchar*, cchar*, cchar*, long,
                   void (*)(const numberoption*, festring&),
                   truth (*)(numberoption*),
                   void (*)(numberoption*, long)
@@ -123,7 +124,7 @@ struct scrollbaroption : public numberoption
 
 struct truthoption : public configoption
 {
-  truthoption(cchar*, cchar*, truth,
+  truthoption(cchar*, cchar*, cchar*, truth,
               void (*)(const truthoption*, festring&)
               = &configsystem::NormalTruthDisplayer,
               truth (*)(truthoption*)
@@ -144,7 +145,7 @@ struct truthoption : public configoption
 
 struct cycleoption : public configoption
 {
-  cycleoption(cchar*, cchar*, long, long,
+  cycleoption(cchar*, cchar*, cchar*, long, long,
               void (*)(const cycleoption*, festring&)
               = &configsystem::NormalCycleDisplayer,
               truth (*)(cycleoption*)

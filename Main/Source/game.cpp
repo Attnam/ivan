@@ -18,6 +18,7 @@
 #include <vector>
 #include <bitset>
 #include <ctime>
+#include <pcre.h>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -70,7 +71,7 @@
 
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 133 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 134 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 118 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -99,9 +100,13 @@ double game::AveragePlayerAgilityExperience;
 int game::Teams;
 int game::Dungeons;
 int game::StoryState;
+int game::GloomyCaveStoryState;
 int game::XinrochTombStoryState;
 int game::FreedomStoryState;
+int game::AslonaStoryState;
+int game::RebelStoryState;
 truth game::PlayerIsChampion;
+truth game::HasBoat;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -850,9 +855,13 @@ truth game::Init(cfestring& loadBaseName)
       Turn = 0;
       InitPlayerAttributeAverage();
       StoryState = 0;
+      GloomyCaveStoryState = 0;
       XinrochTombStoryState = 0;
       FreedomStoryState = 0;
+      AslonaStoryState = 0;
+      RebelStoryState = 0;
       PlayerIsChampion = false;
+      HasBoat = false;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -863,10 +872,14 @@ truth game::Init(cfestring& loadBaseName)
       DefaultChangeMaterial.Empty();
       DefaultDetectMaterial.Empty();
       Player->GetStack()->AddItem(encryptedscroll::Spawn());
-      character* Doggie = dog::Spawn();
-      Doggie->SetTeam(GetTeam(0));
-      GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-      Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+
+      if(!ivanconfig::GetNoPet())
+      {
+        character* Doggie = dog::Spawn();
+        Doggie->SetTeam(GetTeam(0));
+        GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+        Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+      }
       WizardMode = false;
       SeeWholeMapCheatMode = MAP_HIDDEN;
       GoThroughWallsCheat = false;
@@ -1310,32 +1323,85 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
+std::vector<festring> afsAutoPickupMatch;
+pcre *reAutoPickup=NULL;
+void game::UpdateAutoPickUpMatching() //simple matching syntax
+{
+  afsAutoPickupMatch.clear();
+
+  bool bSimple=false;
+  if(bSimple){ //TODO just drop the simple code? or start the string with something to let it be used instead of regex? tho is cool to let ppl learn regex :)
+    if(ivanconfig::GetAutoPickUpMatching().GetSize()==0 || ivanconfig::GetAutoPickUpMatching()[0]=='!')return;
+
+    std::stringstream ss(ivanconfig::GetAutoPickUpMatching().CStr());
+    std::string match;
+    while(std::getline(ss,match,'|'))
+      afsAutoPickupMatch.push_back(festring(match.c_str()));
+  }else{
+    //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
+  //  static bool bDummyInit = [](){reAutoPickup=NULL;return true;}();
+    const char *errMsg;
+    int iErrOffset;
+    if(reAutoPickup)pcre_free(reAutoPickup);
+    reAutoPickup = pcre_compile(
+      ivanconfig::GetAutoPickUpMatching().CStr(), //pattern
+      0, //no options
+      &errMsg,    &iErrOffset,
+      0); // default char tables
+    if (!reAutoPickup){
+      std::vector<festring> afsFullProblems;
+      afsFullProblems.push_back(festring(errMsg));
+      afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
+      bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
+    }
+  }
+}
+bool game::IsAutoPickupMatch(cfestring fsName) {
+  return pcre_exec(reAutoPickup, 0, fsName.CStr(), fsName.GetSize(), 0, 0, NULL, 0) >= 0;
+}
 int game::CheckAutoPickup(square* sqr)
 {
-  if(!ivanconfig::IsAutoPickupThrownItems())
-    return false;
-
   if(sqr==NULL)
     sqr = PLAYER->GetSquareUnder();
 
   if(dynamic_cast<lsquare*>(sqr)==NULL)
-    return false;
+    return 0;
 
   lsquare* lsqr = (lsquare*)sqr;
 
+  static bool bDummyInit = [](){UpdateAutoPickUpMatching();return true;}();
   itemvector iv;
   lsqr->GetStack()->FillItemVector(iv);
-  int j=0;
+  int iTot=0;
   for(int i=0;i<iv.size();i++){
     item* it = iv[i];
-    if(it->HasTag('t')){ //throw
+    if(it->GetRoom() && it->GetRoom()->GetMaster())continue; //not from owned rooms
+    if(it->GetSpoilLevel()>0)continue;
+    bool b=false;
+    if(!b && ivanconfig::IsAutoPickupThrownItems() && it->HasTag('t') )b=true; //was thrown
+    if(!b && !it->HasTag('d')){
+      if(reAutoPickup!=NULL){
+        if(IsAutoPickupMatch(it->GetName(DEFINITE))){
+          b=true;
+        }
+      }
+    }
+    if(!b){ //TODO use player's perception, in case of a stack of items, to allow random pickup based on item volume (size) where smaller = harder like tiny rings, to compensate for the easiness of not losing a round having to pick up the item interactively
+      for(int i=0;i<afsAutoPickupMatch.size();i++){ //each simple match
+        if(it->GetNameSingular().Find(afsAutoPickupMatch[i].CStr(),0) != festring::NPos){
+          b=true;
+          break; //each simple match loop
+        }
+      }
+    }
+    if(b){
       it->MoveTo(PLAYER->GetStack());
       ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
-      j++;
+      iTot++;
     }
   }
 
-  return j;
+  return iTot;
 }
 
 bool game::CheckAddAutoMapNote(square* sqr)
@@ -1363,9 +1429,12 @@ bool game::CheckAddAutoMapNote(square* sqr)
   if(
     dynamic_cast<christmastree*>(olt)!=NULL ||
     dynamic_cast<coffin*>(olt)!=NULL ||
+    dynamic_cast<fountain*>(olt)!=NULL || //TODO exclude cathedral?
     dynamic_cast<monsterportal*>(olt)!=NULL ||
     dynamic_cast<stairs*>(olt)!=NULL ||
     olt->GetConfig() == ANVIL ||
+    olt->GetConfig() == DOUBLE_BED ||
+    olt->GetConfig() == CHAIR ||
     olt->GetConfig() == FORGE ||
     olt->GetConfig() == WORK_BENCH ||
     false
@@ -3170,7 +3239,8 @@ void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
   }else if(v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)){ //bottom edge
     bNearEC=true;iCycleCodeFallBack=4; //top right horiz
   }
-  if(bNearEC)bAboveHead=true;
+  if(bNearEC && iCode==1)
+    bAboveHead=true;
 
   if(bDynamic && bAboveHead && !bPositionQuestionMode){ // will not be above head in bPositionQuestionMode
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
@@ -3355,8 +3425,9 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
-  SaveFile << FreedomStoryState << PlayerIsChampion;
+  SaveFile << Teams << Dungeons << StoryState << GloomyCaveStoryState;
+  SaveFile << XinrochTombStoryState << FreedomStoryState << AslonaStoryState << RebelStoryState;
+  SaveFile << PlayerIsChampion << HasBoat << PlayerRunning;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3433,8 +3504,9 @@ int game::Load(cfestring& saveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
-  SaveFile >> FreedomStoryState >> PlayerIsChampion;
+  SaveFile >> Teams >> Dungeons >> StoryState >> GloomyCaveStoryState;
+  SaveFile >> XinrochTombStoryState >> FreedomStoryState >> AslonaStoryState >> RebelStoryState;
+  SaveFile >> PlayerIsChampion >> HasBoat >> PlayerRunning;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -4735,6 +4807,9 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
         lsqr->KickAnyoneStandingHereAway();
 
       Player->PutToOrNear(Pos);
+
+      game::CheckAddAutoMapNote();
+      game::CheckAutoPickup();
     }
     else
     {
@@ -4765,14 +4840,25 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     /* Gum solution! */
 
-    if(New && CurrentDungeonIndex == ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       CurrentDungeonIndex == ATTNAM)
     {
       GlobalRainLiquid = powder::Spawn(SNOW);
       GlobalRainSpeed = v2(-64, 128);
       CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
     }
 
-    if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() && CurrentDungeonIndex == XINROCH_TOMB)
+    {
+      GlobalRainLiquid = powder::Spawn(SOOT);
+      GlobalRainSpeed = v2(-64, 128);
+      CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+    }
+
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       (CurrentDungeonIndex == NEW_ATTNAM || CurrentDungeonIndex == ASLONA_CASTLE ||
+        CurrentDungeonIndex == REBEL_CAMP || CurrentDungeonIndex == MONDEDR ||
+        CurrentDungeonIndex == DARK_FOREST || CurrentDungeonIndex == IRINOX))
     {
       GlobalRainLiquid = liquid::Spawn(WATER);
       GlobalRainSpeed = v2(256, 512);
@@ -5232,7 +5318,7 @@ int game::GetLevels()
 void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMsg)
 {
   if(InWilderness)
-    DeathMsg << " in the world map";
+    DeathMsg << " in the wilderness";
   else
     DeathMsg << " in " << GetCurrentDungeon()->GetLevelDescription(CurrentLevelIndex);
 
@@ -6009,7 +6095,7 @@ truth game::EndSumoWrestling(int Result)
     PlayerSumoChampion = true;
     character* Sumo = GetSumo();
     festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
-    Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun()
+    Msg << "Here's a little something as a reward,\" " << Sumo->GetPersonalPronoun()
         << " says and hands you a belt of levitation.\n\"";
     (belt::Spawn(BELT_OF_LEVITATION))->MoveTo(Player->GetStack());
     Msg << "Allow me to also teach you a few nasty martial art tricks the years have taught me.\"";
@@ -6200,6 +6286,9 @@ truth game::PolymorphControlKeyHandler(int Key, festring& String)
         Entry << " (" << Req << ')';
         int Int = Player->GetAttribute(INTELLIGENCE);
         List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
+        List.SetLastEntryHelp(festring() << "You can only intentionally polymorph into creatures that you have already "
+                                         << "encountered during your adventure. In addition to that, you need a certain"
+                                         << "amount of Intelligence to successfully control the transformation.");
       }
     }
 
