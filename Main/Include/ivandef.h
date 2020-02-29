@@ -319,16 +319,18 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 
 /* ConsumeTypes */
 
-#define CT_FRUIT 1
-#define CT_MEAT 2
-#define CT_METAL 4
-#define CT_MINERAL 8
-#define CT_LIQUID 16
-#define CT_BONE 32
-#define CT_PROCESSED 64
-#define CT_MISC_ORGANIC 128
-#define CT_PLASTIC 256
-#define CT_GAS 512
+#define CT_FRUIT (1 << 0)
+#define CT_MEAT (1 << 1)
+#define CT_METAL (1 << 2)
+#define CT_MINERAL (1 << 3)
+#define CT_LIQUID (1 << 4)
+#define CT_BONE (1 << 5)
+#define CT_PROCESSED (1 << 6)
+#define CT_MISC_PLANT (1 << 7)
+#define CT_MISC_ANIMAL (1 << 8)
+#define CT_PLASTIC (1 << 9)
+#define CT_GAS (1 << 10)
+#define CT_MAGIC (1 << 11)
 
 /* Possible square positions for item. The first four are used for items
    on walls */
@@ -397,6 +399,15 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define EFFECT_OMMEL_BLOOD 34
 #define EFFECT_PANIC 35
 #define EFFECT_TRAIN_WISDOM 36
+#define EFFECT_REGENERATION 37
+#define EFFECT_TELEPORTATION 38
+#define EFFECT_LAUGH 39
+#define EFFECT_POLYJUICE 40
+#define EFFECT_PUKE 41
+#define EFFECT_SICKNESS 42
+#define EFFECT_PHASE 43
+#define EFFECT_ACID_GAS 44
+#define EFFECT_FIRE_GAS 45
 
 /* CEM = Consume End Message */
 
@@ -503,12 +514,22 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define SUMO_TEAM 3
+#define ANGEL_TEAM 4
+#define GUILD_TEAM 5
 #define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8
 #define TOURIST_GUIDE_TEAM 9
 #define TOURIST_TEAM 10
 #define BETRAYED_TEAM 11
+#define XINROCH_TOMB_ENTRY_TEAM 12
+#define XINROCH_TOMB_NECRO_TEAM 13
+#define XINROCH_TOMB_KAMIKAZE_DWARF_TEAM 14
+#define PRISONER_TEAM 15
+#define TERRA_TEAM 16
+#define ASLONA_TEAM 17
+#define REBEL_TEAM 18
+
 #define NO_TEAM 0xFFFF
 
 #define LOAD 1
@@ -537,11 +558,22 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define UNDER_WATER_TUNNEL 4
 #define EMPTY_AREA 5
 #define XINROCH_TOMB 6
+#define BLACK_MARKET 7
+#define ASLONA_CASTLE 8
+#define REBEL_CAMP 9
+#define GOBLIN_FORT 10
+#define FUNGAL_CAVE 11
+#define PYRAMID 12
+#define MONDEDR 13
+#define IRINOX 14
+#define DARK_FOREST 15
+
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
 #define CRYSTAL_LEVEL 3
 #define SPIDER_LEVEL 4
+
 #define ENNER_BEAST_LEVEL 4
 #define ZOMBIE_LEVEL 5
 #define IVAN_LEVEL 7
@@ -550,6 +582,10 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 
 #define DUAL_ENNER_BEAST_LEVEL 5
 #define NECRO_CHAMBER_LEVEL 6
+
+#define FUSANGA_LEVEL 3
+
+#define KING_LEVEL 5
 
 /* stack::DrawContents flags */
 
@@ -596,7 +632,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define HIT 1
 #define CATCHED 2
 
-#define BEAM_EFFECTS 15
+#define BEAM_EFFECTS 17
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -613,6 +649,8 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define BEAM_NECROMANCY 12
 #define BEAM_WEBBING 13
 #define BEAM_ALCHEMY 14
+#define BEAM_SOFTEN_MATERIAL 15
+#define BEAM_WALL_CREATION 16
 
 #define BEAM_STYLES 3
 
@@ -971,6 +1009,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define CAN_BE_DESTROYED 16
 #define IS_VALUABLE 32
 #define CAN_BE_MIRRORED 64
+#define CAN_BE_DETECTED 128
 
 /* NameFlags */
 #define USE_AN 1
@@ -1137,12 +1176,13 @@ cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 #define ALLOW_ANIMATE 0x10000
 #define ALLOW_ALPHA 0x20000
 
-#define TALENTS 4
+#define TALENTS 5
 
-#define TALENT_STRONG 0
-#define TALENT_FAST_N_ACCURATE 1
-#define TALENT_HEALTHY 2
-#define TALENT_CLEVER 3
+/* 0 reserved for no talent */
+#define TALENT_STRONG 1
+#define TALENT_FAST_N_ACCURATE 2
+#define TALENT_HEALTHY 3
+#define TALENT_CLEVER 4
 
 #define BORDER_PARTNER_ANIMATED (16 << 24)
 

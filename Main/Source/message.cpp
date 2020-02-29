@@ -28,6 +28,8 @@
 #include "bitmap.h"
 #include "igraph.h"
 
+#include "dbgmsgproj.h"
+
 felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
 festring msgsystem::LastMessage;
 festring msgsystem::BigMessage;
@@ -76,7 +78,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
     if(BigMessage.GetSize())
       BigMessage << ' ';
 
-    BigMessage << Buffer;
+    BigMessage << Buffer; DBG1(Buffer.CStr());
     return;
   }
 
@@ -128,7 +130,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
 
   Temp << ' ';
   int Marginal = Temp.GetSize();
-  Temp << Buffer;
+  Temp << Buffer; DBG1(Temp.CStr());
 
   std::vector<festring> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
@@ -175,6 +177,7 @@ void msgsystem::Draw()
 void msgsystem::DrawMessageHistory()
 {
   game::RegionListItemEnable(false); //this fix the problem that happens on death
+  game::RegionSilhouetteEnable(false);
 
   MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
@@ -333,7 +336,7 @@ void soundsystem::initSound()
 
   if(SoundState == 0)
   {
-    festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
+    festring fsSndDbgFile = game::GetUserDataDir() + "ivanSndDebug.txt";
     FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 
@@ -359,6 +362,9 @@ void soundsystem::initSound()
     if(!fNew) SoundState = -1;
 
     truth bDbg=false; //TODO global command line for debug messages
+#ifdef DBGMSG
+    bDbg=true;
+#endif
     if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
     if(fNew)
     {
@@ -466,10 +472,14 @@ void soundsystem::deInitSound()
 
 SoundFile *soundsystem::findMatchingSound(festring Buffer)
 {
-  for(int i = patterns.size() - 1; i >= 0; i--)
-  if(*patterns[i].re)
-  if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
-    return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  if(Buffer.IsEmpty() || Buffer.CStr()[0]=='"') //skips all chat messages lowering config file regex complexity
+    return NULL;
+  
+  for(int i = patterns.size() - 1; i >= 0; i--){
+    if(*patterns[i].re)
+      if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+        return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  }
   return NULL;
 }
 
@@ -490,17 +500,17 @@ void soundsystem::playSound(festring Buffer)
 
     if(*sf->chunk)
     {
-			for(int i=0; i<16; i++)
-			{
-				if(!Mix_Playing(i))
-				{
-					Mix_PlayChannel(i, *sf->chunk, 0);
-//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
-		//    Mix_SetPosition(i, angle, dist);
-					return;
-				}
-			}
-		}
+      for(int i=0; i<16; i++)
+      {
+        if(!Mix_Playing(i))
+        {
+          Mix_PlayChannel(i, *sf->chunk, 0);
+//          fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
+    //    Mix_SetPosition(i, angle, dist);
+          return;
+        }
+      }
+    }
   }
 }
 

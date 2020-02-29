@@ -186,6 +186,11 @@ int solid::GetStrengthValue() const
   return 0; /* not possible */
 }
 
+int organic::CalcNewSpoilLevel()
+{
+  return ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+}
+
 void organic::Be(ulong Flags)
 {
   if(SpoilCheckCounter++ >= 50)
@@ -203,7 +208,7 @@ void organic::Be(ulong Flags)
       {
         if(SpoilCounter << 1 >= GetSpoilModifier())
         {
-          int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+          int NewSpoilLevel = CalcNewSpoilLevel();
 
           if(NewSpoilLevel != SpoilLevel)
           {
@@ -310,7 +315,8 @@ void powder::Load(inputfile& SaveFile)
 material* organic::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
-  GetMotherEntity()->SpecialEatEffect(Eater, Amount);
+  if(GetMotherEntity())
+    GetMotherEntity()->SpecialEatEffect(Eater, Amount);
   Effect(Eater, TORSO_INDEX, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 20 / (1000 * (GetSpoilLevel() + 1)));
 
@@ -351,6 +357,11 @@ void organic::AddConsumeEndMessage(character* Eater) const
   material::AddConsumeEndMessage(Eater);
 }
 
+ushort organic::GetSpoilCounter()
+{
+  return SpoilCounter;
+}
+
 void organic::SetSpoilCounter(int What)
 {
   SpoilCounter = What;
@@ -359,7 +370,7 @@ void organic::SetSpoilCounter(int What)
   {
     if(SpoilCounter << 1 >= GetSpoilModifier())
     {
-      int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+      int NewSpoilLevel = CalcNewSpoilLevel();
 
       if(NewSpoilLevel != SpoilLevel)
       {
@@ -449,8 +460,11 @@ void liquid::TouchEffect(item* Item, cfestring& LocationName)
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
 
-  if(Item->IsBurning())
+  if(Item->IsBurning() && !GetHotness() && !GetExplosivePower())
     Item->FightFire(this, LocationName, Volume);
+
+  if(GetHotness())
+    Item->ReceiveHeat(this, LocationName, Volume * GetHotness());
 
   character* Char = Item->GetBodyPartMaster();
 
@@ -465,6 +479,9 @@ void liquid::TouchEffect(lterrain* Terrain)
 
   if(GetAcidicity())
     Terrain->ReceiveAcid(this, Volume * GetAcidicity());
+
+  if(GetHotness())
+    Terrain->ReceiveHeat(this, Volume * GetHotness());
 }
 
 void liquid::TouchEffect(character* Char, int BodyPartIndex)
@@ -474,6 +491,9 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
 
   if(Char->IsEnabled() && GetAcidicity())
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, CONST_S(""), Volume * GetAcidicity() >> 1);
+
+  if(Char->IsEnabled() && GetHotness())
+    Char->GetBodyPart(BodyPartIndex)->ReceiveHeat(this, CONST_S(""), Volume * GetHotness() >> 1);
 
   if(Char->IsEnabled())
     Effect(Char, BodyPartIndex, Volume >> 9);

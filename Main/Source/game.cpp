@@ -18,6 +18,7 @@
 #include <vector>
 #include <bitset>
 #include <ctime>
+#include <pcre.h>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -40,6 +41,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -54,6 +56,7 @@
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
+#include "namegen.h"
 #include "nonhuman.h"
 #include "pool.h"
 #include "proto.h"
@@ -66,11 +69,9 @@
 #include "whandler.h"
 #include "wsquare.h"
 
-#include "namegen.h"
-
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 134 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 118 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -99,7 +100,13 @@ double game::AveragePlayerAgilityExperience;
 int game::Teams;
 int game::Dungeons;
 int game::StoryState;
+int game::GloomyCaveStoryState;
 int game::XinrochTombStoryState;
+int game::FreedomStoryState;
+int game::AslonaStoryState;
+int game::RebelStoryState;
+truth game::PlayerIsChampion;
+truth game::HasBoat;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -231,14 +238,24 @@ int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
-int game::GetCurrentSavefileVersion(){
+/**
+ * IMPORTANT!!!
+ * this is intended to be called only from Load() and NEVER on Save()!
+ * TODO OS independent backtrace function call name check?
+ */
+int game::GetCurrentSavefileVersion()
+{
   if(CurrentSavefileVersion==-1)
     ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
 
   return CurrentSavefileVersion;
 }
 
-int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
+/**
+ * BEWARE!!!
+ * should only be called once at main(), you probably want GetCurrentSavefileVersion() instead!
+ */
+int  game::GetSaveFileVersionHardcoded(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
@@ -282,7 +299,12 @@ void game::AddCharacterID(character* Char, ulong ID)
 }
 void game::RemoveCharacterID(ulong ID)
 {
-  CharacterIDMap.erase(CharacterIDMap.find(ID));
+  characteridmap::iterator itr = CharacterIDMap.find(ID);
+  if(itr == CharacterIDMap.end() || itr->second == NULL){
+    if(!bugfixdp::IsFixing())
+      ABORT("AlreadyErased:CharacterID %lu",ID);
+  }else
+    CharacterIDMap.erase(itr);
 }
 void game::AddItemID(item* Item, ulong ID)
 {
@@ -293,15 +315,20 @@ void game::RemoveItemID(ulong ID)
 {
   if(ID){
     DBG2("Erasing:ItemID",ID);
-//    if(ID==20957)DBGSTK;//temp test case debug
-    DBGEXEC(
-      if(SearchItem(ID)==NULL){
-        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
-        DBGSTK;
-      }
-    );
-    ItemIDMap.erase(ItemIDMap.find(ID));
-    DBG2("ERASED!:ItemID",ID);
+
+    itemidmap::iterator itr = ItemIDMap.find(ID); //TODO if the search affects performance, make this optional
+    if(itr == ItemIDMap.end() || itr->second == NULL){
+      /**
+       * This happens when the duplicated player bug happens!
+       * so it will try to erase the item 2 times and CRASH on the second,
+       * therefore the abort is appropriate.
+       */
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:ItemID %lu, possible dup char bug",ID);
+    }else{
+      ItemIDMap.erase(itr);
+      DBG2("ERASED!:ItemID",ID);
+    }
   }
 }
 
@@ -315,7 +342,14 @@ void game::AddTrapID(entity* Trap, ulong ID)
 }
 void game::RemoveTrapID(ulong ID)
 {
-  if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
+  if(ID){
+    trapidmap::iterator itr = TrapIDMap.find(ID);
+    if(itr == TrapIDMap.end() || itr->second == NULL){
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:TrapID %lu",ID);
+    }else
+      TrapIDMap.erase(itr);
+  }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
 {
@@ -344,6 +378,15 @@ void game::InitScript()
     }
   }
   GameScript->RandomizeLevels();
+}
+
+truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
+{
+  return it->IsHeadOfElpuri()
+      || it->IsGoldenEagleShirt()
+      || it->IsPetrussNut()
+      || it->IsTheAvatar()
+      || it->IsEncryptedScroll();
 }
 
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
@@ -411,8 +454,15 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
         v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
         plsqChk = plv->GetLSquare(v2ChkSqrPos);
 
-        if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-        if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+        if(plsqChk->CanBeSeenByPlayer())
+          continue;
+        if(!IsInWilderness()){
+          if(plsqChk->CanBeFeltByPlayer())
+            continue;
+          if(plsqChk->GetCharacter()!=NULL)
+            if(plsqChk->GetCharacter()->CanBeSeenByPlayer())
+              continue;
+        }
 
         /********************************************************************************************
          * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
@@ -568,6 +618,9 @@ void game::RegionSilhouetteEnable(bool bEnable){
 }
 
 void game::UpdateSRegionsXBRZ(){
+  UpdateSRegionsXBRZ(ivanconfig::IsXBRZScale());
+}
+void game::UpdateSRegionsXBRZ(bool bIsXBRZScale){
   for(int i=0;i<graphics::GetTotSRegions();i++){
     if(i==iRegionIndexDungeon){
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true,ivanconfig::IsXBRZScale());
@@ -578,7 +631,7 @@ void game::UpdateSRegionsXBRZ(){
       }
     }
 
-    graphics::SetSRegionUseXBRZ(i,ivanconfig::IsXBRZScale());
+    graphics::SetSRegionUseXBRZ(i,bIsXBRZScale);
   }
 }
 
@@ -688,17 +741,20 @@ truth game::Init(cfestring& loadBaseName)
 #ifdef WIN32
   _mkdir("Save");
   _mkdir("Bones");
+  _mkdir("Scrshot");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
   mkdir("Bones", S_IWUSR);
+  mkdir("Scrshot", S_IWUSR);
 #endif
 
 #ifdef UNIX
-  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetUserDataDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
@@ -799,7 +855,13 @@ truth game::Init(cfestring& loadBaseName)
       Turn = 0;
       InitPlayerAttributeAverage();
       StoryState = 0;
+      GloomyCaveStoryState = 0;
       XinrochTombStoryState = 0;
+      FreedomStoryState = 0;
+      AslonaStoryState = 0;
+      RebelStoryState = 0;
+      PlayerIsChampion = false;
+      HasBoat = false;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -810,10 +872,14 @@ truth game::Init(cfestring& loadBaseName)
       DefaultChangeMaterial.Empty();
       DefaultDetectMaterial.Empty();
       Player->GetStack()->AddItem(encryptedscroll::Spawn());
-      character* Doggie = dog::Spawn();
-      Doggie->SetTeam(GetTeam(0));
-      GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-      Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+
+      if(!ivanconfig::GetNoPet())
+      {
+        character* Doggie = dog::Spawn();
+        Doggie->SetTeam(GetTeam(0));
+        GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+        Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
+      }
       WizardMode = false;
       SeeWholeMapCheatMode = MAP_HIDDEN;
       GoThroughWallsCheat = false;
@@ -829,7 +895,8 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
-      commandsystem::ClearSwapWeapons();
+      commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
+      craftcore::ClearSuspendedList(); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -1192,6 +1259,14 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+void game::SetMapNote(lsquare* lsqrN,festring What)
+{
+  festring finalWhat;
+  finalWhat << game::MapNoteToken();
+  finalWhat << What;
+  lsqrN->Engrave(finalWhat);
+}
+
 bool bDrawMapOverlayEnabled=false;
 int iMapOverlayDrawCount=0;
 bool game::ToggleDrawMapOverlay()
@@ -1248,7 +1323,136 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
-bool bShowMapNotes=false;
+std::vector<festring> afsAutoPickupMatch;
+pcre *reAutoPickup=NULL;
+void game::UpdateAutoPickUpMatching() //simple matching syntax
+{
+  afsAutoPickupMatch.clear();
+
+  bool bSimple=false;
+  if(bSimple){ //TODO just drop the simple code? or start the string with something to let it be used instead of regex? tho is cool to let ppl learn regex :)
+    if(ivanconfig::GetAutoPickUpMatching().GetSize()==0 || ivanconfig::GetAutoPickUpMatching()[0]=='!')return;
+
+    std::stringstream ss(ivanconfig::GetAutoPickUpMatching().CStr());
+    std::string match;
+    while(std::getline(ss,match,'|'))
+      afsAutoPickupMatch.push_back(festring(match.c_str()));
+  }else{
+    //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
+  //  static bool bDummyInit = [](){reAutoPickup=NULL;return true;}();
+    const char *errMsg;
+    int iErrOffset;
+    if(reAutoPickup)pcre_free(reAutoPickup);
+    reAutoPickup = pcre_compile(
+      ivanconfig::GetAutoPickUpMatching().CStr(), //pattern
+      0, //no options
+      &errMsg,    &iErrOffset,
+      0); // default char tables
+    if (!reAutoPickup){
+      std::vector<festring> afsFullProblems;
+      afsFullProblems.push_back(festring(errMsg));
+      afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
+      bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
+    }
+  }
+}
+bool game::IsAutoPickupMatch(cfestring fsName) {
+  return pcre_exec(reAutoPickup, 0, fsName.CStr(), fsName.GetSize(), 0, 0, NULL, 0) >= 0;
+}
+int game::CheckAutoPickup(square* sqr)
+{
+  if(sqr==NULL)
+    sqr = PLAYER->GetSquareUnder();
+
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return 0;
+
+  lsquare* lsqr = (lsquare*)sqr;
+
+  static bool bDummyInit = [](){UpdateAutoPickUpMatching();return true;}();
+  itemvector iv;
+  lsqr->GetStack()->FillItemVector(iv);
+  int iTot=0;
+  for(int i=0;i<iv.size();i++){
+    item* it = iv[i];
+    if(it->GetRoom() && it->GetRoom()->GetMaster())continue; //not from owned rooms
+    if(it->GetSpoilLevel()>0)continue;
+    bool b=false;
+    if(!b && ivanconfig::IsAutoPickupThrownItems() && it->HasTag('t') )b=true; //was thrown
+    if(!b && !it->HasTag('d')){
+      if(reAutoPickup!=NULL){
+        if(IsAutoPickupMatch(it->GetName(DEFINITE))){
+          b=true;
+        }
+      }
+    }
+    if(!b){ //TODO use player's perception, in case of a stack of items, to allow random pickup based on item volume (size) where smaller = harder like tiny rings, to compensate for the easiness of not losing a round having to pick up the item interactively
+      for(int i=0;i<afsAutoPickupMatch.size();i++){ //each simple match
+        if(it->GetNameSingular().Find(afsAutoPickupMatch[i].CStr(),0) != festring::NPos){
+          b=true;
+          break; //each simple match loop
+        }
+      }
+    }
+    if(b){
+      it->MoveTo(PLAYER->GetStack());
+      ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      iTot++;
+    }
+  }
+
+  return iTot;
+}
+
+bool game::CheckAddAutoMapNote(square* sqr)
+{
+  if(sqr==NULL)
+    sqr = PLAYER->GetSquareUnder();
+
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return false;
+
+  lsquare* lsqr = (lsquare*)sqr;
+
+  if(lsqr->GetEngraved())
+    return false;
+
+  olterrain* olt = lsqr->GetOLTerrain();
+  if(!olt)return false;
+
+  festring fs;
+  if(fs.GetSize()==0 && dynamic_cast<altar*>(olt)!=NULL)
+    fs<<olt->GetMasterGod()->GetName()<<" altar";
+  if(fs.GetSize()==0 && dynamic_cast<sign*>(olt)!=NULL)
+    fs<<"Sign: "<<((sign*)olt)->GetText();
+
+  if(
+    dynamic_cast<christmastree*>(olt)!=NULL ||
+    dynamic_cast<coffin*>(olt)!=NULL ||
+    dynamic_cast<fountain*>(olt)!=NULL || //TODO exclude cathedral?
+    dynamic_cast<monsterportal*>(olt)!=NULL ||
+    dynamic_cast<stairs*>(olt)!=NULL ||
+    olt->GetConfig() == ANVIL ||
+    olt->GetConfig() == DOUBLE_BED ||
+    olt->GetConfig() == CHAIR ||
+    olt->GetConfig() == FORGE ||
+    olt->GetConfig() == WORK_BENCH ||
+    false
+  ){
+    olt->AddName(fs,INDEFINITE);
+//    fs<<olt->GetNameSingular();
+  }
+
+  if(fs.GetSize()>0){
+    SetMapNote(lsqr,fs);
+    game::RefreshDrawMapOverlay();
+    return true;
+  }
+
+  return false;
+}
+
+bool bShowMapNotes=true;
 bool game::ToggleShowMapNotes()
 {
   bShowMapNotes=!bShowMapNotes;
@@ -1277,6 +1481,8 @@ col16 colMapNoteBkg;
 int iNoteHighlight=-1;
 lsquare* game::GetHighlightedMapNoteLSquare()
 {DBGLN;
+  if(!bDrawMapOverlayEnabled)return NULL;
+  if(!bShowMapNotes)return NULL;
   if(iNoteHighlight==-1)return NULL;DBGLN;
   if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
   return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
@@ -1367,7 +1573,14 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
-      buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+      col16 colMapNoteBkg2=colMapNoteBkg;
+      if(festring(vMapNotes[i].note).Find("!!")!=festring::NPos)
+        colMapNoteBkg2=RED;
+      else
+      if(festring(vMapNotes[i].note).Find("!")!=festring::NPos)
+        colMapNoteBkg2=BLUE;
+
+      buffer->Fill(bkgTL,bkgB,colMapNoteBkg2); //bkg
       buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
     }
 
@@ -1381,22 +1594,27 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
   }
 
+  // line
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
-    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
-      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer)){
+      bool bNH = iNoteHighlight==i;
+      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, bNH ? WHITE : ac[i%iTotCol], bNH);
+    }
   }
 
+  // note
   for(int i=0;i<vMapNotes.size();i++)
     if(validateV2(vMapNotes[i].basePos,buffer))
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
+const char* cHugeMap="Cannot display a map that is as big as the world!";
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
     bDrawMapOverlayEnabled=false;
     return;
   }
@@ -1436,6 +1654,8 @@ void game::DrawMapOverlay(bitmap* buffer)
   static v2 v2TopLeftFinal(0,0);
   static v2 v2MapScrSizeFinal(0,0);
   static bitmap* bmpFinal;
+
+  bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
 
   if(bPositionQuestionMode){
     static v2 v2PreviousCursorPos;
@@ -1516,12 +1736,14 @@ void game::DrawMapOverlay(bitmap* buffer)
       delete bmpMapBuffer;
       bmpMapBuffer=new bitmap(v2BmpSize);
     }
-//      bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
+//    bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
+    bmpMapBuffer->ClearToColor(BLACK);
 
     v2 v2PlayerScrPos(0,0);
     v2 v2CursorScrPos(-1,-1);
     v2 v2Dest(0,0);
     vMapNotes.clear();
+    std::vector<v2> RouteGoOn = commandsystem::GetRouteGoOnCopy();
     for(int iY=v2Min.Y;iY<=v2Max.Y;iY++){
 //        B.Dest.Y = v2TopLeft.Y +iY*iMapTileSize;
       v2Dest.Y = (iY-v2Min.Y)*iMapTileSize;
@@ -1557,7 +1779,7 @@ void game::DrawMapOverlay(bitmap* buffer)
           int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
           float fFrom=0.95;
           float fStep=0.15;
-          int iTot=1.0/fStep;
+          cint iTot=6; // was 1.0/fStep;
           col16 clMap[iTot];
           for(int i=0;i<iTot;i++){
             float f=fFrom -fStep*i;
@@ -1572,16 +1794,18 @@ void game::DrawMapOverlay(bitmap* buffer)
           return true;
         }();
 
+        bool bDrawSqr=true;
         col16 colorO;
-        if(lsqr->HasBeenSeen()){
-          static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
-          static col16 colorFountain=MakeRGB16(        0,         0,0xFF     ); //blue
-          static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
-          static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
-          static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
-          static col16 colorNote    =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white TODO why?
+        static col16 colorDoor     =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
+        static col16 colorFountain =MakeRGB16(        0,         0,0xFF     ); //blue
+        static col16 colorUp       =MakeRGB16(        0, 0xFF     ,        0); //green
+        static col16 colorDown     =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
+        static col16 colorAltar    =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+        static col16 colorNote     =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white because white is used as look mode indicator on map
+//        static col16 colorGoOnRoute=MakeRGB16(0xFF*0.75, 0xFF*0.75,0xFF*0.75); //light gray
+        static col16 colorGoOnRoute=MakeRGB16(        0, 0xFF*0.75,0xFF     ); //cyan
 //            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
-
+        if(lsqr->HasBeenSeen()){
           static const int iTotRM=5 +1; //5 is max rest modifier from dat files
           static col16 colorOnGroundRM[iTotRM];
           static bool bDummyInit2 = [](){
@@ -1628,6 +1852,7 @@ void game::DrawMapOverlay(bitmap* buffer)
             }
           }else{ //floor
             colorO=colorFloor;
+            if(bTransparentMap)bDrawSqr=false;
           }
 
           if(lsqr->IsMaterialDetected()) //color override
@@ -1635,9 +1860,25 @@ void game::DrawMapOverlay(bitmap* buffer)
 
         }else{
           colorO=colorMapBkg;
+          if(bTransparentMap)bDrawSqr=false;
         }
 
-        bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
+        if(RouteGoOn.size()>0)
+          for(auto v2Rt = RouteGoOn.begin(); v2Rt != RouteGoOn.end(); v2Rt++)
+            if(v2SqrPos == *v2Rt){
+              colorO=colorGoOnRoute;
+              bDrawSqr=true;
+              break;
+            }
+//          for(std::list<v2>::iterator itrRt = RouteGoOn.begin(); itrRt != RouteGoOn.end(); itrRt++)
+//            if(itrRt->second == v2SqrPos){
+//              colorO=colorGoOnRoute;
+//              bDrawSqr=true;
+//              break;
+//            }
+
+        if(bDrawSqr)
+          bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
 
         if(CursorPos == v2SqrPos)
           v2CursorScrPos=v2Dest;
@@ -1766,8 +2007,18 @@ void game::DrawMapOverlay(bitmap* buffer)
     v2MapSize = v2MapScrSizeFinal;
   }
 
-  bmpFinal->FastBlit(buffer, v2TopLeftFinal);
-  graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
+  static blitdata BFinal = DEFAULT_BLITDATA;
+  BFinal.Bitmap = buffer;
+  BFinal.Dest = v2TopLeftFinal;
+  BFinal.Border = bmpFinal->GetSize();
+  BFinal.MaskColor = BLACK;
+  if(bTransparentMap){
+    bmpFinal->NormalMaskedBlit(BFinal);
+  }else
+    bmpFinal->FastBlit(BFinal.Bitmap, BFinal.Dest );
+
+  if(!bTransparentMap)
+    graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
 
   iMapOverlayDrawCount++;
 
@@ -1782,7 +2033,7 @@ void DrawMapOverlayFancy(bitmap* buffer)
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
   }else{ //it actually work works (for now) if there is any dungeon stretching going on
     if(buffer!=NULL){
       static float fRGB=0.3;
@@ -2781,7 +3032,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   UpdateAltSilhouette(AnimationDraw);
 
   UpdateShowItemsAtPos(!bXBRZandFelist); //last thing as this is a temp overlay
-  
+
   #ifdef WIZARD
     DBG1(vDbgDrawOverlayFunctions.size());
     if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
@@ -2988,7 +3239,8 @@ void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
   }else if(v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)){ //bottom edge
     bNearEC=true;iCycleCodeFallBack=4; //top right horiz
   }
-  if(bNearEC)bAboveHead=true;
+  if(bNearEC && iCode==1)
+    bAboveHead=true;
 
   if(bDynamic && bAboveHead && !bPositionQuestionMode){ // will not be above head in bPositionQuestionMode
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
@@ -3173,7 +3425,9 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
+  SaveFile << Teams << Dungeons << StoryState << GloomyCaveStoryState;
+  SaveFile << XinrochTombStoryState << FreedomStoryState << AslonaStoryState << RebelStoryState;
+  SaveFile << PlayerIsChampion << HasBoat << PlayerRunning;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3208,6 +3462,7 @@ truth game::Save(cfestring& SaveName)
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+  craftcore::Save(SaveFile);
 
   return true;
 }
@@ -3249,7 +3504,9 @@ int game::Load(cfestring& saveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
+  SaveFile >> Teams >> Dungeons >> StoryState >> GloomyCaveStoryState;
+  SaveFile >> XinrochTombStoryState >> FreedomStoryState >> AslonaStoryState >> RebelStoryState;
+  SaveFile >> PlayerIsChampion >> HasBoat >> PlayerRunning;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3290,10 +3547,7 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
-  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
-    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
+  SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentArea()->GetSquare(Pos)));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -3303,8 +3557,10 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
-  if(game::GetSaveFileVersion()>=132)
-    commandsystem::LoadSwapWeapons(SaveFile);
+  commandsystem::LoadSwapWeapons(SaveFile);
+  craftcore::Load(SaveFile);
+
+  ///////////////// loading ended ////////////////
 
   UpdateCamera();
 
@@ -3370,13 +3626,13 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
 
     if(CurrentBaseSaveFileName.GetSize() == 0)
     {
-      int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
+      cint iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;
       fixChars(CurrentBaseSaveFileName);
     }
-    
+
     PathAndBaseSaveName << CurrentBaseSaveFileName;
   }
 
@@ -3926,8 +4182,16 @@ void game::CreateBusyAnimationCache()
   }
 }
 
+bool bQuestionMode=false;
+bool game::IsQuestionMode()
+{
+  return bQuestionMode || bPositionQuestionMode;
+}
+
 int game::AskForKeyPress(cfestring& Topic)
 {
+  bQuestionMode=true;
+
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
@@ -3939,6 +4203,8 @@ int game::AskForKeyPress(cfestring& Topic)
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Key;
 }
 
@@ -3957,10 +4223,37 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   if(Handler)
     Handler(CursorPos);
 
+  bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
+
+  /**
+   * using the min millis value grants mouse will be updated most often possible
+   * default key -1 just to be ignored
+   */
+  if(bMapNotesMode)
+    globalwindowhandler::SetKeyTimeout(100,-1);
+
   bPositionQuestionMode=true;
+  v2 v2PreviousClick=v2(0,0);
   for(;;)
   {
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
+
+    if(bMapNotesMode){
+      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
+      if(lsqrMapNote){
+        mouseclick mc = globalwindowhandler::ConsumeMouseEvent();
+        if(mc.btn==1){
+          CursorPos = lsqrMapNote->GetPos();
+          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
+            Return =  CursorPos;
+            break;
+          }
+          v2PreviousClick = CursorPos;
+        }
+      }
+
+      CheckAddAutoMapNote(Square);
+    }
 
     if(!Square->HasBeenSeen()
        && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer())
@@ -4036,6 +4329,9 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       UpdateCameraY(ppos.Y);
     }
   }
+
+  if(bMapNotesMode)
+    globalwindowhandler::ResetKeyTimeout();
 
   return Return;
 }
@@ -4113,89 +4409,6 @@ truth game::AnimationController()
   return true;
 }
 
-//static void DefinesValidatorAppend(std::string s);
-//static void DefinesValidatorTop();
-//static void DefinesValidatorAppendCode(std::string s);
-std::ofstream DefinesValidator;
-void DefinesValidatorAppend(std::string s)
-{
-  static std::stringstream ssValidateLine;ssValidateLine.str(std::string());ssValidateLine.clear(); //actually clear/empty it = ""
-
-  ssValidateLine << s << std::endl;
-
-  static bool bDummyInit = [](){
-    DefinesValidator.open(
-        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
-        std::ios::binary);
-    return true;}();
-
-  DefinesValidator.write(ssValidateLine.str().c_str(),ssValidateLine.str().length());
-}
-void DefinesValidatorTop()
-{
-  DefinesValidatorAppend("/****");
-  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
-  DefinesValidatorAppend(" *");
-  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
-  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
-  DefinesValidatorAppend(" */");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  std::stringstream ssErrors;");
-  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
-  DefinesValidatorAppend("");
-}
-void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
-{
-  static std::stringstream ssMsg;ssMsg.str(std::string());ssMsg.clear(); //actually clear/empty it = ""
-
-  ssMsg << "\"Defined " << sDefineId << " with value " << valueReadFromDatFile << " from .dat file " <<
-    "mismatches hardcoded c++ define value of \" << " << sDefineId << " << \"!\"";
-
-
-  static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
-
-//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
-  ssCode <<
-    "  " << std::endl <<
-    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
-    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
-    "  bsB = " << sDefineId << ";" << std::endl <<
-    "  if(bsA!=bsB)" << std::endl <<
-    "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
-    "#endif " << std::endl;
-
-
-  DefinesValidatorAppend(ssCode.str());
-}
-void DefinesValidatorClose(){
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  if(ssErrors.str().length() > 0) ABORT(ssErrors.str().c_str());");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("}};");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#endif // _DEFINESVALIDATOR_H_");
-
-  DefinesValidator.close();
-}
-#include "definesvalidator.h" //tip: 1st run this was commented
-void game::GenerateDefinesValidator(bool bValidade)
-{
-  DefinesValidatorTop();
-
-  for(const valuemap::value_type& p : GlobalValueMap)
-    DefinesValidatorAppendCode(p.first.CStr(), p.second);
-
-  DefinesValidatorClose();
-
-  if(bValidade)
-    definesvalidator::Validate(); //tip: 1st run this was commented
-}
-
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
@@ -4221,6 +4434,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();
+  //TODO need?  graphics::SetAllowStretchedBlit();
+  //TODO useful or messy?  graphics::BlitDBToScreen();
 }
 
 /* ... all the keys that are acceptable
@@ -4230,6 +4445,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
 
 int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
+  bQuestionMode=true;
+
   int* Key = new int[KeyNumber];
   va_list Arguments;
   va_start(Arguments, KeyNumber);
@@ -4260,6 +4477,8 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 
   delete [] Key;
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Return;
 }
 
@@ -4325,6 +4544,8 @@ v2 game::NameKeyHandler(v2 CursorPos, int Key)
 
 void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
+  game::SRegionAroundDisable();
+
   if(!Permanently)
     game::Save();
 
@@ -4338,7 +4559,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 
   if(Permanently && !WizardModeIsReallyActive())
   {
-    highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
+    highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
     { DBGLN;
@@ -4567,15 +4788,33 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     if(Player)
     {
-      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+      lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
+      character* NPC = lsqr->GetCharacter();
+
+      bool bMoveAway=true;
+      /**
+       * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what could be a tactical manouver
+       * using now largecreature check because of this crash stack:
+          area::GetSquare(v2) const //HERE V2 had invalid huge negative values for X and Y
+          largecreature::PutTo(v2)
+          character::PutNear(v2) //TODO some complexer code could be implemented at this method
+          lsquare::KickAnyoneStandingHereAway()
+          game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
+       */
+      if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
+
+      if(bMoveAway)
+        lsqr->KickAnyoneStandingHereAway();
+
       Player->PutToOrNear(Pos);
+
+      game::CheckAddAutoMapNote();
+      game::CheckAutoPickup();
     }
     else
     {
-      SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+      SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentLevel()->GetLSquare(Pos)));
     }
-
-    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 
@@ -4601,14 +4840,25 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     /* Gum solution! */
 
-    if(New && CurrentDungeonIndex == ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       CurrentDungeonIndex == ATTNAM)
     {
       GlobalRainLiquid = powder::Spawn(SNOW);
       GlobalRainSpeed = v2(-64, 128);
       CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
     }
 
-    if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
+    if(New && GetCurrentLevel()->IsOnGround() && CurrentDungeonIndex == XINROCH_TOMB)
+    {
+      GlobalRainLiquid = powder::Spawn(SOOT);
+      GlobalRainSpeed = v2(-64, 128);
+      CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+    }
+
+    if(New && GetCurrentLevel()->IsOnGround() &&
+       (CurrentDungeonIndex == NEW_ATTNAM || CurrentDungeonIndex == ASLONA_CASTLE ||
+        CurrentDungeonIndex == REBEL_CAMP || CurrentDungeonIndex == MONDEDR ||
+        CurrentDungeonIndex == DARK_FOREST || CurrentDungeonIndex == IRINOX))
     {
       GlobalRainLiquid = liquid::Spawn(WATER);
       GlobalRainSpeed = v2(256, 512);
@@ -4693,7 +4943,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iY=v2TopLeft.Y-3;
   }
 
-  int iItemW=bldListItemTMP.Border.X*bldListItemTMP.Stretch;
+  int iItemW = bldListItemTMP.Border.X * bldListItemTMP.Stretch;
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;
@@ -4706,9 +4956,11 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
 
-  v2TopLeft=v2(iX,iY);
+  v2TopLeft=v2(iX,iY); DBGSV2(v2TopLeft);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
+  if(bAltItemPos)
+    felist::SetListItemAltPosMinY(area::getTopLeftCorner().Y);
 }
 
 int prepareListWidth(int iW){
@@ -4930,6 +5182,35 @@ character* game::SearchCharacter(ulong ID)
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
 }
 
+std::vector<character*> game::GetAllCharacters()
+{
+  std::vector<character*> vc;
+  for(int i=0;i<CharacterIDMap.size();i++){
+    if(CharacterIDMap[i]!=NULL)
+      vc.push_back(CharacterIDMap[i]);
+  }
+  return vc;
+}
+
+characteridmap game::GetCharacterIDMapCopy()
+{
+  return CharacterIDMap;
+}
+
+std::vector<item*> game::GetAllItems()
+{
+  std::vector<item*> vc;
+  for(int i=0;i<ItemIDMap.size();i++){
+    if(ItemIDMap[i]!=NULL)
+      vc.push_back(ItemIDMap[i]);
+  }
+  return vc;
+}
+itemidmap game::GetItemIDMapCopy()
+{
+  return ItemIDMap;
+}
+
 item* game::SearchItem(ulong ID)
 {
   itemidmap::iterator Iterator = ItemIDMap.find(ID);
@@ -4968,7 +5249,22 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 /* The program can only create directories to the deepness of one, no more... */
 
-festring game::GetHomeDir()
+festring game::GetDataDir()
+{
+#ifdef UNIX
+#ifdef MAC_APP
+  return "../Resources/data/";
+#else
+  return DATADIR "/ivan/";
+#endif
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return GetUserDataDir();
+#endif
+}
+
+festring game::GetUserDataDir()
 {
 #ifdef UNIX
   festring Dir;
@@ -4985,53 +5281,23 @@ festring game::GetHomeDir()
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return "./";
 #endif
 }
 
 festring game::GetSaveDir()
 {
-  return GetHomeDir() + "Save/";
+  return GetUserDataDir() + "Save/";
 }
 
 festring game::GetScrshotDir()
 {
-  return GetHomeDir() + "Scrshot/";
-}
-
-festring game::GetDataDir()
-{
-#ifdef UNIX
-#ifdef MAC_APP
-  return "../Resources/ivan/";
-#else
-  return DATADIR "/ivan/";
-#endif
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
-#endif
-}
-
-festring game::GetStateDir()
-{
-#ifdef UNIX
-#ifdef MAC_APP
-  return GetHomeDir();
-#else
-  return LOCAL_STATE_DIR "/";
-#endif
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
-#endif
+  return GetUserDataDir() + "Scrshot/";
 }
 
 festring game::GetBoneDir()
 {
-  return GetStateDir() + "Bones/";
+  return GetUserDataDir() + "Bones/";
 }
 
 festring game::GetMusicDir()
@@ -5052,7 +5318,7 @@ int game::GetLevels()
 void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMsg)
 {
   if(InWilderness)
-    DeathMsg << " in the world map";
+    DeathMsg << " in the wilderness";
   else
     DeathMsg << " in " << GetCurrentDungeon()->GetLevelDescription(CurrentLevelIndex);
 
@@ -5291,12 +5557,12 @@ void game::AutoPlayModeApply(){
     bPlayInBackground=true;
     break;
   case 3:
-    msg="%s says \"I am in a hurry!!\"";
+    msg="%s says \"I am in a hurry!\"";
     iTimeout=(1000/2);
     bPlayInBackground=true;
     break;
   case 4:
-    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
     iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;
@@ -5829,7 +6095,7 @@ truth game::EndSumoWrestling(int Result)
     PlayerSumoChampion = true;
     character* Sumo = GetSumo();
     festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
-    Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun()
+    Msg << "Here's a little something as a reward,\" " << Sumo->GetPersonalPronoun()
         << " says and hands you a belt of levitation.\n\"";
     (belt::Spawn(BELT_OF_LEVITATION))->MoveTo(Player->GetStack());
     Msg << "Allow me to also teach you a few nasty martial art tricks the years have taught me.\"";
@@ -5927,6 +6193,7 @@ int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowE
   for(;;)
   {
     festring Temp;
+    Temp << DefaultWish; // to let us fix previous instead of having to fully type it again
 
     if(DefaultQuestion(Temp, CONST_S("What do you want to wish for?"), DefaultWish, AllowExit) == ABORTED)
       return ABORTED;
@@ -6019,6 +6286,9 @@ truth game::PolymorphControlKeyHandler(int Key, festring& String)
         Entry << " (" << Req << ')';
         int Int = Player->GetAttribute(INTELLIGENCE);
         List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
+        List.SetLastEntryHelp(festring() << "You can only intentionally polymorph into creatures that you have already "
+                                         << "encountered during your adventure. In addition to that, you need a certain"
+                                         << "amount of Intelligence to successfully control the transformation.");
       }
     }
 

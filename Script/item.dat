@@ -25,6 +25,7 @@
 
 item
 {
+  DescriptiveInfo = "";
   Possibility = 0;
   IsDestroyable = true;
   CanBeWished = true;
@@ -52,6 +53,8 @@ item
   UsesLongAdjectiveArticle = false;
   /* Obligatory: NameSingular */
   /* NameSingular + "s" by default: NamePlural */
+  /* FlexibleNameSingular = NameSingular */
+  /* Alias = Base.Alias; items of unique names should also have unique aliases */
   PostFix = "";
   ArticleMode = 0;
   /* Obligatory: MainMaterialConfig */
@@ -99,7 +102,8 @@ item
   /* Obligatory: AttachedGod */
   WieldedBitmapPos = 176, 0;
   IsQuestItem = false;
-  IsGoodWithPlants = true;
+  IsGoodWithPlants = false;
+  IsGoodWithUndead = false;
   CreateLockConfigurations = false; /* Can't be overridden by Configs */
   CanBePickedUp = true;
   /* Obligatory if helmet: CoverPercentile */
@@ -152,6 +156,7 @@ lantern
   WallBitmapPos = 0, 192;
   AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 160;
+  DescriptiveInfo = "Often carried strapped on a backpack to leave your hands free, a lantern is invaluable when delving through the dark dungeons.";
 
   Config BROKEN;
   {
@@ -193,7 +198,10 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A sturdy, hermetically-sealed container that will prevent the contents from spoiling.";
 }
 
 lump
@@ -214,7 +222,10 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A shapeless chunk.";
 }
 
 meleeweapon
@@ -226,6 +237,7 @@ meleeweapon
   CanBeEnchanted = true;
   HasSecondaryMaterial = true;
   TeleportPriority = 500;
+  DescriptiveInfo = "Who lives by the sword dies by the sword. Who lives by the hammer dies by the hammer. Who lives by the spoon... You get the idea.";
 
   Config LONG_SWORD;
   {
@@ -284,7 +296,8 @@ meleeweapon
     WieldedBitmapPos = 160, 16;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
-    Alias == "longsword";
+    Alias = { 2, "longsword", "sword"; }
+    DescriptiveInfo = "The staple of any fighter, the long sword makes an effective weapon. Critics denounce the trend for everyone to wield a long sword, citing that it leads to boring battle scenes and little originality in gear, but said critics likely don't have to wander dangerous dungeons and fight for their life.";
   }
 
   Config BROKEN|LONG_SWORD;
@@ -374,7 +387,8 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
-    Alias = { 2, "greatsword", "great sword"; }
+    Alias = { 4, "greatsword", "great sword", "broadsword", "broad sword"; }
+    DescriptiveInfo = "An unusually large and heavy sword normally wielded with two hands. Favored by many barbaric warriors for the sheer power of its blows.";
   }
 
   Config BROKEN|TWO_HANDED_SWORD;
@@ -465,7 +479,8 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
-    Alias == "curved sword";
+    DescriptiveInfo = "A hulking sword, built to cleave opponents in twain.";
+    Alias = { 3, "scimitar", "curved sword", "curved blade"; }
   }
 
   Config BROKEN|TWO_HANDED_SCIMITAR;
@@ -516,6 +531,7 @@ meleeweapon
     SecondaryMaterialConfig == SILVER;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     Roundness = 20;
     IsTwoHanded = true;
     CanBeCloned = false;
@@ -527,6 +543,7 @@ meleeweapon
     WieldedBitmapPos = 176, 112;
     Price = 250;
     DamageFlags = SLASH|BLUNT;
+    DescriptiveInfo = "Every year on the Atavus day, a humongous loaf of banana stollen is baked in the Cathedral and blessed by the high priest himself. The whole town then gathers for a feast where the stollen is cut by this very ceremonial knife and the celebrations of Atavus' charity can properly begin.";
   }
 
   Config BROKEN|GRAND_STOLLEN_KNIFE;
@@ -600,6 +617,7 @@ meleeweapon
     WieldedBitmapPos = 160, 96;
     EnchantmentPlusChance = 15;
     DamageFlags = PIERCE;
+    DescriptiveInfo = "A common, simple thrusting weapon.";
   }
 
   Config BROKEN|SPEAR;
@@ -673,6 +691,7 @@ meleeweapon
     WieldedBitmapPos = 160, 176;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A hatchet that can serve both as a weapon and a tool of many uses.";
   }
 
   Config BROKEN|AXE;
@@ -735,6 +754,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
+    DescriptiveInfo = "A long-hilted weapon combining the traits of an axe and a spear. Strong, but difficult to handle.";
   }
 
   Config BROKEN|HALBERD;
@@ -796,6 +816,7 @@ meleeweapon
     AttachedGod = LEGIFER;
     WieldedBitmapPos = 160, 192;
     EnchantmentPlusChance = 10;
+    DescriptiveInfo = "What maces lack in accuracy, they make up for in brute power.";
   }
 
   Config BROKEN|MACE;
@@ -854,9 +875,11 @@ meleeweapon
     Roundness = 20;
     IsTwoHanded = true;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 320;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "A heavy hammerhead atop a stout handle. This weapon can easily smash through the strongest of armor.";
   }
 
   Config BROKEN|WAR_HAMMER;
@@ -918,6 +941,7 @@ meleeweapon
     IsGoodWithPlants = true;
     EnchantmentPlusChance = 20;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A short, curved blade often used for weeding overgrown plants.";
   }
 
   Config BROKEN|SICKLE;
@@ -950,6 +974,7 @@ meleeweapon
     FormModifier = 75;
     StrengthModifier = 60;
     NameSingular = "dagger";
+    Alias = { 4, "knife", "cutter", "cut", "cutting tool"; }
     MainMaterialConfig = { 67,
                            DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
                            DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
@@ -992,6 +1017,7 @@ meleeweapon
     WieldedBitmapPos = 160, 288;
     EnchantmentPlusChance = 25;
     DamageFlags = SLASH|PIERCE;
+    DescriptiveInfo = "A short blade suitable for quick strikes, throwing and even crafting.";
   }
 
   Config BROKEN|DAGGER;
@@ -1073,7 +1099,8 @@ meleeweapon
     WieldedBitmapPos = 160, 32;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH|PIERCE;
-    Alias == "shortsword";
+    Alias = { 2, "shortsword", "blade"; }
+    DescriptiveInfo = "The smaller cousin of the eternally popular long sword.";
   }
 
   Config BROKEN|SHORT_SWORD;
@@ -1160,6 +1187,7 @@ meleeweapon
     WieldedBitmapPos = 160, 16;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A straight sword with a long, broad blade designed to be wielded with one and a half hand.";
   }
 
   Config BROKEN|BASTARD_SWORD;
@@ -1230,7 +1258,8 @@ meleeweapon
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
-    Alias == "battle-axe";
+    Alias = { 3, "battleaxe", "battle-axe", "great axe"; }
+    DescriptiveInfo = "An axe crafted for battle, not labor.";
   }
 
   Config BROKEN|BATTLE_AXE;
@@ -1293,6 +1322,7 @@ meleeweapon
     IsGoodWithPlants = true;
     EnchantmentPlusChance = 20;
     DamageFlags = SLASH;
+    DescriptiveInfo = "A long shaft topped with a wicked, curved blade. Normally used for crop harvesting, scythe can make a potentially dangerous weapon in skilled hands.";
   }
 
   Config BROKEN|SCYTHE;
@@ -1352,6 +1382,7 @@ meleeweapon
     AttachedGod = SILVA;
     WieldedBitmapPos = 160, 304;
     EnchantmentPlusChance = 20;
+    DescriptiveInfo = "The favoured weapon of travellers, wizards and goblin monks.";
     Alias = { 2, "staff", "stave"; }
   }
 
@@ -1407,10 +1438,12 @@ meleeweapon
                               100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 16;
     EnchantmentPlusChance = 20;
-    Alias == "mallet";
+    Alias = { 2, "mallet", "blunt tool"; }
+    DescriptiveInfo = "A blunt tool useful for crushing skulls and forging metal.";
   }
 
   Config BROKEN|HAMMER;
@@ -1432,46 +1465,6 @@ meleeweapon
     EnchantmentPlusChance = 40;
   }
 
-  Config MAGE_STAFF;
-  {
-    DefaultSize = 220;
-    Possibility = 1;
-    WeaponCategory = BLUNT_WEAPONS;
-    StrengthModifier = 150;
-    BitmapPos = 64, 240;
-    FormModifier = 125;
-    DefaultMainVolume = 2000;
-    DefaultSecondaryVolume = 200;
-    NameSingular = "mage staff";
-    PostFix = "named Y'yter Durr";
-    Alias == "Y'yter Durr";
-    MainMaterialConfig == OCTIRON;
-    SecondaryMaterialConfig == GREEN_CRYSTAL;
-    Roundness = 20;
-    IsTwoHanded = true;
-    AttachedGod = SCABIES;
-    WieldedBitmapPos = 160, 304;
-    Price = 1000;
-    EnchantmentPlusChance = 2;
-    ArticleMode = FORCE_THE;
-    CanBeWished = false;
-    IsMaterialChangeable = false;
-    IsPolymorphable = false;
-    CanBeCloned = false;
-    CanBeMirrored = true;
-    CanBePiled = false;
-    GearStates = POLYMORPH|POLYMORPH_CONTROL;
-  }
-
-  Config BROKEN|MAGE_STAFF;
-  {
-    Possibility = 1;
-    BitmapPos = 64, 256;
-    WieldedBitmapPos = 176, 304;
-    GearStates = 0;
-    EnchantmentPlusChance = 5;
-  }
-
   Config ROLLING_PIN;
   {
     DefaultSize = 45;
@@ -1483,6 +1476,7 @@ meleeweapon
     BitmapPos = 80, 112;
     FormModifier = 60;
     NameSingular = "rolling pin";
+    Alias == "roller";
     MainMaterialConfig = { 20,
                            FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
                            CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
@@ -1496,6 +1490,7 @@ meleeweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 160, 352;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "Hell hath no fury like a woman scorned, especially if she has a rolling pin in hand.";
   }
 
   Config BROKEN|ROLLING_PIN;
@@ -1517,6 +1512,7 @@ meleeweapon
     BitmapPos = 80, 96;
     FormModifier = 75;
     NameSingular = "frying pan";
+    Alias == "pan";
     MainMaterialConfig = { 12,
                            COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON,
                            LEAD, ALUMINIUM, NICKEL, CHROME, STAINLESS_STEEL; }
@@ -1528,6 +1524,7 @@ meleeweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 15;
+    DescriptiveInfo = "Great for food preparation and face smashing.";
   }
 
   Config BROKEN|FRYING_PAN;
@@ -1549,6 +1546,7 @@ meleeweapon
     FormModifier = 75;
     StrengthModifier = 50;
     NameSingular = "beast claw";
+    Alias = { 3, "beast claws", "claws", "claw"; }
     MainMaterialConfig = { 67,
                            DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
                            DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
@@ -1640,6 +1638,7 @@ meleeweapon
     WieldedBitmapPos = 160, 32;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH;
+    Alias == "meat cleaver";
   }
 
   Config BROKEN|MEAT_CLEAVER;
@@ -1664,7 +1663,7 @@ meleeweapon
   Config RUNE_SWORD;
   {
     DefaultSize = 120;
-    Possibility = 2;
+    Possibility = 1;
     WeaponCategory = LARGE_SWORDS;
     DefaultMainVolume = 130;
     DefaultSecondaryVolume = 45;
@@ -1677,23 +1676,91 @@ meleeweapon
     Roundness = 10;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 16;
-    EnchantmentPlusChance = 5;
+    EnchantmentPlusChance = 20;
     DamageFlags = SLASH|PIERCE;
     PriceIsProportionalToEnchantment = true;
     IsMaterialChangeable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
+    DescriptiveInfo = "A thin blade inscribed with countless, softly glowing runes. They seem to be thirstily drinking in any enchantments you present to them.";
     Price = 500;
   }
 
   Config BROKEN|RUNE_SWORD;
   {
-    Possibility = 3;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
-    EnchantmentPlusChance = 20;
+    EnchantmentPlusChance = 50;
   }
+
+  Config KATANA;
+  {
+    DefaultSize = 100;
+    Possibility = 25;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 110;
+    DefaultSecondaryVolume = 30;
+    BitmapPos = 112, 192;
+    FormModifier = 115;
+    StrengthModifier = 110;
+    NameSingular = "katana";
+    MainMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           PETRIFIED_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, BIRCH_WOOD, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig == MAHOGANY_WOOD;
+    MaterialConfigChances = { 79,
+                              100, 50, 100, 50, 100, 50, 50, 25, 5, 1, 10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1000, 1500, 100, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 1, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 750, 100, 50, 25, 5, 80, 20, 80, 20, 150,
+                              100, 10, 5, 100, 50, 25; }
+    Roundness = 20;
+    AttachedGod = LEGIFER;
+    WieldedBitmapPos = 176, 112;
+    EnchantmentPlusChance = 5;
+    DamageFlags = SLASH|PIERCE;
+    AllowedDungeons = { 2, BLACK_MARKET, DARK_FOREST; }
+    DescriptiveInfo = "To train with the sword, first master sweeping. When you have mastered sweeping, you must master the way of drawing water. Once you have learned how to draw water, you must split wood. Once you have split wood, you must learn the arts of finding the fine herbs in the forest, the arts of writing, the arts of paper making, and poetry writing. You must become familiar with the awl and the pen in equal measure. When you have mastered all these things you must master building a house. Once your house is built, you have no further need for a sword, since it is an ugly piece of metal and its adherents idiots."; /* K6BD */
+    IsTwoHanded = true;
+  }
+
+  Config BROKEN|KATANA;
+  {
+    Possibility = 3;
+    BitmapPos = 112, 208;
+    WieldedBitmapPos = 176, 80;
+    MainMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 36,
+                              25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
+                              15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
+                              50, 10, 5, 50, 50; }
+    EnchantmentPlusChance = 10;
+    AllowedDungeons = { 2, BLACK_MARKET, DARK_FOREST; }
+}
 }
 
 banana /* materialcontainer-> */
@@ -1710,7 +1777,7 @@ banana /* materialcontainer-> */
   NameSingular = "banana";
   MainMaterialConfig == BANANA_PEEL;
   SecondaryMaterialConfig == BANANA_FLESH;
-  Alias = { 2, "gun", "snack"; }
+  Alias = { 3, "fruit", "gun", "snack"; }
   Roundness = 15;
   CanBeBroken = true;
   /* MinCharges & MaxCharges overridden */
@@ -1719,7 +1786,8 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
+  DescriptiveInfo = "Ugh, not bananas again! There was pretty much nothing but bananas to eat back in New Attnam, and you would finally like to try a different diet.";
 
   Config BROKEN;
   {
@@ -1742,6 +1810,7 @@ holybanana /* materialcontainer->banana-> */
   PostFix = "of Oily Orpiv";
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 20;
   WieldedBitmapPos = 160, 320;
   CanBePiled = false;
@@ -1754,6 +1823,7 @@ holybanana /* materialcontainer->banana-> */
   IsValuable = true;
   CanBePiled = false;
   IsMaterialChangeable = false;
+  DescriptiveInfo = "Oily Orpiv was an explorer turned merchant. His commercial empire began its rise when on one expedition, he discovered a small village that never had to deal with the hardships of agriculture because of a seemingly miraculous crop. Oily Orpiv had discovered the banana. Being a follower of Mellis, he saw the monetary potential in this new fruit, subjugated the people and turned them into a highly efficient banana production facility. He made a quick profit that he soon used as investment for further business ventures. It is said that Oily Orpiv saved the third banana he ever saw (he ate the first and sold the second, claiming it was the first one) as a keepsake. When later in his life he became the champion of Mellis, this banana was imbued with powers both beneficial and deadly by Oily Orpiv's appreciative patron.";
 }
 
 justifier /* meleeweapon-> */
@@ -1775,6 +1845,7 @@ justifier /* meleeweapon-> */
   MainMaterialConfig == VALPURIUM;
   SecondaryMaterialConfig == VALPURIUM;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Justifier";
   Roundness = 20;
   CanBeCloned = false;
@@ -1811,6 +1882,7 @@ neercseulb /* meleeweapon-> */
   MainMaterialConfig == MITHRIL;
   SecondaryMaterialConfig == MITHRIL;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Neerc Se-ulb";
   Roundness = 35;
   IsTwoHanded = true;
@@ -1835,7 +1907,7 @@ pickaxe /* meleeweapon-> */
   BitmapPos = 0, 96;
   FormModifier = 35;
   NameSingular = "pick-axe";
-  Alias = { 3, "pick-ax", "pickaxe", "pick axe"; }
+  Alias = { 4, "pickax", "pick-ax", "pickaxe", "pick axe"; }
   Roundness = 20;
   WeaponCategory = AXES;
   StrengthModifier = 75;
@@ -1868,6 +1940,7 @@ pickaxe /* meleeweapon-> */
   WieldedBitmapPos = 160, 64;
   EnchantmentPlusChance = 10;
   DamageFlags = PIERCE;
+  DescriptiveInfo = "Strike the earth!";
 
   Config BROKEN;
   {
@@ -1895,6 +1968,7 @@ armor
   IsAbstract = true;
   CanBePiled = false;
   CanBeEnchanted = true;
+  DescriptiveInfo = "Offering protection against the weapons, claws and carnassials of your many adversaries, it is invaluable to your continued life. Heavy armor might hinder your movements, though.";
 }
 
 bodyarmor /* armor-> */
@@ -1908,6 +1982,7 @@ bodyarmor /* armor-> */
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 144;
   TeleportPriority = 200;
+  DescriptiveInfo = "Most of one's vitals lie within the torso, so it is wise indeed to have them properly protected. Many a swordmaster had felt secure in their ability to defend against any opponent, only to receive a dagger to the kidneys from behind.";
 
   Config CHAIN_MAIL;
   {
@@ -2101,7 +2176,8 @@ bodyarmor /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SEGES;
     EnchantmentPlusChance = 2;
-    Alias = { 5, "AoGH", "life", "health", "armor of greater health", "endurance"; }
+    DescriptiveInfo = "Traditionally crafted and worn by members of the Monastic Order of the Haemophiliac Knights, this cuirass boosts one's bodily endurance.";
+    Alias = { 5, "AoGH", "armour", "life", "health", "endurance"; }
     TorsoArmorBitmapPos = 32, 464;
     ArmArmorBitmapPos = 80, 464;
     AthleteArmArmorBitmapPos = 80, 480;
@@ -2161,6 +2237,7 @@ bodyarmor /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBePiled = false;
     CanBeCloned = false;
     CanBeMirrored = true;
@@ -2175,6 +2252,7 @@ bodyarmor /* armor-> */
     ArmArmorBitmapPos = 80, 416;
     AthleteArmArmorBitmapPos = 80, 448;
     LegArmorBitmapPos = 16, 416;
+    DescriptiveInfo = "You know how dromedaries have one hump and camels have two? Ommels have eight, in a circular pattern. They are gargantuan yet docile herbivores that are remarkable in that their physiology seems reversed from almost all other animals. Their diet consists mostly of plants that to other animals (including humans) are poisonous at best, or even outright deadly on contact. While their meat is unsurprisingly vile and toxic, most of their waste products are extremely beneficial to other animals (still including humans). Ommels live in large herds headed by a single white-haired ommel, informally referred to as \"bristler\" due to the sharp spine-like quality their hair takes on as it turns white. Ommels have significantly larger lifespans than all humanoid races and a given herd will only have one bristler at a time, another male becoming a bristler only if the previous dies. Combined with the fact that bristlers do not shed their hair during the summer like normal ommels do, this renders armor made of their distinctive barbed hair incredibly rare.";
   }
 }
 
@@ -2193,6 +2271,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
   MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeBroken = false;
   CanBeBurned = false;
   CanBeCloned = false;
@@ -2222,7 +2301,7 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 43,
+  SecondaryMaterialConfig = { 45,
                               WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID,
                               VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT,
                               OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS,
@@ -2231,10 +2310,11 @@ potion /* materialcontainer-> */
                               MILK, HONEY, COCA_COLA, INK, BRINE, CIDER, WHITE_WINE, RED_WINE,
                               BEER, ELF_ALE, DWARF_BEER, LIQUID_FEAR, ASPHALT, BLOOD, GREEN_BLOOD,
                               BLUE_BLOOD, PLANT_SAP, GLOWING_BLOOD, MERCURY, QUICK_SILVER,
-                              OMMEL_BLOOD; }
-  MaterialConfigChances = { 43,
-                            50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 20, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
-                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5; }
+                              OMMEL_BLOOD, VINEGAR, NAPALM; }
+  MaterialConfigChances = { 45,
+                            50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 10, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
+                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 10,
+                            10; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -2242,6 +2322,8 @@ potion /* materialcontainer-> */
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   TeleportPriority = 200;
+  DescriptiveInfo = "You have heard that in some realms, the glass-blowing guild is so powerful that adventurers are required by law to destroy their bottles immediately after consuming the contents. You are glad that here, recycling is encouraged, even if that might mean cluttering your backpack with empty bottles.";
+
   Config VIAL;
   {
     DefaultSize = 10;
@@ -2250,8 +2332,14 @@ potion /* materialcontainer-> */
     DefaultMainVolume = 10;
     DefaultSecondaryVolume = 100;
     TeleportPriority = 20;
-    SecondaryMaterialConfig = { 9, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, ANTIDOTE_LIQUID, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
-    MaterialConfigChances = { 9, 75, 50, 5, 50, 30, 25, 5, 5, 25; }
+    SecondaryMaterialConfig = { 11,
+                                WATER, HEALING_LIQUID, TROLL_BLOOD, SULPHURIC_ACID,
+                                LIGHT_FROG_BLOOD, CURE_ALL_LIQUID, MAGIC_LIQUID,
+                                LIQUID_FEAR, TELEPORT_FLUID, POLYMORPHINE, LAVA; }
+    MaterialConfigChances = { 11,
+                              25, 75, 20, 10, 3, 1, 20, 5, 10, 10, 1; }
+    Alias = { 2, "small potion", "phial"; }
+    DescriptiveInfo = "A tiny bottle good enough for a single sip.";
   }
 }
 
@@ -2273,6 +2361,7 @@ bananapeels
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
+  DescriptiveInfo = "Careful, someone might slip on it!";
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -2293,9 +2382,12 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
   IsValuable = false;
   DamageFlags = PIERCE;
   IsSadistWeapon = true;
+  DescriptiveInfo = "Sharp and dangerous to your feet. Maybe it could still be put back together?";
+
   Config VIAL;
   {
     NameSingular = "vial";
+    Alias == "phial";
   }
 }
 
@@ -2314,6 +2406,7 @@ scroll
   WieldedBitmapPos = 176, 144;
   AllowEquip = false;
   TeleportPriority = 300;
+  DescriptiveInfo = "Words of Power written down for ease of use.";
 }
 
 scrollofteleportation /* scroll-> */
@@ -2321,9 +2414,10 @@ scrollofteleportation /* scroll-> */
   Possibility = 100;
   Price = 50;
   PostFix = "of teleportation";
-  Alias == "scroll of teleport";
+  Alias = { 2, "teleport", "teleportation"; }
   AttachedGod = SOPHOS;
   ReadDifficulty = 50;
+  DescriptiveInfo = "With the proper incantation to alter the flow of ley lines, one can arbitrarily increase the similarity of two different locations. When the areas become superimposed (with a maximum deviation of 2^-20 m), the Universe itself can no longer tell them apart. The net effect is that, while to an outside observer the inexplicable miracle of teleportation took place, what has actually happened is that the source location became the destination. This is yet another proof that the so-called miracles are only as of yet unexplained phenomena of magical science.";
 }
 
 scrolloffireballs /* scroll-> */
@@ -2335,7 +2429,7 @@ scrolloffireballs /* scroll-> */
   ReadDifficulty = 1000;
   CanBeCloned = false;
   IsPolymorphSpawnable = false;
-  Alias = { 4, "scroll of fireballs", "scroll of fireball", "power", "magic"; }
+  Alias = { 4, "fireballs", "fireball", "power", "magic"; }
 }
 
 scrollofearthquake /* scroll-> */
@@ -2345,7 +2439,7 @@ scrollofearthquake /* scroll-> */
   PostFix = "of earthquake";
   AttachedGod = SILVA;
   ReadDifficulty = 2500;
-  Alias = { 2, "scroll of earthquakes", "earthquake"; }
+  Alias = { 2, "earthquakes", "earthquake"; }
 }
 
 scrollofbodyswitch /* scroll-> */
@@ -2355,6 +2449,8 @@ scrollofbodyswitch /* scroll-> */
   PostFix = "of body switch";
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeWished = false;
   AttachedGod = INFUSCOR;
   ReadDifficulty = 3000;
 }
@@ -2368,7 +2464,7 @@ scrollofcharging /* scroll-> */
   IsPolymorphSpawnable = false;
   AttachedGod = SOPHOS;
   ReadDifficulty = 500;
-  Alias = { 2, "scroll of recharge", "scroll of recharging"; }
+  Alias = { 2, "recharge", "recharging"; }
 }
 
 nut
@@ -2387,6 +2483,7 @@ nut
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
   IsSadistWeapon = true;
+  DescriptiveInfo = "This makes you feel rather uneasy in the groin region.";
 }
 
 leftnutofpetrus /* nut-> */
@@ -2402,6 +2499,7 @@ leftnutofpetrus /* nut-> */
   PostFix = "of Petrus";
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeWished = false;
   CanBeCloned = false;
   CanBePiled = false;
@@ -2410,6 +2508,7 @@ leftnutofpetrus /* nut-> */
   IsQuestItem = true;
   IsValuable = true;
   CanBeBurned = false;
+  DescriptiveInfo = "A relic of the fallen high priest.";
 }
 
 bone
@@ -2453,7 +2552,10 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "Some processed food to sate your hunger.";
 }
 
 scrollofwishing /* scroll-> */
@@ -2473,12 +2575,14 @@ copyofleftnutofpetrus /* nut-> */
   DefaultSize = 10;
   Category = MISC;
   DefaultMainVolume = 500;
-  NameSingular = "copy of the left nut of Petrus";
-  NamePlural = "copies of the left nut of Petrus";
+  NameSingular = "copy";
+  NamePlural = "copies";
+  PostFix = "of the left nut of Petrus";
   FormModifier = 15;
   AttachedGod = MELLIS;
   IsValuable = false;
   IsAbstract = true;
+  DescriptiveInfo = "High priest Petrus lost his right nut in a gruesome, unfortunate accident that left it mangled beyond repair by even divine magic. His remaining nut thus became an object of veneration as the only hope for an heir to the Attnamese throne.";
 
   Config CHEAP;
   {
@@ -2515,10 +2619,12 @@ wand
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 1000;
   CanBeBurned = false;
+  BreakMsg = "releases its powers, causing a number of highly unexpected effects to occur around itself";
+  DescriptiveInfo = "A fragile rod filled to the brim with magic.";
 
   Config WAND_OF_POLYMORPH;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 500;
     IsPolymorphSpawnable = false;
     PostFix = "of polymorph";
@@ -2532,11 +2638,12 @@ wand
     AttachedGod = SCABIES;
     IsKamikazeWeapon = true;
     BreakMsg = "shatters, its pieces transforming into a myriad of exotic forms before vanishing";
+    DescriptiveInfo = "The target of this wand is not really transformed. It is shunted to a pocket dimension while the enchantments shift through a myriad of quantum variations on this reality, substantiating what the target could have been if a tiny change was introduced millions of years ago.";
   }
 
   Config WAND_OF_STRIKING;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of striking";
     MainMaterialConfig == IRON;
@@ -2548,11 +2655,12 @@ wand
     AttachedGod = INFUSCOR;
     IsKamikazeWeapon = true;
     BreakMsg = "explodes, releasing all of its energy at once";
+    DescriptiveInfo = "Loaded with raw destructive magic, this wand is highly popular among the wandslingers in the western lands.";
   }
 
   Config WAND_OF_FIRE_BALLS;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of fireballs";
     MainMaterialConfig == BRONZE;
@@ -2565,11 +2673,12 @@ wand
     BreakEffectRangeSquare = 0;
     IsKamikazeWeapon = true;
     BreakMsg = "turns into a fiery ball of rapidly expanding plasma";
+    DescriptiveInfo = "A fire elemental is trapped inside and tormented every time you zap this wand. Its wrath is then channeled into a mighty explosion. It might not be very understanding should it ever break free.";
   }
 
   Config WAND_OF_TELEPORTATION;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 500;
     PostFix = "of teleportation";
     MainMaterialConfig == SILVER;
@@ -2582,11 +2691,12 @@ wand
     AttachedGod = SOPHOS;
     BreakEffectRangeSquare = 9;
     BreakMsg = "breaks apart and a thousand splinters scatter in random directions, each cutting a tiny hole in space and time";
+    DescriptiveInfo = "A hole was torn in the space-time continuum and then sealed in this wand. It's absolutely, perfectly, hundred percent safe. Really.";
   }
 
   Config WAND_OF_HASTE;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of haste";
     MainMaterialConfig == TIN;
@@ -2597,11 +2707,12 @@ wand
     BeamEffect = BEAM_HASTE;
     AttachedGod = CLEPTIA;
     BreakMsg = "breaks, speeding up everything around it";
+    DescriptiveInfo = "A bit of extra time saved up for when you really need it.";
   }
 
   Config WAND_OF_SLOW;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of slow";
     MainMaterialConfig == GRANITE;
@@ -2616,7 +2727,7 @@ wand
 
   Config WAND_OF_RESURRECTION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 750;
     PostFix = "of resurrection";
     MainMaterialConfig == PHOENIX_FEATHER;
@@ -2627,12 +2738,13 @@ wand
     BeamEffect = BEAM_RESURRECT;
     AttachedGod = SEGES;
     BreakMsg = "breaks, releasing countless green rays of highly compressed life energy";
+    DescriptiveInfo = "Filled with life energy drained from a thousand sacrifices and capable of bringing back the dead, this wand is rare and powerful. All claims of permanent brain damage, demonic possession or other side effects of resurrection are unsubstantiated.";
     Alias = { 2, "heal", "healing"; }
   }
 
   Config WAND_OF_DOOR_CREATION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 250;
     PostFix = "of door creation";
     MainMaterialConfig == OAK_WOOD;
@@ -2643,12 +2755,14 @@ wand
     BeamEffect = BEAM_DOOR_CREATION;
     BeamStyle = SHIELD_BEAM;
     AttachedGod = LORICATUS;
-    BreakMsg = "releases its powers, causing a number of highly unexpected effects to occur around itself";
+    BreakMsg = "releases its powers, thousands of spectral doors manifesting all around";
+    DescriptiveInfo = "Transmuting the surrounding matter and focusing it through a Platonic ideal of a gateway, this wand can manifest door out of the proverbial thin air.";
+    Alias == "wand of door";
   }
 
   Config WAND_OF_INVISIBILITY;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 250;
     PostFix = "of invisibility";
     MainMaterialConfig == GLASS;
@@ -2663,7 +2777,7 @@ wand
 
   Config WAND_OF_CLONING;
   {
-    Possibility = 5;
+    Possibility = 2;
     Price = 2000;
     IsPolymorphSpawnable = false;
     PostFix = "of cloning";
@@ -2677,11 +2791,12 @@ wand
     AttachedGod = INFUSCOR;
     BreakEffectRangeSquare = 0;
     BreakMsg = "breaks up, its dispersing splinters multiplying infinitely";
+    DescriptiveInfo = "The pinnacle of alchemical expertise, this wand allows one to fabricate a perfect, permanent duplicate of nearly anything imaginable.";
   }
 
   Config WAND_OF_LIGHTNING;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 250;
     PostFix = "of lightning";
     MainMaterialConfig == GOLD;
@@ -2695,11 +2810,12 @@ wand
     BreakEffectRangeSquare = 9;
     IsKamikazeWeapon = true;
     BreakMsg = "breaks and releases all of its stored electricity at once";
+    DescriptiveInfo = "The actinic glare of a lightning bolt searing through a darkened corridor would be enough to strike terror in the most stout of warrior. One can only imagine their terror when the bolt, which seemed to just miss them, bounces off a wall to strike them from behind! In the past, massive thunderstorm farms were necessary to produce and harvest the lightning stored in this wand. Nowadays, the progress in the techniques of hattifattener breeding allowes for much quicker, cheaper and more environmental friendly manufacture.";
   }
 
   Config WAND_OF_ACID_RAIN;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of acid rain";
     MainMaterialConfig == SULFUR;
@@ -2712,11 +2828,13 @@ wand
     BreakEffectRangeSquare = 1;
     IsKamikazeWeapon = true;
     BreakMsg = "vaporizes in an instant, unleashing a deadly rainstorm of polluted acid";
+    DescriptiveInfo = "The magic of this wand catalyses a reaction between the water vapors in the air and the naturally occurring nitrogen. The resulting nitric acid condenses into larger particles, forming a caustic shower that wreaks havoc on anything caught inside.";
+    Alias == "wand of acid";
   }
 
   Config WAND_OF_MIRRORING;
   {
-    Possibility = 15;
+    Possibility = 7;
     Price = 1000;
     IsPolymorphSpawnable = false;
     PostFix = "of mirroring";
@@ -2730,11 +2848,12 @@ wand
     AttachedGod = INFUSCOR;
     BreakEffectRangeSquare = 0;
     BreakMsg = "shatters, its slivers reflecting each other recursively ad infinitum";
+    DescriptiveInfo = "The enchantments of this wand construct an astral simulacrum of the target. Unfortunately, the false matter of the duplicate is only metastable and will eventually discorporate.";
   }
 
   Config WAND_OF_NECROMANCY;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of necromancy";
     MainMaterialConfig == BONE;
@@ -2745,12 +2864,13 @@ wand
     BeamEffect = BEAM_NECROMANCY;
     AttachedGod = INFUSCOR;
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
+    DescriptiveInfo = "Dabblers who lack the motivation or ability to learn proper incantations use this wand to infuse the fallen bodies of their foes with a sick parody of life. Contemporary necromantic science is unfortunately unable to induce undeath in non-humanoid corpses, though at least one research team has recently reported a successful animation of a puppy skeleton.";
     Alias = { 2, "necromancy", "undeath"; }
   }
 
   Config WAND_OF_WEBBING;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of webbing";
     MainMaterialConfig == SPIDER_SILK;
@@ -2761,12 +2881,13 @@ wand
     BeamEffect = BEAM_WEBBING;
     AttachedGod = SCABIES;
     BreakMsg = "breaks, sending strands of spider silk everywhere";
+    DescriptiveInfo = "When you zap this wand, a spray of special high-pressure shear-thinning liquid is ejected from an extradimensional reservoir. On contact with air, this long-chain polymer rapidly knits and forms an extremely tough webbing.";
   }
 
   Config WAND_OF_ALCHEMY;
   {
-    Possibility = 20;
-    Price = 500;
+    Possibility = 5;
+    Price = 1000;
     PostFix = "of alchemy";
     MainMaterialConfig == LEAD;
     BeamRange = 5;
@@ -2776,6 +2897,23 @@ wand
     BeamEffect = BEAM_ALCHEMY;
     AttachedGod = MELLIS;
     BreakMsg = "explodes in a puff of golden dust";
+    DescriptiveInfo = "Monetary value, as every scholar of Mellis knows, is an intrinsic quality of every object, just as its temperature or mass. This wand can dispose of the unnecessary substance of an item, transferring its value to you directly.";
+  }
+
+  Config WAND_OF_SOFTEN_MATERIAL;
+  {
+    Possibility = 5;
+    Price = 500;
+    PostFix = "of soften material";
+    MainMaterialConfig == FUNGI_WOOD;
+    BeamRange = 5;
+    MinCharges = 2;
+    MaxCharges = 5;
+    BeamColor = YELLOW;
+    BeamEffect = BEAM_SOFTEN_MATERIAL;
+    AttachedGod = SCABIES; /* Change to SOLICITUS? */
+    BreakMsg = "turns itself into dust";
+    DescriptiveInfo = "Inscribed with the same magic formula as a scroll of harden material, except backwards.";
   }
 }
 
@@ -2784,7 +2922,7 @@ scrollofchangematerial /* scroll-> */
   Possibility = 5;
   Price = 2000;
   PostFix = "of change material";
-  Alias == "SoCM";
+  Alias = { 2, "SoCM", "scroll of change"; }
   AttachedGod = LORICATUS;
   ReadDifficulty = 2000;
 }
@@ -2797,7 +2935,7 @@ avatarofvalpurus
   IsDestroyable = false;
   IsMaterialChangeable = false;
   Price = 1000000;
-  Category = MISC;
+  Category = VALUABLE;
   DefaultMainVolume = 250;
   StrengthModifier = 500;
   BitmapPos = 0, 320;
@@ -2808,6 +2946,7 @@ avatarofvalpurus
   ArticleMode = FORCE_THE;
   MainMaterialConfig == VALPURIUM;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 80;
   CanBeCloned = false;
   AttachedGod = VALPURUS;
@@ -2833,7 +2972,10 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 7,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, FUNGAL_CAVE,
+                      DARK_FOREST, BLACK_MARKET; }
+  DescriptiveInfo = "Kiwis would be more popular if the plants didn't try to eat the harvesters.";
 }
 
 pineapple
@@ -2852,7 +2994,10 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
+  DescriptiveInfo = "A delicious fruit native to the vast pine forests of the far north.";
 }
 
 palmbranch
@@ -2904,7 +3049,8 @@ whip /* meleeweapon-> */
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
-  Alias = { 3, "BDSM", "love", "porn"; }
+  Alias = { 4, "BDSM", "love", "porn", "sex"; }
+  DescriptiveInfo = "Favored by slave-masters and mistresses of Nefas.";
 
   Config BROKEN;
   {
@@ -2952,8 +3098,7 @@ backpack /* materialcontainer-> */
   NameSingular = "backpack";
   MainMaterialConfig == LEATHER;
   SecondaryMaterialConfig == GUN_POWDER;
-  Alias == "explosives";
-  Alias = { 4, "explosives", "explosion", "dynamite", "death"; }
+  Alias = { 5, "explosives", "explosion", "dynamite", "death", "gunpowder"; }
   Roundness = 70;
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
@@ -2982,6 +3127,7 @@ holybook
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1000;
+  DescriptiveInfo = "A tome of myths, rituals, allegories, parables and ancient wisdom. The gods are fickle, but this might help you understand them more.";
 }
 
 fiftymillionroubles
@@ -3002,6 +3148,7 @@ fiftymillionroubles
   AttachedGod = MELLIS;
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
+  DescriptiveInfo = "Jackpot! You're filthy rich, you lucky bastard!"; /* maybe in Soviet Russia */
 }
 
 oillamp
@@ -3026,6 +3173,7 @@ oillamp
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 128;
   CanBeBurned = false;
+  DescriptiveInfo = "You have heard stories about genies trapped in this kind of a lamp.";
 }
 
 stone
@@ -3055,12 +3203,13 @@ stone
                             5, 5, 5, 5, 3, 2, 1, 1, 25, 50, 75, 50, 50, 50, 50, 50,
                             50, 5, 75, 75, 75, 50, 25, 25, 25, 50, 50, 50, 50, 50,
                             25, 5, 50, 50, 50, 25, 20, 15, 10, 5, 2, 1, 2, 5, 1, 1; }
-  Alias = { 2, "jewel", "gem"; }
+  Alias = { 4, "jewel", "gem", "jade", "crystal"; }
   Roundness = 90;
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
   HasNormalPictureDirection = false;
+  DescriptiveInfo = "It's a rock, duh.";
 
   Config SOL_STONE;
   {
@@ -3070,7 +3219,32 @@ stone
     Price = 100;
     MainMaterialConfig == OBSIDIAN;
     IsValuable = true;
+    IsDestroyable = false;
     TeleportPriority = 2000;
+    Alias = { 0; }
+    DescriptiveInfo = "This rock seems to be floating just above the ground.";
+  }
+
+  Config INGOT;
+  {
+    BitmapPos = 128, 16;
+    Possibility = 10;
+    NameSingular = "ingot";
+    IsValuable = true;
+    MainMaterialConfig = { 35,
+                           VALPURIUM, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL,
+                           PLATINUM, DARK_GOLD, ELECTRUM, IRIDIUM, PALLADIUM, CHROME,
+                           TITANITE, STAINLESS_STEEL, PLASTIC_STEEL, DURALLOY,
+                           VITRELLOY, URANIUM, SOLARIUM, NEUTRONIUM, ARCANITE,
+                           OCCULTUM, ILLITHIUM, METEORIC_STEEL, UKKU_STEEL, ADAMANT,
+                           SOUL_STEEL, BLOOD_STEEL, WHITE_STEEL, UR_STEEL; }
+    MaterialConfigChances = { 35,
+                              1, 200, 75, 25, 5, 300, 250, 100, 75, 25, 5, 50, 50, 50,
+                              30, 20, 10, 5, 20, 15, 10, 5, 15, 10, 5, 100, 15, 150,
+                              150, 75, 5, 200, 200, 200, 75; }
+    Alias == "metal";
+    DescriptiveInfo = "Useful in crafting.";
   }
 }
 
@@ -3082,6 +3256,7 @@ scrolloftaming /* scroll-> */
   AttachedGod = DULCIS;
   ReadDifficulty = 100;
   Alias = { 8, "pet", "ally", "minion", "companion", "familiar", "slave", "friend", "help"; }
+  DescriptiveInfo = "All brain washing, memory altering and mind controlling magic is forbidden under the penalty of death in nine out of ten kingdoms. Thankfully, you are in the one that allows it.";
 }
 
 mine /*materialcontainer-> */
@@ -3101,6 +3276,7 @@ mine /*materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
+  Alias = { 2, "mine", "landmine"; }
 
   Config BIG_MINE;
   {
@@ -3110,6 +3286,7 @@ mine /*materialcontainer-> */
     DefaultSecondaryVolume = 12500;
     NameSingular = "big mine";
     BitmapPos = 80, 288;
+    Alias = { 0; }
   }
 }
 
@@ -3131,27 +3308,54 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
+  CanBeBroken = true;
   CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
   Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
+
   Config HEXAGONAL_LOCK;
   {
     MainMaterialConfig == MITHRIL;
     Adjective = "hexagonal";
   }
+
   Config OCTAGONAL_LOCK;
   {
     MainMaterialConfig == OCTIRON;
     UsesLongAdjectiveArticle = true;
     Adjective = "octagonal";
   }
+
   Config HEART_SHAPED_LOCK;
   {
     MainMaterialConfig == GOLD;
     Adjective = "heart-shaped";
   }
+}
+
+skeletonkey /* key-> */
+{
+  Possibility = 1;
+  Price = 5000;
+  MainMaterialConfig == DRAGON_BONE;
+  Adjective = "skeleton";
+  AttachedGod = CLEPTIA;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
+  BaseEmitation = rgb24(125, 125, 105);
+  DescriptiveInfo = "A rough key carved from a knucklebone of a grand dragon. The beast reportedly didn't even stir as the bone was stolen from its paw. The key is said to open any lock easily.";
 }
 
 shield /* armor-> */
@@ -3200,6 +3404,7 @@ shield /* armor-> */
   WieldedBitmapPos = 128, 32;
   EnchantmentPlusChance = 15;
   Alias = { 2, "defense", "protection"; }
+  DescriptiveInfo = "A shield can both deflect attacks aside and provide a measure of defence against those that manage to connect.";
 
   Config BROKEN;
   {
@@ -3234,8 +3439,8 @@ shield /* armor-> */
     Possibility = 1;
     Adjective = "blessed";
     PostFix = "of the Phoenix";
+    Alias == "phoenix shield";
     MainMaterialConfig == PHOENIX_FEATHER;
-    Alias == "Shield of the Phoenix";
     EnchantmentPlusChance = 2;
     StrengthModifier = 150;
     GearStates = LIFE_SAVED;
@@ -3243,22 +3448,13 @@ shield /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    CanBeBroken = false; /* Prevent breaking, because dying when a strong attack first breaks the shield and then kills you feels really cheap. */
     Price = 2500;
-  }
-
-  Config BROKEN|PHOENIX_SHIELD;
-  {
-    Possibility = 1;
-    DefaultSize = 40;
-    FormModifier = 20;
-    StrengthModifier = 75;
-    BitmapPos = 48, 224;
-    WieldedBitmapPos = 128, 48;
-    EnchantmentPlusChance = 5;
-    GearStates = 0;
+    DescriptiveInfo = "A phoenix displayed or, langued and membered sable, on a field azure is emblazoned on this shield. According to the legends, it once belonged to Kuolee Kauheasti the Immortal Knight, who was killed in the battle of Prym after his shield arm was cut off.";
   }
 
   Config AEGIS_SHIELD;
@@ -3281,10 +3477,78 @@ shield /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "A tower displayed argent on a field sable is emblazoned on this shield. Forged in likeness of lord Xinroch's arcanite shield, it used to belong to the master of dark templars who guard Xinroch's eternal resting place. Both Cruentus and Infuscor blessed the shield to offer unparalleled protection against blade and spell alike.";
+  }
+
+  Config SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 10;
+    PostFix = "of fire resistance";
+    Price = 500;
+    FireResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 5;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    FireResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 10;
+    PostFix = "of electricity resistance";
+    Price = 500;
+    ElectricityResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 5;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    ElectricityResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 2;
+    PostFix = "of magic resistance";
+    Price = 500;
+    EnergyResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 1;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    EnergyResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
   }
 }
 
@@ -3298,6 +3562,7 @@ cloak /* armor-> */
   BitmapPos = 32, 352;
   FormModifier = 20;
   NameSingular = "cloak";
+  Alias = { 5, "robe", "cape", "cowl", "mantle", "blanket"; }
   MainMaterialConfig = { 38,
                          LINEN_CLOTH, HEMP_CLOTH, WOOL_CLOTH, FELT, FABRIC, ELF_CLOTH,
                          NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
@@ -3320,6 +3585,7 @@ cloak /* armor-> */
   CanBeBroken = true;
   CloakBitmapPos = 48, 416;
   EnchantmentPlusChance = 10;
+  DescriptiveInfo = "A long, hooded cloak faded from years of exposure to rough weather.";
 
   Config BROKEN;
   {
@@ -3422,24 +3688,28 @@ cloak /* armor-> */
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
     NameSingular = "shadow veil";
+    Alias = { 0; }
     AttachedGod = INFUSCOR;
     CanBeBroken = false;
     CanBeWished = false;
     IsDestroyable = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
     ArticleMode = FORCE_THE;
     CanBeEnchanted = false;
     CanBePiled = false;
+    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live. He was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished. But years eventually caught up with him, after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. But Xinroch wasn't one to give up and thus he started to heavily fund research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life. The Tomb of Xinroch was erected on the battlefield where Lord Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory.";
   }
 
   Config CLOAK_OF_WEREWOLF;
   {
     Possibility = 1;
     NameSingular = "werewolf fur cloak";
+    Alias == "werewolf fur";
     MainMaterialConfig == WOLF_SKIN;
     MaterialConfigChances == 100;
     GearStates = LYCANTHROPY|REGENERATION;
@@ -3448,10 +3718,12 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "A huge pile of stinking, lice-infested hide flayed alive from a werewolf. There's little humanity left in those who wear it.";
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -3469,6 +3741,7 @@ cloak /* armor-> */
     Possibility = 1;
     NameSingular = "mantle";
     PostFix = "of Al-Khan";
+    Alias = { 0; }
     MainMaterialConfig == SPIDER_SILK;
     MaterialConfigChances == 100;
     GearStates = INVISIBLE|TELEPORT;
@@ -3479,6 +3752,7 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -3498,13 +3772,14 @@ cloak /* armor-> */
 
   Config CLOAK_OF_FLYING;
   {
-    Possibility = 0;
+    Possibility = 1;
     GearStates = LEVITATION;
     PostFix = "of flying";
     Price = 2500;
     MainMaterialConfig = { 4, FABRIC, OMMEL_HAIR, OSTRICH_FEATHER, GRIFFON_FEATHER; }
     MaterialConfigChances = { 4, 50, 150, 250, 50; }
     EnchantmentPlusChance = 2;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|CLOAK_OF_FLYING;
@@ -3559,7 +3834,6 @@ cloak /* armor-> */
                               300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
                               5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                               15, 50, 10, 5; }
-    Alias == "invulnerability";
   }
 
   Config BROKEN|CLOAK_OF_PROTECTION;
@@ -3585,6 +3859,7 @@ cloak /* armor-> */
   {
     Possibility = 1;
     NameSingular = "vampire's cowl";
+    Alias = { 2, "vampire cowl", "vampiric cowl"; }
     MainMaterialConfig == BLACK_LEATHER;
     MaterialConfigChances == 100;
     GearStates = VAMPIRISM|INFRA_VISION;
@@ -3594,10 +3869,12 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+    DescriptiveInfo = "An ageless, dark robe stained with dried blood. Now that you think of it, maybe you wouldn't be against some prowling and blood-drinking...";
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -3671,7 +3948,8 @@ boot /* armor-> */
   BootBitmapPos = 16, 432;
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
-  Alias = { 3, "boots", "shoes", "moccasins"; }
+  DescriptiveInfo = "Protection for your legs.";
+  Alias = { 4, "boots", "shoes", "moccasins", "greaves"; }
 
   Config BROKEN;
   {
@@ -3709,7 +3987,7 @@ boot /* armor-> */
 
   Config BOOT_OF_STRENGTH;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 125;
     PostFix = "of strength";
     AffectsLegStrength = true;
@@ -3724,7 +4002,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     AffectsLegStrength = false;
     Price = 10;
     EnchantmentPlusChance = 4;
@@ -3734,7 +4011,7 @@ boot /* armor-> */
 
   Config BOOT_OF_AGILITY;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 125;
     PostFix = "of agility";
     AffectsAgility = true;
@@ -3750,7 +4027,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     AffectsAgility = false;
     Price = 25;
     EnchantmentPlusChance = 4;
@@ -3784,7 +4060,6 @@ boot /* armor-> */
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 368;
-    Possibility = 20;
     MainMaterialConfig = { 30,
                            COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
                            FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
@@ -3796,6 +4071,26 @@ boot /* armor-> */
                               5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                               15, 50, 10, 5; }
     EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
+  }
+
+  Config BOOT_OF_DISPLACEMENT;
+  {
+    Possibility = 5;
+    StrengthModifier = 125;
+    PostFix = "of displacement";
+    Price = 50;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|BOOT_OF_DISPLACEMENT;
+  {
+    DefaultSize = 30;
+    FormModifier = 30;
+    BitmapPos = 80, 368;
+    Price = 10;
+    EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
     BootBitmapPos = 16, 512;
   }
@@ -3812,6 +4107,7 @@ gauntlet /* armor-> */
   FormModifier = 20;
   NameSingular = "gauntlet";
   FlexibleNameSingular = "glove";
+  Alias = { 2, "gauntlets", "gloves"; }
   MainMaterialConfig = { 145,
                          TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
                          SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
@@ -3861,6 +4157,7 @@ gauntlet /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   HasNormalPictureDirection = false;
+  DescriptiveInfo = "Protection for your hands.";
 
   Config BROKEN;
   {
@@ -3898,10 +4195,8 @@ gauntlet /* armor-> */
 
   Config GAUNTLET_OF_STRENGTH;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 110;
-    NameSingular = "gauntlet";
-    FlexibleNameSingular = "glove";
     PostFix = "of strength";
     AffectsArmStrength = true;
     Price = 75;
@@ -3925,10 +4220,8 @@ gauntlet /* armor-> */
 
   Config GAUNTLET_OF_DEXTERITY;
   {
-    Possibility = 10;
+    Possibility = 5;
     StrengthModifier = 110;
-    NameSingular = "gauntlet";
-    FlexibleNameSingular = "glove";
     PostFix = "of dexterity";
     AffectsDexterity = true;
     Price = 100;
@@ -3936,7 +4229,7 @@ gauntlet /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = CLEPTIA;
     EnchantmentPlusChance = 2;
-    Alias = { 2, "gauntlet of dexterity", "gauntlets of dexterity"; }
+    Alias == "dexterity";
   }
 
   Config BROKEN|GAUNTLET_OF_DEXTERITY;
@@ -3985,6 +4278,7 @@ belt /* armor-> */
   EnchantmentPlusChance = 10;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
+  DescriptiveInfo = "You should realize that your groin is the most valuable part of your body. Wait, or was it your head?";
 
   Config BROKEN;
   {
@@ -4021,8 +4315,6 @@ belt /* armor-> */
   Config BELT_OF_CARRYING;
   {
     Possibility = 5;
-    NameSingular = "girdle";
-    FlexibleNameSingular = "belt";
     PostFix = "of carrying";
     AffectsCarryingCapacity = true;
     Price = 75;
@@ -4049,9 +4341,7 @@ belt /* armor-> */
 
   Config BELT_OF_LEVITATION;
   {
-    Possibility = 0;
-    NameSingular = "girdle";
-    FlexibleNameSingular = "belt";
+    Possibility = 1;
     PostFix = "of levitation";
     GearStates = LEVITATION;
     Price = 500;
@@ -4059,6 +4349,7 @@ belt /* armor-> */
     MainMaterialConfig == ANGEL_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|BELT_OF_LEVITATION;
@@ -4075,8 +4366,6 @@ belt /* armor-> */
     DefaultMainVolume = 300;
     StrengthModifier = 150;
     Possibility = 5;
-    NameSingular = "girdle";
-    FlexibleNameSingular = "belt";
     PostFix = "of protection";
     MainMaterialConfig = { 30,
                            COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
@@ -4113,8 +4402,6 @@ belt /* armor-> */
   Config BELT_OF_GIANT_STRENGTH;
   {
     Possibility = 5;
-    NameSingular = "girdle";
-    FlexibleNameSingular = "belt";
     PostFix = "of giant strength";
     Price = 500;
     AffectsArmStrength = true;
@@ -4125,7 +4412,8 @@ belt /* armor-> */
     MainMaterialConfig == BEAR_SKIN;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
-    Alias = { 2, "belt of strength", "strength"; }
+    Alias == "strength";
+    DescriptiveInfo = "Was it made by giants, for giants, or from giants?";
   }
 
   Config BROKEN|BELT_OF_GIANT_STRENGTH;
@@ -4144,6 +4432,7 @@ belt /* armor-> */
     Possibility = 5;
     Adjective = "thief's";
     NameSingular = "girdle";
+    FlexibleNameSingular = "girdle";
     Price = 500;
     AffectsDexterity = true;
     AffectsAgility = true;
@@ -4153,7 +4442,7 @@ belt /* armor-> */
     MainMaterialConfig == NYMPH_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
-    Alias = { 3, "thief belt", "dexterity", "agility"; }
+    Alias = { 4, "thief's belt", "thief girdle", "thief belt", "agility"; }
   }
 
   Config BROKEN|BELT_OF_THIEF;
@@ -4170,8 +4459,6 @@ belt /* armor-> */
   Config BELT_OF_REGENERATION;
   {
     Possibility = 2;
-    NameSingular = "girdle";
-    FlexibleNameSingular = "belt";
     PostFix = "of regeneration";
     GearStates = REGENERATION;
     Price = 100;
@@ -4180,6 +4467,7 @@ belt /* armor-> */
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
     Alias == "regeneration";
+    DescriptiveInfo = "Makes you ready to get at it again much faster than normal.";
   }
 
   Config BROKEN|BELT_OF_REGENERATION;
@@ -4208,6 +4496,7 @@ ring
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
   CanBeBurned = false;
+  DescriptiveInfo = "A piece of jewellery imbued with arcane powers.";
 
   Config RING_OF_FIRE_RESISTANCE;
   {
@@ -4316,6 +4605,7 @@ ring
     Price = 500;
     AttachedGod = LEGIFER;
     GearStates = SEARCHING;
+    DescriptiveInfo = "This ring bestows the diligent observational skills necessary to readily identify any hidden traps you might happen upon during your dungeoneering adventures.";
   }
 
   Config RING_OF_ACID_RESISTANCE;
@@ -4368,7 +4658,11 @@ ring
     Price = 2500;
     AttachedGod = SEGES;
     TeleportPriority = 1000;
-    Alias == "ring of polymorph lock";
+    Alias = { 2, "ring of polymorph lock", "unchanging"; }
+    CanBeWished = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 
   Config RING_OF_WORM;
@@ -4380,18 +4674,20 @@ ring
     MainMaterialConfig == URANIUM;
     Price = 2500;
     AttachedGod = SCABIES;
-    GearStates = PARASITE_TAPE_WORM;
+    GearStates = PARASITE_TAPE_WORM|DISEASE_IMMUNITY;
     TeleportPriority = 500;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     IsDestroyable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBeBroken = false;
     CanBeBurned = false;
     CanBePiled = false;
+    DescriptiveInfo = "A coiled worm transmuted into a sickly glowing ring. It whispers promises of safety into your mind, but also nibbles at your hand with a barely restrained hunger.";
     Alias == "worm ring";
   }
 
@@ -4403,7 +4699,30 @@ ring
     Price = 250;
     AttachedGod = CRUENTUS;
     GearStates = FEARLESS;
-    Alias == "ring of fearlessness";
+    Alias = { 2, "fearlessness", "bravery"; }
+  }
+
+  Config RING_OF_SPEED;
+  {
+    Possibility = 0; /* Artifact held by One-eyed Sam the black marketeer. */
+    PostFix = "of ludicrous speed";
+    MainMaterialConfig == QUICK_SILVER;
+    Price = 2500;
+    AttachedGod = CLEPTIA;
+    GearStates = HASTE;
+    TeleportPriority = 500;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    IsDestroyable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBeBroken = false;
+    CanBeBurned = false;
+    CanBePiled = false;
+    Alias = { 2, "speed", "haste"; }
   }
 }
 
@@ -4417,12 +4736,13 @@ amulet
   FormModifier = 10;
   UsesLongArticle = true;
   NameSingular = "amulet";
-  MainMaterialConfig == GOLD;
+  MainMaterialConfig == SILVER;
   Roundness = 10; /* it is considered here opened */
   IsAbstract = true;
   WieldedBitmapPos = 160, 112;
   HasNormalPictureDirection = false;
   CanBeBurned = false;
+  DescriptiveInfo = "A trinket imbued with magical power.";
 
   Config AMULET_OF_LIFE_SAVING;
   {
@@ -4434,17 +4754,18 @@ amulet
     Price = 5000;
     AttachedGod = SEGES;
     Alias = { 3, "AoLS", "longevity", "immortality"; }
+    DescriptiveInfo = "The most sure path to immortality is not to die. This amulet will help.";
   }
 
   Config AMULET_OF_ESP;
   {
     Possibility = 7;
     PostFix = "of ESP";
-    MainMaterialConfig == ILLITHIUM;
+    MainMaterialConfig == DARK_MATTER;
     GearStates = ESP;
     Price = 1000;
     AttachedGod = INFUSCOR;
-    Alias == "ESP";
+    Alias = { 2, "ESP", "telepathy"; }
   }
 
   Config AMULET_OF_WARDING;
@@ -4466,10 +4787,11 @@ amulet
   {
     Possibility = 3;
     PostFix = "of magic breath";
-    MainMaterialConfig == ARCANITE;
+    MainMaterialConfig == CORAL;
     GearStates = GAS_IMMUNITY|SWIMMING;
     Price = 2000;
     AttachedGod = SCABIES;
+    DescriptiveInfo = "This magical trinket provides a bubble of fresh air, protecting you from gases and drowning.";
     Alias = { 2, "amulet of unbreathing", "swimming"; }
   }
 
@@ -4504,21 +4826,33 @@ amulet
   {
     Possibility = 3;
     PostFix = "of disease immunity";
-    MainMaterialConfig == UNICORN_HORN;
+    MainMaterialConfig == MALACHITE;
     GearStates = DISEASE_IMMUNITY;
     Price = 2000;
     AttachedGod = SEGES;
+    Alias == "immunity";
   }
 
   Config AMULET_OF_DIMENSION_ANCHOR;
   {
     Possibility = 3;
     PostFix = "of dimensional protection";
-    MainMaterialConfig == SIDGURE_WOOD;
+    MainMaterialConfig == RED_SAND_STONE;
     GearStates = TELEPORT_LOCK;
     Price = 2000;
     AttachedGod = SOPHOS;
     Alias == "amulet of teleport lock";
+  }
+
+  Config AMULET_OF_FASTING;
+  {
+    Possibility = 3;
+    PostFix = "of fasting";
+    MainMaterialConfig == LAPIS_LAZULI;
+    GearStates = FASTING;
+    Price = 2000;
+    AttachedGod = DULCIS;
+    Alias = { 2, "fasting", "dieting"; }
   }
 }
 
@@ -4631,6 +4965,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   ArticleMode = FORCE_THE;
   MainMaterialConfig == ELPURI_FLESH;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 80;
   IsTwoHanded = true;
   CanBeCloned = false;
@@ -4639,6 +4974,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   IsQuestItem = true;
   CanBeBurned = false;
   CanBePiled = false;
+  DescriptiveInfo = "Alas, great Elpuri, may thy hunger be finally forgotten in the sleep of death.";
 }
 
 corpse
@@ -4691,6 +5027,10 @@ magicmushroomtorso /* normaltorso-> */
 {
 }
 
+fusangatorso /* largetorso-> */
+{
+}
+
 dogtorso /* normaltorso-> */
 {
 }
@@ -4723,7 +5063,12 @@ magpietorso /* normaltorso-> */
 {
 }
 
-whistle
+magicalinstrument
+{
+  IsAbstract = true;
+}
+
+whistle /* magicalinstrument-> */
 {
   Possibility = 50;
   Category = TOOL;
@@ -4741,7 +5086,7 @@ whistle
   CanBeBurned = false;
 }
 
-magicalwhistle /* whistle-> */
+magicalwhistle /* magicalinstrument->whistle-> */
 {
   Possibility = 5;
   MainMaterialConfig == RUBY;
@@ -4776,6 +5121,7 @@ itemcontainer
   WieldedBitmapPos = 160, 144;
   CreateLockConfigurations = true;
   CanBeBurned = false;
+  DescriptiveInfo = "A sturdy container for your necessities.";
 
   Config SMALL_CHEST;
   {
@@ -4825,6 +5171,7 @@ itemcontainer
   {
     Adjective = "small";
     NameSingular = "strong-box";
+    Alias = { 5, "strongbox", "strong box", "safe", "coffer", "safety"; }
     DefaultSize = 30;
     StorageVolume = 5000;
     DefaultMainVolume = 250;
@@ -4844,6 +5191,7 @@ itemcontainer
     BitmapPos = 48, 368;
     DamageDivider = 5;
     StrengthModifier = 150;
+    DescriptiveInfo = "A small, portable safe that can protect your valuables from harm.";
   }
 }
 
@@ -4874,6 +5222,7 @@ beartrap
                             300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
                             5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                             15, 50, 10, 5; }
+  Alias == "trap";
 
   Config BROKEN;
   {
@@ -4894,6 +5243,7 @@ helmet
   FormModifier = 10;
   NameSingular = "helmet";
   FlexibleNameSingular = "cap";
+  Alias == "helm";
   MainMaterialConfig = { 145,
                          TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
                          SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
@@ -4940,7 +5290,7 @@ helmet
   CoverPercentile = 50;
   HelmetBitmapPos = 112, 416;
   EnchantmentPlusChance = 15;
-  SoundResistance = 0;
+  DescriptiveInfo = "A sturdy helmet can provide an excellent protection against hits to the head. Unfortunately, the sound of rain on it would soon drive you mad.";
 
   Config BROKEN;
   {
@@ -4971,7 +5321,6 @@ helmet
                               25, 10, 5, 2, 1, 25, 5; }
     HelmetBitmapPos = 112, 496;
     EnchantmentPlusChance = 30;
-    SoundResistance = 0;
   }
 
   Config FULL_HELMET;
@@ -5020,105 +5369,69 @@ helmet
 
   Config HELM_OF_PERCEPTION;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of piercing perception";
     AffectsPerception = true;
-    MainMaterialConfig == ILLITHIUM;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = LEGIFER;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
-    Alias = { 2, "helm of perception", "perception"; }
+    Alias == "perception";
   }
 
   Config BROKEN|HELM_OF_PERCEPTION;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsPerception = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_UNDERSTANDING;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of understanding";
     AffectsWisdom = true;
-    MainMaterialConfig == UNICORN_HORN;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SOPHOS;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
-    Alias = { 2, "helm of wisdom", "wisdom"; }
+    Alias == "wisdom";
   }
 
   Config BROKEN|HELM_OF_UNDERSTANDING;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsWisdom = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_BRILLIANCE;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of brilliance";
     AffectsIntelligence = true;
-    MainMaterialConfig == ARCANITE;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
-    Alias = { 2, "helm of intelligence", "intelligence"; }
+    Alias = { 2, "brilliance", "intelligence"; }
   }
 
   Config BROKEN|HELM_OF_BRILLIANCE;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsIntelligence = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5131,11 +5444,26 @@ helmet
     BitmapPos = 48, 32;
     Possibility = 5;
     NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
     PostFix = "of attractivity";
     AffectsCharisma = true;
-    MainMaterialConfig == GOLD;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 60,
+                           SILVER, MOON_SILVER, GOLD, DARK_GOLD, PLATINUM, ELECTRUM,
+                           TITANITE, ADAMANT, CHAR_COAL, COAL, JET, URANIUM, SOLARIUM,
+                           NEUTRONIUM, MAGIC_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           PURPLE_CRYSTAL, PEARL_GLASS, PETRIFIED_WOOD, PETRIFIED_DARK,
+                           DRAGON_BONE, MAMMOTH_TUSK, OBSIDIAN, JASPER, JACINTH, AGATE,
+                           TOURMALINE, CHALCEDONY, CITRINE, LAPIS_LAZULI, OCCULTUM,
+                           AMBER, OPAL, ONYX, PEARL, CORAL, ROSE_QUARTZ, NETHER_QUARTZ,
+                           AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY, DIAMOND, BLACK_DIAMOND,
+                           JADEITE, MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, WHITE_JADE, BRIM_STONE, ALABASTER, HEMATITE,
+                           PYRITE, PRIMORDIAL_ICE, HALCYON; }
+    MaterialConfigChances = { 60,
+                              300, 25, 200, 25, 50, 75, 5, 5, 10, 10, 25, 1, 1, 1,
+                              5, 5, 5, 5, 3, 2, 1, 1, 25, 50, 75, 50, 50, 50, 50, 50,
+                              50, 5, 75, 75, 75, 50, 25, 25, 25, 50, 50, 50, 50, 50,
+                              25, 5, 50, 50, 50, 25, 20, 15, 10, 5, 2, 1, 2, 5, 1, 1; }
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5144,7 +5472,7 @@ helmet
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     SoundResistance = 1;
-    Alias = { 2, "helm of charisma", "charisma"; }
+    Alias = { 2, "attractivity", "charisma"; }
   }
 
   Config BROKEN|HELM_OF_ATTRACTIVITY;
@@ -5167,6 +5495,7 @@ helmet
     Possibility = 0;
     Adjective = "Gorovits family";
     NameSingular = "gas mask";
+    Alias = { 0; }
     MainMaterialConfig == KEVLAR;
     MaterialConfigChances == 100;
     Price = 50;
@@ -5182,9 +5511,11 @@ helmet
     SoundResistance = 0;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    DescriptiveInfo = "A durable mask fitted with a filter that provides good protection against dangerous gases and vapors.";
   }
 
   Config HELM_OF_WILLPOWER;
@@ -5194,62 +5525,61 @@ helmet
     StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 1;
     NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
+    Possibility = 1;
     PostFix = "of indomitable will";
     AffectsWillPower = true;
-    MainMaterialConfig == OCTIRON;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = LEGIFER;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    Alias = { 3, "helm of willpower", "willpower", "will"; }
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              750, 1500, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
+                              15, 50, 10, 5; }
+    Alias = { 2, "willpower", "will"; }
   }
 
   Config BROKEN|HELM_OF_WILLPOWER;
   {
     BitmapPos = 64, 32;
-    Possibility = 0;
+    HelmetBitmapPos = 96, 512;
+    Possibility = 1;
     Price = 25;
     AffectsWillPower = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_TELEPATHY;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 150;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 5;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of telepathy";
     GearStates = ESP;
-    MainMaterialConfig == SOUL_STEEL;
-    MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = INFUSCOR;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    Alias == "helm of ESP";
+    Alias = { 3, "helmet of ESP", "helm of ESP", "cap of ESP"; }
+    DescriptiveInfo = "Purportedly, the helmet of telepathy was invented by witch-queen Yala, who was looking for a way to read the thoughts of her manservants and thus dispose of any with dirty fantasies. According to her memoirs, the enchantments were an utter failure as she never found a way to decipher the detected thoughts. She later decided to dispatch all her servants and use skeletons instead. However, the Society of Adventuring Gentlemen recognized the value in her research and cheaply bought the magical patent. They turned a quick profit on helmets alerting a cautious delver to any lurking dangers even through closed doors.";
   }
 
   Config BROKEN|HELM_OF_TELEPATHY;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 3;
     Price = 25;
     GearStates = 0;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5257,31 +5587,40 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 5;
     NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
-    PostFix = "of teleportation";
-    GearStates = TELEPORT;
-    MainMaterialConfig == MITHRIL;
-    MaterialConfigChances == 100;
-    Price = 100;
-    AttachedGod = SOPHOS;
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
+    Possibility = 5;
+    PostFix = "of teleportation";
+    GearStates = TELEPORT;
+    Price = 100;
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              750, 1500, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
+                              15, 50, 10, 5; }
+    AttachedGod = SOPHOS;
     EnchantmentPlusChance = 2;
-    Alias == "helm of teleport";
+    Alias = { 3, "helmet of teleport", "helm of teleport", "cap of teleport"; }
   }
 
   Config BROKEN|HELM_OF_TELEPORTATION;
   {
     BitmapPos = 64, 32;
+    HelmetBitmapPos = 96, 512;
     Possibility = 3;
     Price = 25;
     GearStates = 0;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5300,9 +5639,11 @@ helmet
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    CanBeBroken = false;
     AffectsPerception = true;
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
@@ -5313,6 +5654,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
     GearStates = INFRA_VISION|SEARCHING;
   }
 
@@ -5331,33 +5673,49 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 1;
     NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
-    PostFix = "of essence plethora";
-    Alias == "helm of mana";
-    AffectsMana = true;
-    MainMaterialConfig == AMETHYST;
-    MaterialConfigChances == 100;
-    BaseEnchantment = 1;
-    Price = 100;
-    PriceIsProportionalToEnchantment = true;
-    AttachedGod = SOPHOS;
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
+    Possibility = 1;
+    PostFix = "of essence plethora";
+    Alias = { 3, "helmet of mana", "helm of mana", "cap of mana"; }
+    AffectsMana = true;
+    BaseEnchantment = 1;
+    Price = 100;
+    MainMaterialConfig = { 60,
+                           SILVER, MOON_SILVER, GOLD, DARK_GOLD, PLATINUM, ELECTRUM,
+                           TITANITE, ADAMANT, CHAR_COAL, COAL, JET, URANIUM, SOLARIUM,
+                           NEUTRONIUM, MAGIC_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           PURPLE_CRYSTAL, PEARL_GLASS, PETRIFIED_WOOD, PETRIFIED_DARK,
+                           DRAGON_BONE, MAMMOTH_TUSK, OBSIDIAN, JASPER, JACINTH, AGATE,
+                           TOURMALINE, CHALCEDONY, CITRINE, LAPIS_LAZULI, OCCULTUM,
+                           AMBER, OPAL, ONYX, PEARL, CORAL, ROSE_QUARTZ, NETHER_QUARTZ,
+                           AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY, DIAMOND, BLACK_DIAMOND,
+                           JADEITE, MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, WHITE_JADE, BRIM_STONE, ALABASTER, HEMATITE,
+                           PYRITE, PRIMORDIAL_ICE, HALCYON; }
+    MaterialConfigChances = { 60,
+                              300, 25, 200, 25, 50, 75, 5, 5, 10, 10, 25, 1, 1, 1,
+                              5, 5, 5, 5, 3, 2, 1, 1, 25, 50, 75, 50, 50, 50, 50, 50,
+                              50, 5, 75, 75, 75, 50, 25, 25, 25, 50, 50, 50, 50, 50,
+                              25, 5, 50, 50, 50, 25, 20, 15, 10, 5, 2, 1, 2, 5, 1, 1; }
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = SOPHOS;
     EnchantmentPlusChance = 2;
   }
 
   Config BROKEN|HELM_OF_MANA;
   {
     BitmapPos = 64, 32;
-    Possibility = 0;
+    HelmetBitmapPos = 96, 512;
+    Possibility = 1;
     Price = 25;
     AffectsMana = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5370,6 +5728,7 @@ helmet
     BitmapPos = 80, 208;
     Possibility = 10;
     NameSingular = "mask";
+    Alias = { 0; }
     CoverPercentile = 30;
     HelmetBitmapPos = 112, 129;
     MainMaterialConfig = { 100,
@@ -5392,7 +5751,7 @@ helmet
                            IRON, STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
                            BLOOD_IRON, BLOOD_STEEL, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
     MaterialConfigChances = { 100,
-                              15, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
+                              150, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
                               25, 50, 5, 3, 1, 5, 100, 50, 50, 5, 5, 5, 10, 75, 5,
                               15, 5, 25, 15, 30, 20, 100, 50, 40, 50, 60, 75, 25, 30,
                               40, 50, 60, 30, 40, 5, 50, 60, 75, 25, 10, 1, 50, 10,
@@ -5400,6 +5759,7 @@ helmet
                               25, 100, 75, 50, 25, 50, 5, 50, 1, 1, 100, 75, 50, 5,
                               25, 5, 50, 10, 5, 1, 15, 5, 15, 5, 5, 5, 3, 3, 1; }
     EnchantmentPlusChance = 30;
+    DescriptiveInfo = "A highly decorative mask to conceal all your troubles.";
   }
 
   Config BROKEN|MASK;
@@ -5418,6 +5778,42 @@ helmet
                               1, 100, 50, 25, 5, 1, 50, 25, 10, 25, 25, 100, 75,
                               50, 10, 5, 25, 25; }
     EnchantmentPlusChance = 40;
+  }
+
+  Config WAR_MASK;
+  {
+    DescriptiveInfo = "In an age long past, the goblin empire of Quetzaltia fought a terrible war against the spawn of Scabies, the dreaded mind worms. The goblins were barely holding on until the wizards and alchemists of their king, the venerable Tlachtlallotlachitl, invented a new type of mask that rendered the powers of mind worms useless. Very few of those masks remain today, but any worm-slayer would give a fortune to own one.";
+    DefaultSize = 25;
+    DefaultMainVolume = 100;
+    StrengthModifier = 250;
+    FormModifier = 10;
+    CoverPercentile = 30;
+    Price = 1000;
+    BitmapPos = 80, 208;
+    Possibility = 1;
+    Adjective = "war";
+    NameSingular = "mask";
+    Alias = { 0; }
+    PostFix = "of Tlachtlallotlachitl";
+    HelmetBitmapPos = 112, 129;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBePiled = false;
+    CanBeBroken = false;
+    AffectsIntelligence = true;
+    AffectsWisdom = true;
+    AffectsWillPower = true;
+    PriceIsProportionalToEnchantment = true;
+    MainMaterialConfig == TIN;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    EnchantmentPlusChance = 30;
+    AttachedGod = CRUENTUS;
   }
 }
 
@@ -5443,7 +5839,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -5483,10 +5879,11 @@ flamingsword /* meleeweapon-> */
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
   CanBeBurned = false;
+  DescriptiveInfo = "A sword wreathed in ceaseless flames.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     MainMaterialConfig = { 33,
@@ -5519,6 +5916,7 @@ flamingsword /* meleeweapon-> */
     IsDestroyable = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
@@ -5529,6 +5927,7 @@ flamingsword /* meleeweapon-> */
     ArticleMode = FORCE_THE;
     DamageFlags = SLASH|PIERCE;
     GearStates = GAS_IMMUNITY|DISEASE_IMMUNITY;
+    DescriptiveInfo = "Lord Xinroch was the greatest and most powerful grand master dark knight to ever live. Some sources claim that he was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent and he rose quickly through the ranks, never stopping until the very top. In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, and his two crossed flaming swords are still found on the banner of the grand master dark knights to this day. During a battle late in his life, Xinroch lost one of the flaming swords he wielded for most of his life, and after his death, the lost sword became shrouded in myths. It was even said that the return of this sword will herald the return of Lord Xinroch himself.";
   }
 }
 
@@ -5553,6 +5952,7 @@ mjolak /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false;*/
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Mjolak";
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -5595,6 +5995,7 @@ vermis /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -5604,6 +6005,7 @@ vermis /* meleeweapon-> */
   EnchantmentPlusChance = 2;
   DamageFlags = PIERCE;
   GearStates = TELEPORT|TELEPORT_CONTROL;
+  DescriptiveInfo = "Granted power over spacetime by the blessing of Sophos, this spear allowed the scholar-knight Karl to unite many kobold tribes and start them on the Path of Enlightenment, until he stepped on a land mine and died, the kobolds promptly falling back to savagery.";
 
   Config BROKEN;
   {
@@ -5637,6 +6039,7 @@ turox /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -5644,6 +6047,7 @@ turox /* meleeweapon-> */
   AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
   EnchantmentPlusChance = 2;
+  DescriptiveInfo = "It is said that when the siege of Prym drove the Shining Knights to desperation and they prepared for one last charge to break through the orcish hordes, their Lord Legifer smiled upon their bravery and blessed their maces with divine fire, naming them all Turox. The Shining Knights were slaughtered anyway, and the holy maces were lost.";
 
   Config BROKEN;
   {
@@ -5658,7 +6062,7 @@ turox /* meleeweapon-> */
 whipofthievery /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -5671,6 +6075,7 @@ whipofthievery /* meleeweapon->whip-> */
   Price = 500;
   AttachedGod = CLEPTIA;
   EnchantmentPlusChance = 10;
+  DescriptiveInfo = "This whip is normally wielded by the clergy of Cleptia. The lash seems to be moving on its own accord, snatching weapons from the hands of your foes.";
 
   Config BROKEN;
   {
@@ -5750,6 +6155,7 @@ skullofxinroch
   IsDestroyable = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeBurned = false;
   CanBeBroken = false;
@@ -5758,6 +6164,7 @@ skullofxinroch
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
   Price = 500;
+  DescriptiveInfo = "It was a great shame to the guardians of the Tomb of Xinroch when several decades ago, an unknown necromancer managed to slip past their guard and animate the skeleton of Xinroch in a mockery of his once-living might. But even though you hold in your hands the skull of this diminished and defeated Xinroch, it radiates an aura of ageless, adamant glory. All hail the mighty lord Xinroch.";
 }
 
 gorovitsweapon
@@ -5768,12 +6175,14 @@ gorovitsweapon
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   IsQuestItem = true;
   IsAbstract = true;
   CanBeBurned = false;
   CanBePiled = false;
+  DescriptiveInfo = "The mystical glow of communism marks this mighty weapon as an interdimensional import from the legendary land of Soviet Russia.";
 
   Config GOROVITS_HAMMER;
   {
@@ -5791,6 +6200,7 @@ gorovitsweapon
     Roundness = 20;
     IsTwoHanded = true;
     CanBeUsedBySmith = true;
+    IsGoodWithUndead = true;
     BaseEnchantment = 3;
     Price = 250;
     AttachedGod = LORICATUS;
@@ -5816,6 +6226,7 @@ gorovitsweapon
     AttachedGod = SEGES;
     WieldedBitmapPos = 176, 32;
     DamageFlags = SLASH;
+    IsGoodWithPlants = true;
   }
 
   Config GOROVITS_SCIMITAR;
@@ -5846,7 +6257,7 @@ scrollofrepair /* scroll-> */
   Possibility = 50;
   Price = 250;
   PostFix = "of repair";
-  Alias = { 2, "scroll of repairing", "repair"; }
+  Alias == "repair";
   AttachedGod = LORICATUS;
   ReadDifficulty = 500;
 }
@@ -5863,9 +6274,10 @@ encryptedscroll /* scroll-> */
   AttachedGod = MELLIS;
   IsQuestItem = true;
   CanBeBurned = false;
+  DescriptiveInfo = "This scroll contains a coded message for the eyes of the high priest Petrus only. Given to you by Richel Decos, the viceroy of New Attnam, it should be delivered posthaste to the Cathedral of Attnam.";
 }
 
-horn
+horn /* magicalinstrument-> */
 {
   StrengthModifier = 70;
   FormModifier = 30;
@@ -5889,6 +6301,7 @@ horn
   {
     MainMaterialConfig == SILVER;
     PostFix = "of bravery";
+    Alias = { 2, "courage", "valor"; }
   }
 
   Config FEAR;
@@ -5919,7 +6332,7 @@ horn
 thunderhammer /* meleeweapon-> */
 {
   DefaultSize = 50;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 200;
@@ -5953,6 +6366,7 @@ thunderhammer /* meleeweapon-> */
   Roundness = 20;
   IsTwoHanded = true;
   CanBeUsedBySmith = true;
+  IsGoodWithUndead = true;
   Price = 500;
   BaseEmitation = rgb24(130, 130, 130);
   AttachedGod = LORICATUS;
@@ -5961,7 +6375,7 @@ thunderhammer /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 192;
     Price = 100;
     WieldedBitmapPos = 176, 224;
@@ -6003,6 +6417,7 @@ saalthul
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -6011,6 +6426,7 @@ saalthul
   WieldedBitmapPos = 160, 32;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "Once upon a time, there was a thief of great skill who sought to impress his beloved goddess by deeds of ever-increasing gall and daring. Eventually, he blundered and died a horrible death, but his name and skills live forever through the sword he used to wield.";
 
   Config BROKEN;
   {
@@ -6026,11 +6442,12 @@ saalthul
 chameleonwhip /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
   NameSingular = "chameleon whip";
+  Alias = { 0; }
   MainMaterialConfig == OMMEL_HAIR;
   SecondaryMaterialConfig == RUBY;
   Roundness = 2;
@@ -6040,6 +6457,7 @@ chameleonwhip /* meleeweapon->whip-> */
   WieldedBitmapPos = 160, 224;
   EnchantmentMinusChance = 50;
   EnchantmentPlusChance = 50;
+  DescriptiveInfo = "Woven into the lash are tiny fragments of protean chaos, each strike destabilizing the biomorphic field of your foes.";
 
   Config BROKEN;
   {
@@ -6071,7 +6489,10 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 12,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, MONDEDR,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST, FUNGAL_CAVE; }
+  DescriptiveInfo = "Beloved by bunnies and people with poor eyesight.";
 
   Config BROKEN;
   {
@@ -6084,7 +6505,7 @@ mango
 {
   WeaponCategory = BLUNT_WEAPONS;
   DefaultSize = 20;
-  Possibility = 0;
+  Possibility = 400;
   Category = FOOD;
   DefaultMainVolume = 200;
   StrengthModifier = 75;
@@ -6097,7 +6518,8 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  /* AllowedDungeons == DARK_FOREST; */
+  AllowedDungeons = { 3, DARK_FOREST, BLACK_MARKET, FUNGAL_CAVE; }
+  DescriptiveInfo = "Yummy!";
 
   Config BROKEN;
   {
@@ -6128,13 +6550,15 @@ sausage
   WieldedBitmapPos = 160, 320;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, MONDEDR, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 wondersmellstaff
 {
   DefaultSize = 220;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   StrengthModifier = 150;
   BitmapPos = 64, 240;
@@ -6143,6 +6567,7 @@ wondersmellstaff
   DefaultSecondaryVolume = 200;
   NameSingular = "staff";
   PostFix = "of wondrous smells";
+  Alias == "staff of smells";
   MainMaterialConfig = { 11,
                          EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD,
                          ORICHALCUM, STAR_METAL, OCCULTUM, CHLOROPHYTE, PRIMORDIAL_ICE; }
@@ -6155,17 +6580,18 @@ wondersmellstaff
   WieldedBitmapPos = 160, 304;
   Price = 500;
   EnchantmentPlusChance = 5;
+  DescriptiveInfo = "It is said that Infuscor was astounded when she saw the massacre that became of the Dwarven Wars. Her magical destruction was flashy and powerful, but the indiscriminate, insidious death that alchemical combat gases brought to the battlefield impressed her enough that she rushed to inspire one of her priestesses to enchant a magic staff for a similar purpose. With a little bit of a twist, this staff conjures both gases detrimental to your foes and beneficial to you and your allies, soon plunging the combat zone into utter chaos, exactly to Infuscor's liking.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     EnchantmentPlusChance = 10;
   }
 }
 
-charmlyre
+charmlyre /* magicalinstrument-> */
 {
   DefaultMainVolume = 1500;
   StrengthModifier = 50;
@@ -6183,7 +6609,8 @@ charmlyre
   AttachedGod = DULCIS;
   WieldedBitmapPos = 176, 352;
   CanBeBurned = false;
-  Alias = { 5, "charm", "domination", "control", "peace", "world peace"; }
+  DescriptiveInfo = "Finally, everyone will be working together. For you.";
+  Alias = { 6, "music", "charm", "domination", "control", "peace", "world peace"; }
 }
 
 ennerhead /* head-> */
@@ -6208,6 +6635,7 @@ decosadshirt /* armor->bodyarmor-> */
   AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   Price = 0;
+  DescriptiveInfo = "Eat a banana. Be happy.";
 }
 
 filthytunic /* armor->bodyarmor-> */
@@ -6230,6 +6658,7 @@ filthytunic /* armor->bodyarmor-> */
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBePiled = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -6279,6 +6708,7 @@ stick
   BitmapPos = 80, 240;
   FormModifier = 40;
   NameSingular = "stick";
+  Alias == "firewood";
   MainMaterialConfig = { 7, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD; }
   MaterialConfigChances = { 7, 100, 350, 300, 250, 200, 150, 100; }
   OKVisualEffects = MIRROR|FLIP;
@@ -6303,6 +6733,7 @@ scrollofgolemcreation /* scroll-> */
   Possibility = 10;
   Price = 750;
   PostFix = "of golem creation";
+  Alias = { 2, "SoGC", "golem"; }
   AttachedGod = SOPHOS;
   ReadDifficulty = 1000;
 }
@@ -6319,12 +6750,14 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 6,
+  SecondaryMaterialConfig = { 9,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR,
-                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR; }
-  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 5; }
+                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS,
+                              ACID_GAS, FIRE_GAS; }
+  MaterialConfigChances = { 9,
+                            50, 10, 1, 10, 5, 5, 10, 5, 5; }
   Adjective = "dwarven";
-  Alias == "gas grenade";
+  Alias == "grenade";
 }
 
 holyhandgrenade
@@ -6332,23 +6765,24 @@ holyhandgrenade
   DefaultSize = 15;
   Category = MISC;
   DefaultMainVolume = 200;
-  NameSingular = "handgrenade of Antioch";
-  NamePlural = "handgrenades of Antioch";
+  NameSingular = "handgrenade";
+  PostFix = "of Antioch";
   FormModifier = 15;
   AttachedGod = VALPURUS;
   Possibility = 5;
   Price = 500;
   MainMaterialConfig == VALPURIUM;
   Adjective = "holy";
-  Alias == "holy grenade";
+  Alias = { 3, "holy grenade", "hand grenade", "handgrenade"; }
   CanBePiled = false;
   CanBeBurned = false;
+  DescriptiveInfo = "And Saint Attila raised the hand grenade up on high, saying: \"O Lord, bless this Thy hand grenade that, with it, Thou mayest blow Thine enemies to tiny bits in Thy mercy.\" And the Lord spake, saying: \"First shalt thou take out the Holy Pin. Then, shalt thou count to three. No more. No less. Three shalt be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, nor either count thou two, excepting that thou then proceed to three. Five is right out. Once the number three, being the third number, be reached, then, lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in My sight, shall snuff it.\""; /* Monty Python and the Holy Grail */
 }
 
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -6375,10 +6809,11 @@ daggerofvenom
   WieldedBitmapPos = 160, 288;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "Invented by Vulcan-Loki, an accomplished assassin and a grandmaster of the Guild, this dagger is always poisoned and ready for a kill.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 288;
     WieldedBitmapPos = 176, 288;
     EnchantmentPlusChance = 4;
@@ -6388,7 +6823,7 @@ daggerofvenom
 weepblade
 {
   DefaultSize = 70;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 70;
   DefaultSecondaryVolume = 30;
@@ -6397,6 +6832,7 @@ weepblade
   StrengthModifier = 90;
   NameSingular = "blade";
   Adjective = "weeping";
+  Alias == "blade of spitting";
   MainMaterialConfig = { 13,
                          MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
                          BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
@@ -6410,10 +6846,11 @@ weepblade
   WieldedBitmapPos = 160, 16;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  DescriptiveInfo = "A single caustic tear of Scabies was trapped within this blade. It shall spill its acidic sorrow upon your adversaries.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
     MainMaterialConfig = { 15,
@@ -6426,10 +6863,10 @@ weepblade
   }
 }
 
-acidshield /* armor ->*/
+acidshield /* armor->shield-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   Category = SHIELD;
   DefaultMainVolume = 350;
   StrengthModifier = 100;
@@ -6441,8 +6878,10 @@ acidshield /* armor ->*/
   MaterialConfigChances = { 13,
                             300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   EnchantmentPlusChance = 2;
-  AcidResistance = 1;
+  AcidResistance = 3;
   NameSingular = "acid shield";
+  Alias == "shield of spitting";
+  DescriptiveInfo = "A single caustic tear of Scabies was trapped within this shield. It shall spill its acidic sorrow upon your adversaries.";
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
@@ -6452,7 +6891,7 @@ acidshield /* armor ->*/
 
   Config BROKEN;
   {
-    Possibility = 3;
+    Possibility = 2;
     DefaultSize = 45;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -6464,6 +6903,7 @@ acidshield /* armor ->*/
                            BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
     MaterialConfigChances = { 15,
                               250, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 5; }
+    AcidResistance = 1;
     EnchantmentPlusChance = 4;
   }
 }
@@ -6483,6 +6923,7 @@ pantheonbook /* holybook-> */
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
@@ -6496,6 +6937,7 @@ pantheonbook /* holybook-> */
   AttachedGod = NONE; /* it's about them all, but none in particular */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
+  DescriptiveInfo = "The most famous theosophical work of professor Keathos of the Tweraif University, this book discusses the manifold, often-times contradictory myths and legends associated with the divine pantheon.";
   Alias = { 2, "tome", "knowledge"; }
 }
 
@@ -6522,6 +6964,7 @@ gorovitscopyoflenin /* item-> */
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -6537,6 +6980,7 @@ chastitybelt
   StrengthModifier = 60;
   BitmapPos = 80, 80;
   NameSingular = "chastity belt";
+  Alias = { 3, "chastity", "abstinence", "invulnerability"; }
   MainMaterialConfig = { 4, IRON, GOLD, SILVER, PLATINUM; }
   MaterialConfigChances = { 4, 250, 5, 5, 5; }
   Roundness = 50;
@@ -6568,6 +7012,7 @@ firstbornchild
   Adjective = "first-born";
   AttachedGod = SILVA;
   CanBeBurned = false;
+  DescriptiveInfo = "Stinky and scared.";
 
   Config MALE;
   {
@@ -6610,6 +7055,7 @@ darkaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Pure darkness drips from the blade of this axe.";
 
   Config BROKEN;
   {
@@ -6623,7 +7069,7 @@ darkaxe  /* meleeweapon-> */
 slowaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6651,10 +7097,11 @@ slowaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Rime glazes the blade of this axe and your fingers stiffen a bit when you touch it.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -6664,7 +7111,7 @@ slowaxe  /* meleeweapon-> */
 terrorscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6694,10 +7141,11 @@ terrorscythe  /* meleeweapon-> */
   WieldedBitmapPos = 176, 48;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "The hair on the back of your neck stand up as you grip the scythe.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6707,7 +7155,7 @@ terrorscythe  /* meleeweapon-> */
 bansheesickle  /* meleeweapon-> */
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 50;
@@ -6734,10 +7182,11 @@ bansheesickle  /* meleeweapon-> */
   WieldedBitmapPos = 176, 32;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Every little movement of this curved blade elicits a muffled scream. You can only imagine how striking an enemy with full force would sound like.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
@@ -6747,7 +7196,7 @@ bansheesickle  /* meleeweapon-> */
 rustscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6770,10 +7219,11 @@ rustscythe  /* meleeweapon-> */
   WieldedBitmapPos = 176, 48;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "A shower of tiny rust flakes falls from the scythe as you grip it, even though the blade seems no worse for wear.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6783,7 +7233,7 @@ rustscythe  /* meleeweapon-> */
 sharpaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6811,10 +7261,11 @@ sharpaxe  /* meleeweapon-> */
   WieldedBitmapPos = 160, 176;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH;
+  DescriptiveInfo = "Do not try the sharpness of this axe with your thumb, or you might loose it along with the whole arm.";
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -6836,6 +7287,7 @@ celestialmonograph /* holybook-> */
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
@@ -6846,10 +7298,11 @@ celestialmonograph /* holybook-> */
   Roundness = 70;
   IsTwoHanded = true;
   CreateDivineConfigurations = false;
-  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  AttachedGod = NONE; /* or more accurately SOLICITUS */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
   Alias = { 3, "insight", "revelation", "truth"; }
+  DescriptiveInfo = "The forbidden holy book of Solicitus, the toppled god of atheism and hopeless situations. Even the most ardent of believers are said to loose their faith upon reading these sacrilegious words, though heretics might cherish the book as a form of absolution.";
 }
 
 materialmanual /* holybook-> */
@@ -6873,11 +7326,13 @@ materialmanual /* holybook-> */
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 500;
-  Alias = { 2, "materials", "manual of materials"; }
+  DescriptiveInfo = "Morgo is the leading expert in the field of materials science and author of several best-selling popular science books such as Morgo's Magical Metamorphoses and Morgo's Mysteries Mastered (for Morons). His books have been published in nearly thirty kingdoms and have received starred reviews in Bazzarian Times and Sophos Recommends. Also included is an exclusive discount coupon for the upcoming Morgo's Mesmerizing Memoires where he recounts his early life as a Khaz-zadm survivor who lost the whole family in the Dwarven Wars. Preorder now!";
+  Alias = { 2, "materials", "material"; }
 }
 
 ullrbone
 {
+  DescriptiveInfo = "Once upon a time an ancient orcish wizard was said to travel the seas on a magical bone inscribed with foul magic and wreak havoc on all lands he visited.";
   Possibility = 1;
   DefaultMainVolume = 500;
   StrengthModifier = 100;
@@ -6892,6 +7347,7 @@ ullrbone
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   IsDestroyable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -6911,7 +7367,7 @@ taiaha /* meleeweapon-> */
 {
   CanBePiled = false;
   DefaultSize = 160;
-  Possibility = 0;
+  Possibility = 1;
   WeaponCategory = POLE_ARMS;
   StrengthModifier = 90;
   BitmapPos = 96, 352;
@@ -6937,6 +7393,7 @@ taiaha /* meleeweapon-> */
   MinCharges = 2;
   MaxCharges = 8;
   TeleportPriority = 1000;
+  DescriptiveInfo = "The weapon of a Sophite Knight. Not as random or as clumsy as a wand, an elegant weapon for a more civilized age. It can channel magical energies into a spark of raw destruction.";
 
   Config BROKEN;
   {
@@ -7011,6 +7468,7 @@ trinket
     AttachedGod = SCABIES;
     IsSadistWeapon = true;
     DamageFlags = PIERCE;
+    DescriptiveInfo = "It's probably Echinocactus platyacanthus. Or maybe Mammillaria dixanthocentron? You're not really sure.";
   }
 
   Config POTTED_PLANT;
@@ -7028,36 +7486,7 @@ trinket
     SecondaryMaterialConfig == PLANT_FIBER;
     Roundness = 60;
     AttachedGod = SILVA;
-  }
-
-  Config DEAD_FISH;
-  {
-    DefaultSize = 30;
-    DefaultMainVolume = 250;
-    HasSecondaryMaterial = false;
-    BitmapPos = 80, 336;
-    FormModifier = 25;
-    StrengthModifier = 75;
-    Adjective = "dead";
-    NameSingular = "fish";
-    MainMaterialConfig == SARDINE;
-    Roundness = 15;
-    AttachedGod = SEGES;
-  }
-
-  Config BONE_FISH;
-  {
-    DefaultSize = 30;
-    DefaultMainVolume = 150;
-    HasSecondaryMaterial = false;
-    BitmapPos = 96, 336;
-    FormModifier = 25;
-    StrengthModifier = 75;
-    Adjective = "fish";
-    NameSingular = "skeleton";
-    MainMaterialConfig == BONE;
-    Roundness = 15;
-    AttachedGod = SCABIES;
+    DescriptiveInfo = "It needs watering.";
   }
 
   Config SMALL_CLOCK;
@@ -7070,10 +7499,12 @@ trinket
     StrengthModifier = 75;
     Possibility = 1;
     NameSingular = "timepiece";
+    Alias == "clock";
     MainMaterialConfig == ARCANITE;
     SecondaryMaterialConfig == OAK_WOOD;
     Roundness = 75;
     AttachedGod = ATAVUS;
+    DescriptiveInfo = "Tick tock, goes the clock...";
   }
 
   Config LARGE_CLOCK;
@@ -7095,6 +7526,47 @@ trinket
   }
 }
 
+fish
+{
+  Category = MISC;
+  IsAbstract = true;
+  CanBeBroken = false;
+  WieldedBitmapPos = 176, 144;
+  DefaultSize = 30;
+  FormModifier = 25;
+  StrengthModifier = 75;
+  Roundness = 15;
+
+  Config DEAD_FISH;
+  {
+    Category = FOOD;
+    DefaultMainVolume = 250;
+    Possibility = 250;
+    BitmapPos = 80, 336;
+    Adjective = "dead";
+    NameSingular = "fish";
+    /* one more "fish" to avoid conflicts with "fish bone" */
+    Alias = { 2, "fish", "sardine"; }
+    MainMaterialConfig == SARDINE;
+    AttachedGod = SEGES;
+    AllowedDungeons = { 7,
+                        ASLONA_CASTLE, REBEL_CAMP, FUNGAL_CAVE, GOBLIN_FORT, PYRAMID,
+                        MONDEDR, IRINOX; }
+    DescriptiveInfo = "Dead fish, dead fish, lovely lovely dead fish! Eat them up! Yum!";
+  }
+
+  Config BONE_FISH;
+  {
+    DefaultMainVolume = 150;
+    BitmapPos = 96, 336;
+    Adjective = "fish";
+    NameSingular = "skeleton";
+    Alias = { 2, "fish bone", "fishbone"; }
+    MainMaterialConfig == BONE;
+    AttachedGod = SCABIES;
+  }
+}
+
 gastrap /*materialcontainer-> */
 {
   DefaultSize = 65;
@@ -7108,11 +7580,12 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 7,
+  SecondaryMaterialConfig = { 12,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
-                              EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
-  MaterialConfigChances = { 7,
-                            20, 30, 1, 15, 10, 15, 5; }
+                              EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS, LAUGHING_GAS,
+                              ECTOPLASM, ACID_GAS, FIRE_GAS; }
+  MaterialConfigChances = { 12,
+                            20, 30, 1, 15, 10, 15, 5, 10, 5, 1, 10, 10; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;
@@ -7126,5 +7599,375 @@ gastrap /*materialcontainer-> */
   {
     Possibility = 0;
     Price = 0;
+  }
+}
+
+mangoseedling
+{
+  DefaultSize = 15;
+  DefaultMainVolume = 200;
+  Category = VALUABLE;
+  BitmapPos = 79, 255;
+  WieldedBitmapPos = 160, 208;
+  NameSingular = "seedling";
+  PostFix = "of the Holy Mango World-tree";
+  FormModifier = 15;
+  Roundness = 10;
+  Possibility = 0;
+  Price = 100000;
+  MainMaterialConfig == SIDGURE_WOOD;
+  AttachedGod = SILVA;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  CanBeCloned = false;
+  IsQuestItem = true;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBePiled = false;
+  IsTwoHanded = true;
+  HasSecondaryMaterial = false;
+  IsValuable = true;
+}
+
+gleipnir /* meleeweapon->whip-> */
+{
+  DefaultSize = 250;
+  Possibility = 1;
+  DefaultMainVolume = 1000;
+  DefaultSecondaryVolume = 50;
+  StrengthModifier = 125;
+  Adjective = "celestial";
+  NameSingular = "whip";
+  PostFix = "named Gleipnir";
+  MainMaterialConfig == SHADOW_CLOTH;
+  SecondaryMaterialConfig == PURPLE_CRYSTAL;
+  Roundness = 5;
+  FormModifier = 30;
+  Price = 2500;
+  AttachedGod = NEFAS;
+  EnchantmentPlusChance = 5;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Alias == "Gleipnir";
+}
+
+eptyron /* meleeweapon-> */
+{
+  DefaultSize = 150;
+  Possibility = 1;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 400;
+  DefaultSecondaryVolume = 800;
+  BitmapPos = 112, 240;
+  FormModifier = 175;
+  StrengthModifier = 150;
+  Adjective = "blasphemous";
+  ArticleMode = FORCE_THE;
+  NameSingular = "great axe";
+  PostFix = "named Eptyron";
+  MainMaterialConfig == PLASTIC_STEEL;
+  SecondaryMaterialConfig == HARDENED_PLASTIC;
+  Roundness = 30;
+  IsTwoHanded = true;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  Alias == "Eptyron";
+  Price = 2500;
+  AttachedGod = NONE; /* or more accurately SOLICITUS */
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 96, 240;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+unpick
+{
+  Possibility = 1;
+  StrengthModifier = 100;
+  FormModifier = 75;
+  Price = 5000;
+  Adjective = "cursed";
+  PostFix = "of Kharaz-arad";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
+  MainMaterialConfig == PSYPHER;
+  SecondaryMaterialConfig == RATA_WOOD;
+  Alias = { 2, "unpick", "unpickaxe"; }
+}
+
+locationmap /* scroll-> */
+{
+  Possibility = 0;
+  BitmapPos = 112, 400;
+  Price = 110;
+  ReadDifficulty = 1000;
+  NameSingular = "map";
+  AttachedGod = SOPHOS;
+  IsAbstract = true;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  DescriptiveInfo = "A detailed map of a secret location.";
+
+  Config BLACK_MARKET;
+  {
+    PostFix = "of black market";
+  }
+}
+
+nuke /* materialcontainer-> */
+{
+  DefaultSize = 200;
+  Possibility = 0;
+  Category = MISC;
+  DefaultMainVolume = 10000;
+  DefaultSecondaryVolume = 1309;
+  BitmapPos = 112, 0;
+  WieldedBitmapPos = 160, 144;
+  Roundness = 100;
+  Price = 500;
+  Adjective = "thaumic";
+  NameSingular = "bomb";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsQuestItem = true;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsKamikazeWeapon = true;
+  IsTwoHanded = true;
+  MainMaterialConfig == STEEL;
+  SecondaryMaterialConfig == URANIUM;
+  AttachedGod = MORTIFER;
+  Alias == "nuke";
+}
+
+weepobsidian /* stone-> */
+{
+  Possibility = 0;
+  Adjective = "weeping obsidian";
+  NameSingular = "shard";
+  Price = 500;
+  MainMaterialConfig == OBSIDIAN;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsQuestItem = true;
+  IsValuable = true;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  AttachedGod = SILVA;
+  DescriptiveInfo = "A single tear of Silva, petrified into the form of an obsidian shard. It brings torrential rains, growth and rejuvenation.";
+}
+
+muramasa /* meleeweapon-> */
+{
+  DefaultSize = 100;
+  Possibility = 0;
+  DefaultMainVolume = 110;
+  DefaultSecondaryVolume = 30;
+  WeaponCategory = LARGE_SWORDS;
+  BitmapPos = 112, 192;
+  FormModifier = 330;
+  StrengthModifier = 175;
+  Adjective = "wicked";
+  NameSingular = "katana";
+  PostFix = "named Asa'marum";
+  MainMaterialConfig == BLACK_JADE;
+  SecondaryMaterialConfig == WHITE_JADE;
+  BaseEnchantment = 9;
+  Roundness = 50;
+  Price = 1500;
+  WieldedBitmapPos = 176, 112;
+  AttachedGod = SCABIES;
+  ArticleMode = FORCE_THE;
+  DamageFlags = SLASH|PIERCE;
+  IsTwoHanded = true;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
+  IsDestroyable = false;
+  IsQuestItem = true;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Alias == "Muramasa";
+  DescriptiveInfo = "The legend goes that in the days of ancient past, two master artificers approached the queen of Aslona and knelt before her, asking her to judge their masterworks and declare the better weaponsmith. They each presented an enchanted sword of immaculate craft and extraordinary might. One was named E-numa sa-am, a katana so noble and pure that the mere sight of it struck fear into the hearts of all evil-doers. The other was named Asamarum, a wickedly sharp katana that killed with the smallest of scratches. The queen, being shrewd and cunning as she was, scrutinized both weapons for a long time and then ordered both of the artificers executed, for the swords were flawless and she didn't wish for them to create such a weapon for anyone else. From then on, the two swords served as the regalia of Aslonian sovereigns and each new king brandished them both during their coronation.";
+}
+
+masamune /* meleeweapon-> */
+{
+  DefaultSize = 100;
+  Possibility = 0;
+  DefaultMainVolume = 110;
+  DefaultSecondaryVolume = 30;
+  WeaponCategory = LARGE_SWORDS;
+  BitmapPos = 112, 192;
+  FormModifier = 175;
+  StrengthModifier = 130;
+  Adjective = "noble";
+  NameSingular = "katana";
+  PostFix = "named E-numa sa-am";
+  MainMaterialConfig == WHITE_JADE;
+  SecondaryMaterialConfig == BLACK_JADE;
+  BaseEnchantment = 9;
+  Roundness = 50;
+  Price = 1500;
+  WieldedBitmapPos = 176, 112;
+  AttachedGod = SEGES;
+  ArticleMode = FORCE_THE;
+  DamageFlags = SLASH|PIERCE;
+  IsTwoHanded = true;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
+  IsDestroyable = false;
+  IsQuestItem = true;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Alias == "Masamune";
+  DescriptiveInfo = "The legend goes that in the days of ancient past, two master artificers approached the queen of Aslona and knelt before her, asking her to judge their masterworks and declare the better weaponsmith. They each presented an enchanted sword of immaculate craft and extraordinary might. One was named E-numa sa-am, a katana so noble and pure that the mere sight of it struck fear into the hearts of all evil-doers. The other was named Asamarum, a wickedly sharp katana that killed with the smallest of scratches. The queen, being shrewd and cunning as she was, scrutinized both weapons for a long time and then ordered both of the artificers executed, for the swords were flawless and she didn't wish for them to create such a weapon for anyone else. From then on, the two swords served as the regalia of Aslonian sovereigns and each new king brandished them both during their coronation.";
+}
+
+magestaff /* meleeweapon-> */
+{
+  DefaultSize = 220;
+  NameSingular = "staff";
+  NamePlural = "staves";
+  WeaponCategory = BLUNT_WEAPONS;
+  StrengthModifier = 150;
+  BitmapPos = 64, 240;
+  FormModifier = 125;
+  DefaultMainVolume = 2000;
+  DefaultSecondaryVolume = 200;
+  Roundness = 20;
+  IsTwoHanded = true;
+  IsAbstract = true;
+  CanBePiled = false;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 304;
+  Price = 500;
+  EnchantmentPlusChance = 5;
+  DescriptiveInfo = "A staff imbued with arcane powers.";
+
+  Config ROYAL_STAFF;
+  {
+    DescriptiveInfo = "Two hundred years ago, the hellish Dwarven Wars came to a close when the joint forces of Kharaz-arad and Khaz-zadm broke through the defences of Khazad-durr and ended their enemy in gunpowder explosions and clouds of mustard gas. Yet it is said that the sovereign of Khazad-durr was never captured, instead transforming into a gargantuan spider and scuttling away. His regalia vanished along with him, including the royal staff bearing the name Y'yter Durr.";
+    Possibility = 1;
+    Adjective = "royal";
+    PostFix = "named Y'yter Durr";
+    Alias == "Y'yter Durr";
+    MainMaterialConfig == OCTIRON;
+    SecondaryMaterialConfig == GREEN_CRYSTAL;
+    AttachedGod = SCABIES;
+    EnchantmentPlusChance = 2;
+    BeamRange = 1;
+    BeamColor = RANDOM_COLOR;
+    BeamEffect = BEAM_POLYMORPH;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    GearStates = POLYMORPH|POLYMORPH_CONTROL;
+  }
+
+  Config BROKEN|ROYAL_STAFF;
+  {
+    Possibility = 1;
+    BitmapPos = 64, 256;
+    WieldedBitmapPos = 176, 304;
+    GearStates = 0;
+  }
+}
+
+pica
+{
+  DefaultSize = 40;
+  Possibility = 1;
+  DefaultMainVolume = 25;
+  DefaultSecondaryVolume = 25;
+  WeaponCategory = SMALL_SWORDS;
+  BitmapPos = 48, 256;
+  WieldedBitmapPos = 160, 288;
+  FormModifier = 75;
+  StrengthModifier = 80;
+  Adjective = "notched";
+  NameSingular = "throwing knife";
+  PostFix = "named Pica";
+  MainMaterialConfig == STAR_METAL;
+  SecondaryMaterialConfig == MOON_SILVER;
+  BaseEnchantment = 1;
+  Roundness = 60;
+  Price = 500;
+  AttachedGod = CLEPTIA;
+  DamageFlags = PIERCE;
+  ArticleMode = FORCE_THE;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsMaterialChangeable = false;
+  CanBeWished = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  DescriptiveInfo = "There was once a thief who challenged a god to a wager: If she can steal the very Moon from the sky, he will turn over his divinity. She won.";
+  Alias == "Pica";
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 48, 288;
+    WieldedBitmapPos = 176, 288;
+    EnchantmentPlusChance = 15;
   }
 }

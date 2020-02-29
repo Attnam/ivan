@@ -17,16 +17,21 @@
 #include <sys/farptr.h>
 #endif
 
+#ifdef BACKTRACE
+#include <execinfo.h>
+#endif
+
 #ifndef WIN32
 #include <csignal>
 #include <cstring>
 #include <cstdlib>
-#include <execinfo.h>
 #include <unistd.h>
 #endif
 
 #include "game.h"
 #include "database.h"
+#include "definesvalidator.h"
+#include "devcons.h"
 #include "feio.h"
 #include "igraph.h"
 #include "iconf.h"
@@ -34,13 +39,16 @@
 #include "hscore.h"
 #include "graphics.h"
 #include "script.h"
+#include "specialkeys.h"
 #include "message.h"
 #include "proto.h"
 #include "audio.h"
 
 #include "dbgmsgproj.h"
 
-#ifndef WIN32
+#include "bugworkaround.h"
+
+#ifdef BACKTRACE
 void CrashHandler(int Signal)
 {
   globalerrorhandler::DumpStackTraceToStdErr(Signal);
@@ -55,7 +63,7 @@ void SkipGameScript(inputfile* pSaveFile){
 
 int main(int argc, char** argv)
 {
-#ifndef WIN32
+#ifdef BACKTRACE
   signal(SIGABRT, CrashHandler);
   signal(SIGBUS, CrashHandler);
   signal(SIGFPE, CrashHandler);
@@ -68,7 +76,7 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
-  game::GetHomeDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
+  game::GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
 
   if(argc > 1 && festring(argv[1]) == "--version")
   {
@@ -97,6 +105,10 @@ int main(int argc, char** argv)
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
+  specialkeys::init();
+  bugfixdp::init();
+  devcons::Init();
+  definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
@@ -140,7 +152,7 @@ int main(int argc, char** argv)
      case 1:
       {
         iosystem::SetSkipSeekSave(&SkipGameScript);
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion(), ivanconfig::IsAllowImportOldSavegame());
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersionHardcoded(), ivanconfig::IsAllowImportOldSavegame());
 
         if(LoadName.GetSize())
         {
@@ -162,7 +174,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
+        highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }

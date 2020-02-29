@@ -64,6 +64,8 @@ MATERIAL(organic, solid)
   virtual material* EatEffect(character*, long);
   virtual void AddConsumeEndMessage(character*) const;
   virtual void SetSpoilCounter(int);
+  virtual ushort GetSpoilCounter();
+  virtual int CalcNewSpoilLevel();
   virtual truth CanSpoil() const { return true; }
   virtual int GetSpoilPercentage() const;
   virtual truth Spoils() const { return true; }
@@ -77,6 +79,7 @@ MATERIAL(organic, solid)
 MATERIAL(gas, material)
 {
   virtual int IsBurning() const { return 0; }
+  virtual truth IsGaseous() const { return true; }
 };
 
 MATERIAL(liquid, material)

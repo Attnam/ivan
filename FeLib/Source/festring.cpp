@@ -17,6 +17,8 @@
 #include "allocate.h"
 #include "error.h"
 
+#include "dbgmsgproj.h"
+
 char** festring::IntegerMap = 0;
 cchar* const festring::EmptyString = "";
 festring::csizetype festring::NPos = festring::sizetype(-1);
@@ -26,12 +28,32 @@ char Capitalize(char Char)
   return (Char >= 'a' && Char <= 'z') ? (Char ^ 0x20) : Char;
 }
 
+void bugTrackInvalidChars(cchar* c,int size){
+  if(!c || !size)return;
+
+  //symbols and characters that are not "usually" expected
+  for(int i=0;i<size;i++){
+    static char C;C=c[i];
+    if(
+        (C < 0x20 || C > 0x7E)
+        && C!='\r' && C!='\n' && C!='\t'
+        && C!=0
+//        && C!='+' // o.O
+    ){
+      /**
+       * after strenghtened festring, this now ends up being more useful to catch wrong usage of the permissive ADD_MESSAGE() passing a festring w/o .CStr()
+       */
+      ABORT("string contains \"probably invalid\" chars, possibly a bug: \"%s\", [%d], 0x%X /0%o %d '%c'",c, i, C,C,C,C); //actual char '?' must be last as may break the string!
+    }
+  }
+}
+
 /* All operations that may change the underlying data will avoid touching the
    memory allocator and deallocator as much as possible. They try very hard to
    save memory and go for speed. */
 
 festring& festring::operator=(cchar* CStr)
-{
+{DBGEXEC(bugTrackInvalidChars(CStr,strlen(CStr)));
   CheckNull(CStr);
 
   sizetype NewSize = strlen(CStr);
@@ -58,7 +80,7 @@ festring& festring::operator=(cchar* CStr)
 }
 
 festring& festring::operator=(staticstring SStr)
-{
+{DBGEXEC(bugTrackInvalidChars(SStr.Data,SStr.Size));
   CheckNull(SStr.Data);
 
   cchar* CStr = SStr.Data;
@@ -84,7 +106,7 @@ festring& festring::operator=(staticstring SStr)
 }
 
 festring& festring::operator=(cfestring& Str)
-{
+{DBGEXEC(bugTrackInvalidChars(Str.Data,Str.Size));
   char* CStr = Str.Data;
   sizetype NewSize = Str.Size;
 
@@ -171,8 +193,6 @@ festring& festring::Append(cfestring& Str)
   sizetype N = Str.Size;
   sizetype OldSize = Size;
   sizetype NewSize = OldSize + N;
-  char* OldPtr = Data;
-  char* OtherPtr = Str.Data;
 
   if(OwnsData && !REFS(Data) && NewSize <= Reserved)
   {
@@ -294,6 +314,43 @@ void festring::Resize(sizetype NewSize, char Char)
     return;
 }
 
+/// Shrink the length of every string of spaces to one. Useful for item search.
+void festring::ShrinkWhitespace()
+{
+  if(Find("  ") == NPos)
+    return;
+
+  EnsureOwnsData(true);
+
+  truth KeepSpace = Size > 0 && Data[Size-1] == ' ';
+  sizetype slow = 0, fast = 2;
+
+  while(fast < Size)
+  {
+    if(Data[slow] != ' ' || Data[slow+1] != ' ')
+    {
+      ++slow;
+      ++fast;
+    }
+    else if(Data[fast] != ' ')
+    {
+      while(fast < Size && Data[slow+1] == ' ' && Data[fast] != ' ')
+      {
+        Data[++slow] = Data[fast++];
+        Data[1+slow] = ' ';
+      }
+      Data[2+slow] = ' ';
+    }
+    else
+      ++fast;
+  }
+  while(slow < Size && Data[slow] != ' ')
+    ++slow;
+
+  Size = slow + KeepSpace;
+  Data[Size] = 0;
+}
+
 /// Find a char not before the specified position.
 festring::sizetype festring::Find(char Char, sizetype Pos) const
 {
@@ -314,22 +371,11 @@ festring::sizetype festring::Find(cchar* CStr,
     return NPos;
 
   if(!N)
-    return 0;
+    return Pos;
 
-  char Char = CStr[0];
-
-  while(true)
-  {
-    char* Result = static_cast<char*>(memchr(Data + Pos, Char, Size - Pos));
-
-    if(!Result)
-      return NPos;
-
-    if(!strncmp(Result, CStr, N))
-      return Result - Data;
-    else
-      Pos = Result - Data + 1;
-  }
+  for(sizetype i = Pos; i + N <= Size; ++i)
+    if(Data[i] == CStr[0] && !strncmp(Data + i, CStr, N))
+      return i;
 
   return NPos;
 }
@@ -340,12 +386,10 @@ festring::sizetype festring::FindLast(char Char, sizetype Pos) const
   if(Pos >= Size)
     Pos = Size - 1;  // sizetype(-1) == NPos
 
-  sizetype i = Pos;
+  while(Pos != NPos && Data[Pos] != Char)
+    --Pos;
 
-  while(i != NPos && Data[i] != Char)
-    --i;
-
-  return i;
+  return Pos;
 }
 
 /// Find the last occurrence of a string not after the specified position.
@@ -353,16 +397,17 @@ festring::sizetype festring::FindLast(cchar* CStr,
                                       sizetype Pos,
                                       sizetype N) const
 {
-  if(!N || Size < N)
+  if(Size < N)
     return NPos;
-
-  char Char = CStr[0];
 
   if(Pos > Size - N)
     Pos = Size - N;
 
+  if(!N)
+    return Pos;
+
   for(sizetype i = Pos; i != NPos; --i)
-    if(Data[i] == Char && !memcmp(Data + i, CStr, N))
+    if(Data[i] == CStr[0] && !strncmp(Data + i, CStr, N))
       return i;
 
   return NPos;
@@ -559,7 +604,6 @@ festring& festring::AppendInt(long Integer)
   *BufferPtr++ = IntegerMap[Integer][1];
   *BufferPtr++ = IntegerMap[Integer][2];
   *BufferPtr = 0;
-  char* EndPtr = BufferPtr;
 
   for(BufferPtr = IntegerBuffer; *BufferPtr == '0'; ++BufferPtr);
 

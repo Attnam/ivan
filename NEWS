@@ -11,11 +11,148 @@ Next version
 ------------
 
 Changes:
+* Add Aslona!
+* Add new ROOM_OWNED_AREA type for generic owned rooms. Uses code similar to
+  the Cathedral or Decos' house.
+* Change structure of quests. Petrus now takes the encrypted scroll and gives
+  you some alone time. If you chat with him again, you will receive the GC quest,
+  or you can find other people to chat for other quests.
+* Add some new monsters, items, artifacts, materials and crafting recipes.
+* Hotness can now be used to define materials that deal fire damage on contact,
+  just like Acidicity for acidic materials.
+* Use GitHub app for LGTM.
+* Cats can be tamed with fishes.
+* Orcs have black blood.
+* Lobh-se is a bit more fun.
+* Make amulets easily recognizable by color.
+* Land mines can now be sometimes defused if you levitate over and pick them up.
+* Willpower now protects against some hostile magic.
+* Add autopick regex.
+* Add an option to show info about gods, displaying their last reaction to prayer.
+* Better 'F1' command in menus.
+  * Some items now have descriptions.
+  * Better help for crafting actions.
+  * New help for config options.
+* Add options to start with no pet and to use health descriptions.
+* Add alternate door traps.
+* Prevent very dumb creatures from using wands.
+* You cannot unequip locked chastity belt.
+* Update README and add MANUAL.
+* A wise player can look at an enemy for a rough estimation of their health.
+* Add day/night cycle to all above-ground locations.
+* Enable weather effects for more above-ground locations.
+* Let monsters also benefit from Detecting status effect.
+* Coffins now generate with grave goods and do something when you steal from them.
+* Hammers are good with the undead.
+* Some monsters now have different diets.
+* Add many new sound effects.
 
 Fixes:
+* Decos no longer lets you steal from him.
+* You can no longer leave the Black Market through walls.
+* Slightly nerf Black Market.
+* Display Willpower in wizard mode secrets.
+* Running in wilderness now correctly takes stamina.
+* Fix some quest messages not being saved as already displayed.
+* Reveal gas traps when you step on them.
+* Fix several places where panic immunity or disease immunity was not respected.
+* Fix several crafting bugs, hopefully preventing crashes.
+* Fix Terra not offering priestly services after you killed Lobh-se.
+* Spill more water over a burning player when they pray to Silva, so there's
+  a better chance to be extinguished.
+* Prevent long strings in config options from overflowing when displayed.
+* Prevent building features in owned rooms.
+* Explosive liquids can no longer be used to douse flames.
+* Wands of webbing were not causing hostility.
+* Fix horns of fear causing panic without checking the panic resistance of the victim.
+* Remove redundant messages from auto map notes.
+* Fix sitting on fountains and drinking from non-water fountains.
+* Fix AI not using equipped zappable items.
+* Make taming/possessing more powerful creatures scale correctly.
+* Fix a bug where boots were not correctly considered for kicking effects.
+* Fix teleport lock from non-equipment sources never timing out.
+* Assorted minor fixes and balancing.
 
-Version 0.54, released ###TODO### 2018
---------------------------------------
+Aslona:
+* A new main quest will see you trying to bring peace back to the kingdom of
+  Aslona, currently in the middle of a civil war.
+* Add five new locations.
+* Player can now have a ship to sail the oceans of worldmap. This also means
+  that they can now bring pets that would normally be unable to cross the ocean
+  with them.
+* Moving over the ocean is slightly slower than on dry land.
+
+Version 0.57, released 24th September 2019
+------------------------------------------
+
+Changes:
+* Add Black Market, an end-game shop to spend all excess gold in.
+* Add game lore and fiction to the Doc folder.
+* Magic helmets spawn with random material.
+* Switch some helmets from full helmet to normal.
+* Keys very rarely break when used.
+
+Fixes:
+* Clean up code.
+* New "expansive terrain" can help prevent blocking important entrances.
+* Improve item search algorithm.
+* Fix ring detection to work same as scrolls.
+* Enable wishes for empty containers, make empty cans and empty bottles wishable.
+* No rotated pictures for equipments and newly-spawned items.
+* Do not aggressively upgrade dependencies for mac build.
+* Mirrored items cannot be dismantled into permanent lump of material.
+* Stop weapon swap from auto-stealing items in shops.
+* NPCs will sometimes talk to you on their own.
+
+Version 0.56, released 19th February 2019
+-----------------------------------------
+
+ Changes:
+* New banana-and-pick-axe icon on Mac and Windows.
+* Remove Google groups e-mail address.
+
+Fixes:
+* Windows build done using mxe, which should fix issues on Windows 7.
+* Fix first person messages.
+* Simplify command descriptions.
+* Fix path search for SDL2.
+* Fix artifacts being spawned through polypiling.
+* Try to fix stat growth while polymorphed.
+* Fix crafting recipes.
+
+Version 0.55, released 20th December 2018
+-----------------------------------------
+
+Changes:
+* Added Freedom for Tweraif victory: It is now possible to win by bringing freedom to Tweraif, and then making sure it stays free. It is a low-ranking win, but at least your village will be safe.
+* Considerably reworked Lobh-se.
+* Added new shields, amulet, wand and artifacts.
+* Added several new materials.
+* Buffed regeneration. It now both regrows limbs and speeds up restoration of HP.
+* Stamina cost reworked. It will decrease more slowly, balancing powerful artificial limbs better.
+* Mana attribute decreases cooldown of magical items.
+* Scroll of body switch is once again unwishable.
+* Decreased frequency of magical equipment.
+* Improved stethoscope display.
+* Tweak the effects of prayers.
+* You may only become the champion of either Valpurus or Mortifer.
+* Increase effects of Wisdom on prayers.
+* You can now attempt to steal from shops.
+* Added crafting.
+* Move saves, bones and config to user directory.
+* Add LGTM code quality badges.
+
+Fixes:
+* Backtrace.
+* Broken vials are no longer fixed into bottles.
+* Fix wizard mode autoplay mode.
+* Fix heap-use-after-free in go::Handle().
+* Harden bitmap::Fill().
+* Fix first person being used in crafting messages.
+* Fix dialogue of Terra.
+
+Version 0.54, released 2nd October 2018
+---------------------------------------
 
 Changes:
 * More interesting TX final level.
@@ -236,7 +373,7 @@ Changes:
 * Lanterns ignite the square they break in.
 * Explosions split to fire only (fireballs) and fire + physical (land mines).
 * Female player head sprites added.
-* Body parts are warm if they're burning - Infravision
+* Body parts are warm if they're burning (Infravision)
 * Ghosts now resemble the deceased!
 
 Fixes:
@@ -328,7 +465,7 @@ Fire subsystem:
 * Made it so that the words "(on fire)" appear in the post-fix of meleeweapons and armors that are on fire, a la fluids (covered in ...).
 
 Fixes:
-* Found that materials no longer sparkle if dipped in fluids, and no longer resume sparkling even after the fluid has evaporated - which is a BUG!
+* Found that materials no longer sparkle if dipped in fluids, and no longer resume sparkling even after the fluid has evaporated, which is a BUG!
 * Fixed a provisional bug where scrolls and books could be dipped without being on fire.
 * Ghosts, powder, fluids were all burning. Even the snow in Attnam was on fire! This was fixed for gases, fluids and powders.
 * Fixed window bug.
@@ -454,131 +591,131 @@ Fixes:
 Version 0.50, released 10th December 2004
 -----------------------------------------
 
-- fluids can now cover items and characters and interact with them
-- items made of iron alloys can now rust
-- added directional light and day and night which use it
-- added some cosmetical weather effects
-- New Attnam has now many new NPCs, for instance a sumo wrestler who
+* fluids can now cover items and characters and interact with them
+* items made of iron alloys can now rust
+* added directional light and day and night which use it
+* added some cosmetical weather effects
+* New Attnam has now many new NPCs, for instance a sumo wrestler who
   can be challenged
-- polymorph control is now more interesting; you need to see a monster
+* polymorph control is now more interesting; you need to see a monster
   once before you can polymorph into it, and more powerful ones require
   more intelligence
-- added wands of acid rain, mirroring and necromancy
-- added scrolls of detect material, harden material and golem creation
-- added several new monsters, eg. powerful named archangels for each god
+* added wands of acid rain, mirroring and necromancy
+* added scrolls of detect material, harden material and golem creation
+* added several new monsters, eg. powerful named archangels for each god
   and necromancers who raise skeletons and zombies to do their bidding
-- one can now give pets tactical commands, change their equipment and
+* one can now give pets tactical commands, change their equipment and
   use them to carry extra stuff (these are accessed using 'C'hat and
   'I'ssue commands keys)
-- the player can now panic if he gets hit too much, like the monsters
+* the player can now panic if he gets hit too much, like the monsters
   have done in previous versions
-- the player can now become exhausted if he fights for too long and/or
+* the player can now become exhausted if he fights for too long and/or
   uses the new r'u'n command too much
-- spiders are now able to make webs
-- you can now get stuck to slime
-- badly hurt/trapped bodyparts now become unusable until they regain
+* spiders are now able to make webs
+* you can now get stuck to slime
+* badly hurt/trapped bodyparts now become unusable until they regain
   some HP/become untrapped
-- it is now possible to browse detailed death reasons of individual
+* it is now possible to browse detailed death reasons of individual
   monsters in the postgame massacre lists
-- added many new informative graphical details, for instance recently
+* added many new informative graphical details, for instance recently
   altered attributes are shown with a different color for some time
-- gloomy cave is now longer and has more special levels and rooms
-- all the endgame battles are more complex
-- added leprosy, a nasty disease which causes your limbs to drop off
+* gloomy cave is now longer and has more special levels and rooms
+* all the endgame battles are more complex
+* added leprosy, a nasty disease which causes your limbs to drop off
   randomly
 
 Version 0.430, released 5th August 2003
 ---------------------------------------
 
-- certain monsters and their corpses are now larger than one square
-- thirteen new monsters added, including electric hattifatteners and
+* certain monsters and their corpses are now larger than one square
+* thirteen new monsters added, including electric hattifatteners and
   reproducing rabbits
-- monsters with high enough intelligence now use much more advanced
+* monsters with high enough intelligence now use much more advanced
   pathfinding methods
-- a very unique side branch added to the underwater tunnel
-- added an alternative keyboard layout to ease playing on some laptops
-- score system simplified
+* a very unique side branch added to the underwater tunnel
+* added an alternative keyboard layout to ease playing on some laptops
+* score system simplified
 
 Version 0.420, released 11th May 2003
 -------------------------------------
 
-- you can now find a level where you died in a former game (a bonefile)
-- added one new monster, a few items and several materials
-- the player's and monsters' representations on the game screen now depend
+* you can now find a level where you died in a former game (a bonefile)
+* added one new monster, a few items and several materials
+* the player's and monsters' representations on the game screen now depend
   on what they wield
-- added many new monster animations
-- corrected many balancing problems, especially with magical mushrooms
-- corrected several fatal bugs
-- corrected some memory leaks
-- the game's compile speed increased greatly
-- lots of monster AI and graphics routine optimizations
+* added many new monster animations
+* corrected many balancing problems, especially with magical mushrooms
+* corrected several fatal bugs
+* corrected some memory leaks
+* the game's compile speed increased greatly
+* lots of monster AI and graphics routine optimizations
 
 Version 0.410, released 27th March 2003
 ---------------------------------------
 
-- added smoke effects
-- added eleven new monsters
-- added several new animations
-- user interface tweaks
-- removed all assembler code
-- the player's representation on the game screen now depends on his armor
-- added search command and searching state which can detect traps
-- a list of killed monsters is now displayed when the game ends
-- breaking wands now all have unique effects
-- dipping to corpses is again possible
+* added smoke effects
+* added eleven new monsters
+* added several new animations
+* user interface tweaks
+* removed all assembler code
+* the player's representation on the game screen now depends on his armor
+* added search command and searching state which can detect traps
+* a list of killed monsters is now displayed when the game ends
+* breaking wands now all have unique effects
+* dipping to corpses is again possible
 
 Version 0.401, released 5th February 2003
 -----------------------------------------
 
-- added lightning effects
-- added several new artifact and regular weapons
-- added floating eye
-- it is now much easier to gather nutrition
-- many abuses prohibited
-- explosions are now stopped by walls
-- corrected a fatal bug in the door breaking code
-- corrected many non-fatal bugs
-- decreased IVAN's RAM usage greatly
-- doubled IVAN's compile speed
+* added lightning effects
+* added several new artifact and regular weapons
+* added floating eye
+* it is now much easier to gather nutrition
+* many abuses prohibited
+* explosions are now stopped by walls
+* corrected a fatal bug in the door breaking code
+* corrected many non-fatal bugs
+* decreased IVAN's RAM usage greatly
+* doubled IVAN's compile speed
 
 Version 0.40, released 10th December 2002
 -----------------------------------------
 
-- bodyparts added
-- animations added
-- multi-colored lights added
-- carnivorous plants, lion, buffalo, snake, orc and many other monsters added
-- added unique monsters
-- added modified versions of old and new monsters
-- enlarged the quest by one new dungeon and one new village
-- tripled the amount of items
-- added many equipable items (gauntlets, boots, cloaks etc)
+* bodyparts added
+* animations added
+* multi-colored lights added
+* carnivorous plants, lion, buffalo, snake, orc and many other monsters added
+* added unique monsters
+* added modified versions of old and new monsters
+* enlarged the quest by one new dungeon and one new village
+* tripled the amount of items
+* added many equipable items (gauntlets, boots, cloaks etc)
 
 Version 0.311, released 25th February 2002
 ------------------------------------------
 
-- a few fatal bugs fixed
-- some non-fatal bugs fixed
-- lots of optimization
+* a few fatal bugs fixed
+* some non-fatal bugs fixed
+* lots of optimization
 
 Version 0.310, released 4th February 2002
 -----------------------------------------
 
-- Linux and DOS ports
-- fountain effects
-- starting pet
-- the first dungeon shop
-- mammoth, unicorn, kamikaze dwarf and genie
-- magic lamp, jewels, holy book, scroll of charging
-- explosions
-- doors can be locked and they can be broken by kicking
-- graphical effects for wand beams
-- dolphins have more living space
-- danger levels and alignments added to the panel
-- processor loads decreased
-- ergonomic tweaks, e.g. with go, rest and look commands
+* Linux and DOS ports
+* fountain effects
+* starting pet
+* the first dungeon shop
+* mammoth, unicorn, kamikaze dwarf and genie
+* magic lamp, jewels, holy book, scroll of charging
+* explosions
+* doors can be locked and they can be broken by kicking
+* graphical effects for wand beams
+* dolphins have more living space
+* danger levels and alignments added to the panel
+* processor loads decreased
+* ergonomic tweaks, e.g. with go, rest and look commands
 
 Version 0.301, released 10th December 2001
 ------------------------------------------
 
-- first public release
+* first public release

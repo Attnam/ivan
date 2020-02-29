@@ -17,6 +17,7 @@
 #include "festring.h"
 
 class bitmap;
+class inputfile;
 
 typedef truth (*stringkeyhandler)(int, festring&);
 typedef void (*bitmapeditor)(bitmap*, truth);
@@ -44,6 +45,9 @@ class iosystem
                          col16 = 0xFFFF, truth = true,
                          truth = true, bitmapeditor = 0);
   static truth IsOnMenu();
+  static bool IsInUse();
+  static bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>(),bool bConfirmMode=true);
+  static void AlertConfirmMsgDraw(bitmap* Buffer);
 };
 
 #endif

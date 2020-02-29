@@ -58,10 +58,18 @@
    waits for keypress. BitmapEditor is a pointer to function that is
    called during every fade tick. */
 
+bool bInUse=false;
+bool iosystem::IsInUse()
+{
+  return bInUse;
+}
+
 void iosystem::TextScreen(cfestring& Text, v2 Disp,
                           col16 Color, truth GKey, truth Fade,
                           bitmapeditor BitmapEditor)
 {
+  bInUse=true;
+
   bitmap Buffer(RES, 0);
   Buffer.ActivateFastFlag();
   festring::sizetype c;
@@ -81,7 +89,7 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
       Line[c - LastBeginningOfLine] = 0;
       v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2) + Disp.X,
                   (RES.Y << 1) / 5 - (LineNumber - Lines) * 15 + Disp.Y);
-      FONT->Printf(&Buffer, PrintPos, Color, Line);
+      FONT->Printf(&Buffer, PrintPos, Color, "%s", Line);
       ++Lines;
       LastBeginningOfLine = c + 1;
     }
@@ -91,7 +99,7 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
   Line[c - LastBeginningOfLine] = 0;
   v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2) + Disp.X,
               (RES.Y << 1) / 5 - (LineNumber - Lines) * 15 + Disp.Y);
-  FONT->Printf(&Buffer, PrintPos, Color, Line);
+  FONT->Printf(&Buffer, PrintPos, Color, "%s", Line);
 
   if(Fade)
     Buffer.FadeToScreen(BitmapEditor);
@@ -110,6 +118,8 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
     else
       GET_KEY();
   }
+
+  bInUse=false;
 }
 
 /* Returns amount of chars cSF in string sSH */
@@ -335,6 +345,8 @@ int iosystem::StringQuestion(festring& Input,
                              truth Fade, truth AllowExit,
                              stringkeyhandler StringKeyHandler)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -402,8 +414,10 @@ int iosystem::StringQuestion(festring& Input,
     if(!LastKey)
       continue;
 
-    if(LastKey == KEY_ESC && AllowExit)
+    if(LastKey == KEY_ESC && AllowExit){
+      bInUse=false;
       return ABORTED;
+    }
 
     if(LastKey == KEY_BACK_SPACE)
     {
@@ -473,6 +487,7 @@ int iosystem::StringQuestion(festring& Input,
 
   Input.Resize(LastAlpha + 1);
 
+  bInUse=false;
   return NORMAL_EXIT;
 }
 
@@ -484,6 +499,8 @@ int iosystem::StringQuestion(festring& Input,
 long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                               truth Fade, truth ReturnZeroOnEsc)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -539,8 +556,10 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 
     if(LastKey == KEY_ESC)
     {
-      if(ReturnZeroOnEsc)
+      if(ReturnZeroOnEsc){
+        bInUse=false;
         return 0;
+      }
 
       break;
     }
@@ -580,6 +599,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                    static_cast<char>(LastKey));
   }
 
+  bInUse=false;
   return atoi(Input.CStr());
 }
 
@@ -600,6 +620,8 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
                                  col16 Color2, int LeftKey, int RightKey,
                                  truth Fade, void (*Handler)(long))
 {
+  bInUse=true;
+
   long BarValue = StartValue;
   festring Input;
   truth FirstTime = true;
@@ -776,45 +798,59 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
       Input << char(LastKey);
   }
 
+  bInUse=false;
   return BarValue;
 }
 
-bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>())
-{//TODO this method could be more global
-  //TODO calc all line withs to determine the full popup width to not look bad if overflow
+struct sAlertConfirmMsg{
+  bool bShow=false;
+  const char* cMsg;
+  std::vector<festring> vfsCritMsgs;
+  bool bConfirmMode;
+} sAlertConfirmMsgInst;
+void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
+{
+  if(!sAlertConfirmMsgInst.bShow)return;
+  
+  //TODO calc all line withs to determine the full popup width to not look bad if overflow, see specialkeys help dialog creation
   int iLineHeight=20;
-  v2 v2Border(700,100+(vfsCritMsgs.size()*iLineHeight));
+  v2 v2Border(700,100+(sAlertConfirmMsgInst.vfsCritMsgs.size()*iLineHeight));
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
 
-  DOUBLE_BUFFER->Fill(v2TL,v2Border,DARK_GRAY);
-  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+  Buffer->Fill(v2TL,v2Border,DARK_GRAY);
+  graphics::DrawRectangleOutlineAround(Buffer, v2TL, v2Border, YELLOW, true);
 
   v2TL+=v2(16,16);
   int y=v2TL.Y;
-  #define ACMPRINT(S,C) {FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
-  ACMPRINT(cMsg,YELLOW);
-  ACMPRINT("(y)es, any other key to ignore this message.",WHITE);
-//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), YELLOW, "%s", cMsg);
-//  y+=iLineHeight;
-//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", "(y)es, any other key to ignore this message.");
-//  y+=iLineHeight;
-  for(int i=0;i<vfsCritMsgs.size();i++){
+  #define ACMPRINT(S,C) {FONT->Printf(Buffer, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
+  ACMPRINT(sAlertConfirmMsgInst.cMsg,YELLOW);
+  if(sAlertConfirmMsgInst.bConfirmMode)ACMPRINT("(y)es, any other key to ignore this message.",WHITE);
+  for(int i=0;i<sAlertConfirmMsgInst.vfsCritMsgs.size();i++){
     if(i==0)
       ACMPRINT("PROBLEMS:",RED);
-//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), RED, "%s", "PROBLEMS:");
-//      y+=iLineHeight;
-//    }
-    ACMPRINT(vfsCritMsgs[i].CStr(),WHITE);
-//    FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", vfsCritMsgs[i].CStr());
-//    y+=iLineHeight;
+    ACMPRINT(sAlertConfirmMsgInst.vfsCritMsgs[i].CStr(),WHITE);
   }
+}
+bool iosystem::AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs,bool bConfirmMode)
+{
+  static bool bDummyInit = [](){graphics::AddDrawAboveAll(&AlertConfirmMsgDraw,100100,"iosystem::AlertConfirmMsgDraw"); return true;}();
+    
+  bInUse=true;
 
+  sAlertConfirmMsgInst.bShow=true;
+  sAlertConfirmMsgInst.cMsg=cMsg;
+  sAlertConfirmMsgInst.vfsCritMsgs=vfsCritMsgs;
+  sAlertConfirmMsgInst.bConfirmMode=bConfirmMode;
+
+  AlertConfirmMsgDraw(DOUBLE_BUFFER);
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y')
-    return true;
+  bool bAnswer=false;
+  if(GET_KEY() == 'y')bAnswer=true;
 
-  return false;
+  bInUse=false;
+  sAlertConfirmMsgInst.bShow=false;
+  return bAnswer;
 }
 
 static bool bSaveGameSortModeByDtTm;
@@ -954,7 +990,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 //  static festring fsLastChangeDetector="_Last_Change_Detector_.sav";
 //  addFileInfo(fsLastChangeDetector.CStr());
 
-  int iTmSz=100;
+  cint iTmSz=100;
   struct stat attr;
   for(int i=0;i<vFiles.size();i++)
   {
@@ -1040,10 +1076,15 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          *    Generating a new level is probably bad as it will ignore whatever happened in that level and may create
          *    duplicated items (uniques) and characters (uniques that died) when they should not exist,
          *    may be only for fully random (with non unique things on it) levels such workaround could be used...
+         * 
+         * TODO for file extensions, find the type only at the end, use std::string if easier/clearer to implement
          */
       }else
       if(vFiles[i].fileName.Find(".wm" ) != vFiles[i].fileName.NPos){
         //skipped from the list
+      }else
+      if(vFiles[i].fileName.Find(".tmp" ) != vFiles[i].fileName.NPos){
+        //just ignored
       }else
       if(vFiles[i].fileName.Find(".bkp") != vFiles[i].fileName.NPos){ //skipped from the list
         vBackups.push_back(vFiles[i].absFileName);

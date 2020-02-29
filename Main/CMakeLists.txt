@@ -4,6 +4,10 @@ if(PKG_CONFIG_FOUND)
   set(PCRE_LIBRARIES ${PCRE_LDFLAGS})
 endif()
 if(NOT PCRE_FOUND)
+  if(MSVC)
+    find_path(PCRE_INCLUDE_DIR NAMES pcre.h)
+    find_library(PCRE_LIBRARY pcre)
+  endif()
   find_package(PCRE REQUIRED)
   add_definitions(${PCRE_DEFINITIONS})
 endif()
@@ -24,12 +28,18 @@ set_source_files_properties(
     Source/smoke.cpp    Source/square.cpp    Source/stack.cpp    Source/team.cpp
     Source/terra.cpp    Source/trap.cpp      Source/traps.cpp    Source/worldmap.cpp
     Source/wsquare.cpp  Source/wterra.cpp    Source/wterras.cpp  Source/hiteffect.cpp
+    Source/cmdcraft.cpp Source/cmdcraftfilters.cpp
     Source/cmdswapweap.cpp
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
 add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
 target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ${PCRE_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIR})
 target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname ${PCRE_LIBRARIES} ${SDL2_mixer_LIBRARY})
+
+if(MSVC AND _VCPKG_INSTALLED_DIR)
+  # Gum solution. Manually copy pcre.dll to where ivan.exe will end up.
+  install(FILES "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/pcre.dll" DESTINATION "ivan")
+endif()
 
 if(UNIX)
     install(TARGETS ivan DESTINATION "${CMAKE_INSTALL_BINDIR}")

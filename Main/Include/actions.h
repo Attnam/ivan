@@ -16,6 +16,9 @@
 #include "action.h"
 #include "festring.h"
 #include "v2.h"
+#include "lterra.h"
+#include "item.h"
+#include "craft.h"
 
 ACTION(unconsciousness, action)
 {
@@ -48,12 +51,14 @@ ACTION(consume, action)
   virtual truth AllowFoodConsumption() const { return false; }
   virtual cchar* GetDescription() const;
   virtual void SetDescription(cfestring&);
-  virtual void SetNibbling(truth What) { nibbling = What; }
-  virtual truth IsNibbling() { return nibbling; }
+  virtual void SetNibbling(truth What) { Nibbling = What; }
+  virtual truth IsNibbling() { return Nibbling; }
  protected:
   festring Description;
   ulong ConsumingID;
-  truth nibbling = false;
+  truth Nibbling = false;
+  truth Gulping = false;
+  truth Spoiling = false;
 };
 
 ACTION(rest, action)
@@ -94,6 +99,29 @@ ACTION(dig, action)
   truth MoveDigger;
 };
 
+ACTION(craft, action)
+{
+ public:
+  craft() : RightBackupID(0), LeftBackupID(0), rpd(), MoveCraftTool(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void Handle();
+  void SetCraftWhat(recipedata rpdCopyFrom){rpd=rpdCopyFrom;}
+  virtual void Terminate(truth);
+  void SetRightBackupID(ulong What) { RightBackupID = What; }
+  void SetLeftBackupID(ulong What) { LeftBackupID = What; }
+  virtual truth TryDisplace() { return false; }
+  virtual cchar* GetDescription() const;
+  virtual truth ShowEnvironment() const { return false; }
+  void SetMoveCraftTool(truth What) { MoveCraftTool = What; }
+  bool IsSuspending();
+ protected:
+  recipedata rpd;
+  ulong RightBackupID;
+  ulong LeftBackupID;
+  truth MoveCraftTool;
+};
+
 ACTION(go, action)
 {
  public:
@@ -102,14 +130,18 @@ ACTION(go, action)
   virtual void Handle();
   int GetDirection() const { return Direction; }
   void SetDirection(int What) { Direction = What; }
+  bool SetDirectionFromRoute();
+  void SetRoute(std::vector<v2> What){RouteGoOn=What;};
   truth IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(truth What) { WalkingInOpen = What; }
+  bool IsRouteMode(){return RouteGoOn.size()>0;}
   virtual truth TryDisplace();
   virtual cchar* GetDescription() const;
   virtual truth ShowEnvironment() const { return false; }
  protected:
   int Direction;
   truth WalkingInOpen;
+  std::vector<v2> RouteGoOn;
 };
 
 ACTION(study, action)

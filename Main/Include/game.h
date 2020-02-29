@@ -178,6 +178,7 @@ class game
   static festring SaveName(cfestring& = CONST_S(""),bool = false); //before all calls to this method, made still here on the header file
   static void PrepareStretchRegionsLazy();
   static void UpdateSRegionsXBRZ();
+  static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
@@ -186,6 +187,7 @@ class game
   static void SRegionAroundDeny();
   static void PrepareToClearNonVisibleSquaresAround(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
+  static truth IsQuestItem(item*);
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -288,12 +290,12 @@ class game
   static v2 PositionQuestion(cfestring&, v2, positionhandler = 0, positionkeyhandler = 0, truth = true);
   static void LookHandler(v2);
   static int AskForKeyPress(cfestring&);
+  static bool IsQuestionMode();
   static truth AnimationController();
   static gamescript* GetGameScript() { return GameScript; }
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  static void GenerateDefinesValidator(bool bValidade);
   static void TextScreen(cfestring&, v2 = ZERO_V2, col16 = 0xFFFF, truth = true, truth = true, bitmapeditor = 0);
   static void SetCursorPos(v2 What) { CursorPos = What; }
   static truth DoZoom() { return Zoom; }
@@ -327,6 +329,10 @@ class game
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(v2, int);
   static character* SearchCharacter(ulong);
+  static std::vector<character*> GetAllCharacters();
+  static characteridmap GetCharacterIDMapCopy();
+  static std::vector<item*> GetAllItems();
+  static itemidmap GetItemIDMapCopy();
   static item* SearchItem(ulong);
   static entity* SearchTrap(ulong);
   static void AddCharacterID(character*, ulong);
@@ -339,15 +345,26 @@ class game
   static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
+  static int GetGloomyCaveStoryState() { return GloomyCaveStoryState; }
+  static void SetGloomyCaveStoryState(int What) { GloomyCaveStoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
+  static int GetFreedomStoryState() { return FreedomStoryState; }
+  static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
+  static int GetAslonaStoryState() { return AslonaStoryState; }
+  static void SetAslonaStoryState(int What) { AslonaStoryState = What; }
+  static int GetRebelStoryState() { return RebelStoryState; }
+  static void SetRebelStoryState(int What) { RebelStoryState = What; }
+  static truth PlayerIsGodChampion() { return PlayerIsChampion; }
+  static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
+  static truth PlayerHasBoat() { return HasBoat; }
+  static void GivePlayerBoat() { HasBoat = true; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
-  static festring GetHomeDir();
+  static festring GetDataDir();
+  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
-  static festring GetDataDir();
-  static festring GetStateDir();
   static festring GetBoneDir();
   static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
@@ -366,6 +383,7 @@ class game
   static truth MassacreListsEmpty();
   static void PlayVictoryMusic();
   static void PlayDefeatMusic();
+  static void SetMapNote(lsquare* lsqrN,festring What);
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
   static void RefreshDrawMapOverlay();
@@ -373,8 +391,12 @@ class game
   static void DrawMapNotesOverlay(bitmap* =NULL);
   static lsquare* GetHighlightedMapNoteLSquare();
   static bool ToggleShowMapNotes();
+  static bool CheckAddAutoMapNote(square* =NULL);
+  static int CheckAutoPickup(square* sqr = NULL);
+  static void UpdateAutoPickUpMatching();
   static int RotateMapNotes();
   static char MapNoteToken();
+  static bool IsAutoPickupMatch(cfestring fsName);
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -481,7 +503,7 @@ class game
   static int getDefaultItemsListWidth(){ return iListWidth; }
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
-  static int GetSaveFileVersion();
+  static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
@@ -534,7 +556,11 @@ class game
   static int Teams;
   static int Dungeons;
   static int StoryState;
+  static int GloomyCaveStoryState;
   static int XinrochTombStoryState;
+  static int FreedomStoryState;
+  static int AslonaStoryState;
+  static int RebelStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;
@@ -570,6 +596,8 @@ class game
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
+  static truth PlayerIsChampion; // This marks the player as a champion of some god.
+  static truth HasBoat; // Whether the player can sail the oceans of world map.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

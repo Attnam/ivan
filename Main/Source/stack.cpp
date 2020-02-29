@@ -279,6 +279,19 @@ void stack::Alchemize(character* Midas)
       break;
 }
 
+void stack::SoftenMaterial(character* Jerk)
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+  int p = 0;
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Exists()
+       && ItemVector[c]->SoftenMaterial()
+       && ++p == 5)
+      break;
+}
+
 void stack::CheckForStepOnEffect(character* Stepper)
 {
   itemvector ItemVector;
@@ -587,6 +600,8 @@ void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
                             !(Flags & NO_SPECIAL_INFO));
     int ImageKey = game::AddToItemDrawVector(PileVector[p]);
     Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
+    if(!Item->GetDescriptiveInfo().IsEmpty())
+      Contents.SetLastEntryHelp(festring()<<Entry<<"\n\n"<<Item->GetDescriptiveInfo());
   }
 }
 

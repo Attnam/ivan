@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 cchar* ToHitValueDescription[] =
 {
   "unbelievably inaccurate",
@@ -52,6 +54,7 @@ truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslo
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 truth item::IsBroken() const { return GetConfig() & BROKEN; }
+truth item::IsFood() const { return DataBase->Category & FOOD; }
 cchar* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
@@ -62,31 +65,30 @@ truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED
 truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable() && !IsBurning(); }
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable() && !IsBurning(); }
+truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
-{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
-{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+material* item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ return SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
 { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
 item::item(citem& Item)
 : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight),
+  iRotateFlyingThrownStep(Item.iRotateFlyingThrownStep),
   Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
+
   CloneMotherID = new idholder(Item.ID);
   idholder* TI = CloneMotherID;
-
   for(idholder* II = Item.CloneMotherID; II; II = II->Next)
     TI = TI->Next = new idholder(II->ID);
-
   TI->Next = 0;
-  Slot = new slot*[SquaresUnder];
 
+  Slot = new slot*[SquaresUnder];
   for(int c = 0; c < SquaresUnder; ++c)
     Slot[c] = 0;
 }
@@ -121,7 +123,10 @@ item::~item()
 
 void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrownRotation)
 {
-  iRotateFlyingThrownStep=0; //simple granted reset
+  if(ivanconfig::GetRotateTimesPerSquare() > 0)
+  {
+    iRotateFlyingThrownStep=0; //simple granted reset
+  }
   lsquare* LandingSquare=NULL;
 
   int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
@@ -218,7 +223,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
       if(Draw)
         while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
 
-      if(iRotateFlyingThrownStep!=0){
+      if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){
         if(iRotateTimes==1){
           iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1; //next rotation step on next square
         }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
@@ -242,7 +247,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
 
   }
 
-  if(iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
     iRotateFlyingThrownStep=4; //default rotation is w/o the rotation flags at the switch(){}
     //force redraw at default rotation to avoid another spin when player moves TODO how to let it stay in the last rotation?
     RemoveFromSlot();LandingSquare->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square...
@@ -329,6 +334,58 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
   }
 }
 
+truth item::Polymorph(character* Polymorpher, character* Wielder)
+{
+  if(!IsPolymorphable())
+    return false;
+  else if(!Wielder->Equips(this))
+    return false;
+  else
+  {
+    if(Polymorpher && Wielder)
+    {
+      Polymorpher->Hostility(Wielder);
+    }
+
+    item* NewItem = protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true);
+    int EquipSlot = GetEquipmentIndex();
+
+    if(Wielder->IsPlayer())
+      ADD_MESSAGE("Your %s polymorphs into %s.", CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s's %s polymorphs into %s.", Wielder->CHAR_NAME(DEFINITE), CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+
+    RemoveFromSlot();
+    SendToHell();
+
+    switch (EquipSlot)
+    {
+      /*
+      case HELMET_INDEX: Wielder->SetHelmet(NewItem); break;
+      case AMULET_INDEX: Wielder->SetAmulet(NewItem); break;
+      case CLOAK_INDEX: Wielder->SetCloak(NewItem); break;
+      case BODY_ARMOR_INDEX: Wielder->SetBodyArmor(NewItem); break;
+      case BELT_INDEX: Wielder->SetBelt(NewItem); break;
+      */
+      case RIGHT_WIELDED_INDEX: Wielder->SetRightWielded(NewItem); break;
+      case LEFT_WIELDED_INDEX: Wielder->SetLeftWielded(NewItem); break;
+      /*
+      case RIGHT_RING_INDEX: Wielder->SetRightRing(NewItem); break;
+      case LEFT_RING_INDEX: Wielder->SetLeftRing(NewItem); break;
+      case RIGHT_GAUNTLET_INDEX: Wielder->SetRightGauntlet(NewItem); break;
+      case LEFT_GAUNTLET_INDEX: Wielder->SetLeftGauntlet(NewItem); break;
+      case RIGHT_BOOT_INDEX: Wielder->SetRightBoot(NewItem); break;
+      case LEFT_BOOT_INDEX: Wielder->SetLeftBoot(NewItem); break;
+      */
+      default: Wielder->ReceiveItemAsPresent(NewItem); break;
+    }
+
+    if(Wielder->IsPlayer())
+      game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
+    return true;
+  }
+}
+
 /* Returns truth that tells whether the alchemical conversion really happened. */
 
 truth item::Alchemize(character* Midas, stack* CurrentStack)
@@ -358,6 +415,42 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
     SendToHell();
     return true;
   }
+}
+
+truth item::SoftenMaterial()
+{
+  if(!IsMaterialChangeable() || !CanBeSoftened())
+  {
+    return false;
+  }
+
+  int Config = GetMainMaterial()->GetSoftenedMaterial(this);
+
+  if(!Config)
+  {
+    /* Should not be possible. */
+    return false;
+  }
+
+  msgsystem::EnterBigMessageMode();
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s starts glowing dull yellow.", CHAR_NAME(INDEFINITE));
+
+  material* TempMaterial = MAKE_MATERIAL(Config);
+  material* MainMaterial = GetMainMaterial();
+  material* SecondaryMaterial = GetSecondaryMaterial();
+
+  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+    delete SetSecondaryMaterial(TempMaterial->SpawnMore());
+
+  delete SetMainMaterial(TempMaterial);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
+
+  msgsystem::LeaveBigMessageMode();
+  return true;
 }
 
 /* Returns whether the Eater must stop eating the item */
@@ -401,6 +494,31 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
     && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
 
+bool item::HasTag(char tag)
+{
+  static char Tag[3]={'#',0,0};
+  Tag[1]=tag;
+  return label.Find(Tag,0) != festring::NPos;
+}
+
+/**
+ * look for all usages to avoid tag clashes
+ */
+void item::SetTag(char tag)
+{
+  if(!HasTag(tag))
+    label<<"#"<<tag;
+}
+
+void item::ClearTag(char tag)
+{
+  static char Tag[3]={'#',0,0};
+  Tag[1]=tag;
+  int pos = label.Find(Tag,0);
+  if(pos != festring::NPos)
+    label.Erase(pos,2);
+}
+
 void item::SetLabel(cfestring& What)
 {
   label.Empty();
@@ -410,12 +528,10 @@ void item::SetLabel(cfestring& What)
 
 void item::AddName(festring& Name, int Case) const
 {
-  if(label.GetSize())
-    Name << label << " "; //this way user can decide how it should look, with or w/o delimiters and which ones
-//    Name << "{"<<label<<"}" << " ";
-//    Name << "#"<<label << " ";
-
   object::AddName(Name,Case);
+
+  if(label.GetSize())
+    Name << " inscribed " << label;
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -425,9 +541,7 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetConfig());
   SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
-    SaveFile << label;
-  }
+  SaveFile << label;
   SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
@@ -447,9 +561,8 @@ void item::Load(inputfile& SaveFile)
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
   SaveFile >> Size >> ID >> LifeExpectancy >> ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
+  if(game::GetCurrentSavefileVersion()>=132)
     SaveFile >> label;
-  }
   LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
@@ -736,11 +849,6 @@ item* item::Duplicate(ulong Flags)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
                              Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
-  idholder* I = new idholder(ID);
-  I->Next = CloneMotherID;
-  CloneMotherID = I;
-  game::RemoveItemID(ID);
-  ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }
@@ -755,8 +863,20 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
     AddName(Entry, PLURAL);
   }
 
-  if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g]";
+  if(ShowSpecialInfo){
+    Entry << " [" << GetWeight() * Amount << "g"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
+    if(ivanconfig::IsShowVolume()){
+      Entry << " " << GetVolume() * Amount << "cm3"; //the item can be seen therefore it's volume guessed already
+      if(GetSecondaryMaterial()==NULL){ //simple items like ingots sticks etc
+        static char density[20];
+        sprintf(density, "%.1f", GetWeight()/(float)GetVolume());
+        Entry << " " << density << "g/cm3"; //the item can be seen and weighted already so this just helps avoiding having to mentally calc density for every item
+        if(game::WizardModeIsActive()) //TODO || Char-> possess item <materialmanual*>
+          Entry << " " << GetStrengthValue() << "str"; //this is special info tho.
+      }
+    }
+    Entry << "]";
+  }
 }
 
 const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig, int Configs, int ConfigNumber)
@@ -894,7 +1014,7 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
   return (GetType() == Item->GetType()
           && GetConfig() == Item->GetConfig()
           && ItemFlags == Item->ItemFlags
-          && (WeightIsIrrelevant() || Weight == Item->Weight)
+          && ((!ivanconfig::IsAllWeightIsRelevant() && WeightIsIrrelevant()) || Weight == Item->Weight)
           && MainMaterial->IsSameAs(Item->MainMaterial)
           && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
           && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
@@ -909,6 +1029,9 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 
 void item::Break(character* Breaker, int)
 {
+  if(!CanBeBroken() || IsBroken())
+    return;
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
 
@@ -1039,6 +1162,78 @@ void item::SignalSpoilLevelChange(material*)
 
 truth item::AllowSpoil() const
 {
+  DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
+  DBGEXEC( //this wont even compile if DBGMSG is not enabled
+    /** crash helper
+     * THE CAUSE SEEMS TO BE from crafting a new item, it being a chest, and cancelling. The code was not sending the canceled spawned chest to hell and it was not placed anywhere. Fixed that, this may not happen again.
+     * TODO remove this debug code and the workaround below after sure wont need anymore. despite the debug code will only compile if using DBGMSG
+     * seems to be about a buggy organic spawned "on floor" that has no square under...
+    *  happens below at: if(IsOnGround())
+   *   item.cpp:1048:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="92980";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x8272630";
+ 2018/07/17-15:36:08(1122986) item.cpp:1049:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="780622";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x38be0e0";
+ 2018/07/17-15:36:08(1122987) item.cpp:1091:AllowSpoil:{itSS}="0x3293700";{ss->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122988) item.cpp:1091:AllowSpoil:{itSS->GetID()}="780622";{itSS->GetNameSingular().CStr()}="loaf";
+ 2018/07/17-15:36:08(1122989) item.cpp:1091:AllowSpoil:{ss->GetMotherStack()->GetItems()}="3";{ent}="0x62a17d0";{ss->GetMotherStack()->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122990) item.cpp:1091:AllowSpoil:{ent->GetSquareUnderEntity()}="0";
+ 2018/07/17-15:36:08(1122991) item.cpp:1091:AllowSpoil:{itM->GetID()}="780621";{itM->GetNameSingular().CStr()}="chest";
+   *     ./bin//ivan(_ZN6dbgmsg20getCurrentStackTraceEbRi+0xaa) [0x92f43e]
+   *     ./bin//ivan(_ZN6dbgmsg22getCurrentStackTraceSSB5cxx11Ebb+0x54) [0x92f53c]
+    *    ./bin//ivan(_ZN6dbgmsg8SigHndlrEi+0x1ae) [0x92fcdc]
+     *   /lib/x86_64-linux-gnu/libc.so.6(+0x354b0) [0x7f6b145e14b0]
+      *  ./bin//ivan(_ZNK4item10IsOnGroundEv+0x17) [0x8963c7]
+      *  ./bin//ivan(_ZNK5stack10IsOnGroundEv+0x38) [0x8f12a8]
+      *  ./bin//ivan(_ZNK9stackslot10IsOnGroundEv+0x20) [0x8ebb96]
+     *   ./bin//ivan(_ZNK4item10IsOnGroundEv+0x31) [0x8963e1]
+    *    ./bin//ivan(_ZNK4item10AllowSpoilEv+0x27f) [0x89b0ab]
+   *     ./bin//ivan(_ZN7organic2BeEm+0x4f) [0x839d0d]
+   *     ./bin//ivan(_ZN4item2BeEv+0x49) [0x89a819]
+   *     ./bin//ivan(_ZN4pool2BeEv+0x3b) [0x69593b]
+    *    ./bin//ivan(_ZN4game3RunEv+0x3da) [0x77ad5a]
+     *   ./bin//ivan(main+0x4d7) [0x70d462]
+      *  /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f6b145cc830]
+      *  ./bin//ivan(_start+0x29) [0x68f999]
+     */
+    if(dynamic_cast<stackslot*>(GetSlot())!=NULL){
+      stackslot* ss = (stackslot*)GetSlot();
+      item* itSS = ss->GetItem();
+      DBG2(itSS,ss->GetSquareUnder());
+      if(itSS!=NULL)DBG2(itSS->GetID(),itSS->GetNameSingular().CStr());
+      stack* stkM=ss->GetMotherStack();
+      if(stkM!=NULL){
+        entity* ent = stkM->GetMotherEntity();
+        DBG3(ss->GetMotherStack()->GetItems(), ent, ss->GetMotherStack()->GetSquareUnder());
+        if(ent!=NULL){
+          DBG1(ent->GetSquareUnderEntity());
+//          if(dynamic_cast<id*>(ent))DBG1(((id*)ent)->GetID());
+          if(dynamic_cast<item*>(ent)){
+            item* itM = (item*)ent;
+            DBG2(itM->GetID(),itM->GetNameSingular().CStr());
+          }
+        }
+      }
+    }
+  );
+//TODO remove this. The workaround is NOT good as SquareUnder is essential everywhere!!!!
+//  bool bIsOnGround=false;
+//  lsquare* Square = GetLSquareUnder(); //TODO what could cause Square to be NULL ?????
+//  static bool bAllowSpoilBugWorkaround=true;
+//  if(bAllowSpoilBugWorkaround){ //See the above bug track code, the origin of the problem is still NOT solved/understood/discovered!!!!!!
+//    if(Square!=NULL){
+//      bIsOnGround=IsOnGround();
+//      DBG1("WorkaroundForItemPlacedNoWhere");
+//    }
+//    /**
+//     * what this means?
+//     *
+//     * not knowing where the item is, if on a room, the item will ALWAYS spoil,
+//     * so if the buggy item "is" on a shop, it will spoil.
+//     *
+//     * and, on this stack/flow that game wont crash, but still may on other code flows!!!
+//     */
+//  }else{
+//    bIsOnGround=IsOnGround();
+//  }
+
   if(IsOnGround())
   {
     lsquare* Square = GetLSquareUnder();
@@ -1289,7 +1484,7 @@ void item::Draw(blitdata& BlitData) const
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
 
   bitmap* bmp = GraphicData.Picture[F];
-  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
     static blitdata B = [](){B=DEFAULT_BLITDATA; //to reuse tmp bitmap memory
       B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
       B.Border = TILE_V2; return B; }();
@@ -1671,6 +1866,20 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
   }
 }
 
+void item::ReceiveHeat(material*, cfestring&, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 1000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
+    }
+  }
+}
+
 void item::FightFire(material*, cfestring&, long Volume)
 {
   int Amount = sqrt(Volume);
@@ -1789,6 +1998,11 @@ truth item::Read(character* Reader)
 truth item::CanBeHardened(ccharacter*) const
 {
   return MainMaterial->GetHardenedMaterial(this) != NONE;
+}
+
+truth item::CanBeSoftened() const
+{
+  return MainMaterial->GetSoftenedMaterial(this) != NONE;
 }
 
 void item::SetLifeExpectancy(int Base, int RandPlus)
@@ -2025,6 +2239,13 @@ truth itemlock::TryKey(item* Key, character* Applier)
         ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
 
+    // Add a tiny chance that any key you use breaks, so that there is some value in having
+    // multiples of a key, and in keys of better materials.
+    if(!RAND_N(Key->GetMainMaterial()->GetStrengthValue()))
+    {
+      Key->Break(Applier);
+    }
+
     Locked = !Locked;
   }
   else
@@ -2085,6 +2306,21 @@ void item::SendMemorizedUpdateRequest() const
         lsquare* Square = GetLSquareUnder(c);
         Square->SendMemorizedUpdateRequest();
       }
+}
+
+void item::AddContainerPostFix(festring& String) const
+{
+  if(GetSecondaryMaterial()){
+    float fRatio = GetSecondaryMaterial()->GetVolume()/(float)GetDefaultSecondaryVolume();
+    const char* c="full of";
+    if     (fRatio<=0.10)c="with just a little bit of";
+    else if(fRatio<=0.25)c="with a bit of";
+    else if(fRatio<=0.45)c="with some";
+    else if(fRatio<=0.55)c="half full of";
+    else if(fRatio<=0.75)c="well filled with"; //TODO any better phrasing for this?
+    else if(fRatio<=0.93)c="almost full of"; //nice arguable arbitrary percent :)
+    GetSecondaryMaterial()->AddName(String << " "<< c << " ", false, false);
+  }
 }
 
 truth item::AddStateDescription(festring& Name, truth Articled) const

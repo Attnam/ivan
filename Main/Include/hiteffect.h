@@ -17,6 +17,7 @@
 
 #include "entity.h"
 #include "v2.h"
+#include "lsquare.h"
 
 class lsquare;
 class blitdata;
@@ -34,11 +35,31 @@ struct hiteffectSetup { //TODO some of these are not actually an external setup.
 
   character* WhoIsHit;
   ulong lWhoIsHitID;
+  lsquare* HitAtSquare; //crafting fancyness mainly
 
   ulong lItemEffectReferenceID;
 
   int iMode;
   lsquare* LSquareUnder;
+  
+  public:
+    hiteffectSetup(){
+        Critical=false;
+        GivenDir=0;
+        Type=0;
+
+        WhoHits=NULL;
+        lWhoHitsID=0;
+
+        WhoIsHit=NULL;
+        lWhoIsHitID=0;
+        HitAtSquare=NULL;
+
+        lItemEffectReferenceID=0;
+
+        iMode=0;
+        LSquareUnder=NULL;
+    }
 };
 class hiteffect : public entity
 {

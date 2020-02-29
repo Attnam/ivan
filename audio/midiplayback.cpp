@@ -618,10 +618,10 @@ MIDI_EVENT_t* MPB_ConfirmEventTx(void)
    return event;
 }
 
-#define MIN_PPQ	(48)
-#define MIN_BMP	(20)
+#define MIN_PPQ  (48)
+#define MIN_BMP  (20)
 #define MIN_BMP_PPQ_PRODUCT (MIN_BMP*MIN_PPQ)
-#define MIN_BMP_PPQ_PRESCALER	(64)
+#define MIN_BMP_PPQ_PRESCALER  (64)
 uint16_t MPB_SetTickRate(uint16_t bpm, uint16_t PPQ)
 {
    //*to send a Timing signal we need to send 24 0xF8's per quarter note
@@ -840,8 +840,8 @@ void MPB_OutputMIDIChanEvent(MIDI_CHAN_EVENT_t* chanEvent)
    }
 }
 
-#define MPB_IGNORE_BYTE	(0xFF)
-#define MPB_SAVE_BUFFER_SIZE	(16)
+#define MPB_IGNORE_BYTE  (0xFF)
+#define MPB_SAVE_BUFFER_SIZE  (16)
 
 //#define MPB_STATUS_BUFFER_ARRAY
 
@@ -1020,5 +1020,5 @@ void _MIDI_fileclose(void)
 void _MIDI_readbuf(uint8_t* position, uint8_t* buf, uint16_t size)
 {
    fseek(midifile, (long long) position, 0);
-   fread(buf, 1, size, midifile);
+   size_t a = fread(buf, 1, size, midifile);
 }

@@ -249,6 +249,10 @@
 #define PYRITE (SOLID_ID + 229)
 #define HARDENED_ASH (SOLID_ID + 230)
 #define PSYPHER (SOLID_ID + 231)
+#define CRYSTEEL (SOLID_ID + 232)
+#define FLAWLESS_CRYSTEEL (SOLID_ID + 233)
+
+#define INGOT 2
 
 #define ORGANIC_ID (2 << 12)
 
@@ -295,6 +299,10 @@
 #define FART (GAS_ID + 10)
 #define MUSTARD_GAS (GAS_ID + 11)
 #define SLEEPING_GAS (GAS_ID + 12)
+#define TELEPORT_GAS (GAS_ID + 13)
+#define LAUGHING_GAS (GAS_ID + 14)
+#define ACID_GAS (GAS_ID + 15)
+#define FIRE_GAS (GAS_ID + 16)
 
 #define LIQUID_ID (4 << 12)
 
@@ -352,6 +360,12 @@
 #define QUICK_SILVER (LIQUID_ID + 52)
 #define MUD (LIQUID_ID + 53)
 #define QUICK_SAND (LIQUID_ID + 54)
+#define TELEPORT_FLUID (LIQUID_ID + 55)
+#define VINEGAR (LIQUID_ID + 56)
+#define BLACK_BLOOD (LIQUID_ID + 57)
+#define POLYMORPHINE (LIQUID_ID + 58)
+#define LAVA (LIQUID_ID + 59)
+#define NAPALM (LIQUID_ID + 60)
 
 #define FLESH_ID (5 << 12)
 
@@ -452,18 +466,21 @@
 #define QUARTER_STAFF 15
 #define HAMMER 16
 #define GRAND_STOLLEN_KNIFE 17
-#define MAGE_STAFF 18
+//#define TODO 18
 #define ROLLING_PIN 19
 #define FRYING_PAN 20
 #define CLAW 21
 #define MEAT_CLEAVER 22
 #define RUNE_SWORD 23
+#define KATANA 24
 
 #define PUPPY_SKULL 1
 
 #define GOROVITS_HAMMER 1
 #define GOROVITS_SICKLE 2
 #define GOROVITS_SCIMITAR 3
+
+#define ROYAL_STAFF 1
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
@@ -488,22 +505,36 @@
 #define WAND_OF_NECROMANCY 14
 #define WAND_OF_WEBBING 15
 #define WAND_OF_ALCHEMY 16
+#define WAND_OF_SOFTEN_MATERIAL 17
 
 #define RUNED_WHIP 1
 
 #define BIG_MINE 1
+
+#define PHOENIX_SHIELD 1
+#define AEGIS_SHIELD 2
+#define SHIELD_OF_FIRE_RESISTANCE 3
+#define SHIELD_OF_ELECTRICITY_RESISTANCE 4
+#define SHIELD_OF_MAGIC_RESISTANCE 5
 
 #define CLOAK_OF_INVISIBILITY 1
 #define CLOAK_OF_FIRE_RESISTANCE 2
 #define CLOAK_OF_ELECTRICITY_RESISTANCE 3
 #define CLOAK_OF_ACID_RESISTANCE 4
 #define CLOAK_OF_SHADOWS 5
+#define CLOAK_OF_WEREWOLF 6
+#define CLOAK_OF_ORCS 7
+#define CLOAK_OF_FLYING 8
+#define CLOAK_OF_QUICKNESS 9
+#define CLOAK_OF_PROTECTION 10
+#define CLOAK_OF_VAMPIRE 11
 
 #define LOST_RUBY_FLAMING_SWORD 2
 
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
 #define BOOT_OF_KICKING 3
+#define BOOT_OF_DISPLACEMENT 4
 
 #define GAUNTLET_OF_STRENGTH 1
 #define GAUNTLET_OF_DEXTERITY 2
@@ -558,10 +589,22 @@
 #define VETERAN 2
 #define EUNUCH 3
 #define PATROL 4
+#define TEMPLAR 4
 #define SHOP 5
+#define GRAVE_KEEPER 5
 #define ELITE 6
 #define MASTER 7
 #define GRAND_MASTER 8
+#define TOMB_ENTRY 9
+#define TOMB_ENTRY_MASTER 10
+#define HONOR 11
+#define EMISSARY 12
+#define TRAINEE 13
+#define ROOKIE_FEMALE 14
+#define VETERAN_FEMALE 15
+#define ELITE_FEMALE 16
+#define CASTLE 17
+#define ROYAL 18
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -580,12 +623,16 @@
 
 #define CONICAL 1
 #define FLAT 2
+#define MAGMA 3
+#define BLOAT 4
 
 #define SKELETON_DOG 1
 
 #define LARGE 1
 #define GIANT 2
-#define ARANEA 3
+#define PHASE 3
+#define GIANT_GOLD 4
+#define ARANEA 5
 
 #define IMPRISONED_HUNTER 1
 
@@ -620,12 +667,20 @@
 #define GREATER 1
 #define GIANT 2
 
+#define RED_SNAKE 1
+#define GREEN_SNAKE 2
+#define BLUE_SNAKE 3
+
 #define SLAUGHTERER 1
 #define SQUAD_LEADER 2
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
 #define REPRESENTATIVE 6
+
+#define VICE_ROY 1
+#define MASTER_TORTURER 2
+#define HOARD_MASTER 3
 
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
@@ -684,12 +739,14 @@
 #define STONE_WALL 6
 #define ICE_WALL 7
 #define BROKEN_WALL 8
+#define TENT_WALL 9
 
 #define PINE 1
 #define FIR 2
 #define HOLY_TREE 3
 #define CARPET 4
 #define COUCH 5
+#define CHAIR 6
 #define DOUBLE_BED 9
 #define POOL_BORDER 13
 #define POOL_CORNER 14
@@ -703,6 +760,9 @@
 #define BIRCH 22
 #define TEAK 23
 #define DWARF_BIRCH 24
+#define FORGE 26
+#define FURNACE 27
+#define WORK_BENCH 32
 
 #define SNOW_BOULDER 4
 
@@ -726,6 +786,7 @@
 #define ROOM_LIBRARY 4
 #define ROOM_BANANA_DROP_AREA 5
 #define ROOM_SUMO_ARENA 6
+#define ROOM_OWNED_AREA 7
 
 #define ALL_DUNGEONS  32767
 

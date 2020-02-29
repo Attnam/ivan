@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_error.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_main.h>
-#include <SDL2/SDL_surface.h>
+#include <SDL.h>
+#include <SDL_error.h>
+#include <SDL_image.h>
+#include <SDL_main.h>
+#include <SDL_surface.h>
 #include <cstdio>
 #include <cstdlib>
 
@@ -73,21 +73,21 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "scale_factor can be between 2 and 6\n");
 		return 1;
 	}
-	
+
 	int scale = atoi(argv[1]);
 	char* in_file = argv[2];
 	char* out_file = argv[3];
-	
+
 	if (scale < 2 || scale > 6) {
 		fprintf(stderr, "scale_factor must be between 2 and 6 (inclusive), got %i\n", scale);
 		return 1;
 	}
-	
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		fprintf(stderr, "Failed to initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
-	
+
 	SDL_Surface* src_img = IMG_Load(in_file);
   if (!src_img) {
     fprintf(stderr, "Failed to load source image '%s': %s\n", in_file, IMG_GetError());

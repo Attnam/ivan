@@ -260,13 +260,27 @@ void bitmap::Fill(v2 TopLeft, v2 FillSize, col16 Color)
 
 void bitmap::Fill(int X, int Y, int Width, int Height, col16 Color)
 {
-  if(X >= Size.X || Y >= Size.Y)
+  /* We crop the area in order to prevent buffer overflow. Take care! */
+
+  if(X >= Size.X || Y >= Size.Y || Width <= 0 || Height <= 0 || X <= -Width || Y <= -Height)
     return;
 
-  if(X + Width > Size.X)
+  if(X < 0)
+  {
+    Width += X;
+    X = 0;
+  }
+
+  if(Y < 0)
+  {
+    Height += Y;
+    Y = 0;
+  }
+
+  if(Width > Size.X - X)
     Width = Size.X - X;
 
-  if(Y + Height > Size.Y)
+  if(Height > Size.Y - Y)
     Height = Size.Y - Y;
 
   if(Color >> 8 == (Color & 0xFF))
@@ -1318,15 +1332,26 @@ SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL
  */
 void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) const
 {
+  blitdata Bto = BlitDataTo;
+  
   if(
-      (BlitDataTo.Src.X+BlitDataTo.Border.X) > Size.X
-      ||
-      (BlitDataTo.Src.Y+BlitDataTo.Border.Y) > Size.Y
+    !femath::Clip( //fixes blitdata if necessary
+      Bto.Src.X, Bto.Src.Y, Bto.Dest.X, Bto.Dest.Y, 
+      Bto.Border.X, Bto.Border.Y, Size.X, Size.Y, 
+      Bto.Bitmap->Size.X, Bto.Bitmap->Size.Y
+    )
   ){
-    ABORT("requested copy from rectangle pos=%d,%d size=%d,%d outside of limits=%d,%d",BlitDataTo.Src.X,BlitDataTo.Src.Y,BlitDataTo.Border.X,BlitDataTo.Border.Y,Size.X,Size.Y);
+    return;
+  }
+  
+  if( //TODO as femath::Clip() fixes the blitdata, confirm this is unnecessary now and remove this check
+      (Bto.Src.X+Bto.Border.X) > Size.X
+      ||
+      (Bto.Src.Y+Bto.Border.Y) > Size.Y
+  ){
+    ABORT("requested copy from rectangle pos=%d,%d size=%d,%d outside of limits=%d,%d",Bto.Src.X,Bto.Src.Y,Bto.Border.X,Bto.Border.Y,Size.X,Size.Y);
   }
 
-  blitdata Bto = BlitDataTo;DBGLN; //to easy coding
   if(Bto.Dest.X>=Bto.Bitmap->GetSize().X || Bto.Dest.Y>=Bto.Bitmap->GetSize().Y){
     ABORT("invalid stretch destination %d,%d on target bitmap size %d,%d",Bto.Dest.X,Bto.Dest.Y,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
   }

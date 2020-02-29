@@ -164,6 +164,16 @@ wall
     BitmapPos = 48, 288;
     HPModifier = 25;
   }
+
+  Config TENT_WALL;
+  {
+    OKVisualEffects = MIRROR;
+    DigMessage = "The tear down the tent wall.";
+    MainMaterialConfig == FELT;
+    NameSingular = "tent wall";
+    BitmapPos = 0, 432;
+    HPModifier = 20;
+  }
 }
 
 decoration
@@ -522,7 +532,7 @@ decoration
     Walkability = ETHEREAL;
     NameSingular = "forge";
     BitmapPos = 16, 16;
-    LeftOverItems == 0;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 1000:3000; } Times = 2:5; }
   }
 
   Config FURNACE;
@@ -713,6 +723,14 @@ door /* olterrain-> */
     NameSingular = "door";
     Adjective = "very secret";
   }
+
+  Config CURTAIN;
+  {
+    DigMessage = "You tear at the curtain.";
+    BitmapPos = 0, 112;
+    NameSingular = "curtain";
+    MainMaterialConfig == FELT;
+  }
 }
 
 stairs /* olterrain-> */
@@ -877,6 +895,14 @@ brokendoor /* olterrain->door-> */
     NameSingular = "door";
     Adjective = "broken very secret";
   }
+
+  Config CURTAIN;
+  {
+    DigMessage = "You tear down the curtain.";
+    BitmapPos = 0, 96;
+    Adjective = "torn";
+    NameSingular = "curtain";
+  }
 }
 
 boulder /* olterrain-> */
@@ -963,7 +989,7 @@ monsterportal
 
 coffin /* olterrain->decoration->olterraincontainer */
 {
-  Walkability = ETHEREAL;
+  Walkability = ANY_MOVE;
   DigMessage = "You smash the coffin into pieces. The spirits are not happy.";
   CanBeDestroyed = true;
   MainMaterialConfig == FIR_WOOD;
