@@ -84,6 +84,22 @@ int main(int argc, char** argv)
     return 0;
   }
 
+  if(argc > 1 && festring(argv[1]) == "--defgen")
+  {
+    std::cout << "Generate defines validator file. " << std::endl;
+    game::InitGlobalValueMap();
+    definesvalidator::GenerateDefinesValidator("generate");
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--defval")
+  {
+    std::cout << "Generate defines validator file. " << std::endl;
+    game::InitGlobalValueMap();
+    definesvalidator::GenerateDefinesValidator("validate");
+    return 0;
+  }
+  
 #ifdef __DJGPP__
 
   /* Saves numlock state and toggles it off */
