@@ -393,17 +393,25 @@ Level design
 
 Corey Martin
 
-Authors of RNG
---------------
+RNG
+---
 
 Takuji Nishimura
 Makoto Matsumoto
 
-Author of the font
-------------------
+Fonts
+-----
 
-Shawn Hargreaves's Allegro
- - A game programming library
+Shawn Hargreaves's Allegro (font 1):
+
+  https://www.shawnhargreaves.com/
+
+Sounds
+------
+
+Many sound effects from:
+
+  FreeSoundEffects.com
 
 Idea providers and bug hunters
 ------------------------------
