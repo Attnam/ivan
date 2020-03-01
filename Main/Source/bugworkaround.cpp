@@ -497,7 +497,7 @@ std::vector<character*> bugfixdp::FindCharactersOnLevel(bool bOnlyPlayerFlag)
 bool bBufFixDPMode=false;
 bool bugfixdp::IsFixing(){return bBufFixDPMode;}
 
-void bugfixdp::DevConsCmd(std::string strCmdParams)
+void bugfixdp::DevConsCmd(festring fsCmdParams)
 {
   BugWorkaroundDupPlayer();
   bBufFixDPMode=true;

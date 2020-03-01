@@ -21,6 +21,7 @@
 #include "error.h"
 #include "feio.h"
 #include "felist.h"
+#include "festring.h"
 #include "game.h"
 #include "message.h"
 #include "stack.h"
@@ -40,10 +41,10 @@
  */
 
 #ifdef WIZARD
-void ListChars(std::string strFilter){
+void ListChars(festring fsFilter){
   ulong idFilter=0;
-  if(!strFilter.empty())
-    idFilter=atoi(strFilter.c_str());
+  if(!fsFilter.IsEmpty())
+    idFilter=atoi(fsFilter.CStr());
 
   DEVCMDMSG("params: %d",idFilter);
 
@@ -80,13 +81,13 @@ void ListChars(std::string strFilter){
 //    );
   }
 }
-void ListItems(std::string strParams){
+void ListItems(festring fsParams){
   ulong idCharFilter=0;
   ulong idFilter=0;
 
-  if(!strParams.empty()){
+  if(!fsParams.IsEmpty()){
     std::string part;
-    std::stringstream iss(strParams);
+    std::stringstream iss(fsParams.CStr());
     if(iss >> part){
       if(part=="c"){
         if(iss >> part)
@@ -209,11 +210,11 @@ void devcons::Init()
 
 const int iVarTot=10;
 float afVars[iVarTot];
-void devcons::SetVar(std::string strParams)
+void devcons::SetVar(festring fsParams)
 {
-  if(!strParams.empty()){
+  if(!fsParams.IsEmpty()){
     std::string part;
-    std::stringstream iss(strParams);
+    std::stringstream iss(fsParams.CStr());
     
     iss >> part;
     int index = atoi(part.c_str()); //TODO use string IDs instead of index and create a map
@@ -284,12 +285,12 @@ void devcons::OpenCommandsConsole()
   bOpenCommandsConsole=false;
 }
 
-typedef void (*callcmd)(std::string);
+//typedef void (*callcmd)(festring&);
 
 struct DevCmd{
-  std::string strCmd="";
-  std::string strCmdLowerCase="";
-  std::string strHelp="";
+  festring fsCmd="";
+  festring fsCmdLowerCase="";
+  festring fsHelp="";
   callcmd Call=NULL;
   bool bWizardModeOnly=false;
 };
@@ -303,39 +304,41 @@ void devcons::AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp,bool bWiza
     ABORT("command %s already set %p %p",fsCmd.CStr(),cc,Call);
 
   DevCmd dc;
-  dc.strCmd=fsCmd.CStr();
-  dc.strCmdLowerCase=fsCmd.CStr();
-  std::transform(dc.strCmdLowerCase.begin(), dc.strCmdLowerCase.end(), dc.strCmdLowerCase.begin(), ::tolower);
-  dc.strHelp=fsHelp.CStr();
+  dc.fsCmd=fsCmd.CStr();
+  
+  std::string strCmdLowerCase=fsCmd.CStr();
+  std::transform(strCmdLowerCase.begin(), strCmdLowerCase.end(), strCmdLowerCase.begin(), ::tolower);
+  dc.fsCmdLowerCase=strCmdLowerCase.c_str();
+  
+  dc.fsHelp=fsHelp.CStr();
   dc.Call = Call;
   dc.bWizardModeOnly=bWizardModeOnly;
 
-  int i=dc.strCmd.find(" ");
+  int i=std::string(dc.fsCmd.CStr()).find(" ");
   if(i!=std::string::npos)
-    ABORT("command must not contain spaces '%s'",dc.strCmd.c_str());
+    ABORT("command must not contain spaces '%s'",dc.fsCmd.CStr());
 
   vCmd.push_back(dc);
 }
 
-void devcons::Help(std::string strFilter)
+void devcons::Help(festring fsFilter)
 {
+  festring fsWM;
   for(int j=0;j<vCmd.size();j++){
     if(!vCmd[j].bWizardModeOnly || game::WizardModeIsActive())
-      DEVCMDMSG("%s - %s%s",
-//      ADD_MESSAGE("%s%s - %s%s",cPrompt,
-        vCmd[j].strCmd.c_str(),
-        vCmd[j].bWizardModeOnly?"(WIZ) ":"",
-        vCmd[j].strHelp.c_str());
+      if(vCmd[j].bWizardModeOnly)fsWM="(WIZ) ";else fsWM="";
+      DEVCMDMSG("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
   DEVCMDMSG("%s","Ps.: main commands are case insensitive.");
 }
 
-callcmd devcons::Find(std::string strCmd)
+callcmd devcons::Find(festring fsCmd)
 {
+  std::string strCmd = fsCmd.CStr();
   std::transform(strCmd.begin(), strCmd.end(), strCmd.begin(), ::tolower);
   for(int j=0;j<vCmd.size();j++){
-    if(vCmd[j].strCmdLowerCase==strCmd)
+    if(vCmd[j].fsCmdLowerCase==strCmd.c_str())
       return vCmd[j].Call;
   }
   return NULL;
@@ -359,11 +362,15 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
-  DEVCMDMSG("Trying to run: %s ('%s' '%s')",strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
+  DEVCMDMSG("Trying to run: %s ('%s' '%s')",
+    festring(strFullCmd.c_str()).CStr(),
+    festring(strCmd.c_str()).CStr(),
+    festring(strParams.c_str()).CStr()
+  );
 
-  callcmd cc = Find(strCmd);
+  callcmd cc = Find(strCmd.c_str());
   if(cc){
-    cc(strParams);
+    cc(strParams.c_str());
 //    ADD_MESSAGE("%scommand %s completed",cPrompt,strCmd.c_str());
     DEVCMDMSG("command %s completed",strCmd.c_str());
   }else{

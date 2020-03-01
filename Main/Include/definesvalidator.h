@@ -24,8 +24,8 @@ class definesvalidator{
 
  public:
   static void init();
-  static void DevConsCmd(std::string);
-  static void GenerateDefinesValidator(std::string);
+  //static void DevConsCmd(std::string);
+  static void GenerateDefinesValidator(festring);
 
  static void Validate() {
   std::stringstream ssErrors;

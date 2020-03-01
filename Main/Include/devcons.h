@@ -19,17 +19,17 @@
 
 #define DEVCMDMSG(fmt,x,...) ADD_MESSAGE(" > " fmt,x);
 
-typedef void (*callcmd)(std::string);
+typedef void (*callcmd)(festring);
 
 class devcons{
-    static callcmd Find(std::string strCmd);
-    static void Help(std::string strFilter);
+    static callcmd Find(festring fsCmd);
+    static void Help(festring fsFilter);
     static void runCommand(festring fsCmd);
   public:
     static void Init();
     static void OpenCommandsConsole();
     static void AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp=festring(), bool bWizardModeOnly=false);
-    static void SetVar(std::string strParams);
+    static void SetVar(festring fsParams);
     static float GetVar(int iIndex,float fDefaultIf0);
 };
 
