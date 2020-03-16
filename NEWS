@@ -10,6 +10,9 @@
 Next version
 ------------
 
+Version 0.58, released 15th March 2020
+--------------------------------------
+
 Changes:
 * Add Aslona!
 * Add new ROOM_OWNED_AREA type for generic owned rooms. Uses code similar to
