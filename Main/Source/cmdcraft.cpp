@@ -127,7 +127,7 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
   fSkill += Char->GetCWeaponSkill(CRAFTING)->GetLevel(); // base/learned
   fSkill += fBonus/fDivFinal; // in short, if all stats are 10, craft skill would be 10
   fSkill -= 10.0; // to make advancing important
-  if(fSkill<=0)fSkill=0.1; //safety
+  if(fSkill<1.0)fSkill=1.0; //safety
   return fSkill;
 }
 
@@ -1323,7 +1323,7 @@ struct srpCutWeb : public recipe{
     if(bSelfPos)
       tot *= 3; //to make it worther than just trying to move, and to compensate for not moving too as player won't insta flee from attacks
     if(rpd.itTool!=NULL) //float multiplier last thing!
-      tot *= 1 + craftcore::CraftSkill(h)/10;
+      tot *= 1 + craftcore::CraftSkill(h)/10.0;
     DBG1(tot);
     bool bSuccess = false;
     for(int i=0;i<tot;i++){
