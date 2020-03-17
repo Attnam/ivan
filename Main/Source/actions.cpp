@@ -283,11 +283,14 @@ void craft::Handle()
     
     /**
      * the minimum to advance 1st level on success is at GetLevelMap(1)
+     * it must have some difficulty to advance
      */
-    int iAddCraftSkill = Actor->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
-    if(rpd.bSpawnBroken) iAddCraftSkill /= 10; // learns something if fumble
-    if(iAddCraftSkill<=0) iAddCraftSkill=1; // something at least...
-    Actor->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
+    if(rpd.fDifficulty > 1.0){
+      int iAddCraftSkill = Actor->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
+      if(rpd.bSpawnBroken) iAddCraftSkill /= 10; // learns something if fumble
+      if(iAddCraftSkill<=0) iAddCraftSkill=1; // something at least...
+      Actor->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
+    }
     
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
     if(!Actor->IsEnabled())
