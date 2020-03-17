@@ -966,6 +966,7 @@ template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(typ
   return true;
 }
 
+// this allows final compilation linking step to succeed! It apparently requires each type to be explicitly declared once;
 #define INST_INSTALL_DATABASE(type)\
 template void databasecreator<type>::InstallDataBase(type*, int);\
 template truth databasecreator<type>::InstallDataBaseIfPossible(type*, int, int)
