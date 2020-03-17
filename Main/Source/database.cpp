@@ -944,6 +944,19 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
 template void databasecreator<character>::FindDataBase(const database*&, const prototype*, int);
 template void databasecreator<material>::FindDataBase(const database*&, const prototype*, int);
 
+template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)
+{
+  const prototype* Proto = Instance->FindProtoType();
+  FindDataBase(Instance->DataBase, Proto, Config);
+
+  if(!Instance->DataBase){
+    FindDataBase(Instance->DataBase, Proto, OldConfig); //restore DataBase field
+    return false;
+  }
+  
+  return true;
+}
+
 template <class type> void databasecreator<type>::InstallDataBase(type* Instance, int Config)
 {
   const prototype* Proto = Instance->FindProtoType();
