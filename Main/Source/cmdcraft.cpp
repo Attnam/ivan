@@ -123,7 +123,12 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
   //TODO CHARISMA //if one day there is item quality, well finished, attribute that could increase sell price
   //TODO MANA //if one day anything magical is allowed to be crafted
 
-  return Char->GetCWeaponSkill(CRAFTING)->GetLevel() + fBonus/fDivFinal; // in short, if all stats are 10, craft skill will be 10
+  float fSkill = 0;
+  fSkill += Char->GetCWeaponSkill(CRAFTING)->GetLevel(); // base/learned
+  fSkill += fBonus/fDivFinal; // in short, if all stats are 10, craft skill would be 10
+  fSkill -= 10.0; // to make advancing important
+  if(fSkill<=0)fSkill=0.1; //safety
+  return fSkill;
 }
 
 bool craftcore::canBeCrafted(item* it){
