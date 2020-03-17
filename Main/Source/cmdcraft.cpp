@@ -3085,7 +3085,8 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
   bool bBreak = rpd.bSpawnBroken;
 
   if(bAllowBreak && bBreak && !itSpawn->IsBroken()){
-    if(itSpawn->CanBeBroken()){
+    bool bCanBeBroken = itSpawn->CanBeBroken();
+    if(bCanBeBroken){
       /**
        * IMPORTANT!!!
        *
@@ -3101,9 +3102,14 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
        * This below was taken from Break() and seems safe.
        * TODO create a method there like SetSelfAsBroken() to re-use the code to grant they will be in sync
        */
-      itSpawn->SetConfig(rpd.itSpawnCfg | BROKEN);
-      itSpawn->SetSize(itSpawn->GetSize() >> 1);
-    }else{
+      if(itSpawn->SetConfigIfPossible(rpd.itSpawnCfg | BROKEN)){
+        itSpawn->SetSize(itSpawn->GetSize() >> 1);
+      }else{
+        bCanBeBroken=false; // missing BROKEN config at .dat file but no problem, see below
+      }
+    }
+    
+    if(!bCanBeBroken){
       /**
        * things that can't be broken are special.
        * if it can't be broken, will just create a messy lump.
