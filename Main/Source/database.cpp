@@ -944,6 +944,15 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
 template void databasecreator<character>::FindDataBase(const database*&, const prototype*, int);
 template void databasecreator<material>::FindDataBase(const database*&, const prototype*, int);
 
+template <class type> void databasecreator<type>::InstallDataBase(type* Instance, int Config)
+{
+  const prototype* Proto = Instance->FindProtoType();
+  FindDataBase(Instance->DataBase, Proto, Config);
+
+  if(!Instance->DataBase)
+    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+}
+
 template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)
 {
   const prototype* Proto = Instance->FindProtoType();
@@ -957,17 +966,9 @@ template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(typ
   return true;
 }
 
-template <class type> void databasecreator<type>::InstallDataBase(type* Instance, int Config)
-{
-  const prototype* Proto = Instance->FindProtoType();
-  FindDataBase(Instance->DataBase, Proto, Config);
-
-  if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
-}
-
 #define INST_INSTALL_DATABASE(type)\
-template void databasecreator<type>::InstallDataBase(type*, int)
+template void databasecreator<type>::InstallDataBase(type*, int);\
+template truth databasecreator<type>::InstallDataBaseIfPossible(type*, int, int)
 
 INST_INSTALL_DATABASE(material);
 INST_INSTALL_DATABASE(character);
