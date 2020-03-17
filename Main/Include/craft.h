@@ -285,6 +285,7 @@ class craftcore {
     
     static int CitType(item* it);
     static bool CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower);
+    static void CraftSkillAdvance(recipedata&);
 };
 
 class crafthandle {

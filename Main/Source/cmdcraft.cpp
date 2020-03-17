@@ -1410,6 +1410,7 @@ struct srpCutWeb : public recipe{
     }
 
     h->EditAP(-500); //to let time pass
+    craftcore::CraftSkillAdvance(rpd); //TODO this should be related to collect spider silk to craft one day with it
 
     rpd.bSpendCurrentTurn=true;
 
@@ -1676,9 +1677,10 @@ struct srpJoinLumps : public recipe{
     }
 
     joinLumpsEqualToFirst(rpd);
+    craftcore::CraftSkillAdvance(rpd);
 
     rpd.bAlreadyExplained = true;
-
+    
     return true;
   }
 };srpJoinLumps rpJoinLumps;
@@ -1884,7 +1886,9 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       lumpMix(vitInv(rpd),RmnM,rpd.bSpendCurrentTurn);
     if(dynamic_cast<lump*>(RmnS)!=NULL)
       lumpMix(vitInv(rpd),RmnS,rpd.bSpendCurrentTurn);
-
+    
+    craftcore::CraftSkillAdvance(rpd);
+    
     return true;
   }
 };srpDismantle rpDismantle;
@@ -1916,6 +1920,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
     fs<<".";
     if(matM||matS){
       ADD_MESSAGE("%s",fs.CStr());
+      craftcore::CraftSkillAdvance(rpd);
     }else{
       ADD_MESSAGE("You can't inspect %s.",it0->GetName(INDEFINITE).CStr());
     }
@@ -1980,6 +1985,7 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
     }
 
     rpd.bAlreadyExplained=true;
+    craftcore::CraftSkillAdvance(rpd);
 
     return true;
   }
@@ -3386,6 +3392,17 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd)
 
   matMRemVol=matM->GetVolume();
   DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
+}
+
+void craftcore::CraftSkillAdvance(recipedata& rpd){
+  /**
+   * the minimum to advance 1st level on success is at GetLevelMap(1)
+   */
+  int iAddCraftSkill = rpd.rc.H()->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
+  if(rpd.fDifficulty <= 1.0) iAddCraftSkill /= 10.0; // too easy stuff will learn less
+  if(rpd.bSpawnBroken) iAddCraftSkill /= 3.0; // learns something if fumble
+  if(iAddCraftSkill<1) iAddCraftSkill=1; // add a minimum
+  rpd.rc.H()->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
 }
 
 bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower)
