@@ -105,12 +105,12 @@ void craftcore::SendToHellSafely(item* it)
 //  **rit=NULL;
 }
 
-float craftcore::CraftSkillBonus(character* Char){ //is the current capability of successfully crafting
-  float Skill = 0; // influence/weights of each stat will be the FINAL divider!
+float craftcore::CraftSkill(character* Char){ //is the current capability of successfully crafting
+  float fBonus = 0; // influence/weights of each stat will be the FINAL divider!
   float fWeight = 0;
   float fDivFinal = 0;
 
-  #define CALCSK(weig,attr) fWeight = weig; Skill += Char->GetAttribute(attr)*weig; fDivFinal+=weig;
+  #define CALCSK(weig,attr) fWeight = weig; fBonus += Char->GetAttribute(attr)*weig; fDivFinal+=weig;
   CALCSK(15.0,DEXTERITY); //by importance order
   CALCSK(7.5,WISDOM);
   CALCSK(3.0,PERCEPTION); //TODO could counter fumbles directly
@@ -123,7 +123,7 @@ float craftcore::CraftSkillBonus(character* Char){ //is the current capability o
   //TODO CHARISMA //if one day there is item quality, well finished, attribute that could increase sell price
   //TODO MANA //if one day anything magical is allowed to be crafted
 
-  return Skill/fDivFinal; // in short, if all stats are 10, craft skill will be 10
+  return Char->GetCWeaponSkill(CRAFTING)->GetLevel() + fBonus/fDivFinal; // in short, if all stats are 10, craft skill will be 10
 }
 
 bool craftcore::canBeCrafted(item* it){
@@ -1318,7 +1318,7 @@ struct srpCutWeb : public recipe{
     if(bSelfPos)
       tot *= 3; //to make it worther than just trying to move, and to compensate for not moving too as player won't insta flee from attacks
     if(rpd.itTool!=NULL) //float multiplier last thing!
-      tot *= 1 + craftcore::CraftSkillBonus(h)/10;
+      tot *= 1 + craftcore::CraftSkill(h)/10;
     DBG1(tot);
     bool bSuccess = false;
     for(int i=0;i<tot;i++){
@@ -2755,7 +2755,7 @@ std::vector<recipe*> vrpAllRecipes;
 void updateCraftDesc(){
   craftRecipes.EmptyDescription();
 
-  float fSkill=craftcore::CraftSkillBonus(PLAYER); //TODO should this dynamic value show too where stats are?
+  float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
   festring fsSkill="Crafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
   sprintf(cSkill, "%.1f",fSkill);
@@ -3001,7 +3001,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
        * LAST turn calc thing!!!
        * ex.: initial dex=10 wis=10 is 1.0 means wont modify turns
        **********************************************************************/
-      rpd.iBaseTurnsToFinish /= craftcore::CraftSkillBonus(Char)/10.0;
+      rpd.iBaseTurnsToFinish /= craftcore::CraftSkill(Char)/10.0;
       if(rpd.iBaseTurnsToFinish==0) //if div zeroed it
         rpd.iBaseTurnsToFinish=1;
       if(rpd.iBaseTurnsToFinish<rpd.iMinTurns)
@@ -3386,7 +3386,7 @@ bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumbleP
   int iLuckPerc=clock()%100;
   float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
   static const int iBaseFumbleChancePerc=15;
-  int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkillBonus(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
+  int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
   if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
   int iDiv=0;
   iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%

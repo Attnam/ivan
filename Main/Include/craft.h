@@ -249,7 +249,7 @@ class craftcore {
 
     static int CurrentDungeonLevelID();
 
-    static float CraftSkillBonus(character* Char);
+    static float CraftSkill(character* Char);
     static bool MoreCraftDeniedFilters(item* it);
 
     static bool EmptyContentsIfPossible(recipedata& rpd,item* itContainer,bool bMoveToInventory=false);
