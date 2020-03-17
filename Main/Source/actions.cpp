@@ -282,9 +282,9 @@ void craft::Handle()
     Actor->DexterityAction(rpd.iAddDexterity); //TODO is this necessary/useful? below also affects dex
     
     /**
-     * the minimum to advance 1st level on success is at SWeaponSkillLevelMap[1]
+     * the minimum to advance 1st level on success is at GetLevelMap(1)
      */
-    int iAddCraftSkill = SWeaponSkillLevelMap[1] * rpd.fDifficulty;
+    int iAddCraftSkill = Actor->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
     if(rpd.bSpawnBroken) iAddCraftSkill /= 10; // learns something if fumble
     if(iAddCraftSkill<=0) iAddCraftSkill=1; // something at least...
     Actor->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
