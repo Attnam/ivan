@@ -77,7 +77,7 @@ void DefinesValidatorTop()
   DefinesValidatorAppend(" public:");
   DefinesValidatorAppend("  static void init();");
   DefinesValidatorAppend("  static void DevConsCmd(std::string);");
-  DefinesValidatorAppend("  static void GenerateDefinesValidator(std::string);");
+  DefinesValidatorAppend("  static void GenerateDefinesValidator(festring);");
   DefinesValidatorAppend("");
   DefinesValidatorAppend(" static void Validate() {");
   DefinesValidatorAppend("  std::stringstream ssErrors;");

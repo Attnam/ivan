@@ -88,15 +88,27 @@ int main(int argc, char** argv)
   {
     std::cout << "Generate defines validator file. " << std::endl;
     game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
     definesvalidator::GenerateDefinesValidator("generate");
+    std::cout << "Finished: Generate DefinesValidator" << std::endl;
     return 0;
   }
 
   if(argc > 1 && festring(argv[1]) == "--defval")
   {
-    std::cout << "Generate defines validator file. " << std::endl;
+    std::cout << "Validate defines. " << std::endl;
     game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
     definesvalidator::GenerateDefinesValidator("validate");
+    std::cout << "Finished: Validate defines" << std::endl;
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--help")
+  {
+    std::cout << "--defgen Generate defines validator source file. " << std::endl;
+    std::cout << "--defval Validate defines. " << std::endl;
+    std::cout << "--version Show current game version. " << std::endl;
     return 0;
   }
   
