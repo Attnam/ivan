@@ -478,7 +478,7 @@ col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
   static col24 colBlack24 = MakeRGB24(0,0,0);
   if(vol<100){
     if(Emit != colBlack24){
-      float fPerc = vol/100.0;
+      float fPerc = (50.0+(vol/2))/100.0; //there is at least 1 square of light only from 50 on, less than 50 is full darkness
       col24 cRed = GetRed24(Emit)*fPerc;
       col24 cGreen = GetGreen24(Emit)*fPerc;
       col24 cBlue = GetBlue24(Emit)*fPerc;
