@@ -3243,26 +3243,6 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
     );
   }
   
-  /**
-   * a good light emmiting crystal stone is about 100 to 200 cm3
-   * smaller stones/sticks/lumps or etc, should emit less light...
-   */
-  static col24 colBlack24 = MakeRGB24(0,0,0);
-  if(bChangeEmit && rpd.itSpawnMatMainVol<100){
-    col24 col = itSpawn->GetEmitation();
-    if(col != colBlack24){
-      col24 cRed = GetRed24(col);
-      col24 cGreen = GetGreen24(col);
-      col24 cBlue = GetBlue24(col);
-      float fPerc = rpd.itSpawnMatMainVol/100.0;
-      itSpawn->SignalEmitationDecrease(MakeRGB24(
-        cRed - (cRed*fPerc),
-        cGreen - (cGreen*fPerc),
-        cBlue - (cBlue*fPerc)
-      ));
-    }
-  }
-  
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
   if(itSpawn!=NULL){
     if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more

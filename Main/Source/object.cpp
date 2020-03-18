@@ -468,13 +468,39 @@ truth object::AddBurningAdjective(festring& String, truth Articled) const
   }
 }
 
+col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
+{
+  /**
+   * a good light emmiting crystal stone is about 100 to 200 cm3
+   * smaller stones/sticks/lumps or etc, should emit less light...
+   */
+  static col24 colBlack24 = MakeRGB24(0,0,0);
+  if(vol<100){
+    if(Emit != colBlack24){
+      col24 cRed = GetRed24(Emit);
+      col24 cGreen = GetGreen24(Emit);
+      col24 cBlue = GetBlue24(Emit);
+      float fPerc = vol/100.0;
+      Emit = MakeRGB24(cRed*fPerc, cGreen*fPerc, cBlue*fPerc);
+    }
+  }
+  
+  return Emit;
+}
+
+bool bEnableLightsBasedOnMainMaterialVolume=true; //may affect performance? TODO user option?
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
 
   if(MainMaterial)
   {
-    game::CombineLights(Emitation, MainMaterial->GetEmitation());
+    game::CombineLights(
+      Emitation,
+      bEnableLightsBasedOnMainMaterialVolume ?
+        CalcEmitationBasedOnVolume( MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) :
+        MainMaterial->GetEmitation()
+    );
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
