@@ -1710,10 +1710,14 @@ void item::CalculateEmitation()
 {
   object::CalculateEmitation();
 
-  if(Fluid)
-    for(int c = 0; c < SquaresUnder; ++c)
-      for(const fluid* F = Fluid[c]; F; F = F->Next)
-        game::CombineLights(Emitation, F->GetEmitation());
+  if(Fluid){
+    for(int c = 0; c < SquaresUnder; ++c){
+      for(const fluid* F = Fluid[c]; F; F = F->Next){
+        game::CombineLights(Emitation,
+          CalcEmitationBasedOnVolume( F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
+      }
+    }
+  }
 }
 
 void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const

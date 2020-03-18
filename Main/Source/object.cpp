@@ -469,7 +469,7 @@ truth object::AddBurningAdjective(festring& String, truth Articled) const
   }
 }
 
-col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
+col24 object::CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
 {
   /**
    * a good light emmiting crystal stone is about 100 to 200 cm3
@@ -490,7 +490,6 @@ col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
   return Emit;
 }
 
-bool bEnableLightsBasedOnMainMaterialVolume=true; //may affect performance? TODO user option?
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
@@ -499,12 +498,8 @@ void object::CalculateEmitation()
   if(MainMaterial)
   {
     DBG4(MainMaterial->GetEmitation(),GetRed24(MainMaterial->GetEmitation()),GetGreen24(MainMaterial->GetEmitation()),GetBlue24(MainMaterial->GetEmitation()));
-    game::CombineLights(
-      Emitation,
-      bEnableLightsBasedOnMainMaterialVolume ?
-        CalcEmitationBasedOnVolume( MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) :
-        MainMaterial->GetEmitation()
-    );
+    game::CombineLights(Emitation,
+      CalcEmitationBasedOnVolume( MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) );
     DBG5("Final",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     if(MainMaterial->IsBurning())
     {
