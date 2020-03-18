@@ -1073,7 +1073,10 @@ void item::Be()
         game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
     }
     else
+    {
       --LifeExpectancy;
+      //TODO fluids emitation on weapons require updating in case it lowers with time, this didnt work: if(Fluid)CalculateEmitation();
+    }
   }
 }
 
@@ -1713,6 +1716,7 @@ void item::CalculateEmitation()
   if(Fluid){
     for(int c = 0; c < SquaresUnder; ++c){
       for(const fluid* F = Fluid[c]; F; F = F->Next){
+        DBG2(F->GetEmitation(),F->GetLiquid()->GetVolume());
         game::CombineLights(Emitation,
           CalcEmitationBasedOnVolume( F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
       }
