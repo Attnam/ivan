@@ -19,6 +19,7 @@
 #include "game.h"
 #include "bitmap.h"
 #include "save.h"
+#include "dbgmsgproj.h"
 
 v2 RightArmSparkleValidityArray[128];
 v2 LeftArmSparkleValidityArray[128];
@@ -477,11 +478,12 @@ col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
   static col24 colBlack24 = MakeRGB24(0,0,0);
   if(vol<100){
     if(Emit != colBlack24){
-      col24 cRed = GetRed24(Emit);
-      col24 cGreen = GetGreen24(Emit);
-      col24 cBlue = GetBlue24(Emit);
       float fPerc = vol/100.0;
-      Emit = MakeRGB24(cRed*fPerc, cGreen*fPerc, cBlue*fPerc);
+      col24 cRed = GetRed24(Emit)*fPerc;
+      col24 cGreen = GetGreen24(Emit)*fPerc;
+      col24 cBlue = GetBlue24(Emit)*fPerc;
+      Emit = MakeRGB24(cRed, cGreen, cBlue);
+      DBG6(Emit,vol,fPerc,cRed,cGreen,cBlue);
     }
   }
   
@@ -492,15 +494,18 @@ bool bEnableLightsBasedOnMainMaterialVolume=true; //may affect performance? TODO
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
+  DBG5("Base",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
 
   if(MainMaterial)
   {
+    DBG4(MainMaterial->GetEmitation(),GetRed24(MainMaterial->GetEmitation()),GetGreen24(MainMaterial->GetEmitation()),GetBlue24(MainMaterial->GetEmitation()));
     game::CombineLights(
       Emitation,
       bEnableLightsBasedOnMainMaterialVolume ?
         CalcEmitationBasedOnVolume( MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) :
         MainMaterial->GetEmitation()
     );
+    DBG5("Final",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
@@ -508,6 +513,7 @@ void object::CalculateEmitation()
       game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel,
                                                120 - 8 * CurrentBurnLevel,
                                                90 - 6 * CurrentBurnLevel));
+      DBG5("FinalBurning",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     }
   }
 }
