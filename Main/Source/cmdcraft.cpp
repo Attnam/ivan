@@ -3249,7 +3249,12 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
       fsCreated << itSpawn->GetName(INDEFINITE);
     itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
   }
-
+  
+  //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
+  itSpawn->CalculateAll();
+  //rpd.rc.H()->CalculateAll();
+  //rpd.rc.H()->SignalEmitationDecrease(rpd.rc.H()->GetEmitation());
+  
   return itSpawn;
 }
 
