@@ -3254,6 +3254,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   itSpawn->CalculateAll();
   //rpd.rc.H()->CalculateAll();
   //rpd.rc.H()->SignalEmitationDecrease(rpd.rc.H()->GetEmitation());
+  //rpd.rc.H()->GetSquareUnder()->
   
   return itSpawn;
 }

@@ -19,6 +19,7 @@
 #include "game.h"
 #include "bitmap.h"
 #include "save.h"
+#include "iconf.h"
 #include "dbgmsgproj.h"
 
 v2 RightArmSparkleValidityArray[128];
@@ -471,6 +472,9 @@ truth object::AddBurningAdjective(festring& String, truth Articled) const
 
 col24 object::CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
 {
+  if(!ivanconfig::IsUseLightEmiterBasedOnVolume())
+    return Emit;
+  
   /**
    * a good light emmiting crystal stone is about 100 to 200 cm3
    * smaller stones/sticks/lumps or etc, should emit less light...
