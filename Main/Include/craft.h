@@ -270,6 +270,7 @@ class craftcore {
     static bool IsBone(material* mat);
 
     static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE);
+    static void FinishSpawning(recipedata& rpd,item* itSpawn);
 
     static void AddSuspended(const recipedata& rpd);
     static void RemoveIfSuspended(const recipedata&rpd);

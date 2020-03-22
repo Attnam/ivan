@@ -2107,7 +2107,7 @@ struct srpSplitLump : public recipe{
       return false;
     }
 
-    if(rpd.itSpawnTot<0){ //cut mode
+    if(rpd.itSpawnTot<0){ //single cut mode
       if(bHumanoidCorpse){
         ADD_MESSAGE("This needs to be split first."); //see 'why' about necromancers above... TODO a better message?
         rpd.bAlreadyExplained=true;
@@ -2126,6 +2126,7 @@ struct srpSplitLump : public recipe{
       item* cut = craftcore::PrepareRemains(rpd,matM,craftcore::CitType(ToSplit));
       cut->GetMainMaterial()->SetVolume(iCutVol);
       matM->SetVolume(matM->GetVolume() - iCutVol);
+      ToSplit->CalculateAll();
       rpd.bAlreadyExplained=true; //no need to say anything
       return true; //TODO should take more turns?
     }
@@ -3162,7 +3163,6 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   item* itSpawn = NULL;
   material* matS = NULL;
   bool bAllowBreak=false;DBG3(rpd.itSpawnType,rpd.itSpawnCfg,rpd.itSpawnMatSecCfg);
-  bool bChangeEmit=false;
   switch(rpd.itSpawnType){
     case CIT_POTION:
       /**
@@ -3183,15 +3183,12 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
       break;
     case CIT_STONE:
       itSpawn = stone::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
-      bChangeEmit=true;
       break;
     case CIT_LUMP:
       itSpawn = lump::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
-      bChangeEmit=true;
       break;
     case CIT_STICK:
       itSpawn = stick::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
-      bChangeEmit=true;
       break;
   }
 
@@ -3247,14 +3244,19 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   if(itSpawn!=NULL){
     if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
       fsCreated << itSpawn->GetName(INDEFINITE);
-    itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
+    craftcore::FinishSpawning(rpd,itSpawn);
+//    itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
+//
+//    //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
+//    DBG3("EmitDbgSpawned",itSpawn->GetEmitation(),itSpawn->GetVolume());
+//    itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
+//    itSpawn->CalculateEmitation();
+//    rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
+//    rpd.rc.H()->CalculateEmitation();
+//    rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
+//    rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
+//    itSpawn->CalculateEmitation();
   }
-  
-  //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
-  itSpawn->CalculateAll();
-  //rpd.rc.H()->CalculateAll();
-  //rpd.rc.H()->SignalEmitationDecrease(rpd.rc.H()->GetEmitation());
-  //rpd.rc.H()->GetSquareUnder()->
   
   return itSpawn;
 }
@@ -3793,11 +3795,26 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
 
   craftcore::CopyDegradation(mat,itTmp->GetMainMaterial());
 
-  rpd.rc.H()->GetStack()->AddItem(itTmp);
+  //rpd.rc.H()->GetStack()->AddItem(itTmp);
+  FinishSpawning(rpd,itTmp);
 
   ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
 
   return itTmp;
+}
+
+void craftcore::FinishSpawning(recipedata& rpd,item* itSpawn){
+  itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
+
+  //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
+  DBG3("EmitDbgSpawned",itSpawn->GetEmitation(),itSpawn->GetVolume());
+  itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
+  itSpawn->CalculateEmitation();
+  rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
+  rpd.rc.H()->CalculateEmitation();
+  rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
+  rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
+  itSpawn->CalculateEmitation();
 }
 
 std::vector<uint> vBone;
