@@ -1049,8 +1049,8 @@ struct recipe{
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
 //            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
-            item* lumpR = craftcore::PrepareRemains(rpd,matM);
-            lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
+            item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_NONE,lRemainingVol);
+            //lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
 
@@ -1151,6 +1151,7 @@ struct recipe{
         if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
           lumpAtInv->GetMainMaterial()->SetVolume(
             lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
+          lumpAtInv->CalculateAll();
 
           craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
 //          lumpToMix->RemoveFromSlot();
@@ -2123,8 +2124,8 @@ struct srpSplitLump : public recipe{
         return false;
       }
 
-      item* cut = craftcore::PrepareRemains(rpd,matM,craftcore::CitType(ToSplit));
-      cut->GetMainMaterial()->SetVolume(iCutVol);
+      item* cut = craftcore::PrepareRemains(rpd,matM,craftcore::CitType(ToSplit),iCutVol);
+      //cut->GetMainMaterial()->SetVolume(iCutVol);
       matM->SetVolume(matM->GetVolume() - iCutVol);
       ToSplit->CalculateAll();
       rpd.bAlreadyExplained=true; //no need to say anything
@@ -3245,20 +3246,9 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
     if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
       fsCreated << itSpawn->GetName(INDEFINITE);
     craftcore::FinishSpawning(rpd,itSpawn);
-//    itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
-//
-//    //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
-//    DBG3("EmitDbgSpawned",itSpawn->GetEmitation(),itSpawn->GetVolume());
-//    itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
-//    itSpawn->CalculateEmitation();
-//    rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
-//    rpd.rc.H()->CalculateEmitation();
-//    rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
-//    rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
-//    itSpawn->CalculateEmitation();
+    return itSpawn;
   }
-  
-  return itSpawn;
+  return NULL;
 }
 
 void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
@@ -3720,9 +3710,10 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
  * @param rpd
  * @param mat
  * @param ForceType CIT_... stick, lump, stone
+ * @param volume is the main material volume, it is important to be set before item->CalculateAll()
  * @return
  */
-item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) //TODO force type could be a class (type) reference?
+item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType, long volume) //TODO force type could be a class (type) reference?
 {
   if(mat==NULL)
     ABORT("NULL remains material");
@@ -3792,10 +3783,12 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
 
 //    delete itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
   delete itTmp->SetMainMaterial(CreateMaterial(mat));
+  
+  if(volume>0)
+    itTmp->GetMainMaterial()->SetVolume(volume);
 
   craftcore::CopyDegradation(mat,itTmp->GetMainMaterial());
 
-  //rpd.rc.H()->GetStack()->AddItem(itTmp);
   FinishSpawning(rpd,itTmp);
 
   ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
@@ -3806,15 +3799,16 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
 void craftcore::FinishSpawning(recipedata& rpd,item* itSpawn){
   itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
 
-  //TODO splitting a crystal stone that emits light, is creating a bug that is only fixed after the savegame is reloaded... these below cause no harm but also doesnt fix it...
+  //TODO splitting a crystal stone that emits light, 
+  //is creating a bug that is only fixed after the savegame is 
+  //reloaded... these below cause no harm but also doesnt fix it...
   DBG3("EmitDbgSpawned",itSpawn->GetEmitation(),itSpawn->GetVolume());
-  itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
   itSpawn->CalculateEmitation();
-  rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
-  rpd.rc.H()->CalculateEmitation();
-  rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
+//  itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
+//  rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
+//  rpd.rc.H()->CalculateEmitation();
+  rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(rpd.rc.H()->GetLSquareUnder()->GetEmitation());
   rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
-  itSpawn->CalculateEmitation();
 }
 
 std::vector<uint> vBone;
