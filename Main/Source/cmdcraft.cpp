@@ -3799,16 +3799,19 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType, l
 void craftcore::FinishSpawning(recipedata& rpd,item* itSpawn){
   itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
 
-  //TODO splitting a crystal stone that emits light, 
-  //is creating a bug that is only fixed after the savegame is 
-  //reloaded... these below cause no harm but also doesnt fix it...
   DBG3("EmitDbgSpawned",itSpawn->GetEmitation(),itSpawn->GetVolume());
-  itSpawn->CalculateEmitation();
-//  itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
-//  rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
-//  rpd.rc.H()->CalculateEmitation();
-  rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(rpd.rc.H()->GetLSquareUnder()->GetEmitation());
-  rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
+  if(itSpawn->GetEmitation()>0){ //TODO is there a better way to do this emitation fix?
+    // uses the previous emitation to fix everywhere before recalculating item emitation
+    rpd.rc.H()->SignalEmitationDecrease(itSpawn->GetEmitation());
+    rpd.rc.H()->CalculateEmitation();
+
+    rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
+    rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
+    
+    // last
+    itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
+    itSpawn->CalculateEmitation();
+  }
 }
 
 std::vector<uint> vBone;
