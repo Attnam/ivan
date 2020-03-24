@@ -326,7 +326,7 @@ void devcons::Help(festring fsFilter)
   festring fsWM;
   for(int j=0;j<vCmd.size();j++){
     if(!vCmd[j].bWizardModeOnly || game::WizardModeIsActive())
-      if(vCmd[j].bWizardModeOnly)fsWM="(WIZ) ";else fsWM="";
+      if(vCmd[j].bWizardModeOnly){fsWM="(WIZ) ";}else{fsWM="";}
       DEVCMDMSG("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
