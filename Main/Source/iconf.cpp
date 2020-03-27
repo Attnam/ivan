@@ -278,9 +278,16 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be changed also to not conflict with this movement keys choice.",
+                                          "Select a pre-defined keybindings scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
+truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
+                                          "Movement control custom keys", //TODO all keys one day
+                                          "Let you assign all 8 movement keys to any available key of your preference. All other command keys will remain as assigned by the scheme above.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SetupCustomKeysChanger);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
                                           "Automatically try to open doors when you walk into them, and don't ask for the target of close/apply actions when only one viable target is present.",
@@ -552,6 +559,9 @@ truth ConfigureCustomKeys()
     }
     iKey=game::AskForKeyPress(fsAsk);
     if(iKey==KEY_ESC){bRet=false;break;}
+    
+    
+    
     fprintf(fl, "%04X\n", iKey);
   }
   fclose(fl);
@@ -572,14 +582,6 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
       break;
     case DIR_HACK:
       Entry << CONST_S("NetHack");
-      break;
-    case DIR_CUSTOM:
-      if(game::IsRunning() && ConfigureCustomKeys()){
-        Entry << CONST_S("Custom");
-      }else{
-        DirectionKeyMap.Value=DIR_NORM;
-        Entry << CONST_S("Normal");
-      }
       break;
   }
 }
@@ -994,6 +996,14 @@ void ivanconfig::FontGfxChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
+{
+  O->Value = What;
+  
+  if(O->Value)
+    ConfigureCustomKeys();
+}
+
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 {
   O->Value = What;
@@ -1155,6 +1165,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SetupCustomKeys);
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
