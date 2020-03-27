@@ -5779,10 +5779,12 @@ void game::LoadCustomCommandKeys()
     Line = pc;
     if(Line.IsEmpty())break;
     
-    std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
+    //std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
     //game::MoveCustomCommandKey[index]=atoi(Line.CStr());
-    sscanf(Line.CStr(),"%x",&game::MoveCustomCommandKey[index]);
-    std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
+    int iVal;
+    sscanf(Line.CStr(),"%x",&iVal);
+    game::MoveCustomCommandKey[index]=iVal;
+    //std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
     
     index++;
     if(index>8)break;
