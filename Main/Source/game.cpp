@@ -5761,10 +5761,19 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
-void game::AssignCustomCommandKeys()
+void game::LoadCustomCommandKeys()
 {
-  for(int i=0;i<=8;i++){ //TODO show on screen and save to a new cfg file
-    game::MoveCustomCommandKey[i]='.';
+  static festring fsFile = game::GetUserDataDir() + "CustomCommandKeys.cfg";
+  FILE *fl = fopen(fsFile.CStr(), "rt");
+  
+  festring Line;
+  int index=0;
+  while((Line = getstr(fNew, false)) != "")
+  {
+    std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
+    game::MoveCustomCommandKey[index]=atoi(Line.CStr());
+    std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
+    index++;
   }
 }
 
@@ -5783,6 +5792,7 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
       pa=game::MoveAbnormalCommandKey; Key=Key2; break;
     case DIR_HACK:
       pa=game::MoveNetHackCommandKey; Key=Key3; break;
+    //TODO should? DIR_CUSTOM be checked here too?
     }
 
     for(int j=0;j<iTot;j++){

@@ -505,7 +505,7 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
-  static void AssignCustomCommandKeys();
+  static void LoadCustomCommandKeys();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
