@@ -5769,7 +5769,7 @@ void game::LoadCustomCommandKeys()
   
   festring Line;
   int index=0;
-  static const int iBuffSz=7;
+  static const int iBuffSz=7; // 7 is max for now could be "0xFFFF\n", but is just "FFFF\n"
   char str[iBuffSz];
   while(true)
   {

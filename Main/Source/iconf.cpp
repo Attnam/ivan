@@ -284,8 +284,8 @@ cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
-                                          "Movement control custom keys", //TODO all keys one day
-                                          "Let you assign all 8 movement keys to any available key of your preference. All other command keys will remain as assigned by the scheme above.",
+                                          "Movement control custom keys", //TODO all keys one day, and let it work on main menu
+                                          "Let you assign all 8 movement keys to any available key of your preference. All other command keys will remain as assigned by the scheme above. This global configuration won't work at main menu, load/start some game.",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
@@ -548,6 +548,7 @@ truth ConfigureCustomKeys()
   festring fsAsk;
   bool bRet=true;
   int index=0;
+  int aiKeyList[8]={0,0,0,0, 0,0,0,0};
   while(true){
     if(index>=8)break; //skip the last to keep as '.'
     
@@ -569,7 +570,14 @@ truth ConfigureCustomKeys()
     
     for(int c = 1; commandsystem::GetCommand(c); ++c){
       if(iKey==commandsystem::GetCommand(c)->GetKey()){
-        ADD_MESSAGE("SYSTEM: conflicting key '%c', retry...",iKey); //TODO this messes the gameplay message log... but is better than a popup?
+        ADD_MESSAGE("SYSTEM: conflicting command key '%c'(code is %d or 0x%X), retry...",iKey,iKey,iKey); //TODO this messes the gameplay message log... but is better than a popup?
+        bRetry=true;
+        break;
+      }
+    }
+    for(int c = 0; c<8; ++c){
+      if(iKey==aiKeyList[c]){
+        ADD_MESSAGE("SYSTEM: conflicting movement key '%c'(code is %d or 0x%X), retry...",iKey,iKey,iKey); //TODO this messes the gameplay message log... but is better than a popup?
         bRetry=true;
         break;
       }
@@ -577,6 +585,7 @@ truth ConfigureCustomKeys()
     if(bRetry)continue;
     
     fprintf(fl, "%04X\n", iKey);
+    aiKeyList[index]=iKey;
     
     index++;
   }
@@ -1014,10 +1023,11 @@ void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 
 void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
 {
-  O->Value = What;
-  
-  if(O->Value)
-    ConfigureCustomKeys();
+  if(game::IsRunning() || !What){
+    O->Value = What;
+    if(O->Value)
+      ConfigureCustomKeys();
+  }
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
