@@ -531,12 +531,13 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 }
 
 
-void ConfigureCustomKeys()
+truth ConfigureCustomKeys()
 {
   festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
   int iKey;
   festring fsAsk;
+  bool bRet=true;
   for(int i=0;i<=8;i++){
     switch(i){
       case 0: fsAsk="Upper Left";break;
@@ -550,12 +551,13 @@ void ConfigureCustomKeys()
       case 8: fsAsk="Stop"; break;
     }
     iKey=game::AskForKeyPress(fsAsk);
-    if(iKey==KEY_ESC)return;
+    if(iKey==KEY_ESC){bRet=false;break;}
     fprintf(fl, "%04X\n", iKey);
   }
   fclose(fl);
   
-  game::LoadCustomCommandKeys();
+  if(bRet)game::LoadCustomCommandKeys();
+  return bRet;
 }
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
@@ -572,8 +574,12 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
       Entry << CONST_S("NetHack");
       break;
     case DIR_CUSTOM:
-      Entry << CONST_S("Custom");
-      ConfigureCustomKeys();
+      if(ConfigureCustomKeys()){
+        Entry << CONST_S("Custom");
+      }else{
+        DirectionKeyMap.Value=DIR_NORM;
+        Entry << CONST_S("Normal");
+      }
       break;
   }
 }
