@@ -552,7 +552,7 @@ truth ConfigureCustomKeys()
     }
     iKey=game::AskForKeyPress(fsAsk);
     if(iKey==KEY_ESC){bRet=false;break;}
-    fprintf(fl, "%04X\n", iKey);
+    fprintf(fl, "0x%04X\n", iKey);
   }
   fclose(fl);
   
@@ -574,7 +574,7 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
       Entry << CONST_S("NetHack");
       break;
     case DIR_CUSTOM:
-      if(ConfigureCustomKeys()){
+      if(game::IsRunning() && ConfigureCustomKeys()){
         Entry << CONST_S("Custom");
       }else{
         DirectionKeyMap.Value=DIR_NORM;

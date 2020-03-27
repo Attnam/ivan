@@ -5772,16 +5772,23 @@ void game::LoadCustomCommandKeys()
   static int iBuffSz=7;
   char str[iBuffSz];
 //  while((Line = getstr(fl, false)) != "")
-  while((Line = fgets(str, iBuffSz, fl)) != "")
+  while(true)
   {
+    char* pc = fgets(str, iBuffSz, fl);
+    if(pc==NULL)break;
+    Line = pc;
     if(Line.IsEmpty())break;
+    
     std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
     //game::MoveCustomCommandKey[index]=atoi(Line.CStr());
     sscanf(Line.CStr(),"%x",&game::MoveCustomCommandKey[index]);
     std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
+    
     index++;
     if(index>8)break;
   }
+  
+  fclose(fl);
 }
 
 void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
