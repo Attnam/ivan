@@ -68,6 +68,8 @@ char command::GetKey() const
     return Key2;
    case DIR_HACK: // Nethack
     return Key3;
+   case DIR_CUSTOM:
+    return Key4;
    default:
     ABORT("This is not Vim!");
     return Key1;

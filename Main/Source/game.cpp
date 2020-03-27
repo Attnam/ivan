@@ -154,6 +154,7 @@ cint game::MoveNormalCommandKey[] =
 { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 cint game::MoveAbnormalCommandKey[] = { '7', '8', '9', 'u', 'o', 'j', 'k', 'l', '.' };
 cint game::MoveNetHackCommandKey[] = { 'y', 'k', 'u', 'h', 'l', 'b', 'j', 'n', '.' };
+int  game::MoveCustomCommandKey[] = { '.', '.', '.', '.', '.', '.', '.', '.', '.' };
 
 cv2 game::MoveVector[] =
 { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
@@ -5760,6 +5761,13 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
+void game::AssignCustomCommandKeys()
+{
+  for(int i=0;i<=8;i++){ //TODO show on screen and save to a new cfg file
+    game::MoveCustomCommandKey[i]='.';
+  }
+}
+
 void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
 {
   static const int iTot=9;
@@ -5796,6 +5804,8 @@ int game::GetMoveCommandKey(int I)
     return MoveAbnormalCommandKey[I];
   case DIR_HACK:
     return MoveNetHackCommandKey[I];
+  case DIR_CUSTOM:
+    return MoveCustomCommandKey[I];
   default:
     ABORT("This is not Emacs!");
     return MoveNormalCommandKey[I];

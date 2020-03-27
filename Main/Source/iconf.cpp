@@ -279,7 +279,7 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
-                                          DIR_NORM, 3, // {default value, number of options to cycle through}
+                                          DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
@@ -532,18 +532,21 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
-        switch(O->Value)
-        {
-          case DIR_NORM:
-                Entry << CONST_S("Normal");
-                break;
-          case DIR_ALT:
-                Entry << CONST_S("Alternative");
-                break;
-          case DIR_HACK:
-                Entry << CONST_S("NetHack");
-                break;
-        }
+  switch(O->Value)
+  {
+    case DIR_NORM:
+      Entry << CONST_S("Normal");
+      break;
+    case DIR_ALT:
+      Entry << CONST_S("Alternative");
+      break;
+    case DIR_HACK:
+      Entry << CONST_S("NetHack");
+      break;
+    case DIR_CUSTOM:
+      Entry << CONST_S("Custom");
+      break;
+  }
 }
 
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
