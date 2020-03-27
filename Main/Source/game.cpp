@@ -5769,9 +5769,8 @@ void game::LoadCustomCommandKeys()
   
   festring Line;
   int index=0;
-  static int iBuffSz=7;
+  static const int iBuffSz=7;
   char str[iBuffSz];
-//  while((Line = getstr(fl, false)) != "")
   while(true)
   {
     char* pc = fgets(str, iBuffSz, fl);
@@ -5781,18 +5780,23 @@ void game::LoadCustomCommandKeys()
     
     //std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
     //game::MoveCustomCommandKey[index]=atoi(Line.CStr());
+    
     int iVal;
     sscanf(Line.CStr(),"%x",&iVal);
     game::MoveCustomCommandKey[index]=iVal;
+    
     //std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
     
     index++;
-    if(index>8)break;
+    if(index>7)break; //skip the last to keep as '.'
   }
   
   fclose(fl);
 }
 
+/**
+ * check all other command keys versus MOVEMENT command keys on their specific branch
+ */
 void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
 {
   static const int iTot=9;
@@ -5808,7 +5812,8 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
       pa=game::MoveAbnormalCommandKey; Key=Key2; break;
     case DIR_HACK:
       pa=game::MoveNetHackCommandKey; Key=Key3; break;
-    //TODO should? DIR_CUSTOM be checked here too?
+/*TODO case DIR_CUSTOM: 
+         pa=game::MoveCustomCommandKey; Key=???; break; */
     }
 
     for(int j=0;j<iTot;j++){

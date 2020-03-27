@@ -52,7 +52,7 @@
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
-: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), Key4(0),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
   game::ValidateCommandKeys(Key1,Key2,Key3);
@@ -69,7 +69,7 @@ char command::GetKey() const
    case DIR_HACK: // Nethack
     return Key3;
    case DIR_CUSTOM:
-    return Key4;
+    return Key4==0?Key1:Key4; //default is "Normal" in case of missing custom cfg TODO custom is not implemented yet anyway...
    default:
     ABORT("This is not Vim!");
     return Key1;
@@ -158,7 +158,7 @@ command* commandsystem::Command[] =
 
 #endif
 
-  0
+  0 //this is important as an end of array indicator
 };
 
 #ifndef WIZARD

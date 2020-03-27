@@ -278,7 +278,7 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
+                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
@@ -538,7 +538,7 @@ truth ConfigureCustomKeys()
   int iKey;
   festring fsAsk;
   bool bRet=true;
-  for(int i=0;i<=8;i++){
+  for(int i=0;i<=7;i++){ //skip the last to keep as '.'
     switch(i){
       case 0: fsAsk="Upper Left";break;
       case 1: fsAsk="Up"; break;
@@ -548,11 +548,11 @@ truth ConfigureCustomKeys()
       case 5: fsAsk="Lower Left"; break;
       case 6: fsAsk="Down"; break;
       case 7: fsAsk="Lower Right"; break;
-      case 8: fsAsk="Stop"; break;
+      //case 8: fsAsk="Stop"; break; //skip the last to keep as '.'
     }
     iKey=game::AskForKeyPress(fsAsk);
     if(iKey==KEY_ESC){bRet=false;break;}
-    fprintf(fl, "0x%04X\n", iKey);
+    fprintf(fl, "%04X\n", iKey);
   }
   fclose(fl);
   

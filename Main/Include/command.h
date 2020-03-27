@@ -32,7 +32,7 @@ class command
   char Key1;
   char Key2;
   char Key3;
-  int Key4; // custom keys can be more than 1 char long ex.: KEY_HOME is 0x147 or 0x0147
+  int Key4; // custom keys can be more than 1 char long as ex.: KEY_HOME is 0x147 or 0x0147
   truth UsableInWilderness;
   truth WizardModeFunction;
 };
