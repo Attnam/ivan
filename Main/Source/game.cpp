@@ -5763,13 +5763,18 @@ bonesghost* game::CreateGhost()
 
 void game::LoadCustomCommandKeys()
 {
-  static festring fsFile = game::GetUserDataDir() + "CustomCommandKeys.cfg";
+  static festring fsFile = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   FILE *fl = fopen(fsFile.CStr(), "rt");
+  if(!fl)return;
   
   festring Line;
   int index=0;
-  while((Line = getstr(fNew, false)) != "")
+  static int iBuffSz=7;
+  char str[iBuffSz];
+//  while((Line = getstr(fl, false)) != "")
+  while((Line = fgets(str, iBuffSz, fl)) != "")
   {
+    if(index>8)break; //can just ignore tho.. ABORT("more than 9 lines");
     std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
     game::MoveCustomCommandKey[index]=atoi(Line.CStr());
     std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;

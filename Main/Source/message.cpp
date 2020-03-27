@@ -312,7 +312,6 @@ int soundsystem::addFile(festring filename) {
 }
 
 bool eol = false;
-
 festring getstr(FILE *f, truth word)
 {
   if(eol && word) return CONST_S("");

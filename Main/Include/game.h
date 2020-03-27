@@ -169,6 +169,7 @@ class areachangerequest { };
 typedef void (*dbgdrawoverlay)();
 
 #define AUTOSAVE_SUFFIX ".AutoSave"
+#define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
 {
  public:

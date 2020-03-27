@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 
 #ifdef __DJGPP__
 #include <go32.h>
@@ -104,10 +105,32 @@ int main(int argc, char** argv)
     return 0;
   }
 
+  if(argc > 1 && festring(argv[1]) == "--genmvkeys")
+  {
+    festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+    FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
+    for(int i=0;i<=8;i++){
+      switch(i){
+        case 0: std::cout << "Upper Left" << std::endl; break;
+        case 1: std::cout << "Up" << std::endl; break;
+        case 2: std::cout << "Upper Right" << std::endl; break;
+        case 3: std::cout << "Left" << std::endl; break;
+        case 4: std::cout << "Right" << std::endl; break;
+        case 5: std::cout << "Lower Left" << std::endl; break;
+        case 6: std::cout << "Down" << std::endl; break;
+        case 7: std::cout << "Lower Right" << std::endl; break;
+        case 8: std::cout << "Stop" << std::endl; break;
+      }
+      //fprintf(fl, "%04d\n", globalwindowhandler::GetKey());
+      fprintf(fl, "%04X\n", globalwindowhandler::GetKey());
+    }
+  }
+  
   if(argc > 1 && festring(argv[1]) == "--help")
   {
     std::cout << "--defgen Generate defines validator source file. " << std::endl;
     std::cout << "--defval Validate defines. " << std::endl;
+    std::cout << "--genmvkeys Generate custom move keys cfg file. " << std::endl;
     std::cout << "--version Show current game version. " << std::endl;
     return 0;
   }
