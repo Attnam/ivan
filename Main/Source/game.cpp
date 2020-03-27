@@ -4497,7 +4497,11 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
         stack* Stack = LSquare->GetStack();
 
         if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
-          Stack->DrawContents(Player, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
+          Stack->DrawContents(Player, "Items here", 
+            NO_SELECT|
+            (GetSeeWholeMapCheatMode() || Stack->GetItem(0)->GetRoom() || Player->GetLSquareUnder()==LSquare ?
+              0 : NO_SPECIAL_INFO)
+          );
         else
           ADD_MESSAGE("You see no items here.");
       }
