@@ -5827,6 +5827,9 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
 
 int game::GetMoveCommandKey(int I)
 {
+  if(ivanconfig::IsSetupCustomKeys())
+    return MoveCustomCommandKey[I];
+  
   switch(ivanconfig::GetDirectionKeyMap())
   {
   case DIR_NORM:
@@ -5835,8 +5838,6 @@ int game::GetMoveCommandKey(int I)
     return MoveAbnormalCommandKey[I];
   case DIR_HACK:
     return MoveNetHackCommandKey[I];
-  case DIR_CUSTOM:
-    return MoveCustomCommandKey[I];
   default:
     ABORT("This is not Emacs!");
     return MoveNormalCommandKey[I];

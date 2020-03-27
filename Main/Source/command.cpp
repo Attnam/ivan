@@ -68,8 +68,6 @@ char command::GetKey() const
     return Key2;
    case DIR_HACK: // Nethack
     return Key3;
-   case DIR_CUSTOM:
-    return Key4==0?Key1:Key4; //default is "Normal" in case of missing custom cfg TODO custom is not implemented yet anyway...
    default:
     ABORT("This is not Vim!");
     return Key1;

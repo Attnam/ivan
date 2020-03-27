@@ -262,6 +262,5 @@ inline int GetMinColor24(col24 Color)
 #define DIR_NORM 0
 #define DIR_ALT  1
 #define DIR_HACK 2
-#define DIR_CUSTOM 3
 
 #endif

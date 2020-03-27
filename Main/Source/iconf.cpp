@@ -278,7 +278,7 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select a pre-defined keybindings scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
+                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
@@ -1198,7 +1198,7 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
   
-  if(ivanconfig::GetDirectionKeyMap()==DIR_CUSTOM)
+  if(ivanconfig::IsSetupCustomKeys())
     game::LoadCustomCommandKeys();
 
   //TODO re-use changer methods for above configs too to avoid duplicating the algo?
