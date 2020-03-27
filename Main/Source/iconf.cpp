@@ -13,12 +13,14 @@
 #include "area.h"
 #include "audio.h"
 #include "bitmap.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "game.h"
 #include "graphics.h"
 #include "iconf.h"
 #include "igraph.h"
+#include "message.h"
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
@@ -545,8 +547,13 @@ truth ConfigureCustomKeys()
   int iKey;
   festring fsAsk;
   bool bRet=true;
-  for(int i=0;i<=7;i++){ //skip the last to keep as '.'
-    switch(i){
+  int index=0;
+  while(true){
+    if(index>=8)break; //skip the last to keep as '.'
+    
+    bool bRetry=false;
+    
+    switch(index){
       case 0: fsAsk="Upper Left";break;
       case 1: fsAsk="Up"; break;
       case 2: fsAsk="Upper Right"; break;
@@ -560,9 +567,18 @@ truth ConfigureCustomKeys()
     iKey=game::AskForKeyPress(fsAsk);
     if(iKey==KEY_ESC){bRet=false;break;}
     
-    
+    for(int c = 1; commandsystem::GetCommand(c); ++c){
+      if(iKey==commandsystem::GetCommand(c)->GetKey()){
+        ADD_MESSAGE("SYSTEM: conflicting key '%c', retry...",iKey); //TODO this messes the gameplay message log... but is better than a popup?
+        bRetry=true;
+        break;
+      }
+    }
+    if(bRetry)continue;
     
     fprintf(fl, "%04X\n", iKey);
+    
+    index++;
   }
   fclose(fl);
   
