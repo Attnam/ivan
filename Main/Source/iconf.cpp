@@ -531,7 +531,7 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 }
 
 
-void configureCustomKeys()
+void ConfigureCustomKeys()
 {
   festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
@@ -550,11 +550,12 @@ void configureCustomKeys()
       case 8: fsAsk="Stop"; break;
     }
     iKey=game::AskForKeyPress(fsAsk);
-    //fprintf(fl, "%04d\n", globalwindowhandler::GetKey());
-    //fprintf(fl, "%04X\n", globalwindowhandler::ReadKey());
+    if(iKey==KEY_ESC)return;
     fprintf(fl, "%04X\n", iKey);
   }
   fclose(fl);
+  
+  game::LoadCustomCommandKeys();
 }
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
@@ -572,7 +573,7 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
       break;
     case DIR_CUSTOM:
       Entry << CONST_S("Custom");
-      configureCustomKeys();
+      ConfigureCustomKeys();
       break;
   }
 }
