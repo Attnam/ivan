@@ -5774,6 +5774,7 @@ void game::LoadCustomCommandKeys()
 //  while((Line = getstr(fl, false)) != "")
   while((Line = fgets(str, iBuffSz, fl)) != "")
   {
+    if(Line.IsEmpty())break;
     if(index>8)break; //can just ignore tho.. ABORT("more than 9 lines");
     std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
     game::MoveCustomCommandKey[index]=atoi(Line.CStr());

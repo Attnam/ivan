@@ -278,7 +278,7 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. To set custom keys you need to exit the game and run it with the parameter --genmvkeys (for now).",
+                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
                                           DIR_NORM, 4, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
@@ -530,6 +530,33 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+
+void configureCustomKeys()
+{
+  festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
+  int iKey;
+  festring fsAsk;
+  for(int i=0;i<=8;i++){
+    switch(i){
+      case 0: fsAsk="Upper Left";break;
+      case 1: fsAsk="Up"; break;
+      case 2: fsAsk="Upper Right"; break;
+      case 3: fsAsk="Left"; break;
+      case 4: fsAsk="Right"; break;
+      case 5: fsAsk="Lower Left"; break;
+      case 6: fsAsk="Down"; break;
+      case 7: fsAsk="Lower Right"; break;
+      case 8: fsAsk="Stop"; break;
+    }
+    iKey=game::AskForKeyPress(fsAsk);
+    //fprintf(fl, "%04d\n", globalwindowhandler::GetKey());
+    //fprintf(fl, "%04X\n", globalwindowhandler::ReadKey());
+    fprintf(fl, "%04X\n", iKey);
+  }
+  fclose(fl);
+}
+
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value)
@@ -545,6 +572,7 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
       break;
     case DIR_CUSTOM:
       Entry << CONST_S("Custom");
+      configureCustomKeys();
       break;
   }
 }
@@ -1152,7 +1180,8 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
   
-  game::LoadCustomCommandKeys();
+  if(ivanconfig::GetDirectionKeyMap()==DIR_CUSTOM)
+    game::LoadCustomCommandKeys();
 
   //TODO re-use changer methods for above configs too to avoid duplicating the algo?
   FrameSkipChanger(NULL,FrameSkip.Value);
