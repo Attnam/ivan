@@ -5773,13 +5773,11 @@ void game::LoadCustomCommandKeys()
   
   festring Line;
   int index=0;
-  static const int iBuffSz=7; // 7 is max for now could be "0xFFFF\n", but is just "FFFF\n"
+  static const int iBuffSz=0xFF;
   char str[iBuffSz];
-  while(true)
+  while(fgets(str, iBuffSz, fl))
   {
-    char* pc = fgets(str, iBuffSz, fl);
-    if(pc==NULL)break;
-    Line = pc;
+    Line = str;
     if(Line.IsEmpty())break;
     
     //std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
@@ -5793,6 +5791,23 @@ void game::LoadCustomCommandKeys()
     
     index++;
     if(index>7)break; //skip the last to keep as '.'
+  }
+  
+  while(fgets(str, iBuffSz, fl)){
+    Line=str;
+    command* cmd;
+    for(int c = 1; cmd=commandsystem::GetCommand(c); ++c){
+      festring::sizetype pos = Line.Find(cmd->GetDescription());
+      if(pos==1){
+        char ch = Line[Line.GetSize()-3]; // -3 skips '\n' and ending "'"
+        cmd->SetCustomKey((int)ch); //the last char between '
+        DBG4(pos,ch,cmd->GetDescription(),Line.CStr());
+//        ADD_MESSAGE("SYSTEM: set custom command key for \"%s\" '%c'",
+//          commandsystem::GetCommand(c)->GetDescription(), 
+//          commandsystem::GetCommand(c)->GetKey()); //TODO this messes the gameplay message log... but is better than a popup?
+        break;
+      }
+    }
   }
   
   fclose(fl);

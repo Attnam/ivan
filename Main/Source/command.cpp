@@ -60,6 +60,11 @@ command::command(truth (*LinkedFunction)(character*), cchar* Description, char K
 
 char command::GetKey() const
 {
+  if(ivanconfig::IsSetupCustomKeys()){
+    if(Key4>0)
+      return (char)Key4; //TODO everything related should be integer now...
+  }
+  
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
@@ -70,7 +75,7 @@ char command::GetKey() const
     return Key3;
    default:
     ABORT("This is not Vim!");
-    return Key1;
+    return Key1; //?
   }
 }
 

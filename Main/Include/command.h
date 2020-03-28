@@ -26,6 +26,7 @@ class command
   char GetKey() const;
   truth IsUsableInWilderness() const { return UsableInWilderness; }
   truth IsWizardModeFunction() const { return WizardModeFunction; }
+  int SetCustomKey(int iKey){ int iKeyBkp=Key4; Key4 = iKey; return iKeyBkp; }
  private:
   truth (*LinkedFunction)(character*);
   cchar* Description;

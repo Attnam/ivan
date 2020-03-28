@@ -543,6 +543,12 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 truth ConfigureCustomKeys()
 {
   festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  
+  festring fsFlBkp=fsFl+".bkp";
+  std::ifstream  src(fsFl.CStr()   , std::ios::binary);
+  std::ofstream  dst(fsFlBkp.CStr(), std::ios::binary);
+  dst << src.rdbuf();
+  
   FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
   int iKey;
   festring fsAsk;
@@ -589,6 +595,15 @@ truth ConfigureCustomKeys()
     
     index++;
   }
+  
+  for(int c = 1; commandsystem::GetCommand(c); ++c){
+    fprintf(fl, "\"%s\"=0x%04X='%c'\n", 
+      commandsystem::GetCommand(c)->GetDescription(), 
+      commandsystem::GetCommand(c)->GetKey(),
+      commandsystem::GetCommand(c)->GetKey()
+    );
+  }
+  
   fclose(fl);
   
   if(bRet)game::LoadCustomCommandKeys();
