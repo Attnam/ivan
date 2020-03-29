@@ -564,7 +564,7 @@ void atavus::PrayBadEffect()
 #define FAVOUR_FEED "Feed me up"
 #define FAVOUR_CALLRAIN "Call Rain"
 #define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
-#define FAVOUR_SUMMONWOLF "Summon a wolf friend"
+#define FAVOUR_SUMMONWOLF "Summon wolf friends"
 
 bool silva::Favour(cfestring fsWhat, int iDebit)
 {

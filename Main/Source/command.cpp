@@ -1159,7 +1159,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
 
 truth commandsystem::AskFavour(character* Char)
 {
-  felist felSpellList(CONST_S("To Whom you want to ask a %s favour?")+game::GetVerbalPlayerAlignment());
+  felist felSpellList(CONST_S("To Whom you want to ask a ")+game::GetVerbalPlayerAlignment()+" favour?");
   
   std::vector<std::pair<god*,festring>> vGS;
   for(int c = 1; c <= GODS; ++c){
@@ -1174,7 +1174,7 @@ truth commandsystem::AskFavour(character* Char)
       std::vector<festring> v = pgod->GetKnownSpells();
       for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
         felSpellList.AddEntry(CONST_S("")+
-          pgod->GetName()+" may grant you a "+*pfsSpell,LIGHT_GRAY);
+          pgod->GetName()+" may grant you a \""+*pfsSpell+"\" favour.",LIGHT_GRAY);
 
         std::pair<god*,festring> GS;
         GS.first = pgod;
@@ -1184,6 +1184,7 @@ truth commandsystem::AskFavour(character* Char)
     }
   }
   
+  game::SetStandardListAttributes(felSpellList);
   felSpellList.AddFlags(SELECTABLE);
   int Select = felSpellList.Draw();
   
