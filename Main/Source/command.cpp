@@ -114,6 +114,7 @@ command* commandsystem::Command[] =
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
+  new command(&AskFavour, "pray for a favour", 'P', 'P', 'P', false),
   new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
   new command(&Save, "save and quit", 'S', 'S', 'S', true),
@@ -1153,6 +1154,46 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
     }
   }
 
+  return false;
+}
+
+truth commandsystem::AskFavour(character* Char)
+{
+  felist felSpellList(CONST_S("To Whom you want to ask a favour?"));
+  
+  std::vector<std::pair<god*,festring>> vGS;
+  for(int c = 1; c <= GODS; ++c){
+    std::vector<festring> v = game::GetGod(c)->GetKnownSpells();
+    for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
+      felSpellList.AddEntry(CONST_S("")+
+        game::GetGod(c)->GetName()+" may grant you a "+*pfsSpell,LIGHT_GRAY);
+      std::pair<god*,festring> GS;
+      GS.first = game::GetGod(c);
+      GS.second = *pfsSpell;
+      vGS.push_back(GS);
+    }
+  }
+  
+  felSpellList.AddFlags(SELECTABLE);
+  int Select = felSpellList.Draw();
+  
+  if(Select == LIST_WAS_EMPTY)
+  {
+    ADD_MESSAGE("You do not know about any favours yet...");
+    return false;
+  }
+
+  if(Select & FELIST_ERROR_BIT)
+    return false;
+
+//  for(int c = 1; c <= GODS; ++c){
+//    if(game::GetGod(c)->Favour(v[Select],-1)){
+  if(vGS[Select].first->Favour(vGS[Select].second,-1)){
+    Char->EditAP(-1000);
+    return true;
+  }
+//  }
+  
   return false;
 }
 

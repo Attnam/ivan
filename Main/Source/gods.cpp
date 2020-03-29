@@ -141,15 +141,31 @@ bool god::Favour(cfestring fsWhat, int iDebit)
   return true;
 }
 
+int CalcDebit(int iDebit,int iDefault){
+  if(iDebit!=0){
+    if(iDebit==-1)iDebit=iDefault;
+    iDebit -= game::GetPlayer()->GetAttribute(MANA);
+    if(iDebit<10)iDebit=10; //minimum
+  }
+  return iDebit;
+}
+
+/**
+ * 
+ * @param fsWhat
+ * @param iDebit if -1 will be automatic
+ * @return 
+ */
 bool sophos::Favour(cfestring fsWhat, int iDebit)
 {
-  if(!god::Favour(fsWhat,iDebit))return false;
-  
   if(fsWhat==FAVOUR_TELEPORT){
+    iDebit=CalcDebit(iDebit,100);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
     game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
     PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
-    static bool bInitDummy=[this](){spells.push_back(CONST_S(FAVOUR_TELEPORT));return true;}();
+    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_TELEPORT));return true;}();
     Relation-=iDebit;
     return true;
   }
