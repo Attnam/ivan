@@ -131,12 +131,19 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 #define FAVOUR_TELEPORT "Teleport"
 
-bool sophos::Favour(cfestring fsWhat, int iDebit)
+bool god::Favour(cfestring fsWhat, int iDebit)
 {
   if(Relation<iDebit){
     ADD_MESSAGE("%s ignores your plea...",GetName());
     return false;
   }
+  
+  return true;
+}
+
+bool sophos::Favour(cfestring fsWhat, int iDebit)
+{
+  if(!god::Favour(fsWhat,iDebit))return false;
   
   if(fsWhat==FAVOUR_TELEPORT){
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
