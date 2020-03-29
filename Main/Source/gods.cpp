@@ -561,20 +561,29 @@ void atavus::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("killed by Atavus's humour"));
 }
 
+#define FAVOUR_FEED "Feed me up"
+#define FAVOUR_CALLRAIN "Call Rain"
+#define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
+#define FAVOUR_SUMMONWOLF "Summon a wolf friend"
+
 bool silva::Favour(cfestring fsWhat, int iDebit)
 {
-}
-
-void silva::PrayGoodEffect()
-{
-  if(PLAYER->GetNP() < HUNGER_LEVEL)
-  {
+  if(fsWhat==FAVOUR_FEED){
+    iDebit=CalcDebit(iDebit,200);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
     ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
     PLAYER->SetNP(SATIATED_LEVEL);
+    
+    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_FEED));return true;}();
+    Relation-=iDebit;
+    return true;
   }
 
-  if(PLAYER->IsBurning() || PLAYER->PossessesItem(&item::IsOnFire))
-  {
+  if(fsWhat==FAVOUR_CALLRAIN){
+    iDebit=CalcDebit(iDebit,75);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
     beamdata Beam
       (
         0,
@@ -588,9 +597,16 @@ void silva::PrayGoodEffect()
     Square->LiquidRain(Beam, WATER);
 
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
+    
+    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_CALLRAIN));return true;}();
+    Relation-=iDebit;
+    return true;
   }
-  else if(!game::GetCurrentLevel()->IsOnGround())
-  {
+  
+  if(fsWhat==FAVOUR_EARTHQUAKE){
+    iDebit=CalcDebit(iDebit,500);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
     if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
@@ -696,9 +712,16 @@ void silva::PrayGoodEffect()
     for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+    
+    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_EARTHQUAKE));return true;}();
+    Relation-=iDebit;
+    return true;
   }
-  else
-  {
+  
+  if(fsWhat==FAVOUR_SUMMONWOLF){
+    iDebit=CalcDebit(iDebit,50);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
     int TryToCreate = 1 + RAND() % 7;
     int Created = 0;
 
@@ -725,6 +748,33 @@ void silva::PrayGoodEffect()
 
     if(Created > 1)
       ADD_MESSAGE("Suddenly some tame wolves materialize around you.");
+    
+    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_SUMMONWOLF));return true;}();
+    Relation-=iDebit;
+    return true;
+  }
+  
+  return false;
+}
+
+void silva::PrayGoodEffect()
+{
+  if(PLAYER->GetNP() < HUNGER_LEVEL)
+  {
+    Favour(FAVOUR_FEED);
+  }
+
+  if(PLAYER->IsBurning() || PLAYER->PossessesItem(&item::IsOnFire))
+  {
+    Favour(FAVOUR_CALLRAIN);
+  }
+  else if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    Favour(FAVOUR_EARTHQUAKE);
+  }
+  else
+  {
+    Favour(FAVOUR_SUMMONWOLF);
   }
 }
 

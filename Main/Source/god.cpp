@@ -553,6 +553,7 @@ void god::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetType());
   SaveFile << Relation << Timer << Known << LastPray;
   SaveFile << fsLastKnownRelation;
+  SaveFile << knownSpells;
 }
 
 void god::Load(inputfile& SaveFile)
@@ -560,6 +561,9 @@ void god::Load(inputfile& SaveFile)
   SaveFile >> Relation >> Timer >> Known >> LastPray;
   if(game::GetCurrentSavefileVersion()>=134){
     SaveFile >> fsLastKnownRelation;
+  }
+  if(game::GetCurrentSavefileVersion()>=135){
+    SaveFile >> knownSpells;
   }
 }
 

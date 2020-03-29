@@ -1159,18 +1159,28 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
 
 truth commandsystem::AskFavour(character* Char)
 {
-  felist felSpellList(CONST_S("To Whom you want to ask a favour?"));
+  felist felSpellList(CONST_S("To Whom you want to ask a %s favour?")+game::GetVerbalPlayerAlignment());
   
   std::vector<std::pair<god*,festring>> vGS;
   for(int c = 1; c <= GODS; ++c){
-    std::vector<festring> v = game::GetGod(c)->GetKnownSpells();
-    for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
-      felSpellList.AddEntry(CONST_S("")+
-        game::GetGod(c)->GetName()+" may grant you a "+*pfsSpell,LIGHT_GRAY);
-      std::pair<god*,festring> GS;
-      GS.first = game::GetGod(c);
-      GS.second = *pfsSpell;
-      vGS.push_back(GS);
+    god* pgod = game::GetGod(c);
+    
+    bool bOk=false;
+    if(pgod->GetBasicAlignment() == GOOD && game::GetPlayerAlignment() > 0)bOk=true;
+    if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0)bOk=true;
+    if(pgod->GetBasicAlignment() == EVIL && game::GetPlayerAlignment() < 0)bOk=true;
+    
+    if(bOk){
+      std::vector<festring> v = pgod->GetKnownSpells();
+      for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
+        felSpellList.AddEntry(CONST_S("")+
+          pgod->GetName()+" may grant you a "+*pfsSpell,LIGHT_GRAY);
+
+        std::pair<god*,festring> GS;
+        GS.first = pgod;
+        GS.second = *pfsSpell;
+        vGS.push_back(GS);
+      }
     }
   }
   
@@ -1186,13 +1196,10 @@ truth commandsystem::AskFavour(character* Char)
   if(Select & FELIST_ERROR_BIT)
     return false;
 
-//  for(int c = 1; c <= GODS; ++c){
-//    if(game::GetGod(c)->Favour(v[Select],-1)){
   if(vGS[Select].first->Favour(vGS[Select].second,-1)){
     Char->EditAP(-1000);
     return true;
   }
-//  }
   
   return false;
 }

@@ -71,7 +71,7 @@
 
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 134 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 135 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 119 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
