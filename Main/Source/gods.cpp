@@ -150,6 +150,14 @@ int CalcDebit(int iDebit,int iDefault){
   return iDebit;
 }
 
+void AddKnownSpell(std::vector<festring> ks,festring fsNew)
+{
+  for(auto pfsSpell = ks.begin(); pfsSpell != ks.end(); pfsSpell++){
+    if(*pfsSpell == fsNew)return;
+  }
+  ks.push_back(fsNew);
+}
+
 /**
  * 
  * @param fsWhat
@@ -165,7 +173,7 @@ bool sophos::Favour(cfestring fsWhat, int iDebit)
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
     game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
     PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
-    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_TELEPORT));return true;}();
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_TELEPORT);return true;}();
     Relation-=iDebit;
     return true;
   }
@@ -575,7 +583,7 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
     ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
     PLAYER->SetNP(SATIATED_LEVEL);
     
-    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_FEED));return true;}();
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FEED);return true;}();
     Relation-=iDebit;
     return true;
   }
@@ -598,7 +606,7 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
 
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
     
-    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_CALLRAIN));return true;}();
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_CALLRAIN);return true;}();
     Relation-=iDebit;
     return true;
   }
@@ -713,13 +721,13 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
     
-    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_EARTHQUAKE));return true;}();
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_EARTHQUAKE);return true;}();
     Relation-=iDebit;
     return true;
   }
   
   if(fsWhat==FAVOUR_SUMMONWOLF){
-    iDebit=CalcDebit(iDebit,50);
+    iDebit=CalcDebit(iDebit,250);
     if(!god::Favour(fsWhat,iDebit))return false;
     
     int TryToCreate = 1 + RAND() % 7;
@@ -749,7 +757,7 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
     if(Created > 1)
       ADD_MESSAGE("Suddenly some tame wolves materialize around you.");
     
-    static bool bInitDummy=[this](){knownSpells.push_back(CONST_S(FAVOUR_SUMMONWOLF));return true;}();
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_SUMMONWOLF);return true;}();
     Relation-=iDebit;
     return true;
   }
@@ -794,8 +802,55 @@ void silva::PrayBadEffect()
   }
 }
 
+#define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
+#define FAVOUR_STOPFIRE "Fix burns in one equipped item"
+
 bool loricatus::Favour(cfestring fsWhat, int iDebit)
 {
+  if(fsWhat==FAVOUR_FIXEQUIPMENT){
+    iDebit=CalcDebit(iDebit,250);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
+    for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+    {
+      item* Equipment = PLAYER->GetEquipment(c);
+
+      if(Equipment && Equipment->IsBroken())
+      {
+        ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+        Equipment->Fix();
+        break;
+      }
+    }
+  
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FIXEQUIPMENT);return true;}();
+    Relation-=iDebit;
+    return true;
+  }  
+  
+  if(fsWhat==FAVOUR_STOPFIRE){
+    iDebit=CalcDebit(iDebit,50);
+    if(!god::Favour(fsWhat,iDebit))return false;
+    
+    for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+    {
+      item* Equipment = PLAYER->GetEquipment(c);
+
+      if(Equipment && Equipment->IsBurnt())
+      {
+        ADD_MESSAGE("%s repairs the burns on your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+        Equipment->RemoveBurns();
+        if(!Equipment->IsBurning())
+          Equipment->ResetThermalEnergies();
+        Equipment->ResetBurning();
+        break;
+      }
+    }
+    
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_STOPFIRE);return true;}();
+    Relation-=iDebit;
+    return true;
+  }
 }
 
 void loricatus::PrayGoodEffect()
@@ -868,32 +923,11 @@ void loricatus::PrayGoodEffect()
     }
   }
 
-  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
-  {
-    item* Equipment = PLAYER->GetEquipment(c);
+  if(Favour(FAVOUR_FIXEQUIPMENT))
+    return;
 
-    if(Equipment && Equipment->IsBroken())
-    {
-      ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
-      Equipment->Fix();
-      return;
-    }
-  }
-
-  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
-  {
-    item* Equipment = PLAYER->GetEquipment(c);
-
-    if(Equipment && Equipment->IsBurnt())
-    {
-      ADD_MESSAGE("%s repairs the burns on your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
-      Equipment->RemoveBurns();
-      if(!Equipment->IsBurning())
-        Equipment->ResetThermalEnergies();
-      Equipment->ResetBurning();
-      return;
-    }
-  }
+  if(Favour(FAVOUR_STOPFIRE))
+    return;
 
   if(PLAYER->GetUsableArms())
     ADD_MESSAGE("You feel a slight tingling in your hands.");
