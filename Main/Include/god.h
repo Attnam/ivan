@@ -86,10 +86,12 @@ class god
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
+  virtual bool Favour(cfestring fsWhat, int iDebit=0) = 0;
   int Relation, LastPray;
   festring fsLastKnownRelation;
   long Timer;
   truth Known;
+  std::vector<festring> spells;
 };
 
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__

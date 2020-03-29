@@ -5796,7 +5796,7 @@ void game::LoadCustomCommandKeys()
   while(fgets(str, iBuffSz, fl)){
     Line=str;
     command* cmd;
-    for(int c = 1; cmd=commandsystem::GetCommand(c); ++c){
+    for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
       festring::sizetype pos = Line.Find(cmd->GetDescription());
       if(pos==1){
         char ch = Line[Line.GetSize()-3]; // -3 skips '\n' and ending "'"

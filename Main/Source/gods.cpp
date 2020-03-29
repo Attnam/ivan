@@ -10,6 +10,9 @@
  *
  */
 
+#include <vector>
+
+
 /* Compiled through godset.cpp */
 
 #define LAWFUL_BASIC_COLOR MakeRGB16(160, 160, 0)
@@ -126,15 +129,34 @@ int mortifer::GetBasicAlignment() const { return EVIL; }
 col16 mortifer::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
+#define FAVOUR_TELEPORT "Teleport"
+
+bool sophos::Favour(cfestring fsWhat, int iDebit)
+{
+  if(Relation<iDebit){
+    ADD_MESSAGE("%s ignores your plea...",GetName());
+    return false;
+  }
+  
+  if(fsWhat==FAVOUR_TELEPORT){
+    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
+    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    static bool bInitDummy=[this](){spells.push_back(CONST_S(FAVOUR_TELEPORT));return true;}();
+    Relation-=iDebit;
+    return true;
+  }
+  
+  return false;
+}
+
 void sophos::PrayGoodEffect()
 {
   truth DidHelp = false;
 
   if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
   {
-    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
-    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
-    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    Favour(FAVOUR_TELEPORT);
     DidHelp = true;
   }
 
@@ -181,6 +203,10 @@ void sophos::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("shattered to pieces by the wrath of ") + GetName(), 0);
 }
 
+bool valpurus::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void valpurus::PrayGoodEffect()
 {
   if(!game::PlayerIsGodChampion())
@@ -214,6 +240,10 @@ void valpurus::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("faced the hammer of Justice from the hand of ") + GetName(), 0);
 }
 
+bool legifer::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void legifer::PrayGoodEffect()
 {
   // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
@@ -229,6 +259,10 @@ void legifer::PrayBadEffect()
   ADD_MESSAGE("%s casts horrible yet righteous flames upon you.", GetName());
   PLAYER->ReceiveDamage(0, 50 + RAND() % 50, FIRE, ALL);
   PLAYER->CheckDeath(CONST_S("burned to death by the holy flames of ") + GetName(), 0);
+}
+
+bool dulcis::Favour(cfestring fsWhat, int iDebit)
+{
 }
 
 void dulcis::PrayGoodEffect()
@@ -326,6 +360,10 @@ void dulcis::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("became insane by listening ") + GetName() + " too much", 0);
 }
 
+bool seges::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void seges::PrayGoodEffect()
 {
   if(PLAYER->IsInBadCondition())
@@ -413,6 +451,10 @@ void seges::PrayBadEffect()
     ADD_MESSAGE("Seges tries to alter the contents of your stomach, but fails.");
 }
 
+bool atavus::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void atavus::PrayGoodEffect()
 {
   item* Enchantable;
@@ -494,6 +536,10 @@ void atavus::PrayBadEffect()
   }
 
   PLAYER->CheckDeath(CONST_S("killed by Atavus's humour"));
+}
+
+bool silva::Favour(cfestring fsWhat, int iDebit)
+{
 }
 
 void silva::PrayGoodEffect()
@@ -675,6 +721,10 @@ void silva::PrayBadEffect()
   }
 }
 
+bool loricatus::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void loricatus::PrayGoodEffect()
 {
   item* MainWielded = PLAYER->GetMainWielded();
@@ -816,6 +866,10 @@ void loricatus::PrayBadEffect()
   }
 }
 
+bool cleptia::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void cleptia::PrayGoodEffect()
 {
   int Duration = 200 * PLAYER->GetAttribute(WISDOM) + Max(Relation, 0);
@@ -863,6 +917,10 @@ void cleptia::PrayBadEffect()
   PLAYER->BeginTemporaryState(SLOW, 250);
 }
 
+bool mortifer::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void mortifer::PrayGoodEffect()
 {
   if(!game::PlayerIsGodChampion())
@@ -898,6 +956,10 @@ void mortifer::PrayBadEffect()
   PLAYER->EditAttribute(ARM_STRENGTH, -1);
   PLAYER->EditAttribute(ENDURANCE, -1);
   PLAYER->CheckDeath(CONST_S("obliterated by the unholy power of ") + GetName(), 0);
+}
+
+bool mellis::Favour(cfestring fsWhat, int iDebit)
+{
 }
 
 void mellis::PrayGoodEffect()
@@ -1077,6 +1139,10 @@ void infuscor::PrayBadEffect()
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
+bool nefas::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void nefas::PrayGoodEffect()
 {
   if(PLAYER->GetNP() < HUNGER_LEVEL)
@@ -1163,6 +1229,10 @@ void nefas::PrayBadEffect()
   PLAYER->ReceiveDamage(0, 2 + RAND() % 7, PHYSICAL_DAMAGE, HEAD);
   PLAYER->GetStackUnder()->AddItem(brokenbottle::Spawn());
   PLAYER->CheckDeath(CONST_S("killed while enjoying the company of ") + GetName(), 0);
+}
+
+bool scabies::Favour(cfestring fsWhat, int iDebit)
+{
 }
 
 void scabies::PrayGoodEffect()
@@ -1268,6 +1338,10 @@ void scabies::PrayBadEffect()
   }
 }
 
+bool infuscor::Favour(cfestring fsWhat, int iDebit)
+{
+}
+
 void infuscor::PrayGoodEffect()
 {
   truth Success = false;
@@ -1350,6 +1424,10 @@ void infuscor::PrayGoodEffect()
   }
 
   return;
+}
+
+bool cruentus::Favour(cfestring fsWhat, int iDebit)
+{
 }
 
 void cruentus::PrayGoodEffect()
