@@ -143,7 +143,11 @@ bool god::Favour(cfestring fsWhat, int iDebit)
 
 int CalcDebit(int iDebit,int iDefault){
   if(iDebit!=0){
-    if(iDebit==-1)iDebit=iDefault;
+    switch(iDebit){
+      case FAVOURDEBIT_AUTO:       iDebit=iDefault  ;break;
+      case FAVOURDEBIT_AUTOHALF:   iDebit=iDefault/2;break;
+      case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2;break;
+    }
     iDebit -= game::GetPlayer()->GetAttribute(MANA);
     if(iDebit<10)iDebit=10; //minimum
   }

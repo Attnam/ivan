@@ -22,6 +22,7 @@
 #include "game.h"
 #include "gear.h"
 #include "god.h"
+#include "gods.h"
 #include "graphics.h"
 #include "human.h"
 #include "iconf.h"
@@ -1197,8 +1198,19 @@ truth commandsystem::AskFavour(character* Char)
 
   if(Select & FELIST_ERROR_BIT)
     return false;
+  
+  god* G = vGS[Select].first;
+  festring fsFavour = vGS[Select].second;
+  int iDebit=FAVOURDEBIT_AUTO;
+  int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
+  if(DivineMaster){
+    if(G == game::GetGod(DivineMaster))
+      iDebit=FAVOURDEBIT_AUTOHALF;
+    else
+      iDebit=FAVOURDEBIT_AUTODOUBLE;
+  }
 
-  if(vGS[Select].first->Favour(vGS[Select].second,-1)){
+  if(G->Favour(fsFavour,iDebit)){
     Char->EditAP(-1000);
     return true;
   }

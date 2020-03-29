@@ -15,6 +15,10 @@
 
 #include "god.h"
 
+#define FAVOURDEBIT_AUTO -1
+#define FAVOURDEBIT_AUTOHALF -2
+#define FAVOURDEBIT_AUTODOUBLE -3
+
 GOD(valpurus, god)
 {
  public:
