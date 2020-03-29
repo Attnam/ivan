@@ -236,6 +236,7 @@ void sophos::PrayBadEffect()
 
 bool valpurus::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void valpurus::PrayGoodEffect()
@@ -273,6 +274,7 @@ void valpurus::PrayBadEffect()
 
 bool legifer::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void legifer::PrayGoodEffect()
@@ -294,6 +296,7 @@ void legifer::PrayBadEffect()
 
 bool dulcis::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void dulcis::PrayGoodEffect()
@@ -393,6 +396,7 @@ void dulcis::PrayBadEffect()
 
 bool seges::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void seges::PrayGoodEffect()
@@ -484,6 +488,7 @@ void seges::PrayBadEffect()
 
 bool atavus::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void atavus::PrayGoodEffect()
@@ -851,6 +856,8 @@ bool loricatus::Favour(cfestring fsWhat, int iDebit)
     Relation-=iDebit;
     return true;
   }
+  
+  return false;
 }
 
 void loricatus::PrayGoodEffect()
@@ -975,6 +982,7 @@ void loricatus::PrayBadEffect()
 
 bool cleptia::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void cleptia::PrayGoodEffect()
@@ -1026,6 +1034,7 @@ void cleptia::PrayBadEffect()
 
 bool mortifer::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void mortifer::PrayGoodEffect()
@@ -1067,6 +1076,7 @@ void mortifer::PrayBadEffect()
 
 bool mellis::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void mellis::PrayGoodEffect()
@@ -1248,6 +1258,7 @@ void infuscor::PrayBadEffect()
 
 bool nefas::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void nefas::PrayGoodEffect()
@@ -1340,6 +1351,7 @@ void nefas::PrayBadEffect()
 
 bool scabies::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void scabies::PrayGoodEffect()
@@ -1447,6 +1459,7 @@ void scabies::PrayBadEffect()
 
 bool infuscor::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void infuscor::PrayGoodEffect()
@@ -1535,6 +1548,7 @@ void infuscor::PrayGoodEffect()
 
 bool cruentus::Favour(cfestring fsWhat, int iDebit)
 {
+  return false;
 }
 
 void cruentus::PrayGoodEffect()
