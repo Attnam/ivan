@@ -150,7 +150,7 @@ int CalcDebit(int iDebit,int iDefault){
   return iDebit;
 }
 
-void AddKnownSpell(std::vector<festring> ks,festring fsNew)
+void AddKnownSpell(std::vector<festring>& ks,festring fsNew)
 {
   for(auto pfsSpell = ks.begin(); pfsSpell != ks.end(); pfsSpell++){
     if(*pfsSpell == fsNew)return;
