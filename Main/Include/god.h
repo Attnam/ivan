@@ -38,6 +38,7 @@ class godprototype
   cchar* ClassID;
 };
 
+typedef bool (*CallFavourType)(god*);
 class god
 {
  public:
@@ -85,7 +86,8 @@ class god
   virtual truth LikesVomit() const { return false; }
   virtual bool Favour(cfestring fsWhat, int iDebit=0);
   const std::vector<festring> GetKnownSpells() const { return knownSpells; }
- protected:
+  bool CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat, int iDebit, int iDbtDefault);
+protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
   int Relation, LastPray;

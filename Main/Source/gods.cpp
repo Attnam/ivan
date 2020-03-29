@@ -129,6 +129,16 @@ int mortifer::GetBasicAlignment() const { return EVIL; }
 col16 mortifer::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
+/**
+ * these are also used as maching IDs, 
+ * this means that changing these texts will change what is saved on the savegame file...
+ */
+#define FAVOUR_CALLRAIN "Make it Rain"
+#define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
+#define FAVOUR_FEED "Feed me up"
+#define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
+#define FAVOUR_STOPFIRE "Undo the burns of one equipped item"
+#define FAVOUR_SUMMONWOLF "Summon wolf friend(s)"
 #define FAVOUR_TELEPORT "Teleport"
 
 bool god::Favour(cfestring fsWhat, int iDebit)
@@ -162,6 +172,30 @@ void AddKnownSpell(std::vector<festring>& ks,festring fsNew)
   ks.push_back(fsNew);
 }
 
+bool FavourTeleport(god* G)
+{
+    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
+    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    return true;
+}
+
+bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat, int iDebit, int iDbtDefault)
+{
+  if(fsCallFavour!=fsWhat)return false;
+  
+  iDebit=CalcDebit(iDebit,iDbtDefault);
+  if(!god::Favour(fsWhat,iDebit))return false;
+
+  if((*call)(this)){
+    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_TELEPORT);return true;}();
+    Relation-=iDebit;
+    return true;
+  }
+  
+  return false;
+}
+
 /**
  * 
  * @param fsWhat
@@ -170,18 +204,7 @@ void AddKnownSpell(std::vector<festring>& ks,festring fsNew)
  */
 bool sophos::Favour(cfestring fsWhat, int iDebit)
 {
-  if(fsWhat==FAVOUR_TELEPORT){
-    iDebit=CalcDebit(iDebit,100);
-    if(!god::Favour(fsWhat,iDebit))return false;
-    
-    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
-    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
-    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_TELEPORT);return true;}();
-    Relation-=iDebit;
-    return true;
-  }
-  
+  if(CallFavour(&FavourTeleport,FAVOUR_TELEPORT,fsWhat,iDebit,100))return true;
   return false;
 }
 
@@ -578,28 +601,55 @@ void atavus::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("killed by Atavus's humour"));
 }
 
-#define FAVOUR_FEED "Feed me up"
-#define FAVOUR_CALLRAIN "Call Rain"
-#define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
-#define FAVOUR_SUMMONWOLF "Summon wolf friends"
+bool FavourFeed(god* G)
+{
+    ADD_MESSAGE("%s feeds you fruits and wild berries.", G->GetName());
+    PLAYER->SetNP(SATIATED_LEVEL);
+    return true;
+}
+
+bool FavourCallRain(god* G)
+{
+    beamdata Beam
+      (
+        0,
+        CONST_S("drowned by the tears of ") + G->GetName(),
+        YOURSELF,
+        0
+      );
+
+    lsquare* Square = PLAYER->GetLSquareUnder();
+    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 400 + RAND() % 800));
+    Square->LiquidRain(Beam, WATER);
+
+    ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
+ 
+    return true;
+}
 
 bool silva::Favour(cfestring fsWhat, int iDebit)
 {
-  if(fsWhat==FAVOUR_FEED){
-    iDebit=CalcDebit(iDebit,200);
-    if(!god::Favour(fsWhat,iDebit))return false;
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true;
+  if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
+/*
+  IF_CODEFAVOUR(FAVOUR_FEED,200);
+//  if(fsWhat==FAVOUR_FEED){
+//    iDebit=CalcDebit(iDebit,200);
+//    if(!god::Favour(fsWhat,iDebit))return false;
     
     ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
     PLAYER->SetNP(SATIATED_LEVEL);
     
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FEED);return true;}();
-    Relation-=iDebit;
-    return true;
-  }
+//    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FEED);return true;}();
+//    Relation-=iDebit;
+//    return true;
+//  }
+  ENDIF_CODEFAVOUR(FAVOUR_FEED);
 
-  if(fsWhat==FAVOUR_CALLRAIN){
-    iDebit=CalcDebit(iDebit,75);
-    if(!god::Favour(fsWhat,iDebit))return false;
+  IF_CODEFAVOUR(FAVOUR_CALLRAIN,75);
+//  if(fsWhat==FAVOUR_CALLRAIN){
+//    iDebit=CalcDebit(iDebit,75);
+//    if(!god::Favour(fsWhat,iDebit))return false;
     
     beamdata Beam
       (
@@ -615,10 +665,12 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
 
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
     
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_CALLRAIN);return true;}();
-    Relation-=iDebit;
-    return true;
-  }
+//    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_CALLRAIN);return true;}();
+//    Relation-=iDebit;
+//    return true;
+//  }
+  ENDIF_CODEFAVOUR(FAVOUR_CALLRAIN);
+*/
   
   if(fsWhat==FAVOUR_EARTHQUAKE){
     iDebit=CalcDebit(iDebit,500);
@@ -810,9 +862,6 @@ void silva::PrayBadEffect()
     break;
   }
 }
-
-#define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
-#define FAVOUR_STOPFIRE "Fix burns in one equipped item"
 
 bool loricatus::Favour(cfestring fsWhat, int iDebit)
 {
