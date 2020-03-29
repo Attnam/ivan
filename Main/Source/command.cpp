@@ -1167,16 +1167,17 @@ truth commandsystem::AskFavour(character* Char)
     god* pgod = game::GetGod(c);
     
     bool bOk=false;
-    if(pgod->GetBasicAlignment() == GOOD && game::GetPlayerAlignment() > 0)bOk=true;
+    if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0)bOk=true;
     if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0)bOk=true;
-    if(pgod->GetBasicAlignment() == EVIL && game::GetPlayerAlignment() < 0)bOk=true;
-    if(game::WizardModeIsReallyActive())bOk=true;
+    if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
     
-    if(bOk){
+    if(bOk || game::WizardModeIsReallyActive()){
       std::vector<festring> v = pgod->GetKnownSpells();
       for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
         felSpellList.AddEntry(CONST_S("")+
-          pgod->GetName()+" may grant you a \""+*pfsSpell+"\" favour.",LIGHT_GRAY);
+          game::GetAlignment(pgod->GetAlignment())+" "+
+          pgod->GetName()+" may grant you a \""+*pfsSpell+"\" favour.",
+          bOk ? LIGHT_GRAY : RED);
 
         std::pair<god*,festring> GS;
         GS.first = pgod;
