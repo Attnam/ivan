@@ -197,11 +197,13 @@ bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat
 {
   if(fsCallFavour!=fsWhat)return false;
   
+  if(iDebit==0) //came thru normal praying
+    AddKnownSpell(knownSpells,fsCallFavour);
+  
   iDebit=CalcDebit(iDebit,iDbtDefault);
   if(!god::Favour(fsWhat,iDebit))return false;
 
   if((*call)(this)){
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_TELEPORT);return true;}();
     Relation-=iDebit;
     return true;
   }
