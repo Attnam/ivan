@@ -387,7 +387,7 @@ void bugfixdp::DupPlayerFix(character* DupPlayer)
   DEVCMDMSG("fixed bodyparts %d",iFixedCount);
   //BEWARE!!! this leads to crash: DupPlayer->Remove();
 
-  DEVCMDMSG("fixed dup player '%s' id=%d/%d 0x%X",DupPlayer->GetName(DEFINITE).CStr(),idOld,DupPlayer->GetID(),DupPlayer);
+  DEVCMDMSG4("fixed dup player '%s' id=%d/%d 0x%X",DupPlayer->GetName(DEFINITE).CStr(),idOld,DupPlayer->GetID(),DupPlayer);
 
   DBGCHAR(DupPlayer,"CharFix:CharToBeLost");
 }
@@ -575,7 +575,7 @@ character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
     CharPlayerOk = CharID1;
     DEVCMDMSG("%s","ID1 will be ok now");
     if(bAndFixIt && CharID1->GetSquareUnder()==NULL){
-      DEVCMDMSG("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
+      DEVCMDMSG2("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
       CharID1->PutToOrNear(ReqPosL); //place he where expected
     }
 //  }
@@ -640,9 +640,9 @@ character* bugfixdp::BugWorkaroundDupPlayer(){
   // last thing is grant player's stuff is consistent
   int iFixedCount=0;
   iFixedCount=CharEquipmentsWork(CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG("fixed player '%s' equipments %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  DEVCMDMSG2("fixed player '%s' equipments %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
   iFixedCount=CharInventoryWork (CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG("fixed player '%s' inventory %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  DEVCMDMSG2("fixed player '%s' inventory %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
   iFixedCount=TrapsWork();
   DEVCMDMSG("fixed traps %d",iFixedCount);
   

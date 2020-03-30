@@ -321,7 +321,7 @@ void devcons::Help(std::string strFilter)
 {
   for(int j=0;j<vCmd.size();j++){
     if(!vCmd[j].bWizardModeOnly || game::WizardModeIsActive())
-      DEVCMDMSG("%s - %s%s",
+      DEVCMDMSG3("%s - %s%s",
 //      ADD_MESSAGE("%s%s - %s%s",cPrompt,
         vCmd[j].strCmd.c_str(),
         vCmd[j].bWizardModeOnly?"(WIZ) ":"",
@@ -359,7 +359,7 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
-  DEVCMDMSG("Trying to run: %s ('%s' '%s')",strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
+  DEVCMDMSG3("Trying to run: %s ('%s' '%s')",strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
 
   callcmd cc = Find(strCmd);
   if(cc){
