@@ -140,6 +140,8 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 #define FAVOUR_STOPFIRE "Undo the burns of one equipped item"
 #define FAVOUR_SUMMONWOLF "Summon wolf friend(s)"
 #define FAVOUR_TELEPORT "Teleport"
+#define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
+#define FAVOUR_FIRESTORM "Fiery Firestorm"
 
 bool god::Favour(cfestring fsWhat, int iDebit)
 {
@@ -261,8 +263,17 @@ void sophos::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("shattered to pieces by the wrath of ") + GetName(), 0);
 }
 
+bool FavourHolyGrenade(god* G)
+{
+    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE "
+                "THAT WITH IT THOU MAYEST BLOW THY ENEMIES TO TINY BITS, MY PALADIN!\"");
+    PLAYER->GetGiftStack()->AddItem(holyhandgrenade::Spawn());
+    return true;
+}
+
 bool valpurus::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(&FavourHolyGrenade,FAVOUR_HOLYGREN,fsWhat,iDebit,300))return true;
   return false;
 }
 
@@ -286,9 +297,7 @@ void valpurus::PrayGoodEffect()
   }
   else // Player already received championship gift, give holy handgrenade instead.
   {
-    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE "
-                "THAT WITH IT THOU MAYEST BLOW THY ENEMIES TO TINY BITS, MY PALADIN!\"");
-    PLAYER->GetGiftStack()->AddItem(holyhandgrenade::Spawn());
+    Favour(FAVOUR_HOLYGREN);
   }
 }
 
@@ -299,19 +308,26 @@ void valpurus::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("faced the hammer of Justice from the hand of ") + GetName(), 0);
 }
 
-bool legifer::Favour(cfestring fsWhat, int iDebit)
-{
-  return false;
-}
-
-void legifer::PrayGoodEffect()
+bool FavourFirestorm(god* G)
 {
   // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
   // No, my bad. Inlux is an anagram of Linux, which will hopefully save us from the horrid Bill. ;)
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
   //ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),
-                                     (Max(20 * PLAYER->GetAttribute(WISDOM), 1) + Max(GetRelation(), 0)) >> 3, false);
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + G->GetName(), PLAYER->GetPos(),
+                                     (Max(20 * PLAYER->GetAttribute(WISDOM), 1) + Max(G->GetRelation(), 0)) >> 3, false);
+  return true;
+}
+
+bool legifer::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourFirestorm,FAVOUR_FIRESTORM,fsWhat,iDebit,200))return true;
+  return false;
+}
+
+void legifer::PrayGoodEffect()
+{
+  Favour(FAVOUR_FIRESTORM);
 }
 
 void legifer::PrayBadEffect()
@@ -631,46 +647,6 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
 {
   if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true;
   if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
-/*
-  IF_CODEFAVOUR(FAVOUR_FEED,200);
-//  if(fsWhat==FAVOUR_FEED){
-//    iDebit=CalcDebit(iDebit,200);
-//    if(!god::Favour(fsWhat,iDebit))return false;
-    
-    ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
-    PLAYER->SetNP(SATIATED_LEVEL);
-    
-//    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FEED);return true;}();
-//    Relation-=iDebit;
-//    return true;
-//  }
-  ENDIF_CODEFAVOUR(FAVOUR_FEED);
-
-  IF_CODEFAVOUR(FAVOUR_CALLRAIN,75);
-//  if(fsWhat==FAVOUR_CALLRAIN){
-//    iDebit=CalcDebit(iDebit,75);
-//    if(!god::Favour(fsWhat,iDebit))return false;
-    
-    beamdata Beam
-      (
-        0,
-        CONST_S("drowned by the tears of ") + GetName(),
-        YOURSELF,
-        0
-      );
-
-    lsquare* Square = PLAYER->GetLSquareUnder();
-    PLAYER->SpillFluid(0, liquid::Spawn(WATER, 400 + RAND() % 800));
-    Square->LiquidRain(Beam, WATER);
-
-    ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
-    
-//    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_CALLRAIN);return true;}();
-//    Relation-=iDebit;
-//    return true;
-//  }
-  ENDIF_CODEFAVOUR(FAVOUR_CALLRAIN);
-*/
   
   if(fsWhat==FAVOUR_EARTHQUAKE){
     iDebit=CalcDebit(iDebit,500);
