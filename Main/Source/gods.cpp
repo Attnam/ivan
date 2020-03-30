@@ -201,10 +201,14 @@ bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat
     AddKnownSpell(knownSpells,fsCallFavour);
   
   iDebit=CalcDebit(iDebit,iDbtDefault);
-  if(!god::Favour(fsWhat,iDebit))return false;
+  
+  if(iDebit>0)
+    if(!god::Favour(fsWhat,iDebit))
+      return false;
 
   if((*call)(this)){
-    Relation-=iDebit;
+    if(iDebit>0)
+      Relation-=iDebit;
     return true;
   }
   
