@@ -133,17 +133,26 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
  * these are also used as maching IDs, 
  * this means that changing these texts will change what is saved on the savegame file...
  */
+#define FAVOUR_BLOATED "Feeds you a lot" //TODO consider price vs FAVOUR_FEED
 #define FAVOUR_CALLRAIN "Make it Rain"
+#define FAVOUR_CURELEPROSY "Cure Leprosy"
+#define FAVOUR_CURELYCANTHROPY "Cure Lycanthropy"
+#define FAVOUR_CUREMINDWORM "Cure Mindworm"
+#define FAVOUR_CUREPOISON "Cure Poison"
+#define FAVOUR_CURETAPEWORM "Cure Tapeworm"
+#define FAVOUR_CUREWOUNDS "Cure Wounds"
 #define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
-#define FAVOUR_FEED "Feed you up"
+#define FAVOUR_EXTINGUISHFIRE "Put out these Flames" //TODO consider price vs FAVOUR_HEALBURNS
+#define FAVOUR_FEED "Feeds you well"
+#define FAVOUR_FIRESTORM "Fiery Firestorm"
 #define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
+#define FAVOUR_HEALBURNS "Heals your burns"
+#define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
+#define FAVOUR_INVIGORATE "Invigorate"
 #define FAVOUR_STOPFIRE "Undo the burns of one equipped item"
 #define FAVOUR_SUMMONWOLF "Summon Wolf friend(s)"
-#define FAVOUR_TELEPORT "Teleport"
-#define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
-#define FAVOUR_FIRESTORM "Fiery Firestorm"
-#define FAVOUR_EXTINGUISHFIRE "Put out these Flames"
 #define FAVOUR_TAME "Tame this Monster"
+#define FAVOUR_TELEPORT "Teleport"
 
 bool god::Favour(cfestring fsWhat, int iDebit)
 {
@@ -457,8 +466,77 @@ void dulcis::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("became insane by listening ") + GetName() + " too much", 0);
 }
 
+bool FavourCureWounds(god* G)
+{
+    ADD_MESSAGE("%s cures your wounds.", G->GetName());
+    PLAYER->RestoreLivingHP();
+    return true;
+}
+bool FavourCurePoison(god* G)
+{
+    ADD_MESSAGE("%s removes the foul liquid in your veins.", G->GetName());
+    PLAYER->DeActivateTemporaryState(POISONED);
+    return true;
+}
+bool FavourCureLeprosy(god* G)
+{
+    ADD_MESSAGE("%s cures your leprosy.", G->GetName());
+    PLAYER->DeActivateTemporaryState(LEPROSY);
+    return true;
+}
+bool FavourCureLycanthropy(god* G)
+{
+    ADD_MESSAGE("%s cures your animalistic urges.", G->GetName());
+    PLAYER->DeActivateTemporaryState(LYCANTHROPY);
+    return true;
+}
+bool FavourCureTapeworm(god* G)
+{
+    ADD_MESSAGE("%s removes the evil hidden in your guts.", G->GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+    return true;
+}
+bool FavourCureMindworm(god* G)
+{
+    ADD_MESSAGE("%s removes the evil hidden in your brain.", G->GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+    return true;
+}
+bool FavourBloated(god* G)
+{
+    ADD_MESSAGE("Your stomach feels full again.");
+    PLAYER->SetNP(BLOATED_LEVEL);
+    return true;
+}
+bool FavourHealBurns(god* G)
+{
+    ADD_MESSAGE("%s heals your burns.", G->GetName());
+    //PLAYER->RemoveBurns(); // removes the burns and restores HP
+    if(!PLAYER->IsBurning()) // the player would do well to put the flames out himself first
+      PLAYER->ResetThermalEnergies();
+    PLAYER->ResetLivingBurning(); // In keeping with Seges' au natural theme. Does roughly the same as RemoveBurns(),
+                                  // only without the message(?) and it resets the burn level counter
+    return true;
+}
+bool FavourInvigorate(god* G)
+{
+    ADD_MESSAGE("You don't feel a bit tired anymore.");
+    PLAYER->RestoreStamina();
+    return true;
+}
+
 bool seges::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(&FavourCureWounds,FAVOUR_CUREWOUNDS,fsWhat,iDebit,150))return true;
+  if(CallFavour(&FavourCurePoison,FAVOUR_CUREPOISON,fsWhat,iDebit,200))return true;
+  if(CallFavour(&FavourCureLeprosy,FAVOUR_CURELEPROSY,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourCureLycanthropy,FAVOUR_CURELYCANTHROPY,fsWhat,iDebit,300))return true;
+  //TODO is vampirism bad in anyway?
+  if(CallFavour(&FavourCureTapeworm,FAVOUR_CURETAPEWORM,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourCureMindworm,FAVOUR_CUREMINDWORM,fsWhat,iDebit,500))return true;
+  if(CallFavour(&FavourBloated,FAVOUR_BLOATED,fsWhat,iDebit,300))return true;
+  if(CallFavour(&FavourHealBurns,FAVOUR_HEALBURNS,fsWhat,iDebit,50))return true;
+  if(CallFavour(&FavourInvigorate,FAVOUR_INVIGORATE,fsWhat,iDebit,250))return true;
   return false;
 }
 
@@ -466,29 +544,25 @@ void seges::PrayGoodEffect()
 {
   if(PLAYER->IsInBadCondition())
   {
-    ADD_MESSAGE("%s cures your wounds.", GetName());
-    PLAYER->RestoreLivingHP();
+    Favour(FAVOUR_CUREWOUNDS);
     return;
   }
 
   if(PLAYER->TemporaryStateIsActivated(POISONED))
   {
-    ADD_MESSAGE("%s removes the foul liquid in your veins.", GetName());
-    PLAYER->DeActivateTemporaryState(POISONED);
+    Favour(FAVOUR_CUREPOISON);
     return;
   }
 
   if(PLAYER->StateIsActivated(LEPROSY))
   {
-    ADD_MESSAGE("%s cures your leprosy.", GetName());
-    PLAYER->DeActivateTemporaryState(LEPROSY);
+    Favour(FAVOUR_CURELEPROSY);
     return;
   }
 
   if(PLAYER->TemporaryStateIsActivated(LYCANTHROPY))
   {
-    ADD_MESSAGE("%s cures your animalistic urges.", GetName());
-    PLAYER->DeActivateTemporaryState(LYCANTHROPY);
+    Favour(FAVOUR_CURELYCANTHROPY);
     return;
   }
 
@@ -501,39 +575,30 @@ void seges::PrayGoodEffect()
 
   if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
   {
-    ADD_MESSAGE("%s removes the evil hidden in your guts.", GetName());
-    PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+    Favour(FAVOUR_CURETAPEWORM);
     return;
   }
 
   if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
   {
-    ADD_MESSAGE("%s removes the evil hidden in your brain.", GetName());
-    PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+    Favour(FAVOUR_CUREMINDWORM);
     return;
   }
 
   if(PLAYER->GetNP() < SATIATED_LEVEL)
   {
-    ADD_MESSAGE("Your stomach feels full again.");
-    PLAYER->SetNP(BLOATED_LEVEL);
+    Favour(FAVOUR_BLOATED);
     return;
   }
 
   if(PLAYER->IsBurnt())
   {
-    ADD_MESSAGE("%s heals your burns.", GetName());
-    //PLAYER->RemoveBurns(); // removes the burns and restores HP
-    if(!PLAYER->IsBurning()) // the player would do well to put the flames out himself first
-      PLAYER->ResetThermalEnergies();
-    PLAYER->ResetLivingBurning(); // In keeping with Seges' au natural theme. Does roughly the same as RemoveBurns(),
-                                  // only without the message(?) and it resets the burn level counter
+    Favour(FAVOUR_HEALBURNS);
     return;
   }
 
   // Always return at least some message.
-  ADD_MESSAGE("You don't feel a bit tired anymore.");
-  PLAYER->RestoreStamina();
+  Favour(FAVOUR_INVIGORATE);
   return;
 }
 
