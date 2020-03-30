@@ -1193,7 +1193,7 @@ truth commandsystem::AskFavour(character* Char)
   
   if(Select == LIST_WAS_EMPTY)
   {
-    ADD_MESSAGE("You do not know about any favours yet...");
+    ADD_MESSAGE("You can't feel the availability of any %s favours...", game::GetVerbalPlayerAlignment());
     return false;
   }
 
