@@ -135,13 +135,15 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
  */
 #define FAVOUR_CALLRAIN "Make it Rain"
 #define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
-#define FAVOUR_FEED "Feed me up"
+#define FAVOUR_FEED "Feed you up"
 #define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
 #define FAVOUR_STOPFIRE "Undo the burns of one equipped item"
-#define FAVOUR_SUMMONWOLF "Summon wolf friend(s)"
+#define FAVOUR_SUMMONWOLF "Summon Wolf friend(s)"
 #define FAVOUR_TELEPORT "Teleport"
 #define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
 #define FAVOUR_FIRESTORM "Fiery Firestorm"
+#define FAVOUR_EXTINGUISHFIRE "Put out these Flames"
+#define FAVOUR_TAME "Tame this Monster"
 
 bool god::Favour(cfestring fsWhat, int iDebit)
 {
@@ -337,49 +339,16 @@ void legifer::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("burned to death by the holy flames of ") + GetName(), 0);
 }
 
-bool dulcis::Favour(cfestring fsWhat, int iDebit)
+bool FavourExtinguishFire(god* G)
 {
-  return false;
+  PLAYER->Extinguish(true);
+  return true;
 }
 
-void dulcis::PrayGoodEffect()
+bool FavourTame(god* G)
 {
-  truth HasHelped = false;
-
-  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
-  {
-    square* Square = PLAYER->GetNeighbourSquare(d);
-
-    if(Square)
-    {
-      character* Char = Square->GetCharacter();
-
-      if(Char)
-        if(Char->IsBurning())
-          if(Char->GetTeam() == PLAYER->GetTeam())
-          {
-            Char->Extinguish(true);
-            HasHelped = true;
-          }
-    }
-  }
-  if(PLAYER->IsBurning())
-  {
-    PLAYER->Extinguish(true);
-    if(HasHelped)
-      ADD_MESSAGE("Dulcis helps you and your companions to put out the flames.");
-    else
-      ADD_MESSAGE("Dulcis helps you to put out the flames.");
-
-    HasHelped = true;
-  }
-  else if(HasHelped)
-    ADD_MESSAGE("Dulcis helps your companions to put out the flames.");
-  if(HasHelped)
-    return;
-  else
-    ADD_MESSAGE("A beautiful melody echoes around you.");
-
+  bool HasHelped = false;
+  
   for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
   {
     square* Square = PLAYER->GetNeighbourSquare(d);
@@ -420,8 +389,59 @@ void dulcis::PrayGoodEffect()
       }
     }
   }
+  
+  return HasHelped;
+}
+
+bool dulcis::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourExtinguishFire,FAVOUR_EXTINGUISHFIRE,fsWhat,iDebit,50))return true;
+  if(CallFavour(&FavourTame,FAVOUR_TAME,fsWhat,iDebit,250))return true;
+  return false;
+}
+
+void dulcis::PrayGoodEffect()
+{
+  truth HasHelped = false;
+  
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  {
+    square* Square = PLAYER->GetNeighbourSquare(d);
+
+    if(Square)
+    {
+      character* Char = Square->GetCharacter();
+
+      if(Char)
+        if(Char->IsBurning())
+          if(Char->GetTeam() == PLAYER->GetTeam())
+          {
+            Char->Extinguish(true);
+            HasHelped = true;
+          }
+    }
+  }
+  if(PLAYER->IsBurning())
+  {
+    Favour(FAVOUR_EXTINGUISHFIRE);
+    if(HasHelped)
+      ADD_MESSAGE("Dulcis helps you and your companions to put out the flames.");
+    else
+      ADD_MESSAGE("Dulcis helps you to put out the flames.");
+
+    HasHelped = true;
+  }
+  else if(HasHelped)
+    ADD_MESSAGE("Dulcis helps your companions to put out the flames.");
   if(HasHelped)
     return;
+  else
+    ADD_MESSAGE("A beautiful melody echoes around you.");
+
+  HasHelped = Favour(FAVOUR_TAME);
+  if(HasHelped)
+    return;
+  
   if (GetRelation() >= 50)
   {
      ADD_MESSAGE("You feel the music resonate within you.", GetName());
