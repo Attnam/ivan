@@ -1170,6 +1170,7 @@ truth commandsystem::AskFavour(character* Char)
     if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0)bOk=true;
     if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0)bOk=true;
     if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
+    if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
     
     if(bOk || game::WizardModeIsReallyActive()){
       std::vector<festring> v = pgod->GetKnownSpells();
