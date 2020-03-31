@@ -4060,9 +4060,16 @@ int game::GetGodAlignmentVsPlayer(god* G)
     case ALP:  return  3; //L+
     case AL:   return  2; //L
     case ALM:  return  1; //L-
-    case ANP:  return  1; //N+...  1 is to match the description at GetVerbalPlayerAlignment()
+    
+    /**
+     * Neutral has 1 less god, so 1 less source of favours. To compensate, these 3 being 0 will make it easier in favour cost for neutrally aligned players.
+     * Btw, these "N" matches the base Neutral alignment for these gods.
+     * And... it won't match very well the description at GetVerbalPlayerAlignment() tho, but let player guess it :)
+     */
+    case ANP:  return  0; //N+ 
     case AN:   return  0; //N=
-    case ANM:  return -1; //N-... -1 is to match the description at GetVerbalPlayerAlignment()
+    case ANM:  return  0; //N- 
+    
     case ACP:  return -1; //C+
     case AC:   return -2; //C
     case ACM:  return -3; //C-
