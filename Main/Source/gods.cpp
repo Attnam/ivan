@@ -133,23 +133,31 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
  * these are also used as maching IDs, 
  * this means that changing these texts will change what is saved on the savegame file...
  */
-#define FAVOUR_BLOATED "Feeds you a lot" //TODO consider price vs FAVOUR_FEED
 #define FAVOUR_CALLRAIN "Make it Rain"
+#define FAVOUR_CONFUSE "Cause Confusion amongst your enemies"
 #define FAVOUR_CURELEPROSY "Cure Leprosy"
 #define FAVOUR_CURELYCANTHROPY "Cure Lycanthropy"
 #define FAVOUR_CUREMINDWORM "Cure Mindworm"
 #define FAVOUR_CUREPOISON "Cure Poison"
+#define FAVOUR_CURESLOWNESS "Cure Slowness"
 #define FAVOUR_CURETAPEWORM "Cure Tapeworm"
 #define FAVOUR_CUREWOUNDS "Cure Wounds"
+#define FAVOUR_DISEASEIMMUNITY "Gain temporary Immunity to Diseases"
 #define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
+#define FAVOUR_ENCHANT "Enchant Equipment"
+#define FAVOUR_ETHEREALMOV "Become Ethereal"
 #define FAVOUR_EXTINGUISHFIRE "Put out these Flames" //TODO consider price vs FAVOUR_HEALBURNS
-#define FAVOUR_FEED "Feeds you well"
+#define FAVOUR_FEED "Calms your Hunger"
 #define FAVOUR_FIRESTORM "Fiery Firestorm"
 #define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
 #define FAVOUR_HEALBURNS "Heals your burns"
 #define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
+#define FAVOUR_INFRAVISION "See in the Darkness"
 #define FAVOUR_INVIGORATE "Invigorate"
-#define FAVOUR_STOPFIRE "Undo the burns of one equipped item"
+#define FAVOUR_INVISIBILITY "Become Invisible"
+#define FAVOUR_SHOPPING "Black Friday"
+#define FAVOUR_SPEEDUP "Make you Fast"
+#define FAVOUR_STOPFIRE "Unburn one Equipment"
 #define FAVOUR_SUMMONWOLF "Summon Wolf friend(s)"
 #define FAVOUR_TAME "Tame this Monster"
 #define FAVOUR_TELEPORT "Teleport"
@@ -516,12 +524,6 @@ bool FavourCureMindworm(god* G)
     PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
     return true;
 }
-bool FavourBloated(god* G)
-{
-    ADD_MESSAGE("Your stomach feels full again.");
-    PLAYER->SetNP(BLOATED_LEVEL);
-    return true;
-}
 bool FavourHealBurns(god* G)
 {
     ADD_MESSAGE("%s heals your burns.", G->GetName());
@@ -538,6 +540,23 @@ bool FavourInvigorate(god* G)
     PLAYER->RestoreStamina();
     return true;
 }
+bool FavourFeed(god* G)
+{
+    if(dynamic_cast<seges*>(G)){
+      ADD_MESSAGE("Your stomach feels full again.");
+      PLAYER->SetNP(BLOATED_LEVEL);
+    }else{
+      if(dynamic_cast<silva*>(G))
+        ADD_MESSAGE("%s feeds you fruits and wild berries.", G->GetName());
+
+      if(dynamic_cast<nefas*>(G))
+        ADD_MESSAGE("%s breast-feeds you.", G->GetName());
+
+      PLAYER->SetNP(SATIATED_LEVEL);
+    }
+    
+    return true;
+}
 
 bool seges::Favour(cfestring fsWhat, int iDebit)
 {
@@ -548,7 +567,7 @@ bool seges::Favour(cfestring fsWhat, int iDebit)
   //TODO is vampirism bad in anyway?
   if(CallFavour(&FavourCureTapeworm,FAVOUR_CURETAPEWORM,fsWhat,iDebit,250))return true;
   if(CallFavour(&FavourCureMindworm,FAVOUR_CUREMINDWORM,fsWhat,iDebit,500))return true;
-  if(CallFavour(&FavourBloated,FAVOUR_BLOATED,fsWhat,iDebit,300))return true;
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,300))return true; //bloats
   if(CallFavour(&FavourHealBurns,FAVOUR_HEALBURNS,fsWhat,iDebit,50))return true;
   if(CallFavour(&FavourInvigorate,FAVOUR_INVIGORATE,fsWhat,iDebit,250))return true;
   return false;
@@ -601,7 +620,7 @@ void seges::PrayGoodEffect()
 
   if(PLAYER->GetNP() < SATIATED_LEVEL)
   {
-    Favour(FAVOUR_BLOATED);
+    Favour(FAVOUR_FEED);
     return;
   }
 
@@ -628,18 +647,13 @@ void seges::PrayBadEffect()
     ADD_MESSAGE("Seges tries to alter the contents of your stomach, but fails.");
 }
 
-bool atavus::Favour(cfestring fsWhat, int iDebit)
-{
-  return false;
-}
-
-void atavus::PrayGoodEffect()
+bool FavourEnchantEquipment(god* G)
 {
   item* Enchantable;
   item* PairEnchantable;
   int LowEnchant = 99;
   truth Pair = false;
-
+  
   for(int c = 0; c < PLAYER->GetEquipments(); ++c)
   {
     item* Equipment = PLAYER->GetEquipment(c);
@@ -662,7 +676,7 @@ void atavus::PrayGoodEffect()
   }
   if(LowEnchant < 99)
   {
-    int EnchDiff = ((Enchantable->GetEnchantment()+2)*250 - GetRelation()) / 50;
+    int EnchDiff = ((Enchantable->GetEnchantment()+2)*250 - G->GetRelation()) / 50;
     if(EnchDiff <= 1 || !RAND_N(EnchDiff)) {
       if(Pair)
       {
@@ -675,9 +689,22 @@ void atavus::PrayGoodEffect()
         ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Enchantable->CHAR_NAME(UNARTICLED));
         Enchantable->EditEnchantment(1);
       }
-      return;
+      return true;
     }
   }
+  
+  return false;
+}
+
+bool atavus::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourEnchantEquipment,FAVOUR_ENCHANT,fsWhat,iDebit,250))return true;
+  return false;
+}
+
+void atavus::PrayGoodEffect()
+{
+  if(Favour(FAVOUR_ENCHANT))return;
   ADD_MESSAGE("You feel that %s is watching your actions closely.", GetName());
 }
 
@@ -714,13 +741,6 @@ void atavus::PrayBadEffect()
   }
 
   PLAYER->CheckDeath(CONST_S("killed by Atavus's humour"));
-}
-
-bool FavourFeed(god* G)
-{
-    ADD_MESSAGE("%s feeds you fruits and wild berries.", G->GetName());
-    PLAYER->SetNP(SATIATED_LEVEL);
-    return true;
 }
 
 bool FavourCallRain(god* G)
@@ -887,7 +907,7 @@ bool FavourSummonWolf(god* G)
 
 bool silva::Favour(cfestring fsWhat, int iDebit)
 {
-  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true;
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true; //satiated
   if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
   if(CallFavour(&FavourEarthQuake,FAVOUR_EARTHQUAKE,fsWhat,iDebit,500))return true;
   if(CallFavour(&FavourSummonWolf,FAVOUR_SUMMONWOLF,fsWhat,iDebit,250))return true;
@@ -1097,41 +1117,78 @@ void loricatus::PrayBadEffect()
   }
 }
 
+int CalcDuration(god* G)
+{
+  if(dynamic_cast<cleptia*>(G))
+    return 200 * PLAYER->GetAttribute(WISDOM) + Max(G->GetRelation(), 0);
+  
+  if(dynamic_cast<scabies*>(G))
+    return 300 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 5;
+  
+  ABORT("invalid duration calc for god %d",G->GetName());
+}
+bool FavourCureSlowness(god* G)
+{
+    ADD_MESSAGE("%s restores the swiftness of your movement.", G->GetName());
+    PLAYER->DeActivateTemporaryState(SLOW);
+    return true;
+}
+bool FavourSpeedUp(god* G)
+{
+    int Duration = CalcDuration(G);
+    ADD_MESSAGE("%s gives you the talent for speed.", G->GetName());
+    PLAYER->BeginTemporaryState(HASTE, Duration);
+    return true;
+}
+bool FavourInvisible(god* G)
+{
+    int Duration = CalcDuration(G);
+    ADD_MESSAGE("%s hides you from your enemies.", G->GetName());
+    PLAYER->BeginTemporaryState(INVISIBLE, Duration);
+    return true;
+}
+bool FavourInfravision(god* G)
+{
+    int Duration = CalcDuration(G);
+    ADD_MESSAGE("%s orders darkness to hinder you no more.", G->GetName());
+    PLAYER->BeginTemporaryState(INFRA_VISION, Duration);
+    return true;
+}
+
 bool cleptia::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(FavourCureSlowness,FAVOUR_CURESLOWNESS,fsWhat,iDebit,100))return true;
+  if(CallFavour(FavourSpeedUp,FAVOUR_SPEEDUP,fsWhat,iDebit,150))return true;
+  if(CallFavour(FavourInvisible,FAVOUR_INVISIBILITY,fsWhat,iDebit,250))return true;
+  if(CallFavour(FavourInfravision,FAVOUR_INFRAVISION,fsWhat,iDebit,150))return true;
   return false;
 }
 
 void cleptia::PrayGoodEffect()
 {
-  int Duration = 200 * PLAYER->GetAttribute(WISDOM) + Max(Relation, 0);
   PLAYER->RestoreStamina();
 
   if(PLAYER->StateIsActivated(SLOW))
   {
-    ADD_MESSAGE("%s restores the swiftness of your movement.", GetName());
-    PLAYER->DeActivateTemporaryState(SLOW);
+    Favour(FAVOUR_CURESLOWNESS);
     return;
   }
 
   if(!PLAYER->StateIsActivated(HASTE))
   {
-    ADD_MESSAGE("%s gives you the talent for speed.", GetName());
-    PLAYER->BeginTemporaryState(HASTE, Duration);
+    Favour(FAVOUR_SPEEDUP);
     return;
   }
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
   {
-    ADD_MESSAGE("%s hides you from your enemies.", GetName());
-    PLAYER->BeginTemporaryState(INVISIBLE, Duration);
+    Favour(FAVOUR_INVISIBILITY);
     return;
   }
 
   if(!PLAYER->StateIsActivated(INFRA_VISION))
   {
-    ADD_MESSAGE("%s orders darkness to hinder you no more.", GetName());
-    PLAYER->BeginTemporaryState(INFRA_VISION, Duration);
+    Favour(FAVOUR_INFRAVISION);
     return;
   }
 
@@ -1149,8 +1206,24 @@ void cleptia::PrayBadEffect()
   PLAYER->BeginTemporaryState(SLOW, 250);
 }
 
+bool FavourEtherealMov(god* G)
+{
+    ADD_MESSAGE("The air suddenly feels much colder. A terrible undead voice shreds "
+                "the silence: \"I aM PlEaSeD By tHy sQuIrMiNg, WoRm! WaLkEtH WiTh mE "
+                "ThRoUgH ThE ShAdOwS As oNe oF ThE DeAd!\"");
+
+    if(!PLAYER->StateIsActivated(ETHEREAL_MOVING))
+      PLAYER->BeginTemporaryState(ETHEREAL_MOVING, PLAYER->GetAttribute(WISDOM) * 300);
+    else
+      PLAYER->EditTemporaryStateCounter(ETHEREAL_MOVING,
+        PLAYER->GetTemporaryStateCounter(ETHEREAL_MOVING) + (PLAYER->GetAttribute(WISDOM) * 100));
+    
+    return true;
+}
+
 bool mortifer::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(FavourEtherealMov,FAVOUR_ETHEREALMOV,fsWhat,iDebit,350))return true;
   return false;
 }
 
@@ -1167,15 +1240,7 @@ void mortifer::PrayGoodEffect()
   }
   else
   {
-    ADD_MESSAGE("The air suddenly feels much colder. A terrible undead voice shreds "
-                "the silence: \"I aM PlEaSeD By tHy sQuIrMiNg, WoRm! WaLkEtH WiTh mE "
-                "ThRoUgH ThE ShAdOwS As oNe oF ThE DeAd!\"");
-
-    if(!PLAYER->StateIsActivated(ETHEREAL_MOVING))
-      PLAYER->BeginTemporaryState(ETHEREAL_MOVING, PLAYER->GetAttribute(WISDOM) * 300);
-    else
-      PLAYER->EditTemporaryStateCounter(ETHEREAL_MOVING,
-        PLAYER->GetTemporaryStateCounter(ETHEREAL_MOVING) + (PLAYER->GetAttribute(WISDOM) * 100));
+    Favour(FAVOUR_ETHEREALMOV);
   }
 }
 
@@ -1191,8 +1256,39 @@ void mortifer::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("obliterated by the unholy power of ") + GetName(), 0);
 }
 
+bool FavourShopping(god* G)
+{
+  truth Success = false;
+  itemvector OKItems;
+
+  for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
+  {
+    if(!i->HasBetterVersion())
+      continue;
+
+    OKItems.push_back(*i);
+    Success = true;
+  }
+
+  item* NewVersion;
+
+  for(int c = 0; !OKItems.empty() && c < 4; ++c)
+  {
+    item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
+    NewVersion = ToBeDeleted->BetterVersion();
+    ADD_MESSAGE("%s manages to trade %s into %s.", G->GetName(),
+                ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
+    PLAYER->GetStack()->AddItem(NewVersion);
+    ToBeDeleted->RemoveFromSlot();
+    ToBeDeleted->SendToHell();
+    OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+  }
+  
+  return Success;
+}
 bool mellis::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(FavourShopping,FAVOUR_SHOPPING,fsWhat,iDebit,250))return true;
   return false;
 }
 
@@ -1202,30 +1298,7 @@ void mellis::PrayGoodEffect()
 
   if(!RAND_2)
   {
-    itemvector OKItems;
-
-    for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
-    {
-      if(!i->HasBetterVersion())
-        continue;
-
-      OKItems.push_back(*i);
-      Success = true;
-    }
-
-    item* NewVersion;
-
-    for(int c = 0; !OKItems.empty() && c < 4; ++c)
-    {
-      item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
-      NewVersion = ToBeDeleted->BetterVersion();
-      ADD_MESSAGE("%s manages to trade %s into %s.", GetName(),
-                  ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
-      PLAYER->GetStack()->AddItem(NewVersion);
-      ToBeDeleted->RemoveFromSlot();
-      ToBeDeleted->SendToHell();
-      OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
-    }
+    Success = Favour(FAVOUR_SHOPPING);
   }
 
   if((Success && !(RAND() % 5)) || (!Success && !(RAND() % 3)))
@@ -1373,20 +1446,8 @@ void infuscor::PrayBadEffect()
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
-bool nefas::Favour(cfestring fsWhat, int iDebit)
+bool FavourConfusion(god* G)
 {
-  return false;
-}
-
-void nefas::PrayGoodEffect()
-{
-  if(PLAYER->GetNP() < HUNGER_LEVEL)
-  {
-    ADD_MESSAGE("%s breast-feeds you.", GetName());
-    PLAYER->SetNP(SATIATED_LEVEL);
-    return;
-  }
-
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
@@ -1420,12 +1481,31 @@ void nefas::PrayGoodEffect()
            && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
         {
           if(Audience->CanBeSeenByPlayer())
-            ADD_MESSAGE("%s confuses %s with her sweet lies.", GetName(), Audience->CHAR_NAME(DEFINITE));
+            ADD_MESSAGE("%s confuses %s with her sweet lies.", G->GetName(), Audience->CHAR_NAME(DEFINITE));
 
           Audience->BeginTemporaryState(CONFUSED, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
         }
       }
   }
+
+  return true;
+}
+bool nefas::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true; //satiated
+  if(CallFavour(&FavourConfusion,FAVOUR_CONFUSE,fsWhat,iDebit,200))return true; //satiated
+  return false;
+}
+
+void nefas::PrayGoodEffect()
+{
+  if(PLAYER->GetNP() < HUNGER_LEVEL)
+  {
+    Favour(FAVOUR_FEED);
+    return;
+  }
+
+  Favour(FAVOUR_CONFUSE);
 
   if((GetRelation() > 200) && RAND_N(5)) {
     int Chief = 3000/GetRelation();
@@ -1466,8 +1546,16 @@ void nefas::PrayBadEffect()
   PLAYER->CheckDeath(CONST_S("killed while enjoying the company of ") + GetName(), 0);
 }
 
+bool FavourDiseaseImmunity(god* G)
+{
+  int Duration = CalcDuration(G);
+  PLAYER->BeginTemporaryState(DISEASE_IMMUNITY, Duration);
+  ADD_MESSAGE("%s chuckles in your mind: \"No need to fall apart, my dear.\"", G->GetName());
+  return true;
+}
 bool scabies::Favour(cfestring fsWhat, int iDebit)
 {
+  if(CallFavour(&FavourDiseaseImmunity,FAVOUR_DISEASEIMMUNITY,fsWhat,iDebit,350))return true; //satiated
   return false;
 }
 
@@ -1486,7 +1574,7 @@ void scabies::PrayGoodEffect()
     ADD_MESSAGE("You feel a horrible disease spreading.");
   }
 
-  int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
+  int Duration = CalcDuration(this);
 
   if((PLAYER->GetNP() < HUNGER_LEVEL) &&
      (!PLAYER->StateIsActivated(FASTING) || PLAYER->GetTemporaryStateCounter(FASTING) < Duration))
@@ -1502,8 +1590,7 @@ void scabies::PrayGoodEffect()
   // Scabies wants followers who can spread her word, not those who just lie on thr ground, missing limbs.
   if(PLAYER->StateIsActivated(LEPROSY) && !PLAYER->IsImmuneToLeprosy())
   {
-    PLAYER->BeginTemporaryState(DISEASE_IMMUNITY, Duration);
-    ADD_MESSAGE("%s chuckles in your mind: \"No need to fall apart, my dear.\"", GetName());
+    Favour(FAVOUR_DISEASEIMMUNITY);
     return;
   }
 
