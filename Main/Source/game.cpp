@@ -4053,6 +4053,26 @@ int game::GetPlayerAlignment()
   return -4;
 }
 
+int game::GetGodAlignmentVsPlayer(god* G)
+{
+  switch(G->GetAlignment()){
+    case ALPP: return  4; //L++
+    case ALP:  return  3; //L+
+    case AL:   return  2; //L
+    case ALM:  return  1; //L-
+    case ANP:  return  1; //N+...  1 is to match the description at GetVerbalPlayerAlignment()
+    case AN:   return  0; //N=
+    case ANM:  return -1; //N-... -1 is to match the description at GetVerbalPlayerAlignment()
+    case ACP:  return -1; //C+
+    case AC:   return -2; //C
+    case ACM:  return -3; //C-
+    case ACMM: return -4; //C--
+  }
+  
+  ABORT("unsupported alignment %d",G->GetAlignment());
+  return -1000; //dummy
+}
+
 cchar* game::GetVerbalPlayerAlignment()
 {
   switch(GetPlayerAlignment()){

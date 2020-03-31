@@ -164,15 +164,23 @@ bool god::Favour(cfestring fsWhat, int iDebit)
   return true;
 }
 
-int CalcDebit(int iDebit,int iDefault){
+int CalcDebit(god* G,int iDebit,int iDefault){
   if(iDebit!=0){
     switch(iDebit){
       case FAVOURDEBIT_AUTO:       iDebit=iDefault  ;break;
       case FAVOURDEBIT_AUTOHALF:   iDebit=iDefault/2;break;
       case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2;break;
     }
+    
+    // can ask more favours if very well aligned
+    if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(G)){
+      iDebit/=3;
+    }
+    
+    // skilled in praying :)
     iDebit -= game::GetPlayer()->GetAttribute(MANA);
-    if(iDebit<10)iDebit=10; //minimum
+    
+    if(iDebit<10)iDebit=10; //max of 100 vafours in the best case (master) only
   }
   return iDebit;
 }
@@ -200,7 +208,7 @@ bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat
   if(iDebit==0) //came thru normal praying
     AddKnownSpell(knownSpells,fsCallFavour);
   
-  iDebit=CalcDebit(iDebit,iDbtDefault);
+  iDebit=CalcDebit(this,iDebit,iDbtDefault);
   
   if(iDebit>0)
     if(!god::Favour(fsWhat,iDebit))
@@ -734,15 +742,8 @@ bool FavourCallRain(god* G)
     return true;
 }
 
-bool silva::Favour(cfestring fsWhat, int iDebit)
+bool FavourEarthQuake(god* G)
 {
-  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true;
-  if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
-  
-  if(fsWhat==FAVOUR_EARTHQUAKE){
-    iDebit=CalcDebit(iDebit,500);
-    if(!god::Favour(fsWhat,iDebit))return false;
-    
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
     if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
@@ -848,16 +849,12 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
     for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
-    
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_EARTHQUAKE);return true;}();
-    Relation-=iDebit;
-    return true;
-  }
   
-  if(fsWhat==FAVOUR_SUMMONWOLF){
-    iDebit=CalcDebit(iDebit,250);
-    if(!god::Favour(fsWhat,iDebit))return false;
-    
+    return true;
+}
+
+bool FavourSummonWolf(god* G)
+{
     int TryToCreate = 1 + RAND() % 7;
     int Created = 0;
 
@@ -885,10 +882,15 @@ bool silva::Favour(cfestring fsWhat, int iDebit)
     if(Created > 1)
       ADD_MESSAGE("Suddenly some tame wolves materialize around you.");
     
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_SUMMONWOLF);return true;}();
-    Relation-=iDebit;
     return true;
-  }
+}
+
+bool silva::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true;
+  if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
+  if(CallFavour(&FavourEarthQuake,FAVOUR_EARTHQUAKE,fsWhat,iDebit,500))return true;
+  if(CallFavour(&FavourSummonWolf,FAVOUR_SUMMONWOLF,fsWhat,iDebit,250))return true;
   
   return false;
 }
@@ -930,40 +932,32 @@ void silva::PrayBadEffect()
   }
 }
 
-bool loricatus::Favour(cfestring fsWhat, int iDebit)
+bool FavourFixEquipment(god* G)
 {
-  if(fsWhat==FAVOUR_FIXEQUIPMENT){
-    iDebit=CalcDebit(iDebit,250);
-    if(!god::Favour(fsWhat,iDebit))return false;
-    
     for(int c = 0; c < PLAYER->GetEquipments(); ++c)
     {
       item* Equipment = PLAYER->GetEquipment(c);
 
       if(Equipment && Equipment->IsBroken())
       {
-        ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("%s fixes your %s.", G->GetName(), Equipment->CHAR_NAME(UNARTICLED));
         Equipment->Fix();
         break;
       }
     }
-  
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_FIXEQUIPMENT);return true;}();
-    Relation-=iDebit;
-    return true;
-  }  
-  
-  if(fsWhat==FAVOUR_STOPFIRE){
-    iDebit=CalcDebit(iDebit,50);
-    if(!god::Favour(fsWhat,iDebit))return false;
     
+  return true;
+}
+
+bool FavourStopFire(god* G)
+{
     for(int c = 0; c < PLAYER->GetEquipments(); ++c)
     {
       item* Equipment = PLAYER->GetEquipment(c);
 
       if(Equipment && Equipment->IsBurnt())
       {
-        ADD_MESSAGE("%s repairs the burns on your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("%s repairs the burns on your %s.", G->GetName(), Equipment->CHAR_NAME(UNARTICLED));
         Equipment->RemoveBurns();
         if(!Equipment->IsBurning())
           Equipment->ResetThermalEnergies();
@@ -972,10 +966,13 @@ bool loricatus::Favour(cfestring fsWhat, int iDebit)
       }
     }
     
-    static bool bInitDummy=[this](){AddKnownSpell(knownSpells,FAVOUR_STOPFIRE);return true;}();
-    Relation-=iDebit;
     return true;
-  }
+}
+
+bool loricatus::Favour(cfestring fsWhat, int iDebit)
+{
+  if(CallFavour(&FavourFixEquipment,FAVOUR_FIXEQUIPMENT,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourStopFire,FAVOUR_STOPFIRE,fsWhat,iDebit,50))return true;
   
   return false;
 }

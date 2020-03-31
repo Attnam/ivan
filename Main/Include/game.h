@@ -280,6 +280,7 @@ class game
   static int GetDirectionForVector(v2);
   static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
+  static int GetGodAlignmentVsPlayer(god* G);
   static void CreateGods();
   static int GetScreenXSize();
   static int GetScreenYSize();
