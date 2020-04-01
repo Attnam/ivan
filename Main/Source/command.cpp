@@ -1162,7 +1162,7 @@ truth commandsystem::AskFavour(character* Char)
 {
   felist felSpellList(CONST_S("To Whom you want to ask a ")+game::GetVerbalPlayerAlignment()+" favour?");
   
-  std::vector<std::pair<god*,festring>> vGS;
+  std::vector<std::pair<god*,int>> vGS;
   for(int c = 1; c <= GODS; ++c){
     god* pgod = game::GetGod(c);
     
@@ -1173,16 +1173,16 @@ truth commandsystem::AskFavour(character* Char)
     if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
     
     if(bOk || game::WizardModeIsReallyActive()){
-      std::vector<festring> v = pgod->GetKnownSpells();
-      for(auto pfsSpell = v.begin(); pfsSpell != v.end(); pfsSpell++){
+      std::vector<int> v = pgod->GetKnownSpells();
+      for(auto piSpell = v.begin(); piSpell != v.end(); ++piSpell){
         felSpellList.AddEntry(CONST_S("")+
           game::GetAlignment(pgod->GetAlignment())+" "+
-          pgod->GetName()+" may grant you a \""+*pfsSpell+"\" favour.",
+          pgod->GetName()+" may grant you a \""+god::GetFavourName(*piSpell)+"\" favour.",
           bOk ? LIGHT_GRAY : RED);
 
-        std::pair<god*,festring> GS;
+        std::pair<god*,int> GS;
         GS.first = pgod;
-        GS.second = *pfsSpell;
+        GS.second = *piSpell;
         vGS.push_back(GS);
       }
     }
@@ -1202,7 +1202,7 @@ truth commandsystem::AskFavour(character* Char)
     return false;
   
   god* G = vGS[Select].first;
-  festring fsFavour = vGS[Select].second;
+  int iFavour = vGS[Select].second;
   int iDebit=FAVOURDEBIT_AUTO;
   int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
   if(DivineMaster){
@@ -1212,7 +1212,7 @@ truth commandsystem::AskFavour(character* Char)
       iDebit=FAVOURDEBIT_AUTODOUBLE;
   }
 
-  if(G->Favour(fsFavour,iDebit)){
+  if(G->Favour(iFavour,iDebit)){
     Char->EditAP(-1000);
     return true;
   }

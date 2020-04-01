@@ -553,7 +553,7 @@ void god::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetType());
   SaveFile << Relation << Timer << Known << LastPray;
   SaveFile << fsLastKnownRelation;
-  SaveFile << knownSpells;
+  SaveFile << knownSpellsID;
 }
 
 void god::Load(inputfile& SaveFile)
@@ -563,7 +563,7 @@ void god::Load(inputfile& SaveFile)
     SaveFile >> fsLastKnownRelation;
   }
   if(game::GetCurrentSavefileVersion()>=135){
-    SaveFile >> knownSpells;
+    SaveFile >> knownSpellsID;
   }
 }
 
@@ -573,4 +573,38 @@ void god::ApplyDivineTick()
     --Timer;
   if(LastPray > -1 && LastPray < 336000)
     ++LastPray;
+}
+
+std::vector<std::pair<int,festring>> god::vFavID;
+
+bool god::Favour(int iWhat, int iDebit)
+{
+  if(Relation<iDebit){
+    ADD_MESSAGE("%s ignores your plea...",GetName());
+    return false;
+  }
+  
+  return true;
+}
+
+festring god::GetFavourName(int iID)
+{
+  if(vFavID.size()==0) FavourInit();
+  
+  for(auto FI = vFavID.begin(); FI != vFavID.end(); ++FI){
+    if(FI->first==iID)
+      return FI->second;
+  }
+  
+  ABORT("invalid favour ID %d",iID);
+  return ""; //dummy
+}
+
+void god::AddFavourID(int i,festring fs)
+{
+//  std::pair<int,festring> IDname;
+//  IDname.first = i;
+//  IDname.second = fs;
+//  vFavID.push_back(IDname);
+  vFavID.push_back(std::make_pair(i,fs));
 }

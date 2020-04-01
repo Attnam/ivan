@@ -33,7 +33,7 @@ GOD(valpurus, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(legifer, god)
@@ -49,7 +49,7 @@ GOD(legifer, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(atavus, god)
@@ -66,7 +66,7 @@ GOD(atavus, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(dulcis, god)
@@ -82,7 +82,7 @@ GOD(dulcis, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(seges, god)
@@ -101,7 +101,7 @@ GOD(seges, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(sophos, god)
@@ -117,7 +117,7 @@ GOD(sophos, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(silva, god)
@@ -133,7 +133,7 @@ GOD(silva, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(loricatus, god)
@@ -149,7 +149,7 @@ GOD(loricatus, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(mellis, god)
@@ -165,7 +165,7 @@ GOD(mellis, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(cleptia, god)
@@ -181,7 +181,7 @@ GOD(cleptia, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(nefas, god)
@@ -197,7 +197,7 @@ GOD(nefas, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(scabies, god)
@@ -217,7 +217,7 @@ GOD(scabies, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(infuscor, god)
@@ -233,7 +233,7 @@ GOD(infuscor, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(cruentus, god)
@@ -249,7 +249,7 @@ GOD(cruentus, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 GOD(mortifer, god)
@@ -266,7 +266,7 @@ GOD(mortifer, god)
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
+  virtual bool Favour(int iWhat, int iDebit=0);
 };
 
 #endif

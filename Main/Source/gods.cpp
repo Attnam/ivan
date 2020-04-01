@@ -130,46 +130,70 @@ col16 mortifer::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 /**
- * these are also used as maching IDs, 
- * this means that changing these texts will change what is saved on the savegame file...
+ * changing the order of these enums will mess importing old savegames (but wont break them)
+ * prefer sorting on the initialization of the strings FavourInit()
  */
-#define FAVOUR_CALLRAIN "Make it Rain"
-#define FAVOUR_CONFUSE "Cause Confusion amongst your enemies"
-#define FAVOUR_CURELEPROSY "Cure Leprosy"
-#define FAVOUR_CURELYCANTHROPY "Cure Lycanthropy"
-#define FAVOUR_CUREMINDWORM "Cure Mindworm"
-#define FAVOUR_CUREPOISON "Cure Poison"
-#define FAVOUR_CURESLOWNESS "Cure Slowness"
-#define FAVOUR_CURETAPEWORM "Cure Tapeworm"
-#define FAVOUR_CUREWOUNDS "Cure Wounds"
-#define FAVOUR_DISEASEIMMUNITY "Gain temporary Immunity to Diseases"
-#define FAVOUR_EARTHQUAKE "Invoke the rage of an Earth Quake"
-#define FAVOUR_ENCHANT "Enchant Equipment"
-#define FAVOUR_ETHEREALMOV "Become Ethereal"
-#define FAVOUR_EXTINGUISHFIRE "Put out these Flames" //TODO consider price vs FAVOUR_HEALBURNS
-#define FAVOUR_FEED "Calms your Hunger"
-#define FAVOUR_FIRESTORM "Fiery Firestorm"
-#define FAVOUR_FIXEQUIPMENT "Fix one broken equipped item"
-#define FAVOUR_HEALBURNS "Heals your burns"
-#define FAVOUR_HOLYGREN "Paladin's Holy Grenade"
-#define FAVOUR_INFRAVISION "See in the Darkness"
-#define FAVOUR_INVIGORATE "Invigorate"
-#define FAVOUR_INVISIBILITY "Become Invisible"
-#define FAVOUR_SHOPPING "Black Friday"
-#define FAVOUR_SPEEDUP "Make you Fast"
-#define FAVOUR_STOPFIRE "Unburn one Equipment"
-#define FAVOUR_SUMMONWOLF "Summon Wolf friend(s)"
-#define FAVOUR_TAME "Tame this Monster"
-#define FAVOUR_TELEPORT "Teleport"
+enum eFavours { 
+  FAVOUR_CALLRAIN = 1,
+  FAVOUR_CONFUSE,
+  FAVOUR_CURELEPROSY,
+  FAVOUR_CURELYCANTHROPY,
+  FAVOUR_CUREMINDWORM,
+  FAVOUR_CUREPOISON,
+  FAVOUR_CURESLOWNESS,
+  FAVOUR_CURETAPEWORM,
+  FAVOUR_CUREWOUNDS,
+  FAVOUR_DISEASEIMMUNITY,
+  FAVOUR_EARTHQUAKE,
+  FAVOUR_ENCHANT,
+  FAVOUR_ETHEREALMOV,
+  FAVOUR_EXTINGUISHFIRE,
+  FAVOUR_FEED,
+  FAVOUR_FIRESTORM,
+  FAVOUR_FIXEQUIPMENT,
+  FAVOUR_HEALBURNS,
+  FAVOUR_HOLYGREN,
+  FAVOUR_INFRAVISION,
+  FAVOUR_INVIGORATE,
+  FAVOUR_INVISIBILITY,
+  FAVOUR_SHOPPING,
+  FAVOUR_SPEEDUP,
+  FAVOUR_STOPFIRE,
+  FAVOUR_SUMMONWOLF,
+  FAVOUR_TAME,
+  FAVOUR_TELEPORT,
+};
 
-bool god::Favour(cfestring fsWhat, int iDebit)
+void god::FavourInit() //this one is better on this file
 {
-  if(Relation<iDebit){
-    ADD_MESSAGE("%s ignores your plea...",GetName());
-    return false;
-  }
-  
-  return true;
+  AddFavourID(FAVOUR_CALLRAIN,"Make it Rain");
+  AddFavourID(FAVOUR_CONFUSE,"Cause Confusion amongst your enemies");
+  AddFavourID(FAVOUR_CURELEPROSY,"Cure Leprosy");
+  AddFavourID(FAVOUR_CURELYCANTHROPY,"Cure Lycanthropy");
+  AddFavourID(FAVOUR_CUREMINDWORM,"Cure Mindworm");
+  AddFavourID(FAVOUR_CUREPOISON,"Cure Poison");
+  AddFavourID(FAVOUR_CURESLOWNESS,"Cure Slowness");
+  AddFavourID(FAVOUR_CURETAPEWORM,"Cure Tapeworm");
+  AddFavourID(FAVOUR_CUREWOUNDS,"Cure Wounds");
+  AddFavourID(FAVOUR_DISEASEIMMUNITY,"Gain temporary Immunity to Diseases");
+  AddFavourID(FAVOUR_EARTHQUAKE,"Invoke the rage of an Earth Quake");
+  AddFavourID(FAVOUR_ENCHANT,"Enchant Equipment");
+  AddFavourID(FAVOUR_ETHEREALMOV,"Become Ethereal");
+  AddFavourID(FAVOUR_EXTINGUISHFIRE,"Put out these Flames"); //TODO consider price vs FAVOUR_HEALBURNS);
+  AddFavourID(FAVOUR_FEED,"Calms your Hunger");
+  AddFavourID(FAVOUR_FIRESTORM,"Fiery Firestorm");
+  AddFavourID(FAVOUR_FIXEQUIPMENT,"Fix one broken equipped item");
+  AddFavourID(FAVOUR_HEALBURNS,"Heals your burns");
+  AddFavourID(FAVOUR_HOLYGREN,"Paladin's Holy Grenade");
+  AddFavourID(FAVOUR_INFRAVISION,"See in the Darkness");
+  AddFavourID(FAVOUR_INVIGORATE,"Invigorate");
+  AddFavourID(FAVOUR_INVISIBILITY,"Become Invisible");
+  AddFavourID(FAVOUR_SHOPPING,"Black Friday");
+  AddFavourID(FAVOUR_SPEEDUP,"Make you Fast");
+  AddFavourID(FAVOUR_STOPFIRE,"Unburn one Equipment");
+  AddFavourID(FAVOUR_SUMMONWOLF,"Summon Wolf friend(s)");
+  AddFavourID(FAVOUR_TAME,"Tame this Monster");
+  AddFavourID(FAVOUR_TELEPORT,"Teleport");
 }
 
 int CalcDebit(god* G,int iDebit,int iDefault){
@@ -193,12 +217,12 @@ int CalcDebit(god* G,int iDebit,int iDefault){
   return iDebit;
 }
 
-void AddKnownSpell(std::vector<festring>& ks,festring fsNew)
+void AddKnownSpell(std::vector<int>& ks,int iNew)
 {
   for(auto pfsSpell = ks.begin(); pfsSpell != ks.end(); pfsSpell++){
-    if(*pfsSpell == fsNew)return;
+    if(*pfsSpell == iNew)return;
   }
-  ks.push_back(fsNew);
+  ks.push_back(iNew);
 }
 
 bool FavourTeleport(god* G)
@@ -209,17 +233,17 @@ bool FavourTeleport(god* G)
     return true;
 }
 
-bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat, int iDebit, int iDbtDefault)
+bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit, int iDbtDefault)
 {
-  if(fsCallFavour!=fsWhat)return false;
+  if(iCallFavour!=iWhat)return false;
   
   if(iDebit==0) //came thru normal praying
-    AddKnownSpell(knownSpells,fsCallFavour);
+    AddKnownSpell(knownSpellsID,iCallFavour);
   
   iDebit=CalcDebit(this,iDebit,iDbtDefault);
   
   if(iDebit>0)
-    if(!god::Favour(fsWhat,iDebit))
+    if(!god::Favour(iWhat,iDebit))
       return false;
 
   if((*call)(this)){
@@ -237,9 +261,9 @@ bool god::CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat
  * @param iDebit if -1 will be automatic
  * @return 
  */
-bool sophos::Favour(cfestring fsWhat, int iDebit)
+bool sophos::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourTeleport,FAVOUR_TELEPORT,fsWhat,iDebit,100))return true;
+  if(CallFavour(&FavourTeleport,FAVOUR_TELEPORT,iWhat,iDebit,100))return true;
   return false;
 }
 
@@ -304,9 +328,9 @@ bool FavourHolyGrenade(god* G)
     return true;
 }
 
-bool valpurus::Favour(cfestring fsWhat, int iDebit)
+bool valpurus::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourHolyGrenade,FAVOUR_HOLYGREN,fsWhat,iDebit,300))return true;
+  if(CallFavour(&FavourHolyGrenade,FAVOUR_HOLYGREN,iWhat,iDebit,300))return true;
   return false;
 }
 
@@ -352,9 +376,9 @@ bool FavourFirestorm(god* G)
   return true;
 }
 
-bool legifer::Favour(cfestring fsWhat, int iDebit)
+bool legifer::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourFirestorm,FAVOUR_FIRESTORM,fsWhat,iDebit,200))return true;
+  if(CallFavour(&FavourFirestorm,FAVOUR_FIRESTORM,iWhat,iDebit,200))return true;
   return false;
 }
 
@@ -424,10 +448,10 @@ bool FavourTame(god* G)
   return HasHelped;
 }
 
-bool dulcis::Favour(cfestring fsWhat, int iDebit)
+bool dulcis::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourExtinguishFire,FAVOUR_EXTINGUISHFIRE,fsWhat,iDebit,50))return true;
-  if(CallFavour(&FavourTame,FAVOUR_TAME,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourExtinguishFire,FAVOUR_EXTINGUISHFIRE,iWhat,iDebit,50))return true;
+  if(CallFavour(&FavourTame,FAVOUR_TAME,iWhat,iDebit,250))return true;
   return false;
 }
 
@@ -558,18 +582,18 @@ bool FavourFeed(god* G)
     return true;
 }
 
-bool seges::Favour(cfestring fsWhat, int iDebit)
+bool seges::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourCureWounds,FAVOUR_CUREWOUNDS,fsWhat,iDebit,150))return true;
-  if(CallFavour(&FavourCurePoison,FAVOUR_CUREPOISON,fsWhat,iDebit,200))return true;
-  if(CallFavour(&FavourCureLeprosy,FAVOUR_CURELEPROSY,fsWhat,iDebit,250))return true;
-  if(CallFavour(&FavourCureLycanthropy,FAVOUR_CURELYCANTHROPY,fsWhat,iDebit,300))return true;
+  if(CallFavour(&FavourCureWounds,FAVOUR_CUREWOUNDS,iWhat,iDebit,150))return true;
+  if(CallFavour(&FavourCurePoison,FAVOUR_CUREPOISON,iWhat,iDebit,200))return true;
+  if(CallFavour(&FavourCureLeprosy,FAVOUR_CURELEPROSY,iWhat,iDebit,250))return true;
+  if(CallFavour(&FavourCureLycanthropy,FAVOUR_CURELYCANTHROPY,iWhat,iDebit,300))return true;
   //TODO is vampirism bad in anyway?
-  if(CallFavour(&FavourCureTapeworm,FAVOUR_CURETAPEWORM,fsWhat,iDebit,250))return true;
-  if(CallFavour(&FavourCureMindworm,FAVOUR_CUREMINDWORM,fsWhat,iDebit,500))return true;
-  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,300))return true; //bloats
-  if(CallFavour(&FavourHealBurns,FAVOUR_HEALBURNS,fsWhat,iDebit,50))return true;
-  if(CallFavour(&FavourInvigorate,FAVOUR_INVIGORATE,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourCureTapeworm,FAVOUR_CURETAPEWORM,iWhat,iDebit,250))return true;
+  if(CallFavour(&FavourCureMindworm,FAVOUR_CUREMINDWORM,iWhat,iDebit,500))return true;
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,iWhat,iDebit,300))return true; //bloats
+  if(CallFavour(&FavourHealBurns,FAVOUR_HEALBURNS,iWhat,iDebit,50))return true;
+  if(CallFavour(&FavourInvigorate,FAVOUR_INVIGORATE,iWhat,iDebit,250))return true;
   return false;
 }
 
@@ -696,9 +720,9 @@ bool FavourEnchantEquipment(god* G)
   return false;
 }
 
-bool atavus::Favour(cfestring fsWhat, int iDebit)
+bool atavus::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourEnchantEquipment,FAVOUR_ENCHANT,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourEnchantEquipment,FAVOUR_ENCHANT,iWhat,iDebit,250))return true;
   return false;
 }
 
@@ -905,12 +929,12 @@ bool FavourSummonWolf(god* G)
     return true;
 }
 
-bool silva::Favour(cfestring fsWhat, int iDebit)
+bool silva::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true; //satiated
-  if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,fsWhat,iDebit,75))return true;
-  if(CallFavour(&FavourEarthQuake,FAVOUR_EARTHQUAKE,fsWhat,iDebit,500))return true;
-  if(CallFavour(&FavourSummonWolf,FAVOUR_SUMMONWOLF,fsWhat,iDebit,250))return true;
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,iWhat,iDebit,200))return true; //satiated
+  if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,iWhat,iDebit,75))return true;
+  if(CallFavour(&FavourEarthQuake,FAVOUR_EARTHQUAKE,iWhat,iDebit,500))return true;
+  if(CallFavour(&FavourSummonWolf,FAVOUR_SUMMONWOLF,iWhat,iDebit,250))return true;
   
   return false;
 }
@@ -989,10 +1013,10 @@ bool FavourStopFire(god* G)
     return true;
 }
 
-bool loricatus::Favour(cfestring fsWhat, int iDebit)
+bool loricatus::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourFixEquipment,FAVOUR_FIXEQUIPMENT,fsWhat,iDebit,250))return true;
-  if(CallFavour(&FavourStopFire,FAVOUR_STOPFIRE,fsWhat,iDebit,50))return true;
+  if(CallFavour(&FavourFixEquipment,FAVOUR_FIXEQUIPMENT,iWhat,iDebit,250))return true;
+  if(CallFavour(&FavourStopFire,FAVOUR_STOPFIRE,iWhat,iDebit,50))return true;
   
   return false;
 }
@@ -1155,12 +1179,12 @@ bool FavourInfravision(god* G)
     return true;
 }
 
-bool cleptia::Favour(cfestring fsWhat, int iDebit)
+bool cleptia::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(FavourCureSlowness,FAVOUR_CURESLOWNESS,fsWhat,iDebit,100))return true;
-  if(CallFavour(FavourSpeedUp,FAVOUR_SPEEDUP,fsWhat,iDebit,150))return true;
-  if(CallFavour(FavourInvisible,FAVOUR_INVISIBILITY,fsWhat,iDebit,250))return true;
-  if(CallFavour(FavourInfravision,FAVOUR_INFRAVISION,fsWhat,iDebit,150))return true;
+  if(CallFavour(FavourCureSlowness,FAVOUR_CURESLOWNESS,iWhat,iDebit,100))return true;
+  if(CallFavour(FavourSpeedUp,FAVOUR_SPEEDUP,iWhat,iDebit,150))return true;
+  if(CallFavour(FavourInvisible,FAVOUR_INVISIBILITY,iWhat,iDebit,250))return true;
+  if(CallFavour(FavourInfravision,FAVOUR_INFRAVISION,iWhat,iDebit,150))return true;
   return false;
 }
 
@@ -1221,9 +1245,9 @@ bool FavourEtherealMov(god* G)
     return true;
 }
 
-bool mortifer::Favour(cfestring fsWhat, int iDebit)
+bool mortifer::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(FavourEtherealMov,FAVOUR_ETHEREALMOV,fsWhat,iDebit,350))return true;
+  if(CallFavour(FavourEtherealMov,FAVOUR_ETHEREALMOV,iWhat,iDebit,350))return true;
   return false;
 }
 
@@ -1286,9 +1310,9 @@ bool FavourShopping(god* G)
   
   return Success;
 }
-bool mellis::Favour(cfestring fsWhat, int iDebit)
+bool mellis::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(FavourShopping,FAVOUR_SHOPPING,fsWhat,iDebit,250))return true;
+  if(CallFavour(FavourShopping,FAVOUR_SHOPPING,iWhat,iDebit,250))return true;
   return false;
 }
 
@@ -1490,10 +1514,10 @@ bool FavourConfusion(god* G)
 
   return true;
 }
-bool nefas::Favour(cfestring fsWhat, int iDebit)
+bool nefas::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourFeed,FAVOUR_FEED,fsWhat,iDebit,200))return true; //satiated
-  if(CallFavour(&FavourConfusion,FAVOUR_CONFUSE,fsWhat,iDebit,200))return true; //satiated
+  if(CallFavour(&FavourFeed,FAVOUR_FEED,iWhat,iDebit,200))return true; //satiated
+  if(CallFavour(&FavourConfusion,FAVOUR_CONFUSE,iWhat,iDebit,200))return true; //satiated
   return false;
 }
 
@@ -1553,9 +1577,9 @@ bool FavourDiseaseImmunity(god* G)
   ADD_MESSAGE("%s chuckles in your mind: \"No need to fall apart, my dear.\"", G->GetName());
   return true;
 }
-bool scabies::Favour(cfestring fsWhat, int iDebit)
+bool scabies::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourDiseaseImmunity,FAVOUR_DISEASEIMMUNITY,fsWhat,iDebit,350))return true; //satiated
+  if(CallFavour(&FavourDiseaseImmunity,FAVOUR_DISEASEIMMUNITY,iWhat,iDebit,350))return true; //satiated
   return false;
 }
 
@@ -1661,7 +1685,7 @@ void scabies::PrayBadEffect()
   }
 }
 
-bool infuscor::Favour(cfestring fsWhat, int iDebit)
+bool infuscor::Favour(int iWhat, int iDebit)
 {
   return false;
 }
@@ -1750,7 +1774,7 @@ void infuscor::PrayGoodEffect()
   return;
 }
 
-bool cruentus::Favour(cfestring fsWhat, int iDebit)
+bool cruentus::Favour(int iWhat, int iDebit)
 {
   return false;
 }

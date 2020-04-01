@@ -84,9 +84,10 @@ class god
   virtual int GetSex() const = 0;
   void SignalRandomAltarGeneration(const std::vector<v2>&);
   virtual truth LikesVomit() const { return false; }
-  virtual bool Favour(cfestring fsWhat, int iDebit=0);
-  const std::vector<festring> GetKnownSpells() const { return knownSpells; }
-  bool CallFavour(CallFavourType call, festring fsCallFavour, festring fsWhat, int iDebit, int iDbtDefault);
+  virtual bool Favour(int iWhat, int iDebit=0);
+  static festring GetFavourName(int iID);
+  const std::vector<int> GetKnownSpells() const { return knownSpellsID; }
+  bool CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit, int iDbtDefault);
 protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
@@ -94,7 +95,11 @@ protected:
   festring fsLastKnownRelation;
   long Timer;
   truth Known;
-  std::vector<festring> knownSpells;
+  
+  static std::vector<std::pair<int,festring>> vFavID;
+  static void AddFavourID(int i,festring fs);
+  static void FavourInit();
+  std::vector<int> knownSpellsID;
 };
 
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
