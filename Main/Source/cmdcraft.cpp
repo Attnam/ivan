@@ -2488,7 +2488,23 @@ struct srpForgeItem : public recipe{
 
     if(bReqS && !bAllowS)
       ABORT("item reqs secondary mat but doesnt allow it??? %s",itSpawn->GetName(DEFINITE).CStr());
-
+    
+    if(rpd.bTailoringMode){
+      long lVolSewing = lVolM/100;
+      if(lVolSewing==0)lVolSewing=1;
+      int iSCfg=-1;
+      ci CISW;
+      CISW.bMainMaterRemainsBecomeLump=true;
+      CISW.bMixRemainingLump = false;
+      CISW.iReqMatCfgMain=SPIDER_SILK;
+      if(!choseIngredients<lump>(cfestring("as sewing material"),lVolSewing,rpd,iSCfg,CISW)){ //TODO instead of <lump> should be <sewingthread> with new graphics
+        ADD_MESSAGE("You don't have enough sewing thread...");
+        rpd.bAlreadyExplained=true;
+        craftcore::SendToHellSafely(itSpawn);
+        return false;
+      }
+    }
+    
     rpd.bHasAllIngredients=true;
 
     rpd.bCanBeBroken = itSpawn->CanBeBroken();
