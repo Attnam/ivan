@@ -214,6 +214,7 @@ class recipedata {
     v2 v2WorkbenchLocation;
     int iRemainingTurnsToFinish;
     bool bGradativeCraftOverride;
+    bool bTailoringMode;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);

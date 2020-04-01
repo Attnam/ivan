@@ -304,6 +304,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << v2WorkbenchLocation
     << iRemainingTurnsToFinish
     << bGradativeCraftOverride
+    << bTailoringMode
 
     ;
 }
@@ -361,6 +362,9 @@ void recipedata::Load(inputfile& SaveFile)
     >> bGradativeCraftOverride
 
     ;
+  
+  if(game::GetCurrentSavefileVersion() >= 135)
+    SaveFile >> bTailoringMode;
 
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
@@ -519,6 +523,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   v2WorkbenchLocation=v2(0,0);
   iRemainingTurnsToFinish=iBaseTurnsToFinish;
   bGradativeCraftOverride=false;
+  bTailoringMode=false;
 }
 
 int craftcore::CurrentDungeonLevelID(){
@@ -615,7 +620,7 @@ void recipedata::ClearRefs(){
   rc.ClearRefs();
 }
 
-struct ci{
+struct ci{ //create item info/helper/data/config/param
   bool bMultSelect = true;
 
   int iReqCfg=0;
@@ -637,6 +642,8 @@ struct ci{
   int iMinMainMaterStr=0;
 
   float fUsablePercVol=1.0;
+  bool bMustBeTailorable=false;
+  bool bMixRemainingLump=true;
 };
 struct recipe{
   festring action;
@@ -765,6 +772,44 @@ struct recipe{
       itTool = FindTool(rpd, iType, 0, iMinCarvingStr);
       if(itTool!=NULL)riMult+=iIncMult;
     }
+    return itTool;
+  }
+  static item* findTailoringTool(recipedata& rpd,item* itToWorkOn){
+    int iCarvingStr=0;
+
+    material* matM = itToWorkOn->GetMainMaterial();
+    material* matS = itToWorkOn->GetSecondaryMaterial();
+    if(!craftcore::IsMeltable(matM))
+      iCarvingStr=matM->GetStrengthValue();
+    if(matS!=NULL && !craftcore::IsMeltable(matS))
+      iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
+
+    int iMinCarvingStr = iCarvingStr/2;
+
+    // any blanded thing bug preferably a dagger
+    int iMult=1;
+    item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,DAGGER,iMult,0); //TODO should be SCISSORS
+    if(itTool!=NULL){
+      if(iCarvingStr>1){
+        int itStr=itTool->GetMainMaterial()->GetStrengthValue();
+        if(itStr<iCarvingStr)
+          iMult++;
+        if(itStr==iMinCarvingStr)
+          iMult++;
+      }
+      calcToolTurns(rpd,iMult);
+
+      if(!recipe::findOLT(rpd,WORK_BENCH)){
+        ADD_MESSAGE("As you lack a workbench, it will take a while."); //it is good to measure, hold tight, has a good height etc...
+        rpd.iBaseTurnsToFinish *= 3;
+      }
+    }else{
+      //ADD_MESSAGE("You have no carving tool good enough to work on the requested material.");
+      // Already covered by failToolMsg()
+      rpd.bAlreadyExplained=true;
+    }
+
     return itTool;
   }
   static item* findCarvingTool(recipedata& rpd,item* itToWorkOn){
@@ -915,7 +960,7 @@ struct recipe{
 
         /**
          * w/o this, things can be indirectly repaired to their original state,
-         * unless spawining/cloning/copying changes to have to same
+         * unless spawining/cloning/copying changes to have the same
          * (or average in case of many to one) degradation data
          *
          * degradation should only be "fixable" thru magic (scroll of repair)
@@ -930,6 +975,9 @@ struct recipe{
           continue;
 
         if(!CI.bAllowMeltables && craftcore::IsMeltable(vi[i]))
+          continue;
+        
+        if(CI.bMustBeTailorable && !(vi[i]->GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED))
           continue;
 
         if(vi[i]->GetStrengthValue() < CI.iMinMainMaterStr)
@@ -1052,7 +1100,8 @@ struct recipe{
             item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_NONE,lRemainingVol);
             //lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
-            lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
+            if(CI.bMixRemainingLump)
+              lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
 
             material* matS = ToUse[i]->GetSecondaryMaterial();
             if(matS!=NULL && matS->GetVolume()>0)
@@ -1336,6 +1385,8 @@ struct srpCutWeb : public recipe{
 
     if(bSuccess){
       rpd.bAlreadyExplained=true;
+      material* matSSilk=material::MakeMaterial(SPIDER_SILK);
+      craftcore::FinishSpawning(rpd, craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,clock()%6+3));
     }else{
       bool bGetStuckOnTheWeb=false;
       bool bLoseWeapon=false; //TODO if has no weapon, lose one glove instead!
@@ -2315,49 +2366,72 @@ struct srpForgeItem : public recipe{
     }
 
     bool bIsItemContainer = dynamic_cast<itemcontainer*>(itSpawn) !=NULL;
-
-    bool bM = false;
-    if(!bM){
-      ci CI = CIM;
-      CI.iReqCfg=INGOT; //meltables are 100% usable
-      festring fsM("as MAIN material (ingots 100%)");
-      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
-    }
-    if(!bM){
-      ci CI = CIM;
-      CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
-      CI.bMultSelect=false;
-      CI.fUsablePercVol=0.75;
-      festring fsM("as MAIN material (stones "); //roundy shape loses material
-      fsM<<(int)(CI.fUsablePercVol*100)<<"%)";
-      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
-    }
-    {//stick block
-      festring fsM("as MAIN material (sticks/bones ");
-      float fPerc=1.0;
-      if(!bIsItemContainer)
-        fPerc=0.5;
+    bool bIsWeapon = itSpawn->IsWeapon(rpd.rc.H());
+    
+    bool bMainMatOk = false;
+    bool bMustTailor = bIsWeapon && dynamic_cast<whip*>(itSpawn);
+    bool bCanTailor = dynamic_cast<armor*>(itSpawn) && !itSpawn->IsHelmet(rpd.rc.H());
+    if(bMustTailor || bCanTailor){ // tailoring
+      festring fsM("as MAIN material (cloth "); // only main can be cloth
+      float fPerc = 0.85;
       fsM<<(int)(fPerc*100)<<"%)";
       /**
-       * stick shape can't provide enough to the required dimensions (this is a xtremely wild simplification btw :))
-       * so, this will require twice as much sticks if not a container, to be crafted ex.: 35/0.5=70
+       * cloth will be cut and sewed
        */
-      if(!bM){
+      if(!bMainMatOk){
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
-        CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
-        bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);
-      }
-      if(!bM){
-        ci CI = CIM;
-        CI.fUsablePercVol=fPerc;
-        if(!bIsItemContainer)
-          CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
-        CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even), so let user chose any wood
-        bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
+        CI.bMustBeTailorable = rpd.bTailoringMode = true;
+        CI.bMixRemainingLump = false;
+        bMainMatOk = choseIngredients<lump>(fsM,lVolM, rpd, iCfgM, CI); //TODO instead of <lump> should be a new item with new graphics called <cloth>
       }
     }
-    if(!bM){
+    if(!bMustTailor){
+      // crafting with stones or ingots
+      if(!bMainMatOk){
+        ci CI = CIM;
+        CI.iReqCfg=INGOT; //meltables are 100% usable
+        festring fsM("as MAIN material (ingots 100%)");
+        bMainMatOk = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
+      }
+      
+      if(!bMainMatOk){
+        ci CI = CIM;
+        CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
+        CI.bMultSelect=false;
+        CI.fUsablePercVol=0.75;
+        festring fsM("as MAIN material (stones "); //roundy shape loses material
+        fsM<<(int)(CI.fUsablePercVol*100)<<"%)";
+        bMainMatOk = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
+      }
+      
+      // crafting with sticks and bones
+      if(!bMainMatOk){ 
+        festring fsM("as MAIN material (sticks/bones ");
+        float fPerc = bIsItemContainer ? 1.0 : 0.5;
+        fsM<<(int)(fPerc*100)<<"%)";
+        /**
+         * stick shape can't provide enough to the required dimensions (this is a xtremely wild simplification btw :))
+         * so, this will require twice as much sticks if not a container, to be crafted ex.: 35/0.5=70
+         */
+        if(!bMainMatOk){
+          ci CI = CIM;
+          CI.fUsablePercVol=fPerc;
+          CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
+          bMainMatOk = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);
+        }
+        if(!bMainMatOk){
+          ci CI = CIM;
+          CI.fUsablePercVol=fPerc;
+          if(!bIsItemContainer)
+            CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
+          CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even), so let user chose any wood
+          bMainMatOk = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
+        }
+      }
+    }
+    
+    if(!bMainMatOk){
       ADD_MESSAGE("You don't have the materials to craft a %s.", Default.CStr());
       rpd.bAlreadyExplained=true;
       craftcore::SendToHellSafely(itSpawn);
@@ -2374,38 +2448,37 @@ struct srpForgeItem : public recipe{
      * so preventing it would still not fix how 'metal can' works...
      */
 
-    bool bIsWeapon = itSpawn->IsWeapon(rpd.rc.H());
     bool bReqS = bIsWeapon;
     bool bAllowS = true;
 //    if(mc)bAllowS=false;
     if(bContainerEmptied)bAllowS=false;
     if(lVolS==0)bAllowS=false;
     if(bAllowS){DBGLN;
-      bool bS = false;
+      bool bSecondMatOk = false;
       festring fsS("as Secondary material");DBGLN;
-      if(!bS){
+      if(!bSecondMatOk){
         ci CI=CIS;
         CI.iReqCfg=INGOT;
-        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
+        bSecondMatOk = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
       }
-      if(!bS){
+      if(!bSecondMatOk){
         ci CI=CIS; //carving: only one stone per material allowed, so it must have required volume
         CI.bFirstItemMustHaveFullVolumeRequired=true;
         CI.bMultSelect=false;
-        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
+        bSecondMatOk = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
       }
       if(bIsWeapon){DBGLN; //this is mainly to prevent "material containers" being filled with non-sense materials like a bottle fille with wood... TODO powders one day would be ok
-        if(!bS){
+        if(!bSecondMatOk){
           ci CI=CIS;
-          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);
+          bSecondMatOk = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);
         }
-        if(!bS){
+        if(!bSecondMatOk){
           ci CI=CIS;
-          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CI);
+          bSecondMatOk = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CI);
         }
       }
 
-      if(!bS){
+      if(!bSecondMatOk){
         ADD_MESSAGE("You will craft it later...");
         rpd.bAlreadyExplained=true;
         craftcore::SendToHellSafely(itSpawn);
@@ -2451,6 +2524,13 @@ struct srpForgeItem : public recipe{
       }
 
       if(!recipe::findOLT(rpd,ANVIL)){ //must be near the anvil to use it!!!
+        craftcore::SendToHellSafely(itSpawn);
+        return false;
+      }
+    }
+    
+    if(rpd.bTailoringMode){
+      if(!recipe::findOLT(rpd,WORK_BENCH)){ //must be near it //TODO should be a new bench called TAILORING_BENCH with new graphics one day...
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -2523,19 +2603,52 @@ struct srpForgeItem : public recipe{
     }
 
     /// TOOLS ///////////////////////////////////////////////////////////////////////////////////////////////
-    // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
+    // HAMMER like for meltables (still hot and easy to work, any hammer will do)
+    //TODO glass should require proper tools (don't know what but sure not a hammer)
     bool bMissingTools=false;
-    if(rpd.bMeltable){ //TODO glass should require proper tools (don't know what but sure not a hammer)
-      rpd.itTool = FindBluntTool(rpd);
+    if(rpd.bTailoringMode){
+      rpd.itTool = findTailoringTool(rpd,itSpawn); // only main material can be tailored
       if(rpd.itTool==NULL)
         bMissingTools=true;
-    }
-
-    if(!bMissingTools){
-      if(!bMeltableM || !bMeltableS){
-        if(!findCarvingTool(rpd,itSpawn))
+      
+      if(!bMissingTools){
+        if(bMeltableS){
+          rpd.itTool2 = FindBluntTool(rpd);
+          if(rpd.itTool2==NULL)
+            bMissingTools=true;
+        }else{
+          rpd.itTool2 = findCarvingTool(rpd,itSpawn);
+          if(rpd.itTool2==NULL)
+            bMissingTools=true;
+        }
+      }
+    }else{ 
+      if(bMeltableM){ 
+        rpd.itTool = FindBluntTool(rpd); 
+        if(rpd.itTool==NULL)
+          bMissingTools=true;
+      }else{
+        rpd.itTool = findCarvingTool(rpd,itSpawn);
+        if(rpd.itTool==NULL)
           bMissingTools=true;
       }
+
+      if(!bMissingTools){
+        if(bMeltableS){ 
+          rpd.itTool2 = FindBluntTool(rpd);
+          if(rpd.itTool2==NULL)
+            bMissingTools=true;
+        }else{
+          rpd.itTool2 = findCarvingTool(rpd,itSpawn);
+          if(rpd.itTool2==NULL)
+            bMissingTools=true;
+        }
+      }
+    }
+    
+    if(!bMissingTools){
+      if(rpd.itTool2==rpd.itTool)
+        rpd.itTool2=NULL;
     }
 
     DBG1(rpd.iBaseTurnsToFinish);
@@ -3044,7 +3157,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       rpd.v2PlayerCraftingAt = Char->GetPos();
 
       if(rpd.itTool!=NULL && rpd.itTool2!=NULL)
-        if(rpd.itTool==rpd.itTool2)
+        if(rpd.itTool==rpd.itTool2) //keep this check to fix any code bofore this.
           ABORT("both tools are the same item %lu:%s %lu:%s",rpd.itTool->GetID(),rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetID(),rpd.itTool2->GetName(INDEFINITE).CStr());
       if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
@@ -3259,11 +3372,11 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
     // keep this preference order!
     lsquare* lsqrHF=NULL;
     if(!lsqrHF)lsqrHF=rpd.lsqrPlaceAt;
-    if(!lsqrHF)lsqrHF=rpd.v2AnvilLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2AnvilLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2AnvilLocation.Is0()     ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2AnvilLocation);
     if(!lsqrHF)lsqrHF=rpd.v2WorkbenchLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2WorkbenchLocation);
-    if(!lsqrHF)lsqrHF=rpd.v2PlaceAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt);
-    if(!lsqrHF)lsqrHF=rpd.v2ForgeLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2ForgeLocation);
-    if(!lsqrHF)lsqrHF=rpd.v2XplodAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2XplodAt);
+    if(!lsqrHF)lsqrHF=rpd.v2PlaceAt.Is0()           ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt);
+    if(!lsqrHF)lsqrHF=rpd.v2ForgeLocation.Is0()     ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2ForgeLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2XplodAt.Is0()           ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2XplodAt);
     if(lsqrHF){
       hiteffectSetup* pHitEff=new hiteffectSetup();
 
@@ -3272,10 +3385,10 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
       pHitEff->HitAtSquare=lsqrHF;
 
       item* itHF=NULL; //keep the below order
-      if(!itHF)itHF = rpd.itTool ? rpd.itTool : NULL;
+      if(!itHF)itHF = rpd.itTool  ? rpd.itTool : NULL;
       if(!itHF)itHF = rpd.itTool2 ? rpd.itTool2 : NULL;
       if(!itHF)itHF = rpd.rc.H()->GetRightArm() ? rpd.rc.H()->GetRightArm() : NULL;
-      if(!itHF)itHF = rpd.rc.H()->GetLeftArm() ? rpd.rc.H()->GetLeftArm() : NULL;
+      if(!itHF)itHF = rpd.rc.H()->GetLeftArm()  ? rpd.rc.H()->GetLeftArm() : NULL;
       if(itHF){
         pHitEff->lItemEffectReferenceID = itHF->GetID();
         lsqrHF->AddHitEffect(*pHitEff);

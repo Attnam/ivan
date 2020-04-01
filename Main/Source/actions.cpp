@@ -358,6 +358,8 @@ void craft::Handle()
     if(rpdBkp.xplodStr>9)rpdBkp.xplodStr=9; // to limit the "fire sparks" size to one square
     game::GetCurrentLevel()->Explosion(
       ActorLocal, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
+    if(rpdBkp.GetTool()) rpdBkp.GetTool()->ReceiveDamage( rpdBkp.rc.H(),rpdBkp.xplodStr,FIRE);
+    if(rpdBkp.GetTool2())rpdBkp.GetTool2()->ReceiveDamage(rpdBkp.rc.H(),rpdBkp.xplodStr,FIRE);
     ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
   }
 
