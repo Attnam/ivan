@@ -162,10 +162,15 @@ enum eFavours {
   FAVOUR_SUMMONWOLF,
   FAVOUR_TAME,
   FAVOUR_TELEPORT,
+  FAVOUR_BURNENEMIES,
+  FAVOUR_FEELENEMIES,
+  FAVOUR_POLYCONTROL,
+  FAVOUR_TELEPCONTROL,
 };
 
 void god::FavourInit() //this one is better on this file
 {
+  AddFavourID(FAVOUR_BURNENEMIES,"Burn your Enemies");
   AddFavourID(FAVOUR_CALLRAIN,"Make it Rain");
   AddFavourID(FAVOUR_CONFUSE,"Cause Confusion amongst your enemies");
   AddFavourID(FAVOUR_CURELEPROSY,"Cure Leprosy");
@@ -181,6 +186,7 @@ void god::FavourInit() //this one is better on this file
   AddFavourID(FAVOUR_ETHEREALMOV,"Become Ethereal");
   AddFavourID(FAVOUR_EXTINGUISHFIRE,"Put out these Flames"); //TODO consider price vs FAVOUR_HEALBURNS);
   AddFavourID(FAVOUR_FEED,"Calms your Hunger");
+  AddFavourID(FAVOUR_FEELENEMIES,"Feel your Enemies");
   AddFavourID(FAVOUR_FIRESTORM,"Fiery Firestorm");
   AddFavourID(FAVOUR_FIXEQUIPMENT,"Fix one broken equipped item");
   AddFavourID(FAVOUR_HEALBURNS,"Heals your burns");
@@ -188,11 +194,13 @@ void god::FavourInit() //this one is better on this file
   AddFavourID(FAVOUR_INFRAVISION,"See in the Darkness");
   AddFavourID(FAVOUR_INVIGORATE,"Invigorate");
   AddFavourID(FAVOUR_INVISIBILITY,"Become Invisible");
+  AddFavourID(FAVOUR_POLYCONTROL,"Control what you are");
   AddFavourID(FAVOUR_SHOPPING,"Black Friday");
   AddFavourID(FAVOUR_SPEEDUP,"Make you Fast");
   AddFavourID(FAVOUR_STOPFIRE,"Unburn one Equipment");
   AddFavourID(FAVOUR_SUMMONWOLF,"Summon Wolf friend(s)");
   AddFavourID(FAVOUR_TAME,"Tame this Monster");
+  AddFavourID(FAVOUR_TELEPCONTROL,"Decide where you are sent");
   AddFavourID(FAVOUR_TELEPORT,"Teleport");
 }
 
@@ -1146,7 +1154,7 @@ int CalcDuration(god* G)
   if(dynamic_cast<cleptia*>(G))
     return 200 * PLAYER->GetAttribute(WISDOM) + Max(G->GetRelation(), 0);
   
-  if(dynamic_cast<scabies*>(G))
+  if(dynamic_cast<scabies*>(G) || dynamic_cast<infuscor*>(G))
     return 300 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 5;
   
   ABORT("invalid duration calc for god %d",G->GetName());
@@ -1685,12 +1693,7 @@ void scabies::PrayBadEffect()
   }
 }
 
-bool infuscor::Favour(int iWhat, int iDebit)
-{
-  return false;
-}
-
-void infuscor::PrayGoodEffect()
+bool FavourBurnYourEnemies(god* G)
 {
   truth Success = false;
 
@@ -1718,7 +1721,7 @@ void infuscor::PrayGoodEffect()
               && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
               && !BodyPart->IsBurning())
           {
-            if(BodyPart->TestActivationEnergy(20 + GetRelation() / 10))
+            if(BodyPart->TestActivationEnergy(20 + G->GetRelation() / 10))
             {
               Success = true;
               Burned = true;
@@ -1726,45 +1729,77 @@ void infuscor::PrayGoodEffect()
           }
         }
         if(Burned)
-          ADD_MESSAGE("%s savagely sets fire to %s!", GetName(), Victim->CHAR_DESCRIPTION(DEFINITE));
+          ADD_MESSAGE("%s savagely sets fire to %s!", G->GetName(), Victim->CHAR_DESCRIPTION(DEFINITE));
       }
     }
   }
+  
+  return Success;
+}
+
+int InfuscorFavourDuration = 0;
+bool FavourFeelYourEnemies(god* G)
+{
+  if(!PLAYER->StateIsActivated(ESP))
+    PLAYER->BeginTemporaryState(ESP, InfuscorFavourDuration);
+  else
+    PLAYER->EditTemporaryStateCounter(ESP, PLAYER->GetTemporaryStateCounter(ESP)+InfuscorFavourDuration);
+  ADD_MESSAGE("You feel %s whisper in your mind.", G->GetName());
+  return true;
+}
+bool FavourControlWhatYouAre(god* G)
+{
+  if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL))
+    PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, InfuscorFavourDuration);
+  else
+    PLAYER->EditTemporaryStateCounter(POLYMORPH_CONTROL, PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL)+InfuscorFavourDuration);
+  ADD_MESSAGE("You feel %s gently touch your body.", G->GetName());
+  return true;
+}
+bool FavourTeleportControl(god* G)
+{
+  if(!PLAYER->StateIsActivated(TELEPORT_CONTROL))
+    PLAYER->BeginTemporaryState(TELEPORT_CONTROL, InfuscorFavourDuration);
+  else
+    PLAYER->EditTemporaryStateCounter(TELEPORT_CONTROL, PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL)+InfuscorFavourDuration);
+  ADD_MESSAGE("You feel %s gently touch your soul.", G->GetName());
+  return true;
+}
+bool infuscor::Favour(int iWhat, int iDebit)
+{
+  if(CallFavour(FavourBurnYourEnemies,FAVOUR_BURNENEMIES,iWhat,iDebit,200))return true;
+  if(CallFavour(FavourFeelYourEnemies,FAVOUR_FEELENEMIES,iWhat,iDebit,250))return true;
+  if(CallFavour(FavourControlWhatYouAre,FAVOUR_POLYCONTROL,iWhat,iDebit,300))return true;
+  if(CallFavour(FavourTeleportControl,FAVOUR_TELEPCONTROL,iWhat,iDebit,300))return true;
+  return false;
+}
+
+void infuscor::PrayGoodEffect()
+{
+  truth Success = Favour(FAVOUR_BURNENEMIES);
 
   if(!Success)
   {
-    int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
-
+    int InfuscorFavourDuration = CalcDuration(this);
+    
     if(!PLAYER->StateIsActivated(ESP) ||
-        PLAYER->GetTemporaryStateCounter(ESP) < Duration)
+        PLAYER->GetTemporaryStateCounter(ESP) < InfuscorFavourDuration)
     {
-      if(!PLAYER->StateIsActivated(ESP))
-        PLAYER->BeginTemporaryState(ESP, Duration);
-      else
-        PLAYER->EditTemporaryStateCounter(ESP, PLAYER->GetTemporaryStateCounter(ESP)+Duration);
-      ADD_MESSAGE("You feel %s whisper in your mind.", GetName());
+      Favour(FAVOUR_FEELENEMIES);
       return;
     }
 
     if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL) ||
-        PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL) < Duration)
+        PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL) < InfuscorFavourDuration)
     {
-      if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL))
-        PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, Duration);
-      else
-        PLAYER->EditTemporaryStateCounter(POLYMORPH_CONTROL, PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL)+Duration);
-      ADD_MESSAGE("You feel %s gently touch your body.", GetName());
+      Favour(FAVOUR_POLYCONTROL);
       return;
     }
 
     if(!PLAYER->StateIsActivated(TELEPORT_CONTROL) ||
-        PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL) < Duration)
+        PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL) < InfuscorFavourDuration)
     {
-      if(!PLAYER->StateIsActivated(TELEPORT_CONTROL))
-        PLAYER->BeginTemporaryState(TELEPORT_CONTROL, Duration);
-      else
-        PLAYER->EditTemporaryStateCounter(TELEPORT_CONTROL, PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL)+Duration);
-      ADD_MESSAGE("You feel %s gently touch your soul.", GetName());
+      Favour(FAVOUR_TELEPCONTROL);
       return;
     }
 
