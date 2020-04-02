@@ -1172,18 +1172,20 @@ truth commandsystem::AskFavour(character* Char)
     if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
     if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
     
-    if(bOk || game::WizardModeIsReallyActive()){
-      std::vector<int> v = pgod->GetKnownSpells();
-      for(auto piSpell = v.begin(); piSpell != v.end(); ++piSpell){
-        felSpellList.AddEntry(CONST_S("")+
-          game::GetAlignment(pgod->GetAlignment())+" "+
-          pgod->GetName()+" may grant you a \""+god::GetFavourName(*piSpell)+"\" favour.",
-          bOk ? LIGHT_GRAY : RED);
+    std::vector<int> v = pgod->GetKnownSpells();
+    for(auto piSpell = v.begin(); piSpell != v.end(); ++piSpell){
+      festring fs = CONST_S("")+
+        game::GetAlignment(pgod->GetAlignment())+" "+
+        pgod->GetName()+" may grant you a \""+god::GetFavourName(*piSpell)+"\" favour.";
+      col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
+      if(!bOk && game::WizardModeIsReallyActive())col=RED;
+      felSpellList.AddEntry(fs, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
 
-        std::pair<god*,int> GS;
-        GS.first = pgod;
-        GS.second = *piSpell;
-        vGS.push_back(GS);
+      if(bOk || game::WizardModeIsReallyActive()){
+//        std::pair<god*,int> GS;
+//        GS.first = pgod;
+//        GS.second = *piSpell;
+        vGS.push_back(std::make_pair(pgod,*piSpell));
       }
     }
   }
@@ -1387,6 +1389,7 @@ truth commandsystem::Offer(character* Char)
 
     if(Item)
     {
+      if(ivanconfig::IsDropBeforeOffering())Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
       if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
       {
         Item->RemoveFromSlot();

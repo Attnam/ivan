@@ -25,6 +25,7 @@ class ivanconfig
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static cfestring& GetAutoPickUpMatching() { return AutoPickUpMatching.Value; }
   static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
+  static truth IsDropBeforeOffering() { return DropBeforeOffering.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -202,6 +203,7 @@ class ivanconfig
   static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
   static truthoption AllWeightIsRelevant;
+  static truthoption DropBeforeOffering;
   static truthoption ShowVolume;
   static truthoption EnhancedLights;
 

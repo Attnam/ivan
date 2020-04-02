@@ -164,6 +164,10 @@ truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
                                           "",
                                           false);
+truthoption ivanconfig::DropBeforeOffering("DropBeforeOffering",
+                                          "Drop the item on altar before offering it.",
+                                          "Beware it may be owned floor!",
+                                          false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
                                           "Show item volume in cm3",
                                           "",
@@ -1156,6 +1160,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
   configsystem::AddOption(fsCategory,&AutoPickUpMatching);
+  configsystem::AddOption(fsCategory,&DropBeforeOffering);
 
   fsCategory="Game Window";
   configsystem::AddOption(fsCategory,&Contrast);
