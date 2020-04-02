@@ -166,12 +166,15 @@ enum eFavours {
   FAVOUR_FEELENEMIES,
   FAVOUR_POLYCONTROL,
   FAVOUR_TELEPCONTROL,
+  FAVOUR_ENRAGE,
+  FAVOUR_CAUSEFEAR,
 };
 
 void god::FavourInit() //this one is better on this file
 {
   AddFavourID(FAVOUR_BURNENEMIES,"Burn your Enemies");
   AddFavourID(FAVOUR_CALLRAIN,"Make it Rain");
+  AddFavourID(FAVOUR_CAUSEFEAR,"Your enemies will Fear you");
   AddFavourID(FAVOUR_CONFUSE,"Cause Confusion amongst your enemies");
   AddFavourID(FAVOUR_CURELEPROSY,"Cure Leprosy");
   AddFavourID(FAVOUR_CURELYCANTHROPY,"Cure Lycanthropy");
@@ -183,6 +186,7 @@ void god::FavourInit() //this one is better on this file
   AddFavourID(FAVOUR_DISEASEIMMUNITY,"Gain temporary Immunity to Diseases");
   AddFavourID(FAVOUR_EARTHQUAKE,"Invoke the rage of an Earth Quake");
   AddFavourID(FAVOUR_ENCHANT,"Enchant Equipment");
+  AddFavourID(FAVOUR_ENRAGE,"Fill you with Rage");
   AddFavourID(FAVOUR_ETHEREALMOV,"Become Ethereal");
   AddFavourID(FAVOUR_EXTINGUISHFIRE,"Put out these Flames"); //TODO consider price vs FAVOUR_HEALBURNS);
   AddFavourID(FAVOUR_FEED,"Calms your Hunger");
@@ -1809,42 +1813,16 @@ void infuscor::PrayGoodEffect()
   return;
 }
 
-bool cruentus::Favour(int iWhat, int iDebit)
+bool FavourEnrage(god* G)
 {
-  return false;
+  ADD_MESSAGE("%s snarls: \"Fight, you lousy coward!\"", G->GetName());
+  PLAYER->DeActivateTemporaryState(PANIC);
+  PLAYER->BeginTemporaryState(REGENERATION, 200 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 3);
+  PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 3);
+  return true;
 }
-
-void cruentus::PrayGoodEffect()
+bool FavourCauseFear(god* G)
 {
-  // Blood for the god of blood!
-  if(!RAND_4 || Relation == 1000)
-  {
-    beamdata Beam
-      (
-        0,
-        CONST_S("drowned by the blood of ") + GetName(),
-        YOURSELF,
-        0
-      );
-    lsquare* Square = PLAYER->GetLSquareUnder();
-    Square->LiquidRain(Beam, BLOOD);
-
-    if(PLAYER->HasHead())
-      ADD_MESSAGE("A torrential rain of blood descends on your head.");
-    else
-      ADD_MESSAGE("A rain of blood drizzles all around you.");
-  }
-
-  // A little bit of healing, but only usable when panicked.
-  if(PLAYER->StateIsActivated(PANIC))
-  {
-    ADD_MESSAGE("%s snarls: \"Fight, you lousy coward!\"", GetName());
-    PLAYER->DeActivateTemporaryState(PANIC);
-    PLAYER->BeginTemporaryState(REGENERATION, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
-    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 3);
-    return;
-  }
-
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
@@ -1883,9 +1861,49 @@ void cruentus::PrayGoodEffect()
           Audience->BeginTemporaryState(PANIC, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
       }
 
+    return true;
+  }
+  
+  return false;
+}
+bool cruentus::Favour(int iWhat, int iDebit)
+{
+  if(CallFavour(FavourEnrage,FAVOUR_ENRAGE,iWhat,iDebit,200))return true;
+  if(CallFavour(FavourCauseFear,FAVOUR_CAUSEFEAR,iWhat,iDebit,500))return true;
+  return false;
+}
+
+void cruentus::PrayGoodEffect()
+{
+  // Blood for the god of blood!
+  if(!RAND_4 || Relation == 1000)
+  {
+    beamdata Beam
+      (
+        0,
+        CONST_S("drowned by the blood of ") + GetName(),
+        YOURSELF,
+        0
+      );
+    lsquare* Square = PLAYER->GetLSquareUnder();
+    Square->LiquidRain(Beam, BLOOD);
+
+    if(PLAYER->HasHead())
+      ADD_MESSAGE("A torrential rain of blood descends on your head.");
+    else
+      ADD_MESSAGE("A rain of blood drizzles all around you.");
+  }
+
+  // A little bit of healing, but only usable when panicked.
+  if(PLAYER->StateIsActivated(PANIC))
+  {
+    Favour(FAVOUR_ENRAGE);
     return;
   }
 
+  if(Favour(FAVOUR_CAUSEFEAR))
+    return;
+    
   if(!RAND_2)
   {
     item* Weapon = PLAYER->GetMainWielded();
