@@ -4062,9 +4062,14 @@ int game::GetGodAlignmentVsPlayer(god* G)
     case ALM:  return  1; //L-
     
     /**
-     * Neutral has 1 less god, so 1 less source of favours. To compensate, these 3 being 0 will make it easier in favour cost for neutrally aligned players.
+     * There are 15 gods, 11 god alignments and 9 player alignments, so lets make it work:
+     * Neutrality has 1 less god, so 1 less source of favours (and no major/extreme god).
+     * These 3 neutral gods returning 0 will compensate by using less favour cost, to all of them,
+     * for a neutrally aligned player at gods.cpp/CalcDebit().
+     * (the alternative would be to expand player alignments to 11 to match gods' ones, anyone up to it?)
+     * 
      * Btw, these "N" matches the base Neutral alignment for these gods.
-     * And... it won't match very well the description at GetVerbalPlayerAlignment() tho, but let player guess it :)
+     * And... it won't match very well the description at GetVerbalPlayerAlignment(), but that shouldn't be a problem.
      */
     case ANP:  return  0; //N+ 
     case AN:   return  0; //N=

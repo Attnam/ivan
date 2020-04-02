@@ -216,9 +216,12 @@ int CalcDebit(god* G,int iDebit,int iDefault){
       case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2;break;
     }
     
+    if(G->GetRelation() < 0) //costy if bad relation
+      iDebit*=2;
+    
     // can ask more favours if very well aligned
     if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(G)){
-      iDebit/=3;
+      iDebit/=2;
     }
     
     // skilled in praying :)

@@ -1160,9 +1160,10 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
 
 truth commandsystem::AskFavour(character* Char)
 {
-  felist felSpellList(CONST_S("To Whom you want to ask a ")+game::GetVerbalPlayerAlignment()+" favour?");
+  felist felFavourList(CONST_S("To Whom you want to ask a ")+game::GetVerbalPlayerAlignment()+" favour?");
   
-  std::vector<std::pair<god*,int>> vGS;
+  int iTot=0;
+  std::vector<std::pair<god*,int>> vSelectableFavours;
   for(int c = 1; c <= GODS; ++c){
     god* pgod = game::GetGod(c);
     
@@ -1173,38 +1174,52 @@ truth commandsystem::AskFavour(character* Char)
     if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
     
     std::vector<int> v = pgod->GetKnownSpells();
-    for(auto piSpell = v.begin(); piSpell != v.end(); ++piSpell){
+    for(auto piFavour = v.begin(); piFavour != v.end(); ++piFavour){
       festring fs = CONST_S("")+
         game::GetAlignment(pgod->GetAlignment())+" "+
-        pgod->GetName()+" may grant you a \""+god::GetFavourName(*piSpell)+"\" favour.";
+        pgod->GetName()+" may grant you a \""+god::GetFavourName(*piFavour)+"\" favour.";
+      
       col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
       if(!bOk && game::WizardModeIsReallyActive())col=RED;
-      felSpellList.AddEntry(fs, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
+      
+      felFavourList.AddEntry(fs, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
 
       if(bOk || game::WizardModeIsReallyActive()){
 //        std::pair<god*,int> GS;
 //        GS.first = pgod;
 //        GS.second = *piSpell;
-        vGS.push_back(std::make_pair(pgod,*piSpell));
+        vSelectableFavours.push_back(std::make_pair(pgod,*piFavour));
       }
+      
+      iTot++;
     }
   }
   
-  game::SetStandardListAttributes(felSpellList);
-  felSpellList.AddFlags(SELECTABLE);
-  int Select = felSpellList.Draw();
+  festring fsMsg;
+  fsMsg = fsMsg+"You don't know about any "+game::GetVerbalPlayerAlignment()+" favours...";
+  if(iTot>0 && vSelectableFavours.size()==0){
+    felFavourList.AddEntry(cfestring("(")+fsMsg+")", DARK_GRAY, 0, NO_IMAGE, false);
+  }
+      
+  int Select = LIST_WAS_EMPTY;
+  if(iTot>0){
+    game::SetStandardListAttributes(felFavourList);
+    felFavourList.AddFlags(SELECTABLE);
+    Select = felFavourList.Draw();
+  }
   
-  if(Select == LIST_WAS_EMPTY)
+  if(Select == LIST_WAS_EMPTY || vSelectableFavours.size()==0)
   {
-    ADD_MESSAGE("You can't feel the availability of any %s favours...", game::GetVerbalPlayerAlignment());
+//    ADD_MESSAGE("You don't know about any %s favours...", game::GetVerbalPlayerAlignment());
+    ADD_MESSAGE(fsMsg.CStr());
     return false;
   }
 
   if(Select & FELIST_ERROR_BIT)
     return false;
   
-  god* G = vGS[Select].first;
-  int iFavour = vGS[Select].second;
+  god* G = vSelectableFavours[Select].first;
+  int iFavour = vSelectableFavours[Select].second;
   int iDebit=FAVOURDEBIT_AUTO;
   int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
   if(DivineMaster){
