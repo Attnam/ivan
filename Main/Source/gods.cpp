@@ -1168,7 +1168,7 @@ int CalcDuration(god* G)
   if(dynamic_cast<scabies*>(G) || dynamic_cast<infuscor*>(G))
     return 300 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 5;
   
-  ABORT("invalid duration calc for god %d",G->GetName());
+  ABORT("duration calc for god %s is not available here!",G->GetName());
 }
 bool FavourCureSlowness(god* G)
 {
@@ -1791,7 +1791,7 @@ void infuscor::PrayGoodEffect()
 
   if(!Success)
   {
-    int InfuscorFavourDuration = CalcDuration(this);
+    InfuscorFavourDuration = CalcDuration(this);
     
     if(!PLAYER->StateIsActivated(ESP) ||
         PLAYER->GetTemporaryStateCounter(ESP) < InfuscorFavourDuration)
