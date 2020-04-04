@@ -1160,7 +1160,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
 
 truth commandsystem::AskFavour(character* Char)
 {
-  felist felFavourList(CONST_S("To Whom you want to ask a ")+game::GetVerbalPlayerAlignment()+" favour?");
+  felist felFavourList(CONST_S("Ask a favour from Whom?"));
   
   int iTot=0;
   std::vector<std::pair<god*,int>> vSelectableFavours;
@@ -1404,16 +1404,18 @@ truth commandsystem::Offer(character* Char)
 
     if(Item)
     {
-      if(ivanconfig::IsDropBeforeOffering())Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
       if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
       {
         Item->RemoveFromSlot();
         Item->SendToHell();
         Char->DexterityAction(5); /** C **/
         return true;
-      }
-      else
+      } else {
+        if(ivanconfig::IsDropBeforeOffering())
+          if(!game::IsQuestItem(Item))
+            Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
         return false;
+      }
     }
     else
       return false;

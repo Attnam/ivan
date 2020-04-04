@@ -579,14 +579,16 @@ std::vector<std::pair<int,festring>> god::vFavID;
 
 bool god::Favour(int iWhat, int iDebit)
 {
-  if((Relation-iDebit) < -1000){
-    ADD_MESSAGE("%s ignores your plea...",GetName());
+  if(Relation < 0){
+    ADD_MESSAGE("%s ignores your plea and makes sure you understand it...",GetName());
+    PrayBadEffect();
     return false;
   }
   
-  if(Relation<iDebit){ //punishes but helps
+  if(Relation < iDebit){ // warns, punishes and provides a last favour before becoming negative relation
     ADD_MESSAGE("You hear a booming voice: \"Don't push your luck... puny mortal!\"");
     PrayBadEffect();
+    return true;
   }
   
   return true;

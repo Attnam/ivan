@@ -168,6 +168,7 @@ enum eFavours {
   FAVOUR_TELEPCONTROL,
   FAVOUR_ENRAGE,
   FAVOUR_CAUSEFEAR,
+  FAVOUR_CUREVAMP,
 };
 
 void god::FavourInit() //this one is better on this file
@@ -182,6 +183,7 @@ void god::FavourInit() //this one is better on this file
   AddFavourID(FAVOUR_CUREPOISON,"Cure Poison");
   AddFavourID(FAVOUR_CURESLOWNESS,"Cure Slowness");
   AddFavourID(FAVOUR_CURETAPEWORM,"Cure Tapeworm");
+  AddFavourID(FAVOUR_CUREVAMP,"Cure Vampirism");
   AddFavourID(FAVOUR_CUREWOUNDS,"Cure Wounds");
   AddFavourID(FAVOUR_DISEASEIMMUNITY,"Gain temporary Immunity to Diseases");
   AddFavourID(FAVOUR_EARTHQUAKE,"Invoke the rage of an Earth Quake");
@@ -216,9 +218,6 @@ int CalcDebit(god* G,int iDebit,int iDefault){
       case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2;break;
     }
     
-    if(G->GetRelation() < 0) //costy if bad relation
-      iDebit*=2;
-    
     // can ask more favours if very well aligned
     if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(G)){
       iDebit/=2;
@@ -242,10 +241,14 @@ void AddKnownSpell(std::vector<int>& ks,int iNew)
 
 bool FavourTeleport(god* G)
 {
+  if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
+  {
     ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
     game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
     PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
     return true;
+  }
+  return false;
 }
 
 bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit, int iDbtDefault)
@@ -286,11 +289,7 @@ void sophos::PrayGoodEffect()
 {
   truth DidHelp = false;
 
-  if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
-  {
-    Favour(FAVOUR_TELEPORT);
-    DidHelp = true;
-  }
+  DidHelp = Favour(FAVOUR_TELEPORT);
 
   // Give a little attribute experience (Cha already given by Dulcis and not Wis,
   // as we want to check Wis to give the experience).
@@ -596,6 +595,12 @@ bool FavourFeed(god* G)
     
     return true;
 }
+bool FavourCureVampirism(god* G)
+{
+    ADD_MESSAGE("%s cures your bloodlust.", G->GetName());
+    PLAYER->DeActivateTemporaryState(VAMPIRISM);
+    return true;
+}
 
 bool seges::Favour(int iWhat, int iDebit)
 {
@@ -603,7 +608,7 @@ bool seges::Favour(int iWhat, int iDebit)
   if(CallFavour(&FavourCurePoison,FAVOUR_CUREPOISON,iWhat,iDebit,200))return true;
   if(CallFavour(&FavourCureLeprosy,FAVOUR_CURELEPROSY,iWhat,iDebit,250))return true;
   if(CallFavour(&FavourCureLycanthropy,FAVOUR_CURELYCANTHROPY,iWhat,iDebit,300))return true;
-  //TODO is vampirism bad in anyway?
+  if(CallFavour(&FavourCureVampirism,FAVOUR_CUREVAMP,iWhat,iDebit,100))return true;
   if(CallFavour(&FavourCureTapeworm,FAVOUR_CURETAPEWORM,iWhat,iDebit,250))return true;
   if(CallFavour(&FavourCureMindworm,FAVOUR_CUREMINDWORM,iWhat,iDebit,500))return true;
   if(CallFavour(&FavourFeed,FAVOUR_FEED,iWhat,iDebit,300))return true; //bloats
@@ -640,8 +645,7 @@ void seges::PrayGoodEffect()
 
   if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
   {
-    ADD_MESSAGE("%s cures your bloodlust.", GetName());
-    PLAYER->DeActivateTemporaryState(VAMPIRISM);
+    Favour(FAVOUR_CUREVAMP);
     return;
   }
 

@@ -165,8 +165,8 @@ truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "",
                                           false);
 truthoption ivanconfig::DropBeforeOffering("DropBeforeOffering",
-                                          "Drop the item on altar before offering it.",
-                                          "Beware it may be owned floor!",
+                                          "Drop the item on altar in case it is not accepted",
+                                          "Automatically drop offered items on an altar to prevent them from cluttering your inventory should the god not accept your gift. Beware it may be owned floor!",
                                           false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
                                           "Show item volume in cm3",
@@ -181,7 +181,7 @@ truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnim
                                           "",
                                           true);
 truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume",
-                                          "Small crystal rocks etc. will emit less light.",
+                                          "Small light sources emit less light",
                                           "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
                                           false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
