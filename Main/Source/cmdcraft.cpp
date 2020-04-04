@@ -2369,8 +2369,10 @@ struct srpForgeItem : public recipe{
     bool bIsWeapon = itSpawn->IsWeapon(rpd.rc.H());
     
     bool bMainMatOk = false;
-    bool bMustTailor = (bIsWeapon && dynamic_cast<whip*>(itSpawn)) || dynamic_cast<cloak*>(itSpawn);
-    bool bCanTailor = dynamic_cast<armor*>(itSpawn) && !itSpawn->IsHelmet(rpd.rc.H());
+    bool bMustTailor = dynamic_cast<whip*>(itSpawn) || dynamic_cast<cloak*>(itSpawn);
+    bool bCanTailor = dynamic_cast<armor*>(itSpawn) && 
+      !( dynamic_cast<helmet*>(itSpawn) || 
+         dynamic_cast<shield*>(itSpawn)    );
     if(bMustTailor || bCanTailor){ // tailoring
       festring fsM("as MAIN material (cloth "); // only main can be cloth
       float fPerc = 0.85;
