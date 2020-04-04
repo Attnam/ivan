@@ -223,10 +223,14 @@ int CalcDebit(god* G,int iDebit,int iDefault){
       iDebit/=2;
     }
     
-    // skilled in praying :)
-    iDebit -= game::GetPlayer()->GetAttribute(MANA);
+    // skilled in manipulative praying :)
+    iDebit -= (
+      (game::GetPlayer()->GetAttribute(MANA)*2.0)
+      +
+       game::GetPlayer()->GetAttribute(WISDOM)
+    ) / 3.0;
     
-    if(iDebit<10)iDebit=10; //max of 100 vafours in the best case (master) only
+    if(iDebit<50)iDebit=50; //max of 20 vafours (50*20=1000) (too much?) in the best case (master) only
   }
   return iDebit;
 }
