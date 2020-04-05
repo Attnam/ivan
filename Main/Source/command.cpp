@@ -1178,6 +1178,7 @@ truth commandsystem::AskFavour(character* Char)
       festring fs = CONST_S("")+
         game::GetAlignment(pgod->GetAlignment())+" "+
         pgod->GetName()+" may grant you a \""+god::GetFavourName(*piFavour)+"\" favour.";
+        if(ivanconfig::IsShowGodInfo())fs << " " << game::GetGod(c)->GetLastKnownRelation();
       
       col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
       if(!bOk && game::WizardModeIsReallyActive())col=RED;

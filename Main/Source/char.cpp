@@ -3113,6 +3113,10 @@ int character::AutoPlayAIFindWalkDist(v2 v2To)
   return iDist>0?iDist:iMoreThanMaxDist;
 }
 
+const int iDesperateResetCountDownDefault=5;
+const int iDesperateEarthQuakeCountDownDefault=iDesperateResetCountDownDefault*2;
+const int iAutoPlayAIResetCountDownDefault = iDesperateEarthQuakeCountDownDefault*2;
+int iAutoPlayAIResetCountDown = iAutoPlayAIResetCountDownDefault;
 truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 {
   /**
@@ -3311,8 +3315,12 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
           iWanderTurns=100+clock()%300; DBG2("WanderALotOnFullyExploredLevel",iWanderTurns); //just move around a lot, some NPC may spawn
         }else{
           // travel between dungeons if current fully explored
-          v2 v2Try = v2Exits[clock()%v2Exits.size()];
-          if(AutoPlayAITestValidPathTo(v2Try))
+          v2 v2Try;
+          for(int i=0;i<10;i++){
+            v2Try = v2Exits[clock()%v2Exits.size()];
+            if(v2Try!=GetPos())break;
+          }
+          if(AutoPlayAITestValidPathTo(v2Try) || iAutoPlayAIResetCountDown==0)
             v2NewKGTo = v2TravelingToAnotherDungeon = v2Try; DBGSV2(v2TravelingToAnotherDungeon);
         }
       }else{
@@ -3557,7 +3565,18 @@ truth character::AutoPlayAICommand(int& rKey)
   /**
    * travel between dungeons
    */
-  if(!v2TravelingToAnotherDungeon.Is0() && GetPos() == v2TravelingToAnotherDungeon){
+  bool bTBD = false;
+  if(!v2TravelingToAnotherDungeon.Is0()){
+    if(GetPos() == v2TravelingToAnotherDungeon)
+      bTBD=true;
+    else
+    if(iAutoPlayAIResetCountDown==0){
+      Move(v2TravelingToAnotherDungeon,true);
+      iAutoPlayAIResetCountDown=iAutoPlayAIResetCountDownDefault;
+      bTBD=true;
+    }
+  }
+  if(bTBD){
     bool bTravel=false;
     lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2TravelingToAnotherDungeon);
 //    square* sqr = Area->GetSquare(v2TravelingToAnotherDungeon);
@@ -3581,8 +3600,6 @@ truth character::AutoPlayAICommand(int& rKey)
     }
   }
 
-  static const int iDesperateResetCountDownDefault=10;
-  static const int iDesperateEarthQuakeCountDownDefault=iDesperateResetCountDownDefault*5;
   static int iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
   if(AutoPlayAINavigateDungeon(bPlayerHasLantern)){
     iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
@@ -3590,6 +3607,10 @@ truth character::AutoPlayAICommand(int& rKey)
   }else{
     if(iDesperateEarthQuakeCountDown==0){
       iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
+      /**
+       * this changes the dungeon level paths, 
+       * so applying pickaxe or using fireballs etc are not required!
+       */
       scrollofearthquake::Spawn()->FinishReading(this);
       DBG1("UsingTerribleEarthquakeSolution"); // xD
     }else{
@@ -3609,6 +3630,7 @@ truth character::AutoPlayAICommand(int& rKey)
     iDesperateResetCountDown=iDesperateResetCountDownDefault;
 
     AutoPlayAIReset(true);
+    iAutoPlayAIResetCountDown--;
 
     // AFTER THE RESET!!!
     iWanderTurns=iMaxWanderTurns; DBG2("DesperateResetToSeeIfAIWorksAgain",iWanderTurns);
