@@ -76,6 +76,7 @@ class ivanconfig
   static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
+  static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 
 #ifndef __DJGPP__
@@ -142,8 +143,11 @@ class ivanconfig
   static void MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
+  static void SfxVolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
+  static truth SfxVolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static void SfxVolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
 
@@ -171,6 +175,7 @@ class ivanconfig
   static void SetupCustomKeysChanger(truthoption*, truth);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
+  static void SfxVolumeHandler(long);
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
@@ -244,6 +249,7 @@ class ivanconfig
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static scrollbaroption Volume;
+  static scrollbaroption SfxVolume;
   static cycleoption MIDIOutputDevice;
 
 #ifndef __DJGPP__

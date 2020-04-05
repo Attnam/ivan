@@ -328,6 +328,7 @@ festring getstr(FILE *f, truth word)
   }
 }
 
+FILE *debf = NULL;
 void soundsystem::initSound()
 {
   const char *error;
@@ -336,7 +337,7 @@ void soundsystem::initSound()
   if(SoundState == 0)
   {
     festring fsSndDbgFile = game::GetUserDataDir() + "ivanSndDebug.txt";
-    FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
+    debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0)
@@ -499,13 +500,14 @@ void soundsystem::playSound(festring Buffer)
 
     if(*sf->chunk)
     {
-      for(int i=0; i<16; i++)
+      for(int iChannel=0; iChannel<16; iChannel++)
       {
-        if(!Mix_Playing(i))
+        if(!Mix_Playing(iChannel))
         {
-          Mix_PlayChannel(i, *sf->chunk, 0);
-//          fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
-    //    Mix_SetPosition(i, angle, dist);
+          Mix_Volume(iChannel, ivanconfig::GetSfxVolume());
+          Mix_PlayChannel(iChannel, *sf->chunk, 0);
+          //TODO why this causes SEGFAULT?!! -> //DBGEXEC( fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", iChannel, sf->filename.CStr()) );
+          //TODO? Mix_SetPosition(i, angle, dist);
           return;
         }
       }
