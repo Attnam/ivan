@@ -769,9 +769,20 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
-  if(RAND() % int(100 + ToHitValue / DodgeValue * (100 + Success)) < 100
-     && !Critical && !ForceHit)
-  {
+  /**
+   * SIGFPE happened once when: 
+   *  ToHitValue = -2.1331964070645735 (why < 0 ???);
+   *  DodgeValue = 2.3094010767585029;
+   *  Success = 8; 
+   *  result thru linux `bc <<< "scale=16;100 + -2.1331964070645735/2.3094010767585029 * (100+8)"`
+   *   was = .2402768919010060
+   */
+  int a = int(100 + ToHitValue / DodgeValue * (100 + Success));
+  if(
+    ((a>=-1 && a<=1) || ((RAND() % a) < 100)) &&
+    !Critical && 
+    !ForceHit
+  ){
     Enemy->AddMissMessage(this);
     EditExperience(AGILITY, 150, 1 << 7);
     EditExperience(PERCEPTION, 75, 1 << 7);

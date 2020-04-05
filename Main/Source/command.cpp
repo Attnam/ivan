@@ -1161,6 +1161,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
 truth commandsystem::AskFavour(character* Char)
 {
   felist felFavourList(CONST_S("Ask a favour from Whom?"));
+  felFavourList.SetEntryDrawer(game::GodEntryDrawer);
   
   int iTot=0;
   std::vector<std::pair<god*,int>> vSelectableFavours;
@@ -1173,17 +1174,22 @@ truth commandsystem::AskFavour(character* Char)
     if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
     if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
     
+    bool bGodSectionEntry=true;
     std::vector<int> v = pgod->GetKnownSpells();
     for(auto piFavour = v.begin(); piFavour != v.end(); ++piFavour){
-      festring fs = CONST_S("")+
-        game::GetAlignment(pgod->GetAlignment())+" "+
-        pgod->GetName()+" may grant you a \""+god::GetFavourName(*piFavour)+"\" favour.";
-        if(ivanconfig::IsShowGodInfo())fs << " " << game::GetGod(c)->GetLastKnownRelation();
+      festring fsFavour = CONST_S("") + god::GetFavourName(*piFavour);
       
       col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
       if(!bOk && game::WizardModeIsReallyActive())col=RED;
       
-      felFavourList.AddEntry(fs, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
+      if(bGodSectionEntry){
+        festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment()) + " " 
+          + pgod->GetName()+" may grant you a favour.";
+        if(ivanconfig::IsShowGodInfo())fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
+        felFavourList.AddEntry(fsGodEntry, DARK_GRAY, 20, c, false);
+        bGodSectionEntry=false;
+      }
+      felFavourList.AddEntry(fsFavour, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
 
       if(bOk || game::WizardModeIsReallyActive()){
 //        std::pair<god*,int> GS;
