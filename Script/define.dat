@@ -1125,6 +1125,7 @@
 #define BANANA_TREE 36
 #define DEAD_TREE 37
 #define STRANGE_TREE 38
+#define TAILORING_BENCH 39
 
 #define SNOW_BOULDER 4
 

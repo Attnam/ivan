@@ -763,6 +763,7 @@
 #define FORGE 26
 #define FURNACE 27
 #define WORK_BENCH 32
+#define TAILORING_BENCH 39
 
 #define SNOW_BOULDER 4
 

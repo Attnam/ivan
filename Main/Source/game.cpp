@@ -1438,6 +1438,7 @@ bool game::CheckAddAutoMapNote(square* sqr)
     olt->GetConfig() == CHAIR ||
     olt->GetConfig() == FORGE ||
     olt->GetConfig() == WORK_BENCH ||
+    olt->GetConfig() == TAILORING_BENCH ||
     false
   ){
     olt->AddName(fs,INDEFINITE);

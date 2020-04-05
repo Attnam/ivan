@@ -129,6 +129,7 @@ class recipedata {
   friend struct srpForge;
   friend struct srpJoinLumps;
   friend struct srpWorkBench;
+  friend struct srpTWorkBench;
   friend struct srpResistanceVS;
   friend struct srpCutWeb;
   
@@ -215,6 +216,7 @@ class recipedata {
     int iRemainingTurnsToFinish;
     bool bGradativeCraftOverride;
     bool bTailoringMode;
+    v2 v2TailoringWorkbenchLocation;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);

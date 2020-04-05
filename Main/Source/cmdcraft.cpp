@@ -218,6 +218,7 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
   if(!rpd.v2AnvilLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2AnvilLocation);
   if(!rpd.v2ForgeLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2ForgeLocation);
   if(!rpd.v2WorkbenchLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2WorkbenchLocation);
+  if(!rpd.v2TailoringWorkbenchLocation.Is0())bReqSamePos=true;
   if(rpd.otSpawnType!=CTT_NONE && !rpd.v2PlaceAt.Is0())bReqSamePos=true; DBG1(rpd.otSpawnType);
   if(bReqSamePos){
     if(rpd.rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
@@ -305,6 +306,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << iRemainingTurnsToFinish
     << bGradativeCraftOverride
     << bTailoringMode
+    << v2TailoringWorkbenchLocation
 
     ;
 }
@@ -363,8 +365,10 @@ void recipedata::Load(inputfile& SaveFile)
 
     ;
   
-  if(game::GetCurrentSavefileVersion() >= 135)
+  if(game::GetCurrentSavefileVersion() >= 135){
     SaveFile >> bTailoringMode;
+    SaveFile >> v2TailoringWorkbenchLocation;
+  }
 
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
@@ -406,6 +410,7 @@ cfestring recipedata::id() const
   RPDINFOV2(v2AnvilLocation);
   RPDINFOV2(v2ForgeLocation);
   RPDINFOV2(v2WorkbenchLocation);
+  RPDINFOV2(v2TailoringWorkbenchLocation);
   RPDINFOV2(v2PlaceAt);
   RPDINFOV2(v2PlayerCraftingAt);
 
@@ -521,6 +526,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bMeltable=false;
 
   v2WorkbenchLocation=v2(0,0);
+  v2TailoringWorkbenchLocation=v2(0,0);
   iRemainingTurnsToFinish=iBaseTurnsToFinish;
   bGradativeCraftOverride=false;
   bTailoringMode=false;
@@ -800,7 +806,7 @@ struct recipe{
       }
       calcToolTurns(rpd,iMult);
 
-      if(!recipe::findOLT(rpd,WORK_BENCH)){
+      if(!recipe::findOLT(rpd,TAILORING_BENCH)){
         ADD_MESSAGE("As you lack a workbench, it will take a while."); //it is good to measure, hold tight, has a good height etc...
         rpd.iBaseTurnsToFinish *= 3;
       }
@@ -1009,6 +1015,40 @@ struct recipe{
         vi[i]->SetValidRecipeIngredient(true);
       }
     }
+  }
+
+  void joinLumpsEqualTo(recipedata& rpd,material* matM){
+    // multiple (compatible with 1st) lumps will be mixed in a big one again
+    for(int i=1;i<rpd.ingredientsIDs.size();i++){
+      item* LumpToAdd = game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
+      if(dynamic_cast<lump*>(LumpToAdd)==NULL)continue;
+
+      material* LumpToAddM = LumpToAdd->GetMainMaterial();DBGLN;
+      if(LumpToAddM->GetConfig()!=matM->GetConfig())continue;
+
+      // join
+      matM->SetVolume(matM->GetVolume()+LumpToAddM->GetVolume());DBGLN;
+
+      craftcore::SendToHellSafely(LumpToAdd);
+    }
+  }
+  
+  void joinLumpsEqualToFirst(recipedata& rpd){
+    item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+    material* matM=Lump->GetMainMaterial();
+    joinLumpsEqualTo(rpd,matM);
+  }
+  
+  void askForEqualLumps(recipedata& rpd){
+    ci CI;
+    CI.bOverridesQuestion=true;
+    CI.bMsgInsuficientMat=false;
+    CI.bInstaAddIngredients=true;
+    int iWeakestCfgDummy;
+    bool bDummy = choseIngredients<lump>(
+      festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
+      1000000, //just any "impossible" huge volume as "limit"
+      rpd, iWeakestCfgDummy, CI); // true, 0, false, true, false, true);
   }
 
   template <typename T> static truth choseIngredients(
@@ -1223,6 +1263,9 @@ struct recipe{
     case WORK_BENCH:
       rpd.v2WorkbenchLocation = lsqr->GetPos();
       break;
+    case TAILORING_BENCH:
+      rpd.v2TailoringWorkbenchLocation = lsqr->GetPos();
+      break;
     }
   }
 
@@ -1267,6 +1310,7 @@ struct recipe{
       case FORGE:fsWhat="forge";break;
       case ANVIL:fsWhat="anvil";break;
       case WORK_BENCH:fsWhat="workbench";break;
+      case TAILORING_BENCH:fsWhat="tailoring bench";break;
       }
 
       festring fsMsg="No ";
@@ -1650,6 +1694,25 @@ struct srpWorkBench : public srpOltBASE{
     return srpOltBASE::work(rpd);
   }
 };srpWorkBench rpWorkBench;
+struct srpTWorkBench : public srpOltBASE{
+  virtual bool spawnCfg(recipedata& rpd){
+    rpd.otSpawnType=CTT_FURNITURE;
+    rpd.otSpawnCfg=TAILORING_BENCH;
+    return true;
+  }
+
+  virtual void fillInfo(){
+    init("build","a tailoring workbench");
+    desc << "Build a tailoring workbench for further crafting. " << fsDescBASE;
+  }
+
+  virtual bool work(recipedata& rpd){
+    iReqVol=9000;
+    iTurns=30;
+    bRequiresWhere=true;
+    return srpOltBASE::work(rpd);
+  }
+};srpTWorkBench rpTWorkBench;
 struct srpWall2 : public srpOltBASE{
   virtual bool spawnCfg(recipedata& rpd){
     rpd.otSpawnType=CTT_WALL;
@@ -1683,40 +1746,6 @@ struct srpJoinLumps : public recipe{
   virtual void fillInfo(){
     init("merge","lumps");
     desc << "Merge lumps of the same material into a single, bigger one.";
-  }
-
-  void askForEqualLumps(recipedata& rpd){
-    ci CI;
-    CI.bOverridesQuestion=true;
-    CI.bMsgInsuficientMat=false;
-    CI.bInstaAddIngredients=true;
-    int iWeakestCfgDummy;
-    bool bDummy = choseIngredients<lump>(
-      festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
-      1000000, //just any "impossible" huge volume as "limit"
-      rpd, iWeakestCfgDummy, CI); // true, 0, false, true, false, true);
-  }
-
-  void joinLumpsEqualTo(recipedata& rpd,material* matM){
-    // multiple (compatible with 1st) lumps will be mixed in a big one again
-    for(int i=1;i<rpd.ingredientsIDs.size();i++){
-      item* LumpToAdd = game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-      if(dynamic_cast<lump*>(LumpToAdd)==NULL)continue;
-
-      material* LumpToAddM = LumpToAdd->GetMainMaterial();DBGLN;
-      if(LumpToAddM->GetConfig()!=matM->GetConfig())continue;
-
-      // join
-      matM->SetVolume(matM->GetVolume()+LumpToAddM->GetVolume());DBGLN;
-
-      craftcore::SendToHellSafely(LumpToAdd);
-    }
-  }
-
-  void joinLumpsEqualToFirst(recipedata& rpd){
-    item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
-    material* matM=Lump->GetMainMaterial();
-    joinLumpsEqualTo(rpd,matM);
   }
 
   virtual bool work(recipedata& rpd){ // it is just like to put them all together, no effort, instant.
@@ -2381,6 +2410,12 @@ struct srpForgeItem : public recipe{
        * cloth will be cut and sewed
        */
       if(!bMainMatOk){
+        askForEqualLumps(rpd);
+        if(!rpd.ingredientsIDs.empty()){
+          joinLumpsEqualToFirst(rpd);
+          rpd.ingredientsIDs.clear();
+        }
+        
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
         CI.bMustBeTailorable = rpd.bTailoringMode = true;
@@ -2548,7 +2583,7 @@ struct srpForgeItem : public recipe{
     }
     
     if(rpd.bTailoringMode){
-      if(!recipe::findOLT(rpd,WORK_BENCH)){ //must be near it //TODO should be a new bench called TAILORING_BENCH with new graphics one day...
+      if(!recipe::findOLT(rpd,TAILORING_BENCH)){ //must be near it //TODO should be a new bench called TAILORING_BENCH with new graphics one day...
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -3066,6 +3101,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpForge);
   RP(rpWall2);
   RP(rpWorkBench);
+  RP(rpTWorkBench);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Alchemy:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpAcid);
@@ -3392,6 +3428,7 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
     if(!lsqrHF)lsqrHF=rpd.lsqrPlaceAt;
     if(!lsqrHF)lsqrHF=rpd.v2AnvilLocation.Is0()     ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2AnvilLocation);
     if(!lsqrHF)lsqrHF=rpd.v2WorkbenchLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2WorkbenchLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2TailoringWorkbenchLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2TailoringWorkbenchLocation);
     if(!lsqrHF)lsqrHF=rpd.v2PlaceAt.Is0()           ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt);
     if(!lsqrHF)lsqrHF=rpd.v2ForgeLocation.Is0()     ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2ForgeLocation);
     if(!lsqrHF)lsqrHF=rpd.v2XplodAt.Is0()           ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2XplodAt);
@@ -3665,6 +3702,16 @@ void crafthandle::CheckFacilities(recipedata& rpd){
     //TODO workbench should be damaged w/o explosions (that is area effect related to fire/forge)
     rpd.bOnlyXplodIfCriticalFumble=true; //TODO kept as WIP
     //explode/sparks at workbench doesnt make much sense: rpd.v2XplodAt=rpd.v2WorkbenchLocation;
+  }else
+  if(!rpd.v2TailoringWorkbenchLocation.Is0()){
+    olterrain* otTWorkbench = game::GetCurrentLevel()->GetLSquare(rpd.v2TailoringWorkbenchLocation)->GetOLTerrain();
+    if(otTWorkbench==NULL || otTWorkbench->GetConfig()!=TAILORING_BENCH){
+      ADD_MESSAGE("The tailoring workbench was destroyed!");
+      rpd.bFailedTerminateCancel=true;
+    }
+
+    //TODO workbench should be damaged w/o explosions (that is area effect related to fire/forge)
+    rpd.bOnlyXplodIfCriticalFumble=true; //TODO kept as WIP
   }
 }
 
