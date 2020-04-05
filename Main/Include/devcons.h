@@ -17,7 +17,12 @@
 
 #include "festring.h"
 
-#define DEVCMDMSG(fmt,x,...) ADD_MESSAGE(" > " fmt,x);
+// this causes warnings with LGTM checks: #define DEVCMDMSG(fmt,x,...) ADD_MESSAGE(" > " fmt,x);
+#define DEVCMDMSG(fmt,x) ADD_MESSAGE(" > " fmt,x);
+#define DEVCMDMSG2(fmt,x,y) ADD_MESSAGE(" > " fmt,x,y);
+#define DEVCMDMSG3(fmt,x,y,z) ADD_MESSAGE(" > " fmt,x,y,z);
+#define DEVCMDMSG4(fmt,x,y,z,a) ADD_MESSAGE(" > " fmt,x,y,z,a);
+#define DEVCMDMSG15(fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o) ADD_MESSAGE(" > " fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o);
 
 typedef void (*callcmd)(festring);
 

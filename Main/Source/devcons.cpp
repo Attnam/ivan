@@ -100,7 +100,7 @@ void ListItems(festring fsParams){
     }
   }
 
-  DEVCMDMSG("params: %d %d",idFilter,idCharFilter);
+  DEVCMDMSG2("params: %d %d",idFilter,idCharFilter);
 
   itemidmap map = game::GetItemIDMapCopy();
   for(itemidmap::iterator itr = map.begin();itr!=map.end();itr++){
@@ -118,7 +118,7 @@ void ListItems(festring fsParams){
       it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
       false
     ){
-      DEVCMDMSG("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
+      DEVCMDMSG2("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
     }
 
     if(idFilter!=0 && idFilter!=it->GetID())
@@ -181,7 +181,7 @@ void ListItems(festring fsParams){
       fsPos<<it->GetPos().X<<","<<it->GetPos().Y;
     }
 
-    DEVCMDMSG("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
+    DEVCMDMSG15("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
       bPlayerStuff?"@":" ",
       it->GetID(),
 
@@ -197,7 +197,9 @@ void ListItems(festring fsParams){
 
       fsType.CStr(),
       fsPB.CStr(),
-      fsDec.CStr()
+      fsDec.CStr(),
+      
+      0,0,0,0 //dummy
     );
   }
 }
@@ -332,7 +334,7 @@ void devcons::Help(festring fsFilter)
         fsWM="";
       }
     }
-      DEVCMDMSG("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
+      DEVCMDMSG3("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
   DEVCMDMSG("%s","Ps.: main commands are case insensitive.");
@@ -367,7 +369,7 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
-  DEVCMDMSG("Trying to run: %s ('%s' '%s')",
+  DEVCMDMSG3("Trying to run: %s ('%s' '%s')",
     festring(strFullCmd.c_str()).CStr(),
     festring(strCmd.c_str()).CStr(),
     festring(strParams.c_str()).CStr()
