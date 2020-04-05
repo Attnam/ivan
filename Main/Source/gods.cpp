@@ -267,14 +267,16 @@ bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit
   if(iDebit>0)
     if(!god::Favour(iWhat,iDebit))
       return false;
-
+  
+  bool bWorked = false;
   if((*call)(this)){
     if(iDebit>0)
       Relation-=iDebit;
-    return true;
+    bWorked = true;
   }
   
-  return false;
+  fsLastKnownRelation = PrintRelation();
+  return bWorked;
 }
 
 /**

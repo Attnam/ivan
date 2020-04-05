@@ -21,7 +21,7 @@ int god::GetBasicAlignment() const { return NEUTRAL; }
 void god::Pray()
 {
   LastPray = 0;
-  if(!Timer)
+  if(!Timer){
     if(Relation >= -RAND_N(500))
     {
       ADD_MESSAGE("You feel %s is pleased.", GetName());
@@ -79,7 +79,7 @@ void god::Pray()
       game::ApplyDivineAlignmentBonuses(this, 10, false);
       PLAYER->EditExperience(WISDOM, -50, 1 << 10);
     }
-  else
+  }else{
     if(Relation > RAND_N(500) && Timer < RAND_N(500000))
     {
       ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
@@ -109,6 +109,9 @@ void god::Pray()
           ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
       }
     }
+  }
+  
+  fsLastKnownRelation = PrintRelation();
 }
 
 festring god::GetCompleteDescription() const
@@ -356,6 +359,7 @@ truth god::ReceiveOffer(item* Sacrifice)
       ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
     fsLastKnownRelation = PrintRelation();
+    
     int RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
     if(OfferValue > 0 && Relation > 250 && !(RAND() % RandModifier))
@@ -582,6 +586,7 @@ bool god::Favour(int iWhat, int iDebit)
   if(Relation < 0){
     ADD_MESSAGE("%s ignores your plea and makes sure you understand it...",GetName());
     PrayBadEffect();
+    fsLastKnownRelation = PrintRelation();
     return false;
   }
   

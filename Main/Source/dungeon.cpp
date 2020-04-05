@@ -150,7 +150,7 @@ void dungeon::PrepareMusic(int Index)
 
   if( hasCurrentTrack == true )
   {
-     audio::ClearMIDIPlaylist(CurrentTrack);
+     audio::ClearMIDIPlaylist(CurrentTrack); //keep current track
      for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
      {
         festring Music = LevelScript->GetAudioPlayList()->Data[i];
@@ -167,7 +167,7 @@ void dungeon::PrepareMusic(int Index)
   if( hasCurrentTrack == false )
   {
      audio::SetPlaybackStatus(audio::STOPPED);
-     audio::ClearMIDIPlaylist();
+     audio::ClearMIDIPlaylist(); //clear it all
      for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
      {
         festring Music = LevelScript->GetAudioPlayList()->Data[i];
@@ -175,9 +175,6 @@ void dungeon::PrepareMusic(int Index)
      }
      audio::SetPlaybackStatus(audio::PLAYING);
   }
-
-
-
 
 }
 

@@ -2,12 +2,27 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="audio" name="0">
+      <in>MIDICodes.h</in>
+      <in>MIDIDebug.cpp</in>
+      <in>MIDIDebug.h</in>
+      <in>MIDIUtils.cpp</in>
+      <in>MIDIUtils.h</in>
+      <in>RtMidi.cpp</in>
+      <in>audio.cpp</in>
+      <in>audio_stack.cpp</in>
+      <in>linkedlist.cpp</in>
+      <in>midiparser.cpp</in>
+      <in>midiplayback.cpp</in>
     </df>
     <df root="fantasyname" name="1">
+      <in>example.cc</in>
+      <in>namegen.cc</in>
     </df>
     <df root="Main/Include" name="2">
+      <in>dungeon.h</in>
     </df>
     <df root="FeLib/Include" name="3">
+      <in>bitmap.h</in>
       <in>felist.h</in>
       <in>feloops.h</in>
       <in>femath.h</in>
@@ -94,6 +109,13 @@
       <in>wterras.cpp</in>
     </df>
     <df root="xbrzscale" name="6">
+      <df name="xbrz">
+        <in>config.h</in>
+        <in>xbrz.cpp</in>
+        <in>xbrz.h</in>
+      </df>
+      <in>libxbrzscale.cpp</in>
+      <in>libxbrzscale.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -167,6 +189,8 @@
           <preBuildCommand>${CMAKE} -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX} -DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .</preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="FeLib/Include/bitmap.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="FeLib/Include/felist.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="FeLib/Include/feloops.h" ex="false" tool="3" flavor2="0">
@@ -212,6 +236,8 @@
       <item path="FeLib/Source/specialkeys.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="FeLib/Source/whandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Include/dungeon.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -326,6 +352,42 @@
       <item path="Main/Source/wterra.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/wterras.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/MIDICodes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="audio/MIDIDebug.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/MIDIDebug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="audio/MIDIUtils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/MIDIUtils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="audio/RtMidi.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/audio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/audio_stack.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/linkedlist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/midiparser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio/midiplayback.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="fantasyname/example.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="fantasyname/namegen.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="xbrzscale/libxbrzscale.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="xbrzscale/libxbrzscale.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xbrzscale/xbrz/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xbrzscale/xbrz/xbrz.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="xbrzscale/xbrz/xbrz.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
