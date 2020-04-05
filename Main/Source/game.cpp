@@ -1655,6 +1655,7 @@ void game::DrawMapOverlay(bitmap* buffer)
   static v2 v2BmpSize(0,0);
   static v2 v2TopLeftFinal(0,0);
   static v2 v2MapScrSizeFinal(0,0);
+  static v2 v2MinTopLeft(10,10); // this prevents a crash related to drawing lines too near top and left game gfx buffer edges
   static bitmap* bmpFinal;
 
   bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
@@ -1727,8 +1728,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 //      v2 v2VisibleDungeonScrSize=v2CL*TILE_SIZE;
     v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
     v2TopLeft = v2Center -v2MapScrSize/2;
-    if(v2TopLeft.X<0)v2TopLeft.X=0;
-    if(v2TopLeft.Y<0)v2TopLeft.Y=0;
+    if(v2TopLeft.X<v2MinTopLeft.X)v2TopLeft.X=v2MinTopLeft.X;
+    if(v2TopLeft.Y<v2MinTopLeft.Y)v2TopLeft.Y=v2MinTopLeft.Y;
 //        v2(
 //          RES.X/2 -(v2CL.X * iMapTileSize)/2,
 //          RES.Y/2 -(v2CL.Y * iMapTileSize)/2);
@@ -1991,8 +1992,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
     if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
-    if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
-    if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    if(v2TopLeftFinal.X<v2MinTopLeft.X)v2TopLeftFinal.X=v2MinTopLeft.X;
+    if(v2TopLeftFinal.Y<v2MinTopLeft.Y)v2TopLeftFinal.Y=v2MinTopLeft.Y;
     DBGSV2(v2TopLeftFinal);
 
     // prepare notes

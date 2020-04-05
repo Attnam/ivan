@@ -865,6 +865,11 @@ void bitmap::DrawLine(int FromX, int FromY, v2 To, col16 Color, truth Wide)
 void bitmap::DrawLine(v2 From, v2 To, col16 Color, truth Wide)
 { DrawLine(From.X, From.Y, To.X, To.Y, Color, Wide); }
 
+/**
+ * TODO this needs a fix:
+ *  If a line is drawn from x,1 to anywhere and it is WIDE, the game will SEGFAULT.
+ *  Every drawn dot must be checked if is inside the bitmap boundaries...
+ */
 void bitmap::DrawLine(int OrigFromX, int OrigFromY, int OrigToX, int OrigToY, col16 Color, truth Wide)
 {
   if(OrigFromY == OrigToY)
