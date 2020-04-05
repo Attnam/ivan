@@ -1167,6 +1167,7 @@ truth commandsystem::AskFavour(character* Char)
   std::vector<std::pair<god*,int>> vSelectableFavours;
   for(int c = 1; c <= GODS; ++c){
     god* pgod = game::GetGod(c);
+    if(!pgod->IsKnown())continue;
     
     bool bOk=false;
     if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0)bOk=true;

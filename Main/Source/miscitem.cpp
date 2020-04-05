@@ -202,10 +202,12 @@ void scrollofearthquake::FinishReading(character* Reader)
 
     int ToEmpty = 10 + RAND() % 11;
 
-    for(c = 0; c < ToEmpty; ++c)
+    for(c = 0; c < ToEmpty; ++c){
       for(int i = 0; i < 50; ++i)
       {
         v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+        if(Pos == ERROR_V2)continue; //this may probably happen at Spider Nest dungeon level
+        
         truth Correct = false;
 
         for(int d = 0; d < 8; ++d)
@@ -225,6 +227,7 @@ void scrollofearthquake::FinishReading(character* Reader)
           break;
         }
       }
+    }
 
     int ToGround = 20 + RAND() % 21;
 
