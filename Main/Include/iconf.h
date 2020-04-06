@@ -47,7 +47,7 @@ class ivanconfig
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return 2; /*MemorizeEquipmentMode.Value;*/ }
-  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value * 4; }
+  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }

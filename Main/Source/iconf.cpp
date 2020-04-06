@@ -255,7 +255,7 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           "Breeders' active range",
-                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively.",
+                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively. After you lower this option value to the minimum, you have to wait for all magic clouds (from magic mushrooms) to disappear as they are the main source of lag.",
                                           0, 5,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
@@ -394,16 +394,11 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value == 0)
-    Entry << "everywhere";
-  else if(O->Value == 1)
-    Entry << "close";
-  else if(O->Value == 2)
-    Entry << "near";
-  else if(O->Value == 3)
-    Entry << "medium";
-  else if(O->Value == 4)
-    Entry << "far";
+  if     (O->Value == 0) Entry << "everywhere";
+  else if(O->Value == 1) Entry << "close";
+  else if(O->Value == 2) Entry << "near";
+  else if(O->Value == 3) Entry << "medium";
+  else if(O->Value == 4) Entry << "far";
   else
     Entry << O->Value;
 }
