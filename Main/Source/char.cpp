@@ -3496,15 +3496,20 @@ truth character::AutoPlayAIPray()
       aiKGodsP[iKGTotP++] = c;
     }
   }
-  if(iKGTot==0)return false;
+  if(iKGTot==0){
+    if(clock()%10==0)
+      for(int c = 1; c <= GODS; ++c)
+        game::LearnAbout(game::GetGod(c));
+    return false;
+  }
 //  if(bSPO && iKGTotP==0)return false;
 
   // chose and pray to one god
   god* g = NULL;
   if(iKGTotP>0 && (bSPO || clock()%10!=0))
-    g = game::GetGod(aiKGodsP[clock()%iKGTotP]);
+    g = game::GetGod(aiKGodsP[clock()%iKGTotP]); //only good effect
   else
-    g = game::GetGod(aiKGods[clock()%iKGTot]);
+    g = game::GetGod(aiKGods[clock()%iKGTot]); //can have bad effect too
 
   if(bSPO || clock()%10!=0){ //it may not recover some times to let pray unsafely
     int iRecover=0;
