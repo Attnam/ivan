@@ -203,6 +203,7 @@ ITEM(scrollofearthquake, scroll)
 {
  public:
   virtual void FinishReading(character*);
+  static void EarthQuakeMagic();
 };
 
 ITEM(scrollofbodyswitch, scroll)

@@ -188,10 +188,8 @@ void scrolloffireballs::FinishReading(character* Reader)
   Square->FireBall(Beam);
 }
 
-void scrollofearthquake::FinishReading(character* Reader)
+void scrollofearthquake::EarthQuakeMagic()
 {
-  if(!game::GetCurrentLevel()->IsOnGround())
-  {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level!");
     int c, Tunnels = 2 + RAND() % 3;
     if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
@@ -300,6 +298,12 @@ void scrollofearthquake::FinishReading(character* Reader)
     for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+}
+void scrollofearthquake::FinishReading(character* Reader)
+{
+  if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    EarthQuakeMagic();
   }
   else
   {
