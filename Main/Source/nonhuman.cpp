@@ -1137,6 +1137,53 @@ truth eddy::Hit(character* Enemy, v2, int, int)
   return true;
 }
 
+/**
+ * This is not gameplay wise as far AI events will not happen,
+ * but will allow the game to still be playable at least...
+ * Use this on any NPC class that may encumber the CPU too much.
+ * 
+ * TODO Confirm if the main lag problem is related to magic clouds *animations* 
+ * or other magic cloud calculations? If the problem is about animations, 
+ * non visible (or simply far away) ones could just be skipped w/o problem!
+ */
+bool CPUwiseAI(nonhumanoid* nh)
+{
+  if(!nh->IsRooted())return true; //only NPCs that can't move
+
+  int iDist = ivanconfig::GetDistLimitMagicMushrooms();
+  if(iDist==0)return true; //everywhere allowed
+  
+  iDist*=4; // this gives min AI = 64, max = 1024 but the lag seems related to magic clouds (non visible animations?) from magic mushrooms, as soon the clouds vanish, lag goes away too
+
+  int iSqDist = nh->GetDistanceSquareFrom(PLAYER);
+  int iSqLim = iDist*iDist;
+  int iMaxActiveAI = iDist*2 * iDist*2;
+
+  static int iPreviousTurnActivatedAIs=0;
+  static int iTurnChkAI = 0;
+  if(iTurnChkAI != game::GetTurn()){ DBG6(iTurnChkAI,iPreviousTurnActivatedAIs,iDist,iSqDist,iSqLim,iMaxActiveAI);
+    iPreviousTurnActivatedAIs=0;
+    iTurnChkAI = game::GetTurn();
+  }
+
+  bool bActivated = false;
+  if(iTurnChkAI==game::GetTurn()){
+    if(iPreviousTurnActivatedAIs<iMaxActiveAI){
+      /**
+       * this keeps levitating ones still active what may be good 
+       * to keep some far away randomicity, but it may compromize AI from nearby ones,
+       * anyway the point is to keep the game fastly playable
+       */
+      if(iSqDist<=iSqLim || nh->StateIsActivated(LEVITATION)){
+        iPreviousTurnActivatedAIs++;
+        bActivated=true; 
+      }
+    }
+  }
+
+  return bActivated;
+}
+
 void mushroom::Save(outputfile& SaveFile) const
 {
   nonhumanoid::Save(SaveFile);
@@ -1151,6 +1198,8 @@ void mushroom::Load(inputfile& SaveFile)
 
 void mushroom::GetAICommand()
 {
+  if(!CPUwiseAI(this))return;
+  
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -1215,57 +1264,9 @@ void mushroom::PostConstruct()
   }
 }
 
-/**
- * This is not gameplay wise as far AI events will not happen,
- * but will allow the game to still be playable at least...
- * Use this on any NPC class that may encumber the CPU too much.
- * 
- * TODO Confirm if the main lag problem is related to magic clouds *animations* 
- * or other magic cloud calculations? If the problem is about animations, 
- * non visible (or simply far away) ones could just be skipped w/o problem!
- */
-bool CPUwiseAI(nonhumanoid* nh)
-{
-  if(!nh->IsRooted())return true; //only NPCs that can't move
-
-  int iDist = ivanconfig::GetDistLimitMagicMushrooms();
-  if(iDist==0)return true; //everywhere allowed
-  
-  iDist*=4; // this gives min AI = 64, max = 1024 but the lag seems related to magic clouds (non visible animations?) from magic mushrooms, as soon the clouds vanish, lag goes away too
-
-  int iSqDist = nh->GetDistanceSquareFrom(PLAYER);
-  int iSqLim = iDist*iDist;
-  int iMaxActiveAI = iDist*2 * iDist*2;
-
-  static int iPreviousTurnActivatedAIs=0;
-  static int iTurnChkAI = 0;
-  if(iTurnChkAI != game::GetTurn()){ DBG6(iTurnChkAI,iPreviousTurnActivatedAIs,iDist,iSqDist,iSqLim,iMaxActiveAI);
-    iPreviousTurnActivatedAIs=0;
-    iTurnChkAI = game::GetTurn();
-  }
-
-  bool bActivated = false;
-  if(iTurnChkAI==game::GetTurn()){
-    if(iPreviousTurnActivatedAIs<iMaxActiveAI){
-      /**
-       * this keeps levitating ones still active what may be good 
-       * to keep some far away randomicity, but it may compromize AI from nearby ones,
-       * anyway the point is to keep the game fastly playable
-       */
-      if(iSqDist<=iSqLim || nh->StateIsActivated(LEVITATION)){
-        iPreviousTurnActivatedAIs++;
-        bActivated=true; 
-      }
-    }
-  }
-
-  return bActivated;
-}
-
 void magicmushroom::GetAICommand()
 {
-  if(!CPUwiseAI(this))
-    return;
+  if(!CPUwiseAI(this))return;
 
   if(!(RAND() % 750))
   {
