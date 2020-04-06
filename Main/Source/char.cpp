@@ -3046,8 +3046,8 @@ bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
   if(!it->IsPickable(this))return false;
   if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
 
-  if(!bPlayerHasLantern && it->IsOnFire(this)){
-    //ok
+  if(!bPlayerHasLantern && (it->IsOnFire(this) || it->GetEmitation()>0)){
+    //pickup priority
   }else{
     if(it->IsBroken())return false;
     if(it->GetTruePrice()<=iMaxValueless)return false; //mainly to avoid all rocks from broken walls
@@ -3134,6 +3134,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
    * navigate the unknown dungeon
    */
   std::vector<v2> v2Exits;
+  std::vector<v2> v2Altars;
   if(v2KeepGoingTo.Is0()){ DBG1("TryNewMoveTarget");
     // target undiscovered squares to explore
     v2 v2PreferedTarget(0,0);
@@ -3160,6 +3161,12 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       olterrain* olt = lsqr->GetOLTerrain();
       if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
         v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
+      }
+      
+      altar* Altar = dynamic_cast<altar*>(olt);
+      if(olt && Altar){
+        if(!Altar->GetMasterGod()->IsKnown())
+          v2Altars.push_back(v2(lsqr->GetPos()));
       }
 
       stack* stkSqr = lsqr->GetStack();
@@ -3221,8 +3228,10 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
                   vit[n]->IsWeapon  (this) ||
                   vit[n]->IsArmor   (this) ||
                   vit[n]->IsAmulet  (this) ||
-                  vit[n]->IsZappable(this) ||
+                  vit[n]->IsZappable(this) || //wands
                   vit[n]->IsRing    (this) ||
+                  vit[n]->IsReadable(this) || //books and scrolls
+                  vit[n]->IsDrinkable(this)|| //potions and vials
                   bIsLanternOnFloor
                 )
                   if(IsAutoplayAICanPickup(vit[n],bPlayerHasLantern))
@@ -3321,6 +3330,17 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
     }
 
     if(v2NewKGTo.Is0()){ //no new destination: fully explored
+      if(v2Altars.size()>0){
+        for(int i=0;i<v2Altars.size();i++){
+          if(AutoPlayAITestValidPathTo(v2Altars[i])){
+            v2NewKGTo = v2Altars[i];
+            break;
+          }
+        }
+      }
+    }
+    
+    if(v2NewKGTo.Is0()){
       if(v2Exits.size()>0){
         if(game::GetCurrentDungeonTurnsCount()==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
           iWanderTurns=100+clock()%300; DBG2("WanderALotOnFullyExploredLevel",iWanderTurns); //just move around a lot, some NPC may spawn
@@ -3522,7 +3542,7 @@ truth character::AutoPlayAICommand(int& rKey)
   truth bPlayerHasLantern=false;
   static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
   for(uint i=0;i<vit.size();i++){
-    if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this)){
+    if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this) || vit[i]->GetEmitation()>0){
       bPlayerHasLantern=true; //will keep only the 1st lantern
       break;
     }

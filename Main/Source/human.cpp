@@ -3795,7 +3795,7 @@ truth humanoid::AutoPlayAIequip()
       }
     }
 
-    //////////////////////////////// read book
+    //////////////////////////////// read books and scrolls
     static int iLastReadTurn=-1;
     if(game::GetTurn()>(iLastReadTurn+50)){ DBG2(game::GetTurn(),iLastReadTurn); //every X turns try to use stuff from inv
       iLastReadTurn=game::GetTurn();
@@ -3803,10 +3803,22 @@ truth humanoid::AutoPlayAIequip()
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
       for(uint c = 0; c < vitEqW.size(); ++c){
         if(!vitEqW[c]->IsReadable(this))continue;
+        
         static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
-        if(hb==NULL)continue;
-
-        if(vitEqW[c]->Read(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
+        if(hb){
+          if(vitEqW[c]->Read(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
+            return true;
+          }
+        }
+        
+        static scroll* Scroll; Scroll = dynamic_cast<scroll*>(vitEqW[c]);
+        if( //some are simple (just read to work imediately)
+           dynamic_cast<scrollofearthquake*>(Scroll) ||
+           dynamic_cast<scrolloftaming*>(Scroll) ||
+           dynamic_cast<scrollofteleportation*>(Scroll) ||
+           false //dummy
+        ){
+          Scroll->Read(this);
           return true;
         }
       }
