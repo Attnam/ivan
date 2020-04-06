@@ -203,7 +203,7 @@ ITEM(scrollofearthquake, scroll)
 {
  public:
   virtual void FinishReading(character*);
-  static void EarthQuakeMagic();
+  static void EarthQuakeMagic(festring fsMsgHitNPC = cfestring());
 };
 
 ITEM(scrollofbodyswitch, scroll)
