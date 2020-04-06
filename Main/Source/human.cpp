@@ -3755,6 +3755,7 @@ truth humanoid::AutoPlayAIequip()
         if(
           ConsumeMaterial!=NULL &&
           vitEqW[c]->IsConsumable() &&
+          !HasHadBodyPart(vitEqW[c]) && //this avoids a slow interactive question
           ConsumeItem(vitEqW[c], vitEqW[c]->GetConsumeMaterial(this)->GetConsumeVerb())
         ){
           DBG2("AutoPlayConsumed",vitEqW[c]->GetNameSingular().CStr());
