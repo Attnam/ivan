@@ -42,6 +42,12 @@ int web::GetRemoveTrapModifier(character* C)
                + C->GetAttribute(ARM_STRENGTH), 1);
 }
 
+/**
+ * 
+ * @param Actor who tears down the web (from self or another character*)
+ * @param Modifier
+ * @return 
+ */
 truth web::TryToTearDown(character* Actor,int Modifier)
 {
   if(Modifier==-1)
@@ -50,16 +56,21 @@ truth web::TryToTearDown(character* Actor,int Modifier)
   if(!RAND_N(Max(Modifier << 1, 2)))
   {
     //if(GetLSquareUnder()->GetPos()==Actor->GetPos())C->RemoveTrap(GetTrapID());else
-    if(GetLSquareUnder()->GetCharacter())
-      GetLSquareUnder()->GetCharacter()->RemoveTrap(GetTrapID());
+    character* C = GetLSquareUnder()->GetCharacter();
+    if(C && C->IsStuckToTrap(GetTrapID()))
+      C->RemoveTrap(GetTrapID());
     TrapData.VictimID = 0;
     GetLSquareUnder()->RemoveTrap(this);
     SendToHell();
-
+    
+    festring fsOther;
+    if(C && Actor!=C)
+      fsOther=CONST_S(" from ")+C->CHAR_NAME(DEFINITE);
+    
     if(Actor->IsPlayer())
-      ADD_MESSAGE("You tear the web down.");
+      ADD_MESSAGE("You tear the web down%s.",fsOther.CStr());
     else if(Actor->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s tears the web down.", Actor->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s tears the web down%s.", Actor->CHAR_NAME(DEFINITE),fsOther.CStr());
 
     Actor->EditAP(-500);
     return true;

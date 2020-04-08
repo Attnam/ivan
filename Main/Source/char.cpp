@@ -12110,6 +12110,9 @@ struct trapidcomparer
 
 void character::RemoveTrap(ulong ID)
 {
+  if(!TrapData) //everywhere calling this must be sure it can be called!
+    ABORT("can't remove a non existing trap...");
+  
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
   trapdata* ToDel = T;
   T = T->Next;

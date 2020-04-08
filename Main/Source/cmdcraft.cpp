@@ -1415,7 +1415,7 @@ struct srpCutWeb : public recipe{
     if(ra && la)
       tot+=2; //means something like using both arms to destroy a single web spot
     if(bSelfPos)
-      tot *= 3; //to make it worther than just trying to move, and to compensate for not moving too as player won't insta flee from attacks
+      tot *= 3; //to make it worthier than just trying to move, and to compensate for not moving too as player won't insta flee from attacks
     if(rpd.itTool!=NULL) //float multiplier last thing!
       tot *= 1 + craftcore::CraftSkill(h)/10.0;
     DBG1(tot);
