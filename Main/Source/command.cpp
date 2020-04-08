@@ -531,12 +531,7 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems()){
-          ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
-          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
-            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
-          }
-        }
+        game::SetDropTag(ToDrop[c]);
       }
       Success = true;
     }
@@ -1259,9 +1254,9 @@ truth commandsystem::Pray(character* Char)
     return false;
   }
 
+  festring desc;
   if(!DivineMaster)
   {
-    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
@@ -1276,7 +1271,9 @@ truth commandsystem::Pray(character* Char)
   else
     if(game::GetGod(DivineMaster)->IsKnown())
     {
-      Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+      desc << game::GetGod(DivineMaster)->GetCompleteDescription();
+      if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(DivineMaster)->GetLastKnownRelation();
+      Panthenon.AddEntry(desc, LIGHT_GRAY, 20, DivineMaster);
       Panthenon.SetLastEntryHelp(festring() << game::GetGod(DivineMaster)->GetName() << ", the " << game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
@@ -1420,8 +1417,10 @@ truth commandsystem::Offer(character* Char)
         return true;
       } else {
         if(ivanconfig::IsDropBeforeOffering())
-          if(!game::IsQuestItem(Item))
+          if(!game::IsQuestItem(Item)){
             Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
+            game::SetDropTag(Item);
+          }
         return false;
       }
     }

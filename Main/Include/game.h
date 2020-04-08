@@ -182,6 +182,7 @@ class game
   static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
+  static void SetDropTag(item* it);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();

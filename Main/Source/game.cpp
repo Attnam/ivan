@@ -1324,6 +1324,16 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
+void game::SetDropTag(item* it)
+{
+  if(ivanconfig::IsAutoPickupThrownItems()){
+    it->ClearTag('t'); //throw: to avoid auto-pickup
+    if(game::IsAutoPickupMatch(it->GetName(DEFINITE))){
+      it->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
+    }
+  }
+}
+
 std::vector<festring> afsAutoPickupMatch;
 pcre *reAutoPickup=NULL;
 void game::UpdateAutoPickUpMatching() //simple matching syntax
