@@ -25,7 +25,7 @@
 
     #include "dbgmsg.h"
 
-    /********************************************************************************************
+    /************************************************************
      * CUSTOM / PROJECT SPECIFIC, modify at will
      ************************************************************/
     #ifndef DBGMSG_OBJ //do NOT define DBGMSG_OBJ this in your project cpp files!

@@ -3133,6 +3133,8 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
   /**
    * navigate the unknown dungeon
    */
+  festring fsDL;fsDL<<GetDungeon()->GetIndex()<<GetLevel()->GetIndex();
+  festring fsStayOnDL;{const char* pc = std::getenv("IVAN_DebugStayOnDungeonLevel");if(pc!=NULL)fsStayOnDL<<pc;}
   std::vector<v2> v2Exits;
   std::vector<v2> v2Altars;
   if(v2KeepGoingTo.Is0()){ DBG1("TryNewMoveTarget");
@@ -3160,7 +3162,8 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
       olterrain* olt = lsqr->GetOLTerrain();
       if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
-        v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
+        if(fsDL!=fsStayOnDL)
+          v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
       }
       
       altar* Altar = dynamic_cast<altar*>(olt);

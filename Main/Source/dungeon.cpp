@@ -90,19 +90,26 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
-    DBG2("GeneratingDungeonLevel",Index);
-    int iRetryMax=10;
+    festring fsGenLoopDL;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopID");if(pc!=NULL)fsGenLoopDL<<pc;}
+    int iGenLoopMax=250;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopMax");if(pc!=NULL)iGenLoopMax=atoi(pc);}
+    
+    festring fsDL;fsDL<<GetIndex()<<Index;
+    int iRetryMax = fsGenLoopDL==fsDL ? iGenLoopMax : 10;
+    
+    DBG3("GeneratingDungeonLevel",fsDL.CStr(),fsGenLoopDL.CStr());
+    
     level* NewLevel=NULL;
     cbitmap* EnterImage=NULL;
-    if(!genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
     for(int i=0;i<iRetryMax;i++){
       try{
+        if(!genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to become: true");
+        
         NewLevel = Level[Index] = new level;
         NewLevel->SetDungeon(this);
         NewLevel->SetIndex(Index);
         const levelscript* LevelScript = GetLevelScript(Index);
         NewLevel->SetLevelScript(LevelScript);
-        DBG3("GeneratingDungeonLevel",Index,NewLevel->GetDungeon()->GetLevelDescription(Index, true).CStr());
+        DBG7("GeneratingDungeonLevel",NewLevel->GetDungeon()->GetIndex(),Index,fsDL.CStr(),fsGenLoopDL.CStr(),i,NewLevel->GetDungeon()->GetLevelDescription(Index, true).CStr());
 
         if(Visual)
         {
@@ -114,10 +121,12 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
             game::SetEnterTextDisplacement(Displacement);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nThis may take some time, please wait."),
-                             Displacement, WHITE, false, true, &game::BusyAnimation);
+                             Displacement, WHITE, false, 
+                             true, &game::BusyAnimation);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nPress any key to continue."),
-                             Displacement, WHITE, game::GetAutoPlayMode()<AUTOPLAYMODE_SLOW, false, &game::BusyAnimation);
+                             Displacement, WHITE, game::GetAutoPlayMode()<AUTOPLAYMODE_SLOW, 
+                             false, &game::BusyAnimation);
             game::SetEnterImage(0);
             delete EnterImage;
             EnterImage=NULL;
@@ -139,16 +148,19 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
         if(*NewLevel->GetLevelScript()->GenerateMonsters())
           NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
-        if(genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
-        return false; // new level is ok
+        if(genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to become: false");
+        if(fsGenLoopDL!=fsDL)
+          return false; // new level is ok
       }catch(const genericException& e){
         // cleanup
-        if(NewLevel)delete NewLevel; //TODO is this enough to clean it in a whole?
-        if(EnterImage)delete EnterImage;
+        //TODO it is not working well, memory usage keeps increasing...
+        if(NewLevel  ){delete NewLevel  ;NewLevel=NULL;}
+        if(EnterImage){delete EnterImage;EnterImage=NULL;}
         
         //retry
       }
-    }
+    } //for()
+    if(fsGenLoopDL==fsDL)ABORT("Generating dungeon loop test completed.");
     ABORT("Generating new level failed after %d retries, aborting...",iRetryMax);
   }
 }

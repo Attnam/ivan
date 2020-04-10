@@ -135,10 +135,13 @@ int main(int argc, char** argv)
 //    std::cout << "--genmvkeys Generate custom move keys cfg file. " << std::endl;
     std::cout << "--version Show current game version. " << std::endl;
     std::cout << std::endl;
-    std::cout << "Environment Variables (only work if set to 'true'):" << std::endl;
-    std::cout << "IVAN_SHOWFPS=true # show FPS at top right" << std::endl;
-    std::cout << "IVAN_DebugShowTinyDungeon=true #DEBUG always show tiny dungeon above stretched one" << std::endl;
-    std::cout << "IVAN_LISTDRAWABOVE=true #DEBUG output the draw above priority list to text console terminal" << std::endl;
+    std::cout << "Environment Variables:" << std::endl;
+    std::cout << "IVAN_SHOWFPS=[true] # show FPS at top right" << std::endl;
+    std::cout << "IVAN_DebugShowTinyDungeon=[true] #DEBUG always show tiny dungeon above stretched one" << std::endl;
+    std::cout << "IVAN_LISTDRAWABOVE=[true] #DEBUG output the draw above priority list to text console terminal" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopID=[DungeonLevelIndex] #DEBUG DungeonLevelIndex must be an integer matching a some dungeon level" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopMax=[integer] #DEBUG generate the dungeon level how many times" << std::endl;
+    std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG auto play AI will not leave that Dungeon Level after entering it" << std::endl;
     return 0;
   }
   
