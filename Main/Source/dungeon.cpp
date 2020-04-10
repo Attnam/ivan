@@ -21,6 +21,7 @@
 #include "graphics.h"
 #include "message.h"
 #include "audio.h"
+#include "database.h"
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -88,47 +89,64 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
-    level* NewLevel = Level[Index] = new level;
-    NewLevel->SetDungeon(this);
-    NewLevel->SetIndex(Index);
-    const levelscript* LevelScript = GetLevelScript(Index);
-    NewLevel->SetLevelScript(LevelScript);
+    int iRetryMax=10;
+    level* NewLevel=NULL;
+    cbitmap* EnterImage=NULL;
+    if(!game::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
+    for(int i=0;i<iRetryMax;i++){
+      try{
+        NewLevel = Level[Index] = new level;
+        NewLevel->SetDungeon(this);
+        NewLevel->SetIndex(Index);
+        const levelscript* LevelScript = GetLevelScript(Index);
+        NewLevel->SetLevelScript(LevelScript);
 
-    if(Visual)
-    {
-      if(LevelScript->GetEnterImage())
-      {
-        cbitmap* EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
-        game::SetEnterImage(EnterImage);
-        v2 Displacement = *LevelScript->GetEnterTextDisplacement();
-        game::SetEnterTextDisplacement(Displacement);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nThis may take some time, please wait."),
-                         Displacement, WHITE, false, true, &game::BusyAnimation);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nPress any key to continue."),
-                         Displacement, WHITE, true, false, &game::BusyAnimation);
-        game::SetEnterImage(0);
-        delete EnterImage;
-      }
-      else
-      {
-        game::SetEnterTextDisplacement(ZERO_V2);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nThis may take some time, please wait."),
-                         ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+        if(Visual)
+        {
+          if(LevelScript->GetEnterImage())
+          {
+            EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
+            game::SetEnterImage(EnterImage);
+            v2 Displacement = *LevelScript->GetEnterTextDisplacement();
+            game::SetEnterTextDisplacement(Displacement);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nThis may take some time, please wait."),
+                             Displacement, WHITE, false, true, &game::BusyAnimation);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nPress any key to continue."),
+                             Displacement, WHITE, true, false, &game::BusyAnimation);
+            game::SetEnterImage(0);
+            delete EnterImage;
+            EnterImage=NULL;
+          }
+          else
+          {
+            game::SetEnterTextDisplacement(ZERO_V2);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nThis may take some time, please wait."),
+                             ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+          }
+        }
+
+        NewLevel->Generate(Index);
+        game::SetCurrentLSquareMap(NewLevel->GetMap());
+        Generated[Index] = true;
+        game::BusyAnimation();
+
+        if(*NewLevel->GetLevelScript()->GenerateMonsters())
+          NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
+
+        if(game::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
+        return false; // new level is ok
+      }catch(undefinedConfigurationSoughtException){
+        // cleanup
+        if(NewLevel)delete NewLevel; //TODO is this enough to clean it in a whole?
+        if(EnterImage)delete EnterImage;
+        
+        //retry
       }
     }
-
-    NewLevel->Generate(Index);
-    game::SetCurrentLSquareMap(NewLevel->GetMap());
-    Generated[Index] = true;
-    game::BusyAnimation();
-
-    if(*NewLevel->GetLevelScript()->GenerateMonsters())
-      NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
-
-    return false;
+    ABORT("Generating new level failed after %d retries, aborting...",iRetryMax);
   }
 }
 

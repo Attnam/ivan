@@ -165,6 +165,7 @@ typedef std::vector<character*> charactervector;
 
 class quitrequest { };
 class areachangerequest { };
+class undefinedConfigurationSoughtException { };
 
 typedef void (*dbgdrawoverlay)();
 
@@ -509,6 +510,8 @@ class game
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
   static void LoadCustomCommandKeys();
+  static truth IsGenNewLvl(){return bGeneratingNewDungeonLevel;}
+  static truth ToggleGenNewLvl(){return bGeneratingNewDungeonLevel = !bGeneratingNewDungeonLevel;return bGeneratingNewDungeonLevel;}
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -631,6 +634,7 @@ class game
   const static int iListWidth = 652;
   static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
   static int iCurrentDungeonTurn;
+  static truth bGeneratingNewDungeonLevel;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

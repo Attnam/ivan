@@ -4542,8 +4542,8 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
 
         if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
           Stack->DrawContents(Player, "Items here", 
-            NO_SELECT|
-            (GetSeeWholeMapCheatMode() || Stack->GetItem(0)->GetRoom() || Player->GetLSquareUnder()==LSquare ?
+            NO_SELECT| // that square may have an adjacent square with a wall lantern, checking for Stack->GetItem(0) prevents a SEGFAULT
+            (GetSeeWholeMapCheatMode() || (Stack->GetItem(0) && Stack->GetItem(0)->GetRoom()) || Player->GetLSquareUnder()==LSquare ?
               0 : NO_SPECIAL_INFO)
           );
         else
@@ -4820,8 +4820,10 @@ truth game::LeaveArea(charactervector& Group, truth AllowHostiles, truth AlliesF
   return true;
 }
 
-/* Used always when the player enters an area. */
+static truth bGeneratingNewDungeonLevel;
+truth game::bGeneratingNewDungeonLevel=false;
 
+/* Used always when the player enters an area. */
 void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 {
   if(Area != WORLD_MAP)

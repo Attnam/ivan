@@ -13,6 +13,7 @@
 /* Compiled through dataset.cpp */
 
 #include <stack>
+#include "game.h"
 
 int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray,
                       long* TempTableInfo, int Type, int Configs, int TempTables)
@@ -949,8 +950,12 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   const prototype* Proto = Instance->FindProtoType();
   FindDataBase(Instance->DataBase, Proto, Config);
 
-  if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+  if(!Instance->DataBase){
+    if(game::IsGenNewLvl())
+      throw undefinedConfigurationSoughtException();
+    else
+      ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+  }
 }
 
 template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)

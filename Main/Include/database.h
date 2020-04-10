@@ -34,8 +34,8 @@ template <class type> class databasecreator
   typedef std::map<festring, databasememberbase<database>*> databasemembermap;
   static void ReadFrom(inputfile&);
   static void FindDataBase(const database*&, const prototype*, int);
-  static truth InstallDataBaseIfPossible(type*, int, int);
   static void InstallDataBase(type*, int);
+  static truth InstallDataBaseIfPossible(type*, int, int);
   static void CreateDataBaseMemberMap();
   static int CreateDivineConfigurations(const prototype*, database**, int);
  private:
