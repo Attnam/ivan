@@ -22,6 +22,7 @@
 #include "message.h"
 #include "audio.h"
 #include "database.h"
+#include "dbgmsgproj.h"
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -89,10 +90,11 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
+    DBG2("GeneratingDungeonLevel",Index);
     int iRetryMax=10;
     level* NewLevel=NULL;
     cbitmap* EnterImage=NULL;
-    if(!undefinedConfigurationSoughtException::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
+    if(!genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
     for(int i=0;i<iRetryMax;i++){
       try{
         NewLevel = Level[Index] = new level;
@@ -100,6 +102,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
         NewLevel->SetIndex(Index);
         const levelscript* LevelScript = GetLevelScript(Index);
         NewLevel->SetLevelScript(LevelScript);
+        DBG3("GeneratingDungeonLevel",Index,NewLevel->GetDungeon()->GetLevelDescription(Index, true).CStr());
 
         if(Visual)
         {
@@ -136,9 +139,9 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
         if(*NewLevel->GetLevelScript()->GenerateMonsters())
           NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
-        if(undefinedConfigurationSoughtException::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
+        if(genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
         return false; // new level is ok
-      }catch(undefinedConfigurationSoughtException){
+      }catch(const genericException& e){
         // cleanup
         if(NewLevel)delete NewLevel; //TODO is this enough to clean it in a whole?
         if(EnterImage)delete EnterImage;

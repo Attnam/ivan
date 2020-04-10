@@ -77,6 +77,14 @@ void globalerrorhandler::DumpStackTraceToStdErr(int Signal){
 }
 #endif
 
+
+genericException::genericException(cchar* pc)
+{
+  pcMsg=pc;
+  DBG1(pc);
+  DBGBREAKPOINT;
+}
+
 void globalerrorhandler::Install()
 {
   static truth AlreadyInstalled = false;
@@ -219,4 +227,4 @@ void globalerrorhandler::SignalHandler(int Signal)
 
 #endif
 
-truth undefinedConfigurationSoughtException::bGeneratingNewDungeonLevel=false;
+truth genericException::bGeneratingNewDungeonLevel=false;

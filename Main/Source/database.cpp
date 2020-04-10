@@ -951,8 +951,8 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   FindDataBase(Instance->DataBase, Proto, Config);
 
   if(!Instance->DataBase){
-    if(undefinedConfigurationSoughtException::IsGenNewLvl())
-      throw undefinedConfigurationSoughtException();
+    if(genericException::IsGenNewLvl())
+      throw genericException([Proto,Config]{festring fsE;fsE << "UndefinedConfigurationSought,\"" << const_cast<char*>(Proto->GetClassID()) << "\","<<Config;return fsE.CStr();}());
     else
       ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
   }

@@ -21,12 +21,15 @@
 #define SIGNALS 8
 #endif
 
-class undefinedConfigurationSoughtException 
+class genericException 
 {
   public:
+    genericException(cchar* pc);
+    cchar* GetMsg(){return pcMsg;};
     static truth IsGenNewLvl(){return bGeneratingNewDungeonLevel;}
     static truth ToggleGenNewLvl(){return bGeneratingNewDungeonLevel = !bGeneratingNewDungeonLevel;return bGeneratingNewDungeonLevel;}
   private:
+    cchar* pcMsg;
     static truth bGeneratingNewDungeonLevel;
 };
 
