@@ -3580,7 +3580,7 @@ truth character::AutoPlayAICommand(int& rKey)
     return true;
 
   if(iWanderTurns>0){
-    if(!IsPlayer() || game::GetAutoPlayMode()==0 || !IsPlayerAutoPlay()){ //redundancy: yep
+    if(!IsPlayer() || game::GetAutoPlayMode()==AUTOPLAYMODE_DISABLED || !IsPlayerAutoPlay()){ //redundancy: yep
       DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
       DBG5(IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
       ABORT("autoplay is inconsistent %d %d %d %d %d %s %d %s %d %d %d %d %d",
@@ -3724,7 +3724,7 @@ void character::GetPlayerCommand()
 #ifdef WIZARD
     if(IsPlayerAutoPlay()){
       bool bForceStop = false;
-      if(game::GetAutoPlayMode()>=2)
+      if(game::GetAutoPlayMode()>=AUTOPLAYMODE_SLOW)
         bForceStop = globalwindowhandler::IsKeyPressed(SDL_SCANCODE_ESCAPE);
 
       if(!bForceStop && Key=='.'){ // pressed or simulated
@@ -3739,7 +3739,7 @@ void character::GetPlayerCommand()
          * if the user hits any key during the autoplay mode that runs by itself, it will be disabled.
          * at non auto mode, can be moved around but cannot rest or will move by itself
          */
-        if(game::GetAutoPlayMode()>=2 && (Key!='~' || bForceStop)){
+        if(game::GetAutoPlayMode()>=AUTOPLAYMODE_SLOW && (Key!='~' || bForceStop)){
           game::DisableAutoPlayMode();
           AutoPlayAIReset(true); // this will help on re-randomizing things, mainly paths
         }

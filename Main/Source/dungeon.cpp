@@ -114,7 +114,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
                              Displacement, WHITE, false, true, &game::BusyAnimation);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nPress any key to continue."),
-                             Displacement, WHITE, true, false, &game::BusyAnimation);
+                             Displacement, WHITE, game::GetAutoPlayMode()<AUTOPLAYMODE_SLOW, false, &game::BusyAnimation);
             game::SetEnterImage(0);
             delete EnterImage;
             EnterImage=NULL;

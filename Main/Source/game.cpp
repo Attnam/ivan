@@ -193,7 +193,7 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
-int game::AutoPlayMode=0;
+int game::AutoPlayMode=AUTOPLAYMODE_DISABLED;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -296,7 +296,7 @@ int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
-  DBG3(ID,Char->GetID(),Char->GetName(INDEFINITE).CStr());
+  DBG2(ID,Char->GetID()); // do not use GetName() here, will crash!:  ,Char->GetName(INDEFINITE).CStr());
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID)
@@ -310,7 +310,7 @@ void game::RemoveCharacterID(ulong ID)
 }
 void game::AddItemID(item* Item, ulong ID)
 {
-  DBG3(ID,Item->GetID(),Item->GetName(INDEFINITE).CStr());
+  DBG2(ID,Item->GetID());// do not use GetName() here, will crash!:  ,Item->GetName(INDEFINITE).CStr());
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 
@@ -341,8 +341,10 @@ void game::UpdateItemID(item* Item, ulong ID)
 }
 void game::AddTrapID(entity* Trap, ulong ID)
 {
-  DBG3(ID,Trap->GetTrapID(),Trap->GetTrapType());
-  if(ID) TrapIDMap.insert(std::make_pair(ID, Trap));
+  if(ID){
+    DBG2(ID,Trap->GetTrapID()); // do not use GetTrapType() here, will crash!: ,Trap->GetTrapType());
+    TrapIDMap.insert(std::make_pair(ID, Trap));
+  }
 }
 void game::RemoveTrapID(ulong ID)
 {
@@ -4246,7 +4248,7 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  if(game::GetAutoPlayMode()==0)
+  if(game::GetAutoPlayMode()==AUTOPLAYMODE_DISABLED)
     for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
@@ -5594,25 +5596,25 @@ void game::AutoPlayModeApply(){
 
   const char* msg;
   switch(game::AutoPlayMode){
-  case 0:
+  case AUTOPLAYMODE_DISABLED:
     // disabled
     msg="%s says \"I can rest now.\"";
     break;
-  case 1:
+  case AUTOPLAYMODE_NOTIMEOUT:
     // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
     msg="%s says \"I won't rest!\"";
     break;
-  case 2: // TIMEOUTs key press from here to below
+  case AUTOPLAYMODE_SLOW: // TIMEOUTs key press from here to below
     msg="%s says \"I can't wait anymore!\"";
     iTimeout=(1000);
     bPlayInBackground=true;
     break;
-  case 3:
+  case AUTOPLAYMODE_FAST:
     msg="%s says \"I am in a hurry!\"";
     iTimeout=(1000/2);
     bPlayInBackground=true;
     break;
-  case 4:
+  case AUTOPLAYMODE_FRENZY:
     msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
     iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
@@ -5645,7 +5647,7 @@ void game::IncAutoPlayMode() {
 //  }
 
   ++AutoPlayMode;
-  if(AutoPlayMode>4)AutoPlayMode=0;
+  if(AutoPlayMode>AUTOPLAYMODE_FRENZY)AutoPlayMode=AUTOPLAYMODE_DISABLED;
 
   AutoPlayModeApply();
 }
