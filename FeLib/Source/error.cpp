@@ -218,3 +218,5 @@ void globalerrorhandler::SignalHandler(int Signal)
 }
 
 #endif
+
+truth undefinedConfigurationSoughtException::bGeneratingNewDungeonLevel=false;

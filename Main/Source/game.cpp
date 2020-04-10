@@ -4820,9 +4820,6 @@ truth game::LeaveArea(charactervector& Group, truth AllowHostiles, truth AlliesF
   return true;
 }
 
-static truth bGeneratingNewDungeonLevel;
-truth game::bGeneratingNewDungeonLevel=false;
-
 /* Used always when the player enters an area. */
 void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 {

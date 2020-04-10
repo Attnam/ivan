@@ -21,6 +21,15 @@
 #define SIGNALS 8
 #endif
 
+class undefinedConfigurationSoughtException 
+{
+  public:
+    static truth IsGenNewLvl(){return bGeneratingNewDungeonLevel;}
+    static truth ToggleGenNewLvl(){return bGeneratingNewDungeonLevel = !bGeneratingNewDungeonLevel;return bGeneratingNewDungeonLevel;}
+  private:
+    static truth bGeneratingNewDungeonLevel;
+};
+
 class globalerrorhandler
 {
  public:

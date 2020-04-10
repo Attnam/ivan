@@ -92,7 +92,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
     int iRetryMax=10;
     level* NewLevel=NULL;
     cbitmap* EnterImage=NULL;
-    if(!game::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
+    if(!undefinedConfigurationSoughtException::ToggleGenNewLvl())ABORT("expecting gen lvl to be true");
     for(int i=0;i<iRetryMax;i++){
       try{
         NewLevel = Level[Index] = new level;
@@ -136,7 +136,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
         if(*NewLevel->GetLevelScript()->GenerateMonsters())
           NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
-        if(game::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
+        if(undefinedConfigurationSoughtException::ToggleGenNewLvl())ABORT("expecting gen lvl to be false");
         return false; // new level is ok
       }catch(undefinedConfigurationSoughtException){
         // cleanup
