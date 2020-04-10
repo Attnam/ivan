@@ -129,10 +129,16 @@ int main(int argc, char** argv)
   
   if(argc > 1 && festring(argv[1]) == "--help")
   {
+    std::cout << "Command line options:" << std::endl;
     std::cout << "--defgen Generate defines validator source file. " << std::endl;
     std::cout << "--defval Validate defines. " << std::endl;
 //    std::cout << "--genmvkeys Generate custom move keys cfg file. " << std::endl;
     std::cout << "--version Show current game version. " << std::endl;
+    std::cout << std::endl;
+    std::cout << "Environment Variables (only work if set to 'true'):" << std::endl;
+    std::cout << "IVAN_SHOWFPS=true # show FPS at top right" << std::endl;
+    std::cout << "IVAN_DebugShowTinyDungeon=true #DEBUG always show tiny dungeon above stretched one" << std::endl;
+    std::cout << "IVAN_LISTDRAWABOVE=true #DEBUG output the draw above priority list to text console terminal" << std::endl;
     return 0;
   }
   

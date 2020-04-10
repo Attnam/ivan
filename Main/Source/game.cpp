@@ -296,6 +296,7 @@ int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
+  DBG3(ID,Char->GetID(),Char->GetName(INDEFINITE).CStr());
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID)
@@ -309,6 +310,7 @@ void game::RemoveCharacterID(ulong ID)
 }
 void game::AddItemID(item* Item, ulong ID)
 {
+  DBG3(ID,Item->GetID(),Item->GetName(INDEFINITE).CStr());
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 
@@ -339,6 +341,7 @@ void game::UpdateItemID(item* Item, ulong ID)
 }
 void game::AddTrapID(entity* Trap, ulong ID)
 {
+  DBG3(ID,Trap->GetTrapID(),Trap->GetTrapType());
   if(ID) TrapIDMap.insert(std::make_pair(ID, Trap));
 }
 void game::RemoveTrapID(ulong ID)

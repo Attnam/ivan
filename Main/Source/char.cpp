@@ -12093,7 +12093,10 @@ truth character::TryToUnStickTraps(v2 Dir)
     if(IsEnabled())
     {
       entity* Trap = game::SearchTrap(TrapVector[c].TrapID);
-
+      
+      if(!Trap)
+        ABORT("Trap ID %d not found, character name: %s, x=%d y=%d",TrapVector[c].TrapID,GetName(INDEFINITE).CStr(),GetPos().X,GetPos().Y);
+      
       if(Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
         break;
     }
