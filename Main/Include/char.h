@@ -1125,6 +1125,7 @@ class character : public entity, public id
   festring GetTrapDescription() const;
   truth TryToUnStickTraps(v2);
   void RemoveTrap(ulong);
+  void ValidateTrapData();
   void AddTrap(ulong, ulong);
   truth IsStuckToTrap(ulong) const;
   void RemoveTraps();

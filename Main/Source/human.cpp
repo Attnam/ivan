@@ -2657,6 +2657,7 @@ truth humanoid::CanWield() const
 
 truth humanoid::CheckBalance(double KickDamage)
 {
+  ValidateTrapData();
   return !CanMove()
     || IsStuck()
     || !KickDamage

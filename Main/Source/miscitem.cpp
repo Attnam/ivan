@@ -1598,6 +1598,7 @@ void beartrap::StepOnEffect(character* Stepper)
 
 truth beartrap::CheckPickUpEffect(character* Picker)
 {
+  Picker->ValidateTrapData();
   if(Picker->IsStuckToTrap(GetTrapID()))
   {
     if(Picker->IsPlayer())

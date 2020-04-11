@@ -6760,6 +6760,7 @@ double game::GetGameSituationDanger()
 {
   double SituationDanger = 0;
   character* Player = GetPlayer();
+  Player->ValidateTrapData();
   truth PlayerStuck = Player->IsStuck();
   v2 PlayerPos = Player->GetPos();
   character* TruePlayer = Player;
@@ -6774,6 +6775,7 @@ double game::GetGameSituationDanger()
         if(Enemy->IsEnabled() && Enemy->CanAttack()
            && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
         {
+          Enemy->ValidateTrapData();
           truth EnemyStuck = Enemy->IsStuck();
           v2 EnemyPos = Enemy->GetPos();
           truth Sees = TruePlayer->CanBeSeenBy(Enemy);
@@ -6794,6 +6796,7 @@ double game::GetGameSituationDanger()
                   v2 FriendPos = Friend->GetPos();
                   truth Sees = TrueEnemy->CanBeSeenBy(Friend);
 
+                  Friend->ValidateTrapData();
                   if(Friend->IsStuck())
                   {
                     Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);

@@ -1566,6 +1566,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
   }
   else
   {
+    ValidateTrapData();
     if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround()
        && game::TruthQuestion(CONST_S("Do you want to leave ")
                               + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex())
@@ -2602,6 +2603,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
       ++SpecifierParts;
     }
 
+    ValidateTrapData();
     if(!(DeathFlags & IGNORE_TRAPS) && IsStuck())
     {
       if(SpecifierParts++)
@@ -3043,6 +3045,7 @@ truth character::AutoPlayAIDropThings()
 bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
 {
   if(!it->CanBeSeenBy(this))return false;
+  ValidateTrapData();
   if(!it->IsPickable(this))return false;
   if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
 
@@ -3940,6 +3943,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, v2 HitPos
 
 truth character::CheckBalance(double KickDamage)
 {
+  ValidateTrapData();
   return !CanMove()
     || IsStuck()
     || !KickDamage
@@ -4241,7 +4245,8 @@ truth character::CheckForUsefulItemsOnGround(truth CheckFood)
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
 
-  for(uint c = 0; c < ItemVector.size(); ++c)
+  ValidateTrapData();
+  for(uint c = 0; c < ItemVector.size(); ++c){
     if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this))
     {
       if(!(CommandFlags & DONT_CHANGE_EQUIPMENT)
@@ -4252,6 +4257,7 @@ truth character::CheckForUsefulItemsOnGround(truth CheckFood)
          && TryToConsume(ItemVector[c]))
         return true;
     }
+  }
 
   return false;
 }
@@ -4384,6 +4390,8 @@ truth character::Displace(character* Who, truth Forced)
   else
     Danger /= 1 << -PriorityDifference;
 
+  ValidateTrapData();
+  Who->ValidateTrapData();
   if(IsSmall() && Who->IsSmall()
      && (Forced || Danger > 1. || !(Who->IsPlayer() || Who->IsBadPath(GetPos())))
      && !IsStuck() && !Who->IsStuck()
@@ -10052,8 +10060,9 @@ truth character::CheckForFoodInSquare(v2 Pos)
     lsquare* Square = Level->GetLSquare(Pos);
     stack* Stack = Square->GetStack();
 
-    if(Stack->GetItems())
-      for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
+    if(Stack->GetItems()){
+      ValidateTrapData();
+      for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i){
         if(i->IsPickable(this)
            && i->CanBeSeenBy(this)
            && i->CanBeEatenByAI(this)
@@ -10063,6 +10072,8 @@ truth character::CheckForFoodInSquare(v2 Pos)
           SetGoingTo(Pos);
           return MoveTowardsTarget(false);
         }
+      }
+    }
   }
 
   return false;
@@ -12086,26 +12097,16 @@ truth character::IsUsingWeaponOfCategory(int Category) const
 
 truth character::TryToUnStickTraps(v2 Dir)
 {
-  if(!TrapData)
-    return true;
-
-  std::vector<trapdata> TrapVector;
-
-  for(const trapdata* T = TrapData; T; T = T->Next)
-    TrapVector.push_back(*TrapData);
-
-  for(uint c = 0; c < TrapVector.size(); ++c)
+  ValidateTrapData();
+  for(trapdata* T = TrapData; T; T = T->Next)
     if(IsEnabled())
     {
-      entity* Trap = game::SearchTrap(TrapVector[c].TrapID);
-      
-      if(!Trap)
-        ABORT("Trap ID %lu not found, character name: %s, x=%d y=%d",TrapVector[c].TrapID,GetName(INDEFINITE).CStr(),GetPos().X,GetPos().Y);
-      
-      if(Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
+      entity* Trap = game::SearchTrap(T->TrapID);
+      if(Trap && Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
         break;
     }
 
+  ValidateTrapData();
   return !TrapData && IsEnabled();
 }
 
@@ -12116,20 +12117,37 @@ struct trapidcomparer
   ulong ID;
 };
 
+void character::ValidateTrapData()
+{
+  for(trapdata* T = TrapData; T;)
+  {
+    if(!game::SearchTrap(T->TrapID)){
+      trapdata* ToDel = T;
+      if(TrapData==ToDel)
+        TrapData=T->Next;
+      T = T->Next;
+      delete ToDel;
+    }else{
+      T = T->Next;
+    }
+  }
+}
+
 void character::RemoveTrap(ulong ID)
 {
-  if(!TrapData) //everywhere calling this must be sure it can be called!
-    ABORT("can't remove a non existing trap...");
-  
+  ValidateTrapData();
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
-  trapdata* ToDel = T;
-  T = T->Next;
-  delete ToDel;
+  if(T){
+    trapdata* ToDel = T;
+    T = T->Next;
+    delete ToDel;
+  }
   doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 void character::AddTrap(ulong ID, ulong BodyParts)
 {
+  ValidateTrapData();
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
 
   if(T)
@@ -12231,25 +12249,27 @@ festring character::GetTrapDescription() const
     }
   }
 
-  if(Index <= 3)
-  {
-    TrapStack[0].first->AddTrapName(Desc, TrapStack[0].second);
+  if(Index > 0){
+    if(Index <= 3)
+    {
+      TrapStack[0].first->AddTrapName(Desc, TrapStack[0].second);
 
-    if(Index == 2)
-    {
-      Desc << " and ";
-      TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+      if(Index == 2)
+      {
+        Desc << " and ";
+        TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+      }
+      else if(Index == 3)
+      {
+        Desc << ", ";
+        TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+        Desc << " and ";
+        TrapStack[2].first->AddTrapName(Desc, TrapStack[2].second);
+      }
     }
-    else if(Index == 3)
-    {
-      Desc << ", ";
-      TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
-      Desc << " and ";
-      TrapStack[2].first->AddTrapName(Desc, TrapStack[2].second);
-    }
+    else
+      Desc << "lots of traps";
   }
-  else
-    Desc << "lots of traps";
 
   return Desc;
 }

@@ -2480,6 +2480,7 @@ void spider::GetAICommand()
 
   if(NearestChar)
   {
+    NearestChar->ValidateTrapData();
     if(NearestChar->IsStuck() || GetConfig() == ARANEA ||
        (GetConfig() == PHASE && !CanBeSeenBy(NearestChar)))
       SetGoingTo(NearestChar->GetPos());
@@ -2719,6 +2720,7 @@ void lobhse::GetAICommand()
 
     if(NearestChar)
     {
+      NearestChar->ValidateTrapData();
       if(NearestChar->IsStuck())
         SetGoingTo(NearestChar->GetPos());
       else
