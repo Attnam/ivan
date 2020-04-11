@@ -3162,8 +3162,10 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
       olterrain* olt = lsqr->GetOLTerrain();
       if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
-        if(fsDL!=fsStayOnDL)
-          v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
+        if(fsDL!=fsStayOnDL){
+          v2Exits.push_back(v2(lsqr->GetPos()));
+          DBGSV2(v2Exits[v2Exits.size()-1]);
+        }
       }
       
       altar* Altar = dynamic_cast<altar*>(olt);
