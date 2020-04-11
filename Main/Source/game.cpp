@@ -353,8 +353,10 @@ void game::RemoveTrapID(ulong ID)
     if(itr == TrapIDMap.end() || itr->second == NULL){
       if(!bugfixdp::IsFixing())
         ABORT("AlreadyErased:TrapID %lu",ID);
-    }else
+    }else{
+      DBG1(ID);
       TrapIDMap.erase(itr);
+    }
   }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)

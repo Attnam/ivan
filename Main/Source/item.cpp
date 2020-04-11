@@ -404,7 +404,7 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
 
     long Price = GetTruePrice();
 
-    if(Price)
+    if(Midas && Price)
     {
       Price /= 4; /* slightly lower than with 10 Cha */
       ADD_MESSAGE("Gold pieces clatter on the floor.");
