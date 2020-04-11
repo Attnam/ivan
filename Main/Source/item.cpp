@@ -1704,8 +1704,12 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
       if(Slot[c])
       {
         lsquare* Square = GetLSquareUnder(c);
-        Square->SendNewDrawRequest();
-        Square->SendMemorizedUpdateRequest();
+        if(Square){ //TODO is this fix ok? let it crash elsewhere better to track the problem...
+          Square->SendNewDrawRequest();
+          Square->SendMemorizedUpdateRequest();
+        }else{
+          DBG4("Is nowhere to be found, how!?",Square,GetNameSingular().CStr(),SquaresUnder);
+        }
       }
 }
 

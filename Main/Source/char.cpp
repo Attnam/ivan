@@ -3015,21 +3015,36 @@ truth character::AutoPlayAIDropThings()
 
       if(iDirOk==-1){iDirOk=clock()%8;DBG2("RandomDir",iDirOk);}DBGLN; //TODO should just drop may be? unless hitting w/e is there could help
 
-      if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
-        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
-        static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
-        DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
-        if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
-          dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
-          Kick(lsqrDropAt,iDirOk,true);DBGLN; // ..to kick it
-        }else{DBGLN;
-          ThrowItem(iDirOk, dropMe); DBG5("DropThrow",iDirOk,dropMe->GetName(DEFINITE).CStr(),dropMe->GetTruePrice(),dropMe->GetWeight());
+      bool bApplyDropped=false; //or vanished
+      if(dropMe->IsAppliable(this) && dropMe->Apply(this)){
+        static itemvector ivChkDrop;ivChkDrop.clear();
+        GetStack()->FillItemVector(ivChkDrop);
+        bApplyDropped=true;
+        for(int i6=0;i6<ivChkDrop.size();i6++){
+          if(ivChkDrop[i6]==dropMe){
+            bApplyDropped=false;
+            break;
+          }
         }
-      }else{DBGLN;
-        dropMe->MoveTo(GetLSquareUnder()->GetStack());DBGLN; //just drop
       }
+      
+      if(!bApplyDropped){
+        if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
+          static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
+          static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
+          DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
+          if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
+            dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
+            Kick(lsqrDropAt,iDirOk,true);DBGLN; // ..to kick it
+          }else{DBGLN;
+            ThrowItem(iDirOk, dropMe); DBG5("DropThrow",iDirOk,dropMe->GetName(DEFINITE).CStr(),dropMe->GetTruePrice(),dropMe->GetWeight());
+          }
+        }else{DBGLN;
+          dropMe->MoveTo(GetLSquareUnder()->GetStack());DBGLN; //just drop
+        }
 
-      v2LastDropPlayerWasAt=GetPos();DBGSV2(v2LastDropPlayerWasAt);
+        v2LastDropPlayerWasAt=GetPos();DBGSV2(v2LastDropPlayerWasAt);
+      }
 
       return true;
     }
@@ -3064,8 +3079,11 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(this);
   if(h==NULL)return false;
+  // other invalid equippers
+  if(dynamic_cast<ghost*>(this) != NULL)return false;
+  if(dynamic_cast<golem*>(this) != NULL)return false;
 
-  if(h->AutoPlayAIequip())
+  if(h->AutoPlayAIequipConsumeZapReadApply())
     return true;
 
   if(GetBurdenState()!=OVER_LOADED){ DBG4(CommandFlags&DONT_CHANGE_EQUIPMENT,this,GetNameSingular().CStr(),GetSquareUnder());
@@ -3237,6 +3255,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
                   vit[n]->IsArmor   (this) ||
                   vit[n]->IsAmulet  (this) ||
                   vit[n]->IsZappable(this) || //wands
+                  vit[n]->IsAppliable(this) || //mines, beartraps etc
                   vit[n]->IsRing    (this) ||
                   vit[n]->IsReadable(this) || //books and scrolls
                   vit[n]->IsDrinkable(this)|| //potions and vials

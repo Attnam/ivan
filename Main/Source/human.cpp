@@ -3657,24 +3657,29 @@ long skeleton::GetBodyPartVolume(int I) const
   return 0;
 }
 
-truth humanoid::AutoPlayAIequip()
+truth humanoid::AutoPlayAIequipConsumeZapReadApply()
 {
+  bool bDidSomething=false;
+  
+  ///////////////////////////////// WIELD
+  
   item* iL = GetEquipment(LEFT_WIELDED_INDEX);
   item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
 
   //every X turns remove all equipments
   bool bTryWieldNow=false;
   static int iLastReEquipAllTurn=-1;
-  if(game::GetTurn()>(iLastReEquipAllTurn+150)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
+  if(game::GetTurn()>(iLastReEquipAllTurn+100)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
     iLastReEquipAllTurn=game::GetTurn();
+    DBG1("UnequipAll");
     for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
       item* eq = GetEquipment(i);
       if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
       if(iL==eq)iL=NULL;
       if(iR==eq)iR=NULL;
     }
-//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
-//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);}
+//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);}
     bTryWieldNow=true;
   }
 
@@ -3698,6 +3703,7 @@ truth humanoid::AutoPlayAIequip()
         for(uint c = 0; c < vitEqW.size(); ++c){
           if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){  DBG1(vitEqW[c]->GetNameSingular().CStr());
             vitEqW[c]->RemoveFromSlot();
+            DBG2("Wield2hd",vitEqW[c]->GetNameSingular().CStr());
             SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
             bDoneLR=true;
             break;
@@ -3727,7 +3733,8 @@ truth humanoid::AutoPlayAIequip()
                 (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
                 ||
                 vitEqW[c]->IsShield(this)
-            ){ DBG1(vitEqW[c]->GetNameSingular().CStr());
+            ){ 
+              DBG2("WieldDual",vitEqW[c]->GetNameSingular().CStr());
               vitEqW[c]->RemoveFromSlot();
               SetEquipment(iChk, vitEqW[c]);
               bDoneLR=true;
@@ -3742,14 +3749,15 @@ truth humanoid::AutoPlayAIequip()
 
   //every X turns try to use stuff from inv
   static int iLastTryToUseInvTurn=-1;
-  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){ DBG2(game::GetTurn(),iLastTryToUseInvTurn);
+  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){
+    DBG2(game::GetTurn(),iLastTryToUseInvTurn);
     iLastTryToUseInvTurn=game::GetTurn();
 
     //////////////////////////////// consume food/drink
     { //TODO let this happen for non-human too?
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);DBGLN;
-      for(uint c = 0; c < vitEqW.size(); ++c){DBGLN;
-        if(clock()%3!=0 && GetHungerState() >= BLOATED)break;DBGLN; //randomly let it vomit and activate all related flows *eew* xD
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(clock()%3!=0 && GetHungerState() >= BLOATED)break; //randomly let it vomit and activate all related flows *eew* xD
 
         //if(TryToConsume(vitEqW[c]))
         material* ConsumeMaterial = vitEqW[c]->GetConsumeMaterial(this);
@@ -3760,18 +3768,21 @@ truth humanoid::AutoPlayAIequip()
           ConsumeItem(vitEqW[c], vitEqW[c]->GetConsumeMaterial(this)->GetConsumeVerb())
         ){
           DBG2("AutoPlayConsumed",vitEqW[c]->GetNameSingular().CStr());
-          return true;
-        }DBGLN;
+          bDidSomething=true;
+          break;
+        }
       }
     }
 
-    //////////////////////////////// equip
-    {DBGLN;
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);DBGLN;
-      for(uint c = 0; c < vitEqW.size(); ++c){DBGLN;
-        if(TryToEquip(vitEqW[c],true)){ DBG1(vitEqW[c]->GetNameSingular().CStr());
-          return true;
-        }else{DBGLN;
+    //////////////////////////////// equip armor ring amulet etc
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(TryToEquip(vitEqW[c],true)){ 
+          DBG2("EquipItem",vitEqW[c]->GetNameSingular().CStr());
+          bDidSomething=true;
+          break;
+        }else{
           vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
         }
       }
@@ -3779,7 +3790,8 @@ truth humanoid::AutoPlayAIequip()
 
     //////////////////////////////// zap
     static int iLastZapTurn=-1;
-    if(game::GetTurn()>(iLastZapTurn+100)){ DBG2(game::GetTurn(),iLastZapTurn); //every X turns try to use stuff from inv
+    if(game::GetTurn()>(iLastZapTurn+30)){ 
+      DBG2(game::GetTurn(),iLastZapTurn); //every X turns try to use stuff from inv
       iLastZapTurn=game::GetTurn();
 
       int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
@@ -3787,19 +3799,25 @@ truth humanoid::AutoPlayAIequip()
       for(uint c = 0; c < vitEqW.size(); ++c){
         if(!vitEqW[c]->IsZappable(this))continue;
 
-        if(vitEqW[c]->Zap(this, GetPos(), iDir)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
-          return true;
-        }
-
-        if(vitEqW[c]->Apply(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr());
-          return true;
+        if(vitEqW[c]->IsZapWorthy(this)){
+          if(vitEqW[c]->Zap(this, GetPos(), iDir)){
+            DBG2(iLastZapTurn,vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
+            bDidSomething=true;
+            break;
+          }
+        }else{
+          if(vitEqW[c]->Apply(this)){ 
+            DBG2(iLastZapTurn,vitEqW[c]->GetNameSingular().CStr());
+            bDidSomething=true;
+            break;
+          }
         }
       }
     }
 
     //////////////////////////////// read books and scrolls
     static int iLastReadTurn=-1;
-    if(game::GetTurn()>(iLastReadTurn+50)){ DBG2(game::GetTurn(),iLastReadTurn); //every X turns try to use stuff from inv
+    if(game::GetTurn()>(iLastReadTurn+15)){ DBG2(game::GetTurn(),iLastReadTurn); //every X turns try to use stuff from inv
       iLastReadTurn=game::GetTurn();
 
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
@@ -3809,7 +3827,9 @@ truth humanoid::AutoPlayAIequip()
         static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
         if(hb){
           if(vitEqW[c]->Read(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
-            return true;
+            DBG2(iLastReadTurn,vitEqW[c]->GetNameSingular().CStr());
+            bDidSomething=true;
+            break;
           }
         }
         
@@ -3820,14 +3840,42 @@ truth humanoid::AutoPlayAIequip()
            dynamic_cast<scrollofteleportation*>(Scroll) ||
            false //dummy
         ){
+          DBG2(iLastReadTurn,vitEqW[c]->GetNameSingular().CStr());
           Scroll->Read(this);
-          return true;
+          bDidSomething=true;
+          break;
         }
       }
     }
+    
+    //////////////////////////////// apply things
+    static int iLastApplyTurn=-1;
+    if(game::GetTurn()>(iLastApplyTurn+40)){ 
+      DBG2(game::GetTurn(),iLastApplyTurn); //every X turns try to use stuff from inv
+      iLastApplyTurn=game::GetTurn();
+
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      static itemvector vitA;vitA.clear();
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsAppliable(this))continue;
+        if(vitEqW[c]->IsZappable(this))continue; //not here, see zap section
+        if(dynamic_cast<key*>(vitEqW[c]))continue; // too complex to make it auto work
+        if(dynamic_cast<stethoscope*>(vitEqW[c]))continue; // too complex to make it auto work
+        
+        vitA.push_back(vitEqW[c]);
+      }
+      
+      if(vitA.size()){
+        item* itA = vitA[clock()%vitA.size()];
+        DBG2(iLastApplyTurn,itA->GetNameSingular().CStr());
+        itA->Apply(this);
+        bDidSomething=true;
+      }
+    }
+    
   }
 
-  return false;
+  return bDidSomething;
 }
 
 truth humanoid::CheckIfEquipmentIsNotUsable(int I) const

@@ -1178,7 +1178,7 @@ truth key::Apply(character* User)
     }
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
-
+    
     if(DirVect != ERROR_V2 && User->GetArea()->IsValidPos(User->GetPos() + DirVect))
       return GetLevel()->GetLSquare(User->GetPos() + DirVect)->TryKey(this, User);
   }
@@ -1633,7 +1633,6 @@ truth stethoscope::Apply(character* Doctor)
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
   int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false, true);
-
   if(Dir == DIR_ERROR)
     return false;
 
@@ -1669,8 +1668,8 @@ truth itemcontainer::ContentsCanBeSeenBy(ccharacter* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ")
-                                              + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) &&
+    !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1704,8 +1703,8 @@ truth beartrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer()
-     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) &&
+     !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -4066,8 +4065,8 @@ truth gastrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer()
-     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) && 
+    !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
