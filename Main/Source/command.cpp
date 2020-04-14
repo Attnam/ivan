@@ -993,7 +993,7 @@ truth commandsystem::ShowKeyLayout(character*)
     if(!GetCommand(c)->IsWizardModeFunction())
     {
       Buffer.Empty();
-      Buffer << GetCommand(c)->GetKey();
+      Buffer << (char)GetCommand(c)->GetKey();
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
     }
@@ -1008,7 +1008,7 @@ truth commandsystem::ShowKeyLayout(character*)
       if(GetCommand(c)->IsWizardModeFunction())
       {
         Buffer.Empty();
-        Buffer << GetCommand(c)->GetKey();
+        Buffer << (char)GetCommand(c)->GetKey();
         Buffer.Resize(10);
         List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
