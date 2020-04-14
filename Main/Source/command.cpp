@@ -59,11 +59,11 @@ command::command(truth (*LinkedFunction)(character*), cchar* Description, char K
   game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
-char command::GetKey() const
+int command::GetKey() const
 {
   if(ivanconfig::IsSetupCustomKeys()){
     if(Key4>0)
-      return (char)Key4; //TODO everything related should be integer now...
+      return Key4;
   }
   
   switch(ivanconfig::GetDirectionKeyMap())
@@ -246,16 +246,16 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   return false;
 }
 
-char findCmdKey(truth (*func)(character*))
+int findCmdKey(truth (*func)(character*))
 {
-  char cKey=0;
+  int iKey=0;
   for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
     if(cmd->GetLinkedFunction()==func){
-      cKey = cmd->GetKey();
+      iKey = cmd->GetKey();
       break;
     }
-  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
-  return cKey;
+  if(iKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return iKey;
 }
 
 truth commandsystem::GoUp(character* Char)
@@ -763,7 +763,7 @@ truth commandsystem::Quit(character* Char)
 
 truth commandsystem::Talk(character* Char)
 {
-  static char cmdKey = findCmdKey(&Talk);
+  static int cmdKey = findCmdKey(&Talk);
 
   if(!Char->CheckTalk())
     return false;
@@ -797,7 +797,7 @@ truth commandsystem::Talk(character* Char)
   else
   {
     static festring fsQ;
-    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<cmdKey<<"']";return true;}();
+    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
     static int iPreviousDirChosen = DIR_ERROR;
     int Dir = game::DirectionQuestion(fsQ, false, true, cmdKey, iPreviousDirChosen);
 
@@ -1345,7 +1345,7 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
-  static char cmdKey = findCmdKey(&Kick);
+  static int cmdKey = findCmdKey(&Kick);
 
   /** No multi-tile support */
 
@@ -1360,7 +1360,7 @@ truth commandsystem::Kick(character* Char)
   }
 
   static festring fsQ;
-  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";return true;}();
+  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
   static int iPreviousDirChosen = DIR_ERROR;
   int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
@@ -1441,7 +1441,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  static char cmdKey = findCmdKey(&Throw);
+  static int cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;

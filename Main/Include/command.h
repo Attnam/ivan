@@ -23,7 +23,7 @@ class command
   command(truth (*)(character*), cchar*, char, char, char, truth, truth = false);
   truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   cchar* GetDescription() const { return Description; }
-  char GetKey() const;
+  int GetKey() const;
   truth IsUsableInWilderness() const { return UsableInWilderness; }
   truth IsWizardModeFunction() const { return WizardModeFunction; }
   int SetCustomKey(int iKey){ int iKeyBkp=Key4; Key4 = iKey; return iKeyBkp; }

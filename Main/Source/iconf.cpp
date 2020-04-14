@@ -288,8 +288,8 @@ cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
-                                          "* Movement control custom keys", //TODO all keys one day, and let it work on main menu
-                                          "Let you assign all 8 movement keys to any available key of your preference. All other command keys will remain as assigned by the scheme above until you change them externally on the newly generated config file and restart the game. This global configuration won't work at main menu, load/start some game.",
+                                          "* Custom command and movement", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign all commands to any key of your preference. This global configuration won't work at main menu, load/start some game.",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
@@ -549,77 +549,6 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
     case 5: Entry << "breathSlower+"; break;
     case 6: Entry << "breathSlower++"; break;
   }
-}
-
-
-truth ConfigureCustomKeys()
-{
-  festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
-  
-  festring fsFlBkp=fsFl+".bkp";
-  std::ifstream  src(fsFl.CStr()   , std::ios::binary);
-  std::ofstream  dst(fsFlBkp.CStr(), std::ios::binary);
-  dst << src.rdbuf();
-  
-  FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
-  int iKey;
-  festring fsAsk;
-  bool bRet=true;
-  int index=0;
-  int aiKeyList[8]={0,0,0,0, 0,0,0,0};
-  while(true){
-    if(index>=8)break; //skip the last to keep as '.'
-    
-    bool bRetry=false;
-    
-    switch(index){
-      case 0: fsAsk="Upper Left";break;
-      case 1: fsAsk="Up"; break;
-      case 2: fsAsk="Upper Right"; break;
-      case 3: fsAsk="Left"; break;
-      case 4: fsAsk="Right"; break;
-      case 5: fsAsk="Lower Left"; break;
-      case 6: fsAsk="Down"; break;
-      case 7: fsAsk="Lower Right"; break;
-      //case 8: fsAsk="Stop"; break; //skip the last to keep as '.'
-    }
-    iKey=game::AskForKeyPress(fsAsk);
-    if(iKey==KEY_ESC){bRet=false;break;}
-    
-    for(int c = 1; commandsystem::GetCommand(c); ++c){
-      if(iKey==commandsystem::GetCommand(c)->GetKey()){
-        ADD_MESSAGE("SYSTEM: conflicting command key '%c'(code is %d or 0x%X), retry...",iKey,iKey,iKey); //TODO this messes the gameplay message log... but is better than a popup?
-        bRetry=true;
-        break;
-      }
-    }
-    for(int c = 0; c<8; ++c){
-      if(iKey==aiKeyList[c]){
-        ADD_MESSAGE("SYSTEM: conflicting movement key '%c'(code is %d or 0x%X), retry...",iKey,iKey,iKey); //TODO this messes the gameplay message log... but is better than a popup?
-        bRetry=true;
-        break;
-      }
-    }
-    if(bRetry)continue;
-    
-    fprintf(fl, "%04X\n", iKey);
-    aiKeyList[index]=iKey;
-    
-    index++;
-  }
-  
-  for(int c = 1; commandsystem::GetCommand(c); ++c){
-    fprintf(fl, "\"%s\"=0x%04X='%c'\n", 
-      commandsystem::GetCommand(c)->GetDescription(), 
-      commandsystem::GetCommand(c)->GetKey(),
-      commandsystem::GetCommand(c)->GetKey()
-    );
-  }
-  
-  fclose(fl);
-  
-  if(bRet)game::LoadCustomCommandKeys();
-  return bRet;
 }
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
@@ -1070,7 +999,7 @@ void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
   if(game::IsRunning() || !What){
     O->Value = What;
     if(O->Value)
-      ConfigureCustomKeys();
+      game::ConfigureCustomKeys();
   }
 }
 

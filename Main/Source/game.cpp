@@ -5815,6 +5815,15 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
+int HexToInt(festring fs)
+{
+  std::string str = fs.CStr();
+  std::string strHex = str.substr(str.size() -1 -4); // -1 is "\n"
+  int iVal=0;
+  sscanf(strHex.c_str(),"%x",&iVal);
+  return iVal;
+}
+
 void game::LoadCustomCommandKeys()
 {
   static festring fsFile = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
@@ -5822,46 +5831,180 @@ void game::LoadCustomCommandKeys()
   if(!fl)return;
   
   festring Line;
-  int index=0;
   static const int iBuffSz=0xFF;
   char str[iBuffSz];
-  while(fgets(str, iBuffSz, fl))
-  {
-    Line = str;
-    if(Line.IsEmpty())break;
-    
-    //std::cout << "Ln" << index << ", Read:'" << Line.CStr() <<"'"<< std::endl;
-    //game::MoveCustomCommandKey[index]=atoi(Line.CStr());
-    
-    int iVal;
-    sscanf(Line.CStr(),"%x",&iVal);
-    game::MoveCustomCommandKey[index]=iVal;
-    
-    //std::cout << "ValueInt=" << game::MoveCustomCommandKey[index] << std::endl;
-    
-    index++;
-    if(index>7)break; //skip the last to keep as '.'
-  }
-  
   while(fgets(str, iBuffSz, fl)){
     Line=str;
     command* cmd;
     for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
-      festring::sizetype pos = Line.Find(cmd->GetDescription());
-      if(pos==1){
-        char ch = Line[Line.GetSize()-3]; // -3 skips '\n' and ending "'"
-        cmd->SetCustomKey((int)ch); //the last char between '
-        DBG4(pos,ch,cmd->GetDescription(),Line.CStr());
-//        ADD_MESSAGE("SYSTEM: set custom command key for \"%s\" '%c'",
-//          commandsystem::GetCommand(c)->GetDescription(), 
-//          commandsystem::GetCommand(c)->GetKey()); //TODO this messes the gameplay message log... but is better than a popup?
+      if(Line.Find(cmd->GetDescription())==1){ // after "
+        cmd->SetCustomKey(HexToInt(Line));
         break;
       }
     }
+    
+    int iVal;
+    for(int c=0;c<8;c++){
+      if(Line.Find(GetMoveKeyDesc(c))==1){ // after "
+        game::MoveCustomCommandKey[c]=HexToInt(Line);
+        break;
+      }
+    }  
   }
   
   fclose(fl);
 }
+
+festring game::GetMoveKeyDesc(int i)
+{
+  switch(i){
+    case 0: return "MoveKey Upper Left";
+    case 1: return "MoveKey Up";
+    case 2: return "MoveKey Upper Right";
+    case 3: return "MoveKey Left";
+    case 4: return "MoveKey Right";
+    case 5: return "MoveKey Lower Left";
+    case 6: return "MoveKey Down";
+    case 7: return "MoveKey Lower Right";
+    //case 8: return "MoveKey Stop"; //skip the last to keep as '.'
+    default: ABORT("invalid move key index %d",i);
+  }
+  return ""; //dummy
+}
+
+truth game::CheckConflictingCmdKey(int iNewKey, int iIgnoreIndex)
+{
+   //TODO these SYSTEM messages messes the gameplay message log... but is better than a popup?
+  
+  command *cmd;
+  for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
+    if(c==iIgnoreIndex)continue;
+    if(iNewKey==cmd->GetKey()){
+      ADD_MESSAGE("SYSTEM: conflicting key '%c'(code is %d or 0x%X) with command \"%s\", retry...",
+        iNewKey,iNewKey,iNewKey,cmd->GetDescription());
+      return true;
+    }
+  }
+  
+  for(int c=0;c<8;c++){
+    if(c==iIgnoreIndex)continue;
+    if(iNewKey == game::MoveCustomCommandKey[c]){
+      ADD_MESSAGE("SYSTEM: conflicting key '%c'(code is %d or 0x%X) with movement command \"%s\", retry...",
+        iNewKey,iNewKey,iNewKey,GetMoveKeyDesc(c).CStr());
+      return true;
+    }
+  }  
+  
+  return false;
+}
+
+festring IntToHexStr(int i)
+{
+  static char hexbuf[100];
+  sprintf(hexbuf, "0x%04X", i);
+  festring fs;fs=hexbuf;
+  return fs;
+}
+
+truth game::ConfigureCustomKeys()
+{
+  festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  
+  festring fsFlBkp=fsFl+".bkp";
+  std::ifstream  src(fsFl.CStr()   , std::ios::binary);
+  std::ofstream  dst(fsFlBkp.CStr(), std::ios::binary);
+  dst << src.rdbuf();
+  
+  FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
+  felist fel(CONST_S("Configure custom keys:"));
+  bool bRet=true;
+  command* cmd;
+  while(true){
+    fel.Empty();
+    int iMoveKeyStart=0;
+    bool bWizIni=false;
+    festring fsEntry;
+    for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
+      fsEntry=cmd->GetDescription(); 
+      fsEntry.Resize(60);
+      fsEntry<<"'"<<(char)cmd->GetKey()<<"' ";
+      fsEntry<<IntToHexStr(cmd->GetKey());
+      
+      if(!bWizIni && cmd->IsWizardModeFunction()){
+        fel.AddEntry("Wizard mode keys:", DARK_GRAY, 20, NO_IMAGE, false);
+        bWizIni=true;
+      }
+      
+      fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
+      iMoveKeyStart++;
+    }
+    fel.AddEntry("Movement keys:", DARK_GRAY, 20, NO_IMAGE, false);
+    for(int c=0;c<8;c++){
+      fsEntry=GetMoveKeyDesc(c);
+      fsEntry.Resize(60);
+      fsEntry<<"'"<<(char)game::MoveCustomCommandKey[c]<<"' ";
+      fsEntry<<IntToHexStr(game::MoveCustomCommandKey[c]);
+      fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
+    }
+
+    game::SetStandardListAttributes(fel);
+    fel.AddFlags(SELECTABLE);
+    uint Select = fel.Draw();
+    if(Select==ESCAPED || Select==NOTHING_SELECTED || Select==LIST_WAS_EMPTY){
+      bRet=false;
+      break;
+    }
+    
+    int iNewKey;
+    bool bIgnore=false;
+    festring fsC = " (currently is set to '";
+    while(true){
+      cmd=NULL;
+      festring fsAsk = "Press a key to assign to the command \"";
+      int iMvKey = 0;
+      if(Select>=iMoveKeyStart)
+        iMvKey = Select-iMoveKeyStart;
+      if(iMvKey){
+        fsAsk<<GetMoveKeyDesc(iMvKey)<<"\"";
+        fsAsk<<fsC<<(char)game::MoveCustomCommandKey[iMvKey];
+      }else{
+        cmd = commandsystem::GetCommand(Select+1); //commands begin at index 1
+        fsAsk<<cmd->GetDescription()<<"\"";
+        fsAsk<<fsC<<(char)cmd->GetKey();
+      }
+      fsAsk<<"' ";
+      fsAsk<<IntToHexStr( iMvKey ? game::MoveCustomCommandKey[iMvKey] : cmd->GetKey());
+      fsAsk<<")";
+        
+      iNewKey=game::AskForKeyPress(fsAsk);
+      if(iNewKey==KEY_ESC){bIgnore=true;break;}
+
+      if(!CheckConflictingCmdKey(iNewKey,Select))break;
+    }
+    if(bIgnore)continue;
+    
+    if(!bRet)break;
+    
+    festring fsWriteLine;
+    if(Select>=iMoveKeyStart){
+      game::MoveCustomCommandKey[Select-iMoveKeyStart]=iNewKey;
+      fsWriteLine=GetMoveKeyDesc(Select-iMoveKeyStart);
+    }else{
+      commandsystem::GetCommand(Select+1)->SetCustomKey(iNewKey);
+      fsWriteLine=cmd->GetDescription();
+    }
+    
+    //save
+    fprintf(fl, "\"%s\"=0x%04X\n", fsWriteLine.CStr(), iNewKey);
+    fflush(fl);
+  }
+  
+  fclose(fl);
+  
+  if(bRet)game::LoadCustomCommandKeys(); //this here is more to validate if all went ok
+  return bRet;
+}
+
 
 /**
  * check all other command keys versus MOVEMENT command keys on their specific branch
