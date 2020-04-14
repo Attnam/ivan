@@ -288,8 +288,8 @@ cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
-                                          "* Custom command and movement", //TODO all keys one day, and let it work on main menu
-                                          "Lets you assign all commands to any key of your preference. This global configuration won't work at main menu, load/start some game.",
+                                          "Custom command and movement", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign any command to any key binding of your preference. The default keys here will be from the control scheme option above. Only changed keybindings will be saved at the new config file. This global configuration won't work at main menu, load/start some game.",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,

@@ -2886,6 +2886,15 @@ void character::AutoPlayAIDebugDrawOverlay()
     AutoPlayAIDebugDrawSquareRect(vv2WrongGoingTo[i],BLUE,i,false,true);
 }
 
+truth character::AutoPlayAIcanApply(item* it)
+{
+  if(!it->IsAppliable(this))return false;
+  if(it->IsZappable(this))return false; //not here, see zap section
+  if(dynamic_cast<key*>(it))return false; // too complex to make it auto work
+  if(dynamic_cast<stethoscope*>(it))return false; // too complex to make it auto work
+  return true;
+}
+
 truth character::AutoPlayAIDropThings()
 {
 //  level* lvl = game::GetCurrentLevel(); DBG1(lvl);
@@ -3016,7 +3025,7 @@ truth character::AutoPlayAIDropThings()
       if(iDirOk==-1){iDirOk=clock()%8;DBG2("RandomDir",iDirOk);}DBGLN; //TODO should just drop may be? unless hitting w/e is there could help
 
       bool bApplyDropped=false; //or vanished
-      if(dropMe->IsAppliable(this) && dropMe->Apply(this)){
+      if(AutoPlayAIcanApply(dropMe) && dropMe->Apply(this)){
         static itemvector ivChkDrop;ivChkDrop.clear();
         GetStack()->FillItemVector(ivChkDrop);
         bApplyDropped=true;

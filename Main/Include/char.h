@@ -1228,6 +1228,7 @@ class character : public entity, public id
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
+  truth AutoPlayAIcanApply(item* it);
   truth AutoPlayAIDropThings();
   bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);

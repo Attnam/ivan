@@ -3857,12 +3857,8 @@ truth humanoid::AutoPlayAIequipConsumeZapReadApply()
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
       static itemvector vitA;vitA.clear();
       for(uint c = 0; c < vitEqW.size(); ++c){
-        if(!vitEqW[c]->IsAppliable(this))continue;
-        if(vitEqW[c]->IsZappable(this))continue; //not here, see zap section
-        if(dynamic_cast<key*>(vitEqW[c]))continue; // too complex to make it auto work
-        if(dynamic_cast<stethoscope*>(vitEqW[c]))continue; // too complex to make it auto work
-        
-        vitA.push_back(vitEqW[c]);
+        if(AutoPlayAIcanApply(vitEqW[c]))
+          vitA.push_back(vitEqW[c]);
       }
       
       if(vitA.size()){

@@ -5906,6 +5906,39 @@ festring IntToHexStr(int i)
   return fs;
 }
 
+festring game::ToCharIfPossible(int i)
+{
+  switch(i){ // these are above 0xFF 
+    //TODO complete this list, if has no #define, use the hexa directly.
+    case KEY_UP: 
+      return "Up";
+    case KEY_DOWN: 
+      return "Down";
+    case KEY_RIGHT: 
+      return "Right";
+    case KEY_LEFT: 
+      return "Left";
+    case KEY_HOME: 
+      return "Home";
+    case KEY_END: 
+      return "End";
+    case KEY_PAGE_DOWN: 
+      return "PgDn";
+    case KEY_PAGE_UP: 
+      return "PgUp";
+  }
+  
+  if(i>=0 && i<=0xFF) //these are mapped at fonts gfx files
+    return festring()+(char)i;
+  
+  return IntToHexStr(i);
+}
+
+/**
+ * Command's (and movement keys) descriptions are used as identifiers at the config file.
+ * These descriptions shall not clash and preferably should not be changed.
+ * @return 
+ */
 truth game::ConfigureCustomKeys()
 {
   festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
@@ -5927,7 +5960,7 @@ truth game::ConfigureCustomKeys()
     for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
       fsEntry=cmd->GetDescription(); 
       fsEntry.Resize(60);
-      fsEntry<<"'"<<(char)cmd->GetKey()<<"' ";
+      fsEntry<<"'"<<ToCharIfPossible(cmd->GetKey())<<"' ";
       fsEntry<<IntToHexStr(cmd->GetKey());
       
       if(!bWizIni && cmd->IsWizardModeFunction()){
@@ -5942,7 +5975,7 @@ truth game::ConfigureCustomKeys()
     for(int c=0;c<8;c++){
       fsEntry=GetMoveKeyDesc(c);
       fsEntry.Resize(60);
-      fsEntry<<"'"<<(char)game::MoveCustomCommandKey[c]<<"' ";
+      fsEntry<<"'"<<ToCharIfPossible(game::MoveCustomCommandKey[c])<<"' ";
       fsEntry<<IntToHexStr(game::MoveCustomCommandKey[c]);
       fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
     }
@@ -5961,10 +5994,10 @@ truth game::ConfigureCustomKeys()
     while(true){
       cmd=NULL;
       festring fsAsk = "Press a key to assign to the command \"";
-      int iMvKey = 0;
+      int iMvKey = -1;
       if(Select>=iMoveKeyStart)
         iMvKey = Select-iMoveKeyStart;
-      if(iMvKey){
+      if(iMvKey>=0){
         fsAsk<<GetMoveKeyDesc(iMvKey)<<"\"";
         fsAsk<<fsC<<(char)game::MoveCustomCommandKey[iMvKey];
       }else{
@@ -5973,7 +6006,7 @@ truth game::ConfigureCustomKeys()
         fsAsk<<fsC<<(char)cmd->GetKey();
       }
       fsAsk<<"' ";
-      fsAsk<<IntToHexStr( iMvKey ? game::MoveCustomCommandKey[iMvKey] : cmd->GetKey());
+      fsAsk<<IntToHexStr( iMvKey>=0 ? game::MoveCustomCommandKey[iMvKey] : cmd->GetKey());
       fsAsk<<")";
         
       iNewKey=game::AskForKeyPress(fsAsk);
