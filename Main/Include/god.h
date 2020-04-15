@@ -99,6 +99,7 @@ protected:
   static std::vector<std::pair<int,festring>> vFavID;
   static void AddFavourID(int i,festring fs);
   static void FavourInit();
+  int CalcDebit(int iDebit,int iDefault);
   std::vector<int> knownSpellsID;
 };
 

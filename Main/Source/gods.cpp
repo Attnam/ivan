@@ -210,7 +210,7 @@ void god::FavourInit() //this one is better on this file
   AddFavourID(FAVOUR_TELEPORT,"Teleport");
 }
 
-int CalcDebit(god* G,int iDebit,int iDefault){
+int god::CalcDebit(int iDebit,int iDefault){
   if(iDebit!=0){
     switch(iDebit){
       case FAVOURDEBIT_AUTO:       iDebit=iDefault  ;break;
@@ -219,8 +219,16 @@ int CalcDebit(god* G,int iDebit,int iDefault){
     }
     
     // can ask more favours if very well aligned
-    if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(G)){
+    if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(this)){
       iDebit/=2;
+    }
+    
+    /**
+     * if enough time has passed, a normal pray could provide the favour freely
+     * and even with relation benefits, so make it cheaper too, but not costless.
+     */
+    if(Timer==0){
+      iDebit/=2; // /=3 too cheap?
     }
     
     // skilled in manipulative praying :)
@@ -230,7 +238,11 @@ int CalcDebit(god* G,int iDebit,int iDefault){
        game::GetPlayer()->GetAttribute(WISDOM)
     ) / 3.0;
     
-    if(iDebit<50)iDebit=50; //max of 20 vafours (50*20=1000) (too much?) in the best case (master) only
+    /**
+     * max of 20 vafours (50*20=1000) (too much?) 
+     * in the best case (master prayer) only
+     */
+    if(iDebit<50)iDebit=50;
   }
   return iDebit;
 }
@@ -262,7 +274,7 @@ bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit
   if(iDebit==0) //came thru normal praying
     AddKnownSpell(knownSpellsID,iCallFavour);
   
-  iDebit=CalcDebit(this,iDebit,iDbtDefault);
+  iDebit=CalcDebit(iDebit,iDbtDefault);
   
   if(iDebit>0)
     if(!god::Favour(iWhat,iDebit))
