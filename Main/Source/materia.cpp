@@ -83,6 +83,15 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
   if(!Amount)
     return false;
 
+  /**
+   * Pos is used to prepare a seed for temporary random state.
+   * Some rare times, mother entity is nowhere (square under is NULL) and the game would crash...
+   * So... why not just use the Char pos? it is random anyway... right?
+   */
+  v2 Pos=Char->GetPos();
+  if(GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity())
+    Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+  
   switch(GetEffect())
   {
    case EFFECT_POISON: Char->BeginTemporaryState(POISONED, Amount); break;
@@ -111,7 +120,6 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_SKUNK_SMELL: Char->BeginTemporaryState(POISONED, Amount); break;
    case EFFECT_MAGIC_MUSHROOM:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
@@ -124,14 +132,12 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_EVIL, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_GOOD, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
@@ -143,7 +149,6 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_TELEPORT_CONTROL: Char->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
    case EFFECT_MUSHROOM:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MUSHROOM, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
