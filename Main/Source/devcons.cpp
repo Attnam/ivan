@@ -58,7 +58,7 @@ void ListChars(festring fsFilter){
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
     if(idFilter==0){
-      if(C->GetNameSingular().Find(fsFilter)==festring::NPos)
+      if(C->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
         continue;
     }else{
       if(idFilter!=C->GetID())
@@ -96,8 +96,10 @@ void DelChars(festring fsParams){
   DEVCMDMSG1P("params: count=%d",count);
   
   for(int i=0;i<count;i++){
-    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",vCharLastSearch[i]->GetID(),vCharLastSearch[i]->GetNameSingular().CStr());
-    vCharLastSearch[i]->SendToHell();
+    character* C = vCharLastSearch[i];
+    if(C->IsPlayer() || C->IsPet())continue;
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",C->GetID(),C->GetNameSingular().CStr());
+    C->Die();
   }
 }
 void DelItems(festring fsParams){
@@ -111,8 +113,11 @@ void DelItems(festring fsParams){
   DEVCMDMSG1P("params: count=%d",count);
   
   for(int i=0;i<count;i++){
-    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",vCharLastSearch[i]->GetID(),vCharLastSearch[i]->GetNameSingular().CStr());
-    vItemLastSearch[i]->SendToHell();
+    item* it = vItemLastSearch[i];
+    //TODO dont remove from player's inventory/equipped
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetNameSingular().CStr());
+    it->RemoveFromSlot();
+    it->SendToHell();
   }
 }
 void ListItems(festring fsParams){
@@ -215,7 +220,7 @@ void ListItems(festring fsParams){
       if(entC==NULL || entC->GetID()!=idCharFilter)
         continue;
     }else{
-      if(entC==NULL || entC->GetNameSingular().Find(fsFilter)==festring::NPos)
+      if(entC==NULL || entC->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
         continue;
     }
 
