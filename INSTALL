@@ -76,7 +76,7 @@ zlib:x86-windows                                   1.2.11-5         A compressio
 
 Clone attnam/ivan into a directory (for example C:\Users\yourname\source\repos\ivan)
 
-Open Microsoft Visual Studio (2017)
+Open Microsoft Visual Studio (2019)
 
 Go File->Open Folder
 
