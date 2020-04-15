@@ -334,7 +334,7 @@ bool bugfixdp::ItemWork(character* Char, item* itWork, bool bFix, const char* cI
 
 void bugfixdp::ValidateFullLevel()
 {
-  DEVCMDMSG("%s","validate full level against dup stuff");
+  DEVCMDMSG1P("%s","validate full level against dup stuff");
 
   // validate full level against other possible dup items
   std::vector<item*> vAllItemsOnLevel;
@@ -357,9 +357,9 @@ void bugfixdp::DupPlayerFix(character* DupPlayer)
    */
   int iFixedCount=0;
   iFixedCount=CharEquipmentsWork(DupPlayer,true,true);DBGLN;
-  DEVCMDMSG("fixed equipments %d",iFixedCount);
+  DEVCMDMSG1P("fixed equipments %d",iFixedCount);
   iFixedCount=CharInventoryWork (DupPlayer,true,true);DBGLN;
-  DEVCMDMSG("fixed inv %d",iFixedCount);
+  DEVCMDMSG1P("fixed inv %d",iFixedCount);
 
   ulong idOld = DupPlayer->GetID();
   DupPlayer->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(DupPlayer));DBGLN; // make it consistent as removing it is crashing (also empties inv)
@@ -384,10 +384,10 @@ void bugfixdp::DupPlayerFix(character* DupPlayer)
   DupPlayer->SetNP(1); //to die soon at least
 
   iFixedCount=CharBodypartsWork(DupPlayer,true,false);DBGLN; //bodyparts sent to hell would crash!!! TODO only torso?
-  DEVCMDMSG("fixed bodyparts %d",iFixedCount);
+  DEVCMDMSG1P("fixed bodyparts %d",iFixedCount);
   //BEWARE!!! this leads to crash: DupPlayer->Remove();
 
-  DEVCMDMSG4("fixed dup player '%s' id=%d/%d 0x%X",DupPlayer->GetName(DEFINITE).CStr(),idOld,DupPlayer->GetID(),DupPlayer);
+  DEVCMDMSG4P("fixed dup player '%s' id=%d/%d 0x%X",DupPlayer->GetName(DEFINITE).CStr(),idOld,DupPlayer->GetID(),DupPlayer);
 
   DBGCHAR(DupPlayer,"CharFix:CharToBeLost");
 }
@@ -518,7 +518,7 @@ character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
 //    if(PB!=NULL && PB==CharID1){
     if(PBtmp!=NULL && PBtmp->GetID()==1){
       PBID1 = PBtmp;
-      DEVCMDMSG("polymorphed has backup with id=1 ref 0x%X",PBID1);
+      DEVCMDMSG1P("polymorphed has backup with id=1 ref 0x%X",PBID1);
       PPolymL=vCL[j];
       break;
     }
@@ -551,7 +551,7 @@ character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
   character* CharPlayerOk = NULL;
   if(bAndFixIt && PPolymL!=NULL){
 //    DEVCMDMSG("killing polymorphed id=%d",PPolymL->GetID());
-    DEVCMDMSG("vanishing polymorphed id=%d",PPolymL->GetID());
+    DEVCMDMSG1P("vanishing polymorphed id=%d",PPolymL->GetID());
     PPolymL->SetPolymorphBackup(NULL);
     PPolymL->RemoveTraps();
     PPolymL->Remove();
@@ -573,16 +573,16 @@ character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
   }
 //  }else{
     CharPlayerOk = CharID1;
-    DEVCMDMSG("%s","ID1 will be ok now");
+    DEVCMDMSG1P("%s","ID1 will be ok now");
     if(bAndFixIt && CharID1->GetSquareUnder()==NULL){
-      DEVCMDMSG2("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
+      DEVCMDMSG2P("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
       CharID1->PutToOrNear(ReqPosL); //place he where expected
     }
 //  }
 
   if(bAndFixIt)
     if(!CharPlayerOk->IsPlayer() || PLAYER!=CharPlayerOk){
-      DEVCMDMSG("restoring player reference to id=%d",CharPlayerOk->GetID());
+      DEVCMDMSG1P("restoring player reference to id=%d",CharPlayerOk->GetID());
       game::SetPlayer(CharPlayerOk);
     }
 
@@ -633,18 +633,18 @@ character* bugfixdp::BugWorkaroundDupPlayer(){
     if(!bFound){
 //      game::RemoveCharacterID(Cid); //causes weird crashes elsewhere
 //      DEVCMDMSG("removed inconsistent character id '%d'",Cid);
-      DEVCMDMSG("possibly inconsistent character id '%d'",Cid);
+      DEVCMDMSG1P("possibly inconsistent character id '%d'",Cid);
     }
   }
 
   // last thing is grant player's stuff is consistent
   int iFixedCount=0;
   iFixedCount=CharEquipmentsWork(CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG2("fixed player '%s' equipments %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  DEVCMDMSG2P("fixed player '%s' equipments %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
   iFixedCount=CharInventoryWork (CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG2("fixed player '%s' inventory %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  DEVCMDMSG2P("fixed player '%s' inventory %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
   iFixedCount=TrapsWork();
-  DEVCMDMSG("fixed traps %d",iFixedCount);
+  DEVCMDMSG1P("fixed traps %d",iFixedCount);
   
   // just a final validation, may abort on failure
   ValidateFullLevel();

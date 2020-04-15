@@ -40,17 +40,21 @@
  * Any information/functionality that provides an advantage must be considered a cheat, therefore WIZARD MODE!!!
  */
 
+std::vector<character*> vCharLastSearch;
+std::vector<item*>      vItemLastSearch;
+
 #ifdef WIZARD
 void ListChars(festring fsFilter){
   ulong idFilter=0;
   if(!fsFilter.IsEmpty())
     idFilter=atoi(fsFilter.CStr());
 
-  DEVCMDMSG2("params: NameHas=\"%s\" or ID=%d",fsFilter.CStr(),idFilter);
+  DEVCMDMSG2P("params: NameHas=\"%s\" or ID=%d",fsFilter.CStr(),idFilter);
 
 //  std::vector<character*> vc = game::GetAllCharacters();
 //  for(int i=0;i<vc.size();i++){
   characteridmap map = game::GetCharacterIDMapCopy();
+  vCharLastSearch.clear();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
     if(idFilter==0){
@@ -76,21 +80,47 @@ void ListChars(festring fsFilter){
     if(PB!=NULL)
       fsMsg << " PB='"<<PB->GetID() <<"/"<< PB->GetName(DEFINITE)<<"'";
     fsMsg << ".";
-    DEVCMDMSG("%s",fsMsg.CStr());
-//    DEVCMDMSG("%sid=%d[%d] (%s) '%s'.",
-////    ADD_MESSAGE("%sid=%d (%d,%d) '%s'.",
-//      C->IsPlayer()?"@":" ",
-//      C->GetID(),
-//      itr->first,
-//      fsPos.CStr(),
-//      C->GetName(DEFINITE).CStr()
-//    );
+    DEVCMDMSG1P("%s",fsMsg.CStr());
+    vCharLastSearch.push_back(C);
+  }
+  DEVCMDMSG1P("total:%d",vCharLastSearch.size());
+}
+void DelChars(festring fsParams){
+  ulong count=0;
+  if(!fsParams.IsEmpty())
+    count=atoi(fsParams.CStr());
+  
+  if(count==0)
+    count=vCharLastSearch.size();
+
+  DEVCMDMSG1P("params: count=%d",count);
+  
+  for(int i=0;i<count;i++){
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",vCharLastSearch[i]->GetID(),vCharLastSearch[i]->GetNameSingular().CStr());
+    vCharLastSearch[i]->SendToHell();
+  }
+}
+void DelItems(festring fsParams){
+  ulong count=0;
+  if(!fsParams.IsEmpty())
+    count=atoi(fsParams.CStr());
+  
+  if(count==0)
+    count=vItemLastSearch.size();
+
+  DEVCMDMSG1P("params: count=%d",count);
+  
+  for(int i=0;i<count;i++){
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",vCharLastSearch[i]->GetID(),vCharLastSearch[i]->GetNameSingular().CStr());
+    vItemLastSearch[i]->SendToHell();
   }
 }
 void ListItems(festring fsParams){
   ulong idCharFilter=0;
   ulong idItemFilter=0;
   festring fsFilter;
+  vCharLastSearch.clear();
+  vItemLastSearch.clear();
 
   if(!fsParams.IsEmpty()){
     std::string part;
@@ -111,7 +141,7 @@ void ListItems(festring fsParams){
     }
   }
 
-  DEVCMDMSG3("params: ItemID=%d CharID=%d ItemOrCharNameHas=\"%s\"",idItemFilter,idCharFilter,fsFilter.CStr());
+  DEVCMDMSG3P("params: ItemID=%d CharID=%d ItemOrCharNameHas=\"%s\"",idItemFilter,idCharFilter,fsFilter.CStr());
 
   itemidmap map = game::GetItemIDMapCopy();
   for(itemidmap::iterator itr = map.begin();itr!=map.end();itr++){
@@ -129,7 +159,7 @@ void ListItems(festring fsParams){
       it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
       false
     ){
-      DEVCMDMSG2("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
+      DEVCMDMSG2P("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
     }
 
     if(idItemFilter!=0){
@@ -201,7 +231,7 @@ void ListItems(festring fsParams){
       fsPos<<it->GetPos().X<<","<<it->GetPos().Y;
     }
 
-    DEVCMDMSG15("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
+    DEVCMDMSG15P("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
       bPlayerStuff?"@":" ",
       it->GetID(),
 
@@ -221,7 +251,10 @@ void ListItems(festring fsParams){
       
       0,0,0,0 //dummy
     );
+    if(entC!=NULL)vCharLastSearch.push_back((character*)entC);
+    if(entI!=NULL)vItemLastSearch.push_back((item*)entI);
   }
+  DEVCMDMSG2P("total: Chars=%d Items=%d",vCharLastSearch.size(),vItemLastSearch.size());
 }
 #endif
 
@@ -268,6 +301,8 @@ void devcons::OpenCommandsConsole()
     ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
     ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
     ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters inventory and containers",true);
+    ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
+    ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
 #endif
     return true;
   }();
@@ -354,10 +389,10 @@ void devcons::Help(festring fsFilter)
         fsWM="";
       }
     }
-      DEVCMDMSG3("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
+      DEVCMDMSG3P("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
-  DEVCMDMSG("%s","Ps.: main commands are case insensitive.");
+  DEVCMDMSG1P("%s","Ps.: main commands are case insensitive.");
 }
 
 callcmd devcons::Find(festring fsCmd)
@@ -389,7 +424,7 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
-  DEVCMDMSG3("Trying to run: %s ('%s' '%s')",
+  DEVCMDMSG3P("Trying to run: %s ('%s' '%s')",
     festring(strFullCmd.c_str()).CStr(),
     festring(strCmd.c_str()).CStr(),
     festring(strParams.c_str()).CStr()
@@ -399,9 +434,9 @@ void devcons::runCommand(festring fsFullCmd)
   if(cc){
     cc(strParams.c_str());
 //    ADD_MESSAGE("%scommand %s completed",cPrompt,strCmd.c_str());
-    DEVCMDMSG("command %s completed",strCmd.c_str());
+    DEVCMDMSG1P("command %s completed",strCmd.c_str());
   }else{
 //    ADD_MESSAGE("%scommand %s not found",cPrompt,strCmd.c_str());
-    DEVCMDMSG("command %s not found",strCmd.c_str());
+    DEVCMDMSG1P("command %s not found",strCmd.c_str());
   }
 }
