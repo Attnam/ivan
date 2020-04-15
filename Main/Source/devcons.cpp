@@ -46,14 +46,20 @@ void ListChars(festring fsFilter){
   if(!fsFilter.IsEmpty())
     idFilter=atoi(fsFilter.CStr());
 
-  DEVCMDMSG("params: %d",idFilter);
+  DEVCMDMSG2("params: NameHas=\"%s\" or ID=%d",fsFilter.CStr(),idFilter);
 
 //  std::vector<character*> vc = game::GetAllCharacters();
 //  for(int i=0;i<vc.size();i++){
   characteridmap map = game::GetCharacterIDMapCopy();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
-    if(idFilter!=0 && idFilter!=C->GetID())continue;
+    if(idFilter==0){
+      if(C->GetNameSingular().Find(fsFilter)==festring::NPos)
+        continue;
+    }else{
+      if(idFilter!=C->GetID())
+        continue;
+    }
 
     festring fsPos="NULL";
     if(C->GetSquareUnder()!=NULL){
@@ -83,24 +89,29 @@ void ListChars(festring fsFilter){
 }
 void ListItems(festring fsParams){
   ulong idCharFilter=0;
-  ulong idFilter=0;
+  ulong idItemFilter=0;
+  festring fsFilter;
 
   if(!fsParams.IsEmpty()){
     std::string part;
     std::stringstream iss(fsParams.CStr());
     if(iss >> part){
       if(part=="c"){
-        if(iss >> part)
-          idCharFilter=atoi(part.c_str());
+        if(iss >> part){
+          fsFilter=part.c_str();
+          idCharFilter=atoi(fsFilter.CStr());
+        }
       }
       if(part=="i"){
-        if(iss >> part)
-          idFilter=atoi(part.c_str());
+        if(iss >> part){
+          fsFilter=part.c_str();
+          idItemFilter=atoi(fsFilter.CStr());
+        }
       }
     }
   }
 
-  DEVCMDMSG2("params: %d %d",idFilter,idCharFilter);
+  DEVCMDMSG3("params: ItemID=%d CharID=%d ItemOrCharNameHas=\"%s\"",idItemFilter,idCharFilter,fsFilter.CStr());
 
   itemidmap map = game::GetItemIDMapCopy();
   for(itemidmap::iterator itr = map.begin();itr!=map.end();itr++){
@@ -121,9 +132,14 @@ void ListItems(festring fsParams){
       DEVCMDMSG2("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
     }
 
-    if(idFilter!=0 && idFilter!=it->GetID())
-      continue;
-
+    if(idItemFilter!=0){
+      if(idItemFilter!=it->GetID())
+        continue;
+    }else{
+      if(it->GetNameSingular().Find(fsFilter)==festring::NPos)
+        continue;
+    }
+      
     slot* Slot = it->GetSlot();
 
     const entity* ent;
@@ -165,9 +181,13 @@ void ListItems(festring fsParams){
       entC=NULL;
     }
 
-    if(idCharFilter!=0)
+    if(idCharFilter!=0){
       if(entC==NULL || entC->GetID()!=idCharFilter)
         continue;
+    }else{
+      if(entC==NULL || entC->GetNameSingular().Find(fsFilter)==festring::NPos)
+        continue;
+    }
 
     bool bPlayerStuff = entC!=NULL && entC->IsPlayer();
 
@@ -246,8 +266,8 @@ void devcons::OpenCommandsConsole()
     AddDevCmd("?",Help,"show this help",false);
 #ifdef WIZARD
     ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
-    ADDCMD(ListChars,"[filterCharID:ulong] list all characters on current dungeon level",true);
-    ADDCMD(ListItems,"[[c|i] <filterID:ulong>] filter by char or item ID. List all items on current dungeon level, including on characters inventory and containers",true);
+    ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
+    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters inventory and containers",true);
 #endif
     return true;
   }();
