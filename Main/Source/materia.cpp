@@ -88,9 +88,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    * Some rare times, mother entity is nowhere (square under is NULL) and the game would crash...
    * So... why not just use the Char pos? it is random anyway... right?
    */
-  v2 Pos=Char->GetPos();
-  if(GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity())
+  v2 Pos;
+  if(Pos.Is0() && GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity())
     Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+  if(Pos.Is0() && Char && Char->GetSquareUnder())
+    Pos=Char->GetPos();
+  if(Pos.Is0() && game::GetCurrentLevel())
+    Pos=game::GetCurrentLevel()->GetRandomSquare(); //TODO any better idea?
   
   switch(GetEffect())
   {
