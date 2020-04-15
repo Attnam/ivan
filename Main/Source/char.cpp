@@ -3862,10 +3862,15 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
 
     DeActivateTemporaryState(PARASITE_TAPE_WORM);
   }
-
-  if(!game::IsInWilderness())
+  
+  if(!game::IsInWilderness()){
+    if(GetMyVomitMaterial() < LIQUID_ID || GetMyVomitMaterial() > _LIQUID_ID_END_){
+      DBGSTK;DBG4("_BUG_TRACK_:Fixing invalid vomit material config ID to prevent unnecessary ABORT()",GetMyVomitMaterial(),LIQUID_ID,_LIQUID_ID_END_);
+      SetNewVomitMaterial(VOMIT);
+    }
     GetNearLSquare(Pos)->ReceiveVomit(this,
-                                      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+  }
 }
 
 truth character::Polymorph(character* NewForm, int Counter)

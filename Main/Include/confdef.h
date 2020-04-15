@@ -366,6 +366,7 @@
 #define POLYMORPHINE (LIQUID_ID + 58)
 #define LAVA (LIQUID_ID + 59)
 #define NAPALM (LIQUID_ID + 60)
+#define _LIQUID_ID_END_ (LIQUID_ID + 61) //this must be the last one always!
 
 #define FLESH_ID (5 << 12)
 

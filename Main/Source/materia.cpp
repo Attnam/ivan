@@ -12,6 +12,8 @@
 
 /* Compiled through materset.cpp */
 
+#include "dbgmsgproj.h"
+
 materialprototype::materialprototype(const materialprototype* Base,
                                      materialspawner Spawner,
                                      materialcloner Cloner,
@@ -89,8 +91,11 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    * So... why not just use the Char pos? it is random anyway... right?
    */
   v2 Pos;
-  if(Pos.Is0() && GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity())
+  if(Pos.Is0() && GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity()){
     Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+  }else{
+    DBGSTK;DBG3("_BUG_TRACK_:Workaround for mother entity being nowhere to prevent crash",GetMotherEntity(),Char);
+  }
   if(Pos.Is0() && Char && Char->GetSquareUnder())
     Pos=Char->GetPos();
   if(Pos.Is0() && game::GetCurrentLevel())
