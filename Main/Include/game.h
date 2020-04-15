@@ -516,7 +516,7 @@ class game
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
   static truth ConfigureCustomKeys();
   static festring ToCharIfPossible(int i);
-  static truth CheckConflictingCmdKey(int iNewKey, int iIgnoreIndex);
+  static truth ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys);
   static festring GetMoveKeyDesc(int i);
   static void LoadCustomCommandKeys();
  private:
