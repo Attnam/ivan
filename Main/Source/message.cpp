@@ -485,7 +485,11 @@ SoundFile *soundsystem::findMatchingSound(festring Buffer)
 
 void soundsystem::playSound(festring Buffer)
 {
-  if(!ivanconfig::GetPlaySounds()) return;
+  if(!ivanconfig::GetPlaySounds())
+    return;
+  if(ivanconfig::GetSfxVolume()==0)
+    return;
+  
   initSound();
   if(SoundState == 1)
   {

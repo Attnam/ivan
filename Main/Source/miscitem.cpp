@@ -195,8 +195,11 @@ void scrollofearthquake::EarthQuakeMagic(festring fsMsgHitNPC)
   if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
     Tunnels = 0;
 
-  for(c = 0; c < Tunnels; ++c)
-    game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
+  for(c = 0; c < Tunnels; ++c){
+    v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE);
+    if(Pos == ERROR_V2)continue;
+    game::GetCurrentLevel()->AttachPos(Pos);
+  }
 
   int ToEmpty = 10 + RAND() % 11;
 
