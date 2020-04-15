@@ -282,8 +282,15 @@ bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit
   
   bool bWorked = false;
   if((*call)(this)){
-    if(iDebit>0)
+    if(iDebit>0){ //was a favour
+      int iTm = 10000 - Relation*10; //by reaching here, Relation is always > 0
+      if(iTm<1000)iTm=1000;
+      AdjustTimer(iTm); // this is a kind of debit too (counts against next safe pray time)
+      
+      LastPray=0; // to make it count as a pray too
+      
       Relation-=iDebit;
+    }
     bWorked = true;
   }
   
