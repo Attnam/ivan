@@ -47,7 +47,7 @@ make -f ivandj.mak
 
 --------------------------------------
 
-Under Windows - Microsoft Visual Studio 2017 (or better):
+Under Windows - Microsoft Visual Studio 2019:
 
 You will need to install the C++ tools with CMake support, along with Git integrations from the Visual Studio Installer. 
 We will not be using Visual Studio in the traditional way with everything squished into a solution file. 
@@ -93,6 +93,13 @@ This will build ivan.exe and install all the components, automatically copying t
 The build folder is located in C:\Users\yourname\CMakeBuilds\some-long-code-here-abcdef123456\install\x86-Release\ivan
 Go there and hit ivan.exe, and you're playing IVAN built using Microsoft Visual Studio!!!
 
+--------------------------------------
+
+Under Windows - Microsoft Visual Studio 2017:
+
+Instructions are the same as for Microsoft Visual Studio 2019, except that you must open CMakeSettings.json and change the generator to:
+
+"generator": "Visual Studio 15 2017"
 
 --------------------------------------
 
