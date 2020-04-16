@@ -90,35 +90,75 @@ void DelChars(festring fsParams){
   if(!fsParams.IsEmpty())
     count=atoi(fsParams.CStr());
   
-  if(count==0)
+  if(count==0 || count>vCharLastSearch.size())
     count=vCharLastSearch.size();
 
   DEVCMDMSG1P("params: count=%d",count);
   
+  int iCount=0;
   for(int i=0;i<count;i++){
     character* C = vCharLastSearch[i];
-    if(C->IsPlayer() || C->IsPet())continue;
-    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",C->GetID(),C->GetNameSingular().CStr());
+    if(!C->Exists() || C->IsPlayer() || C->IsPet())continue;
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",C->GetID(),C->GetName(DEFINITE).CStr());
     C->Die();
+    iCount++;
   }
+  DEVCMDMSG1P("total=%d",iCount);
+}
+festring fsDummy;
+entity* GetOwner(item* it,festring& rfsType = fsDummy){
+  slot* Slot = it->GetSlot();
+  
+  const entity* ent;
+  if(dynamic_cast<gearslot*>(Slot)!=NULL){
+    ent=((gearslot*)Slot)->FindCarrier();
+    rfsType="gear";
+  }else
+  if(dynamic_cast<bodypartslot*>(Slot)!=NULL){
+    ent=((bodypartslot*)Slot)->GetMaster();
+    rfsType="bodypart";
+  }else
+  if(dynamic_cast<stackslot*>(Slot)!=NULL){
+    stackslot* sl = ((stackslot*)Slot);
+    ent=sl->FindCarrier();
+    if(sl->GetMotherStack()!=NULL)
+      ent=sl->GetMotherStack()->GetMotherEntity();
+    rfsType="stack";
+  }else
+    ent=NULL;
+  
+  return (entity*)ent;
+}
+character* GetOwnerChar(item* it,festring& rfsType = fsDummy){
+  entity* ent = GetOwner(it,rfsType);
+  if(dynamic_cast<character*>(ent)!=NULL)
+    return (character*)ent;
+  return NULL;
 }
 void DelItems(festring fsParams){
   ulong count=0;
   if(!fsParams.IsEmpty())
     count=atoi(fsParams.CStr());
   
-  if(count==0)
+  if(count==0 || count>vItemLastSearch.size())
     count=vItemLastSearch.size();
 
   DEVCMDMSG1P("params: count=%d",count);
   
+  int iCount=0;
+  item* it;
+  character* C;
   for(int i=0;i<count;i++){
-    item* it = vItemLastSearch[i];
-    //TODO dont remove from player's inventory/equipped
-    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetNameSingular().CStr());
+    it = vItemLastSearch[i];
+    if(!it->Exists())continue;
+    C = GetOwnerChar(it);
+    if(C && (C->IsPlayer() || C->IsPet()))continue;
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetName(DEFINITE).CStr());
     it->RemoveFromSlot();
     it->SendToHell();
+    iCount++;
   }
+  DEVCMDMSG1P("total=%d",iCount);
 }
 void ListItems(festring fsParams){
   ulong idCharFilter=0;
@@ -158,43 +198,28 @@ void ListItems(festring fsParams){
 
     //TODO could check app memory range if pointer is within limits...
     if( //TODO items could have a random key to detect if they were not deleted improperly or w/e, could still segfault when reading it tho...
+      !it->Exists() ||
       it->GetVolume()==0 ||
       it->GetID()==0 ||
+      it->GetLSquareUnder()==NULL ||
       it->GetSquaresUnder()==0 ||
       it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
-      false
+      false //dummy
     ){
       DEVCMDMSG2P("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
+      continue;
     }
 
     if(idItemFilter!=0){
       if(idItemFilter!=it->GetID())
         continue;
     }else{
-      if(it->GetNameSingular().Find(fsFilter)==festring::NPos)
+      if(it->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
         continue;
     }
       
-    slot* Slot = it->GetSlot();
-
-    const entity* ent;
     festring fsType;
-    if(dynamic_cast<gearslot*>(Slot)!=NULL){
-      ent=((gearslot*)Slot)->FindCarrier();
-      fsType="gear";
-    }else
-    if(dynamic_cast<bodypartslot*>(Slot)!=NULL){
-      ent=((bodypartslot*)Slot)->GetMaster();
-      fsType="bodypart";
-    }else
-    if(dynamic_cast<stackslot*>(Slot)!=NULL){
-      stackslot* sl = ((stackslot*)Slot);
-      ent=sl->FindCarrier();
-      if(sl->GetMotherStack()!=NULL)
-        ent=sl->GetMotherStack()->GetMotherEntity();
-      fsType="stack";
-    }else
-      ent=NULL;
+    const entity* ent=GetOwner(it,fsType);
 
     festring fsDec;
     citem* entI;
