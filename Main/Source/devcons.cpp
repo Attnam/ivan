@@ -57,11 +57,14 @@ void ListChars(festring fsFilter){
   vCharLastSearch.clear();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
-    if(idFilter==0){
-      if(C->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+    if(!C->Exists())
+      continue;
+    
+    if(idFilter!=0){
+      if(idFilter!=C->GetID())
         continue;
     }else{
-      if(idFilter!=C->GetID())
+      if(C->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
         continue;
     }
 
@@ -153,6 +156,7 @@ void DelItems(festring fsParams){
   for(int i=count-1;i>=0;i--){
     it = vItemLastSearch[i];
     if(!it->Exists())continue;
+    
     C = GetOwnerChar(it);
     if(C && (C->IsPlayer() || C->IsPet()))continue;
     DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetName(DEFINITE).CStr());
@@ -212,7 +216,7 @@ void ListItems(festring fsParams){
       it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
       false //dummy
     ){
-      DEVCMDMSG2P("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
+      DEVCMDMSG3P("item REFERENCE INVALID at consistent list ID=%d 0x%X \"%s\"",itr->first,it,it->GetName(DEFINITE).CStr()); //was the item deleted or what happened?
       continue;
     }
 
@@ -300,7 +304,7 @@ void ListItems(festring fsParams){
       if(!bSkip)
         vCharLastSearch.push_back((character*)ownerC);
     }
-    if(ownerI!=NULL)vItemLastSearch.push_back(it);
+    vItemLastSearch.push_back(it);
   }
   DEVCMDMSG2P("total: Chars=%d Items=%d",vCharLastSearch.size(),vItemLastSearch.size());
 }
