@@ -66,6 +66,19 @@ void TeleToChar(festring fsFilter){
     }
   }
 }
+void TeleToMe(festring fsFilter){
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(!IsValidChar(C))
+      continue;
+    
+    if(C->GetName(DEFINITE).Find(fsFilter)!=festring::NPos){
+      C->TeleportNear(game::GetPlayer());
+      DEVCMDMSG2P("%d %s",C,C->GetName(DEFINITE).CStr());
+    }
+  }
+}
 void ListChars(festring fsFilter){
   ulong idFilter=0;
   if(!fsFilter.IsEmpty())
@@ -383,6 +396,7 @@ void devcons::OpenCommandsConsole()
     ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(TeleToChar,"<filterName:string> teleports near 1st character matching filter.",true);
+    ADDCMD(TeleToMe,"<filterName:string> teleports all NPCs matching filter to you.",true);
 #endif
     return true;
   }();
@@ -504,6 +518,7 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
+  DEVCMDMSG1P("%s",DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG );
   DEVCMDMSG3P("Trying to run: %s ('%s' '%s')",
     festring(strFullCmd.c_str()).CStr(),
     festring(strCmd.c_str()).CStr(),
@@ -514,9 +529,9 @@ void devcons::runCommand(festring fsFullCmd)
   if(cc){
     cc(strParams.c_str());
 //    ADD_MESSAGE("%scommand %s completed",cPrompt,strCmd.c_str());
-    DEVCMDMSG1P("command %s completed",strCmd.c_str());
+    DEVCMDMSG1P(" <<< command %s completed",strCmd.c_str());
   }else{
 //    ADD_MESSAGE("%scommand %s not found",cPrompt,strCmd.c_str());
-    DEVCMDMSG1P("command %s not found",strCmd.c_str());
+    DEVCMDMSG1P(" <<< command %s not found",strCmd.c_str());
   }
 }

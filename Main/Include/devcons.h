@@ -18,11 +18,12 @@
 #include "festring.h"
 
 // this causes warnings with LGTM checks: #define DEVCMDMSG(fmt,x,...) ADD_MESSAGE(" > " fmt,x);
-#define DEVCMDMSG1P(fmt,x) ADD_MESSAGE(" > " fmt,x);
-#define DEVCMDMSG2P(fmt,x,y) ADD_MESSAGE(" > " fmt,x,y);
-#define DEVCMDMSG3P(fmt,x,y,z) ADD_MESSAGE(" > " fmt,x,y,z);
-#define DEVCMDMSG4P(fmt,x,y,z,a) ADD_MESSAGE(" > " fmt,x,y,z,a);
-#define DEVCMDMSG15P(fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o) ADD_MESSAGE(" > " fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o);
+#define DEVCMDMSGTAG " > "
+#define DEVCMDMSG1P(fmt,x) ADD_MESSAGE(DEVCMDMSGTAG fmt,x);
+#define DEVCMDMSG2P(fmt,x,y) ADD_MESSAGE(DEVCMDMSGTAG fmt,x,y);
+#define DEVCMDMSG3P(fmt,x,y,z) ADD_MESSAGE(DEVCMDMSGTAG fmt,x,y,z);
+#define DEVCMDMSG4P(fmt,x,y,z,a) ADD_MESSAGE(DEVCMDMSGTAG fmt,x,y,z,a);
+#define DEVCMDMSG15P(fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o) ADD_MESSAGE(DEVCMDMSGTAG fmt,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o);
 
 typedef void (*callcmd)(festring);
 
