@@ -133,7 +133,12 @@ void DelChars(festring fsParams){
 }
 festring fsDummy;
 entity* GetOwner(item* it,festring& rfsType = fsDummy){
+  if(!it->GetLSquareUnder())
+    return NULL;
+  
   slot* Slot = it->GetSlot();
+  if(!Slot->GetSquareUnder())
+    return NULL;
   
   const entity* ent;
   if(dynamic_cast<gearslot*>(Slot)!=NULL){
@@ -146,10 +151,10 @@ entity* GetOwner(item* it,festring& rfsType = fsDummy){
   }else
   if(dynamic_cast<stackslot*>(Slot)!=NULL){
     stackslot* sl = ((stackslot*)Slot);
-    if(sl->GetMotherStack()==NULL)
-      ent=sl->FindCarrier();
-    else
+    if(sl->GetMotherStack()!=NULL)
       ent=sl->GetMotherStack()->GetMotherEntity();
+    else
+      ent=sl->FindCarrier();
     rfsType="stack";
   }else
     ent=NULL;
