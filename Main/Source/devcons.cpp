@@ -44,6 +44,28 @@ std::vector<character*> vCharLastSearch;
 std::vector<item*>      vItemLastSearch;
 
 #ifdef WIZARD
+truth IsValidChar(character* C){
+  if(!C->Exists())
+    return false;
+  if(C->IsDead())
+    return false;
+  if(!C->GetLSquareUnder())
+    return false;
+  return true;
+}
+void TeleToChar(festring fsFilter){
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(!IsValidChar(C))
+      continue;
+    
+    if(C->GetName(DEFINITE).Find(fsFilter)!=festring::NPos){
+      game::GetPlayer()->TeleportNear(C);
+      return;
+    }
+  }
+}
 void ListChars(festring fsFilter){
   ulong idFilter=0;
   if(!fsFilter.IsEmpty())
@@ -57,7 +79,7 @@ void ListChars(festring fsFilter){
   vCharLastSearch.clear();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
-    if(!C->Exists())
+    if(!IsValidChar(C))
       continue;
     
     if(idFilter!=0){
@@ -355,6 +377,7 @@ void devcons::OpenCommandsConsole()
     ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
     ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
+    ADDCMD(TeleToChar,"<filterName:string> teleports near 1st character matching filter.",true);
 #endif
     return true;
   }();
