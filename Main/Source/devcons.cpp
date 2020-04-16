@@ -95,15 +95,16 @@ void DelChars(festring fsParams){
 
   DEVCMDMSG1P("params: count=%d",count);
   
-  int iCount=0;
-  for(int i=0;i<count;i++){
+  int iRm=0;
+  for(int i=count-1;i>=0;i--){
     character* C = vCharLastSearch[i];
     if(!C->Exists() || C->IsPlayer() || C->IsPet())continue;
     DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",C->GetID(),C->GetName(DEFINITE).CStr());
     C->Die();
-    iCount++;
+    vCharLastSearch.pop_back();
+    iRm++;
   }
-  DEVCMDMSG1P("total=%d",iCount);
+  DEVCMDMSG2P("total=%d, remaining=%d",iRm,vCharLastSearch.size());
 }
 festring fsDummy;
 entity* GetOwner(item* it,festring& rfsType = fsDummy){
@@ -120,8 +121,9 @@ entity* GetOwner(item* it,festring& rfsType = fsDummy){
   }else
   if(dynamic_cast<stackslot*>(Slot)!=NULL){
     stackslot* sl = ((stackslot*)Slot);
-    ent=sl->FindCarrier();
-    if(sl->GetMotherStack()!=NULL)
+    if(sl->GetMotherStack()==NULL)
+      ent=sl->FindCarrier();
+    else
       ent=sl->GetMotherStack()->GetMotherEntity();
     rfsType="stack";
   }else
@@ -145,10 +147,10 @@ void DelItems(festring fsParams){
 
   DEVCMDMSG1P("params: count=%d",count);
   
-  int iCount=0;
+  int iRm=0;
   item* it;
   character* C;
-  for(int i=0;i<count;i++){
+  for(int i=count-1;i>=0;i--){
     it = vItemLastSearch[i];
     if(!it->Exists())continue;
     C = GetOwnerChar(it);
@@ -156,9 +158,10 @@ void DelItems(festring fsParams){
     DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetName(DEFINITE).CStr());
     it->RemoveFromSlot();
     it->SendToHell();
-    iCount++;
+    vItemLastSearch.pop_back();
+    iRm++;
   }
-  DEVCMDMSG1P("total=%d",iCount);
+  DEVCMDMSG2P("total=%d, remaining=%d",iRm,vItemLastSearch.size());
 }
 void ListItems(festring fsParams){
   ulong idCharFilter=0;
@@ -166,6 +169,7 @@ void ListItems(festring fsParams){
   festring fsFilter;
   vCharLastSearch.clear();
   vItemLastSearch.clear();
+  bool bItemMode=false;
 
   if(!fsParams.IsEmpty()){
     std::string part;
@@ -176,12 +180,14 @@ void ListItems(festring fsParams){
           fsFilter=part.c_str();
           idCharFilter=atoi(fsFilter.CStr());
         }
+        bItemMode=false;
       }
       if(part=="i"){
         if(iss >> part){
           fsFilter=part.c_str();
           idItemFilter=atoi(fsFilter.CStr());
         }
+        bItemMode=true;
       }
     }
   }
@@ -210,49 +216,53 @@ void ListItems(festring fsParams){
       continue;
     }
 
-    if(idItemFilter!=0){
-      if(idItemFilter!=it->GetID())
-        continue;
-    }else{
-      if(it->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
-        continue;
+    if(bItemMode){
+      if(idItemFilter!=0){
+        if(idItemFilter!=it->GetID())
+          continue;
+      }else{
+        if(it->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+          continue;
+      }
     }
       
     festring fsType;
     const entity* ent=GetOwner(it,fsType);
 
     festring fsDec;
-    citem* entI;
-    ccharacter* entC;
+    citem* ownerI=NULL;
+    ccharacter* ownerC=NULL;
     if(dynamic_cast<citem*>(ent)){
-      entI=(citem*)ent;
-      entC=NULL;
+      ownerI=(citem*)ent;
+      ownerC=NULL;
       if(dynamic_cast<const corpse*>(ent)){
         const corpse* CP = (const corpse*)ent;
-        entC = CP->GetDeceased();
+        ownerC = CP->GetDeceased();
         fsDec=",Dec";
       }
     }else
     if(dynamic_cast<ccharacter*>(ent)){
-      entI=NULL;
-      entC=(ccharacter*)ent;
+      ownerI=NULL;
+      ownerC=(ccharacter*)ent;
     }else{
-      entI=NULL;
-      entC=NULL;
+      ownerI=NULL;
+      ownerC=NULL;
     }
 
-    if(idCharFilter!=0){
-      if(entC==NULL || entC->GetID()!=idCharFilter)
-        continue;
-    }else{
-      if(entC==NULL || entC->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
-        continue;
+    if(!bItemMode){
+      if(idCharFilter!=0){
+        if(ownerC==NULL || ownerC->GetID()!=idCharFilter)
+          continue;
+      }else{
+        if(ownerC==NULL || ownerC->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+          continue;
+      }
     }
 
-    bool bPlayerStuff = entC!=NULL && entC->IsPlayer();
+    bool bPlayerStuff = ownerC!=NULL && ownerC->IsPlayer();
 
     festring fsPB;
-    if(entC!=NULL && entC->GetPolymorphBackup()!=NULL && entC->GetPolymorphBackup()->IsPlayer())
+    if(ownerC!=NULL && ownerC->GetPolymorphBackup()!=NULL && ownerC->GetPolymorphBackup()->IsPlayer())
       fsPB=",PB";
 
     festring fsPos="NULL";
@@ -269,11 +279,11 @@ void ListItems(festring fsParams){
 
       it->GetName(DEFINITE).CStr(),
 
-      entC!=NULL ? entC->GetID() : 0,
-      entC!=NULL ? entC->GetName(DEFINITE).CStr() : "NoEntC",
+      ownerC!=NULL ? ownerC->GetID() : 0,
+      ownerC!=NULL ? ownerC->GetName(DEFINITE).CStr() : "NoEntC",
 
-      entI!=NULL ? entI->GetID() : 0,
-      entI!=NULL ? entI->GetName(DEFINITE).CStr() : "NoEntI",
+      ownerI!=NULL ? ownerI->GetID() : 0,
+      ownerI!=NULL ? ownerI->GetName(DEFINITE).CStr() : "NoEntI",
 
       fsType.CStr(),
       fsPB.CStr(),
@@ -281,8 +291,16 @@ void ListItems(festring fsParams){
       
       0,0,0,0 //dummy
     );
-    if(entC!=NULL)vCharLastSearch.push_back((character*)entC);
-    if(entI!=NULL)vItemLastSearch.push_back((item*)entI);
+    if(ownerC!=NULL){
+      bool bSkip=false;
+      for(auto pCchk = vCharLastSearch.begin(); pCchk != vCharLastSearch.end(); ++pCchk){
+        bSkip = (*pCchk == ownerC);
+        if(bSkip)break;
+      }
+      if(!bSkip)
+        vCharLastSearch.push_back((character*)ownerC);
+    }
+    if(ownerI!=NULL)vItemLastSearch.push_back(it);
   }
   DEVCMDMSG2P("total: Chars=%d Items=%d",vCharLastSearch.size(),vItemLastSearch.size());
 }
@@ -330,7 +348,7 @@ void devcons::OpenCommandsConsole()
 #ifdef WIZARD
     ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
     ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
-    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters inventory and containers",true);
+    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
     ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
 #endif
