@@ -363,8 +363,19 @@ int iosystem::StringQuestion(festring& Input,
 {
   bInUse=true;
   
-  // history
+  /**
+   * History files are based on tokens to make them more shareable.
+   * Questions (topic) must have '?' or ':' after the static string part and 
+   * after that all can be dynamic.
+   * So the files will be named up to these tokens only!
+   * TODO This means some questions should be revised to share the history file for the very "same" base question...
+   */
   festring fsFixTopicToFileName = Topic;
+  ulong cutAt;
+  cutAt = fsFixTopicToFileName.Find("?");
+  if(cutAt!=festring::NPos)fsFixTopicToFileName.Resize(cutAt);
+  cutAt = fsFixTopicToFileName.Find(":");
+  if(cutAt!=festring::NPos)fsFixTopicToFileName.Resize(cutAt);
   fixChars(fsFixTopicToFileName);  
   festring fsHistFile = festring()+GetUserDataDir()+".QuestionHistory_"+fsFixTopicToFileName+".txt";
   DBG1(fsHistFile.CStr());
@@ -521,25 +532,29 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_UP)
     {
-      if(iHistIndex == (vHist.size()-1))
-        vHist.push_back(Input);
-      
-      --iHistIndex;
-      if(iHistIndex<0)iHistIndex=0;
-      Input=vHist[iHistIndex];
-      if(CursorPos>Input.GetSize())
-        CursorPos=Input.GetSize();
+      if(vHist.size()){
+        if(iHistIndex == (vHist.size()-1))
+          vHist.push_back(Input);
+
+        --iHistIndex;
+        if(iHistIndex<0)iHistIndex=0;
+        Input=vHist[iHistIndex];
+        if(CursorPos>Input.GetSize())
+          CursorPos=Input.GetSize();
+      }
 
       continue;
     }
     
     if(LastKey == KEY_DOWN)
     {
-      ++iHistIndex;
-      if(iHistIndex>=vHist.size())iHistIndex=vHist.size()-1;
-      Input=vHist[iHistIndex];
-      if(CursorPos>Input.GetSize())
-        CursorPos=Input.GetSize();
+      if(vHist.size()){
+        ++iHistIndex;
+        if(iHistIndex>=vHist.size())iHistIndex=vHist.size()-1;
+        Input=vHist[iHistIndex];
+        if(CursorPos>Input.GetSize())
+          CursorPos=Input.GetSize();
+      }
 
       continue;
     }
