@@ -84,14 +84,25 @@ void TeleToMe(festring fsFilter){
   }
 }
 void FillWithWalls(festring fsFilter){
+  int iAround=0;
+  if(!fsFilter.IsEmpty())
+    iAround=atoi(fsFilter.CStr());
   int iCount=0;
   ulong Tick = game::GetLOSTick();
+  v2 v2PPos=game::GetPlayer()->GetPos();
   for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
     lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
 
     if(lsqr->GetOLTerrain())continue;
     if(lsqr->GetCharacter())continue;
     if(!(lsqr->GetGLTerrain()->GetWalkability() & WALK))continue;
+    if(iAround>0){
+      if(lsqr->GetPos().X > v2PPos.X+iAround)continue;
+      if(lsqr->GetPos().X < v2PPos.X-iAround)continue;
+      if(lsqr->GetPos().Y > v2PPos.Y+iAround)continue;
+      if(lsqr->GetPos().Y < v2PPos.Y-iAround)continue;
+    }
+    
     lsqr->ChangeOLTerrainAndUpdateLights(wall::Spawn(STONE_WALL));
     lsqr->Reveal(Tick);
     iCount++;
@@ -409,7 +420,7 @@ void devcons::OpenCommandsConsole()
     ADDCMD(Help,"show this help",false);
     AddDevCmd("?",Help,"show this help",false);
 #ifdef WIZARD
-    ADDCMD(FillWithWalls,"all empty (of OLTerrain) squares.",true);
+    ADDCMD(FillWithWalls,"[distance:int] all empty (of OLTerrain) squares (optionally around player max distance).",true);
     ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
