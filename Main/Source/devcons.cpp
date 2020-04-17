@@ -26,6 +26,8 @@
 #include "message.h"
 #include "stack.h"
 #include "specialkeys.h"
+#include "confdef.h"
+#include "lterras.h"
 
 /**
  * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
@@ -78,6 +80,16 @@ void TeleToMe(festring fsFilter){
       DEVCMDMSG2P("%d %s",C,C->GetName(DEFINITE).CStr());
     }
   }
+}
+void FillWithWalls(festring fsFilter){
+  for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
+
+    if(lsqr->GetOLTerrain())continue;
+    if(lsqr->GetCharacter())continue;
+    if(!(lsqr->GetGLTerrain()->GetWalkability() & WALK))continue;
+    lsqr->ChangeOLTerrainAndUpdateLights(wall::Spawn(STONE_WALL));
+  }}
 }
 void ListChars(festring fsFilter){
   ulong idFilter=0;
@@ -390,11 +402,12 @@ void devcons::OpenCommandsConsole()
     ADDCMD(Help,"show this help",false);
     AddDevCmd("?",Help,"show this help",false);
 #ifdef WIZARD
-    ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
-    ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
-    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
+    ADDCMD(FillWithWalls,"all empty (of OLTerrain) squares.",true);
     ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
     ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
+    ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
+    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
+    ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
     ADDCMD(TeleToChar,"<filterName:string> teleports near 1st character matching filter.",true);
     ADDCMD(TeleToMe,"<filterName:string> teleports all NPCs matching filter to you.",true);
 #endif
