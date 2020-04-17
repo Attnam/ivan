@@ -5914,6 +5914,10 @@ festring game::ToCharIfPossible(int i)
       return "PgDn";
     case KEY_PAGE_UP: 
       return "PgUp";
+    case KEY_DELETE:
+      return "Del";
+    case 0x3FFF2049: //KEY_INSERT: //TODO everykeyboard generates this huge value???
+      return "Ins";
   }
   
   if(i>=0 && i<=0xFF) //these are mapped at fonts gfx files

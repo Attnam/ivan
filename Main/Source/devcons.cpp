@@ -53,6 +53,8 @@ truth IsValidChar(character* C){
     return false;
   if(!C->GetLSquareUnder())
     return false;
+  if(!C->IsEnabled())
+    return false;
   return true;
 }
 void TeleToChar(festring fsFilter){
@@ -83,6 +85,7 @@ void TeleToMe(festring fsFilter){
 }
 void FillWithWalls(festring fsFilter){
   int iCount=0;
+  ulong Tick = game::GetLOSTick();
   for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
     lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
 
@@ -90,12 +93,10 @@ void FillWithWalls(festring fsFilter){
     if(lsqr->GetCharacter())continue;
     if(!(lsqr->GetGLTerrain()->GetWalkability() & WALK))continue;
     lsqr->ChangeOLTerrainAndUpdateLights(wall::Spawn(STONE_WALL));
+    lsqr->Reveal(Tick);
     iCount++;
-//    lsqr->Reveal();
   }}
   DEVCMDMSG1P("new walls: %d",iCount);
-  level* l = game::GetCurrentLevel();
-  if(l)l->Reveal();
 }
 void ListChars(festring fsFilter){
   ulong idFilter=0;

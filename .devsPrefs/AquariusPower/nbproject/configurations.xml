@@ -31,9 +31,9 @@
       <in>graphics.h</in>
       <in>hscore.h</in>
     </df>
-    <df root="SDL2-2.0.4/include" name="8">
+    <df root="SDL2-2.0.4/include" name="4">
     </df>
-    <df root="FeLib/Source" name="4">
+    <df root="FeLib/Source" name="5">
       <in>bitmap.cpp</in>
       <in>config.cpp</in>
       <in>dbgmsg.cpp</in>
@@ -51,7 +51,7 @@
       <in>specialkeys.cpp</in>
       <in>whandler.cpp</in>
     </df>
-    <df root="Main/Source" name="5">
+    <df root="Main/Source" name="6">
       <in>action.cpp</in>
       <in>actions.cpp</in>
       <in>actset.cpp</in>
@@ -110,7 +110,7 @@
       <in>wterra.cpp</in>
       <in>wterras.cpp</in>
     </df>
-    <df root="xbrzscale" name="6">
+    <df root="xbrzscale" name="7">
       <df name="xbrz">
         <in>config.h</in>
         <in>xbrz.cpp</in>

@@ -187,6 +187,7 @@ inline int GetMinColor24(col24 Color)
 #endif
 #if SDL_MAJOR_VERSION == 2 || !defined(__APPLE__)
 #define KEY_BACK_SPACE 0x08
+#define KEY_DELETE 0x7F //ugh... this conflicts with SDL1 backspace? well does it still even compiles on SDL1???
 #else
 #define KEY_BACK_SPACE 0x7F
 #endif
