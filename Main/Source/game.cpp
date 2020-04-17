@@ -5907,14 +5907,14 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
     }  
   }
   if(!bValid){
-    ADD_MESSAGE("SYSTEM: conflicting key '%s'(code is %d or 0x%X) with command \"%s\", retry...",
+    ADD_MESSAGE("SYSTEM: conflicting key '%s'(code is %d or 0x%04X) with command \"%s\", retry...",
       ToCharIfPossible(iNewKey).CStr(),iNewKey,iNewKey,fsDesc.CStr());
   }
   
   // general invalid key codes
   if(bValid){
     if(iNewKey<0x20){
-      ADD_MESSAGE("SYSTEM: invalid key code 0x%X, retry...",iNewKey);
+      ADD_MESSAGE("SYSTEM: invalid key code 0x%04X, retry...",iNewKey);
       bValid=false;
     }
   }

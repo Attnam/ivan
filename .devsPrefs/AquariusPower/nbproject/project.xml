@@ -17,6 +17,7 @@
                 <sourceRootElem>Main/Source</sourceRootElem>
                 <sourceRootElem>Main/Include</sourceRootElem>
                 <sourceRootElem>FeLib/Include</sourceRootElem>
+                <sourceRootElem>SDL2-2.0.4/include</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

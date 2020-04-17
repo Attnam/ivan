@@ -657,7 +657,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
   {
     case SDLK_RETURN:
     case SDLK_KP_ENTER:
-      // both SDL keys are mixed into KEY_ENTER
+      // ex.: both SDL keys are mixed into KEY_ENTER
       KeyPressed = KEY_ENTER; //TODO SDL1? old comment tip or deadCode: Event->key.keysym.unicode;
       break;
 
@@ -704,17 +704,17 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
       KeyPressed = iRestWaitKey;
       break;
 
-#if SDL_MAJOR_VERSION == 2 //TODO there is no ESC on SDL1??? but does SDL1 still compiles? anyone uses it yet??? the same question about DJGPP...
-   case SDLK_ESCAPE:
-   case SDLK_BACKSPACE:
-     KeyPressed = Event->key.keysym.sym;
-     break;
+#if SDL_MAJOR_VERSION == 2 
+    default:
+      KeyPressed = Event->key.keysym.sym;
+      if(!KeyPressed)
+        return;
 #endif
 
-#if SDL_MAJOR_VERSION == 1
+//TODO SDL1 still compiles? anyone uses it yet??? the same question about DJGPP...
+#if SDL_MAJOR_VERSION == 1 
    default:
     KeyPressed = Event->key.keysym.unicode;
-
     if(!KeyPressed)
       return;
 #endif

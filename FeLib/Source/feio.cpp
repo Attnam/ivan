@@ -397,11 +397,15 @@ int iosystem::StringQuestion(festring& Input,
        character not available in the font */
 
     while(!(LastKey >= 0x20 && LastKey < 0x7F)
-          && LastKey != KEY_ENTER && LastKey != KEY_ESC
-          && LastKey != KEY_HOME && LastKey != KEY_END
-          && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
-          && LastKey != KEY_BACK_SPACE)
-    {
+          && LastKey != KEY_BACK_SPACE
+          && LastKey != SDLK_DELETE
+          && LastKey != KEY_END
+          && LastKey != KEY_ENTER
+          && LastKey != KEY_ESC
+          && LastKey != KEY_HOME 
+          && LastKey != KEY_LEFT 
+          && LastKey != KEY_RIGHT
+    ){
       LastKey = GET_KEY(false);
 
       if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
@@ -423,6 +427,14 @@ int iosystem::StringQuestion(festring& Input,
     {
       if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
+
+      continue;
+    }
+
+    if(LastKey == SDLK_DELETE)
+    {
+      if(CursorPos < Input.GetSize())
+        Input.Erase(static_cast<festring::sizetype>(CursorPos), 1);
 
       continue;
     }
