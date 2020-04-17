@@ -628,6 +628,9 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
       break;
     }
     return;
+  }else
+  if(Event->key.keysym.mod & KMOD_SHIFT){
+    return;
   }
 
   // other special non buffered keys
@@ -703,7 +706,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     case SDLK_KP_5:
       KeyPressed = iRestWaitKey;
       break;
-
+    
 #if SDL_MAJOR_VERSION == 2 
     default:
       KeyPressed = Event->key.keysym.sym;

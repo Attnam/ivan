@@ -371,7 +371,6 @@ class game
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
-  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetBoneDir();

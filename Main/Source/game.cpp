@@ -3587,21 +3587,6 @@ int game::Load(cfestring& saveName)
   return LOADED;
 }
 
-/**
- * this prevents all possibly troublesome characters in all OSs
- */
-void fixChars(festring& fs)
-{
-  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
-  {
-    if(fs[i]>='A' && fs[i]<='Z')continue;
-    if(fs[i]>='a' && fs[i]<='z')continue;
-    if(fs[i]>='0' && fs[i]<='9')continue;
-
-    fs[i] = '_';
-  }
-}
-
 bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
   std::string strChk;
   strChk = fs.CStr();
@@ -3639,7 +3624,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
   else
   {
     // this is important in case player name changes like when using the fantasy name generator
-    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    festring fsPN; fsPN<<PlayerName; iosystem::fixChars(fsPN);
     std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
     if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
       CurrentBaseSaveFileName.Empty();
@@ -3650,7 +3635,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;
-      fixChars(CurrentBaseSaveFileName);
+      iosystem::fixChars(CurrentBaseSaveFileName);
     }
 
     PathAndBaseSaveName << CurrentBaseSaveFileName;
@@ -5319,27 +5304,6 @@ festring game::GetDataDir()
 #endif
 }
 
-festring game::GetUserDataDir()
-{
-#ifdef UNIX
-  festring Dir;
-  Dir << getenv("HOME");
-#ifdef MAC_APP
-  Dir << "/Library/Application Support/IVAN/";
-#else
-  Dir << "/.ivan/";
-#endif
-#ifdef DBGMSG
-  dbgmsg::SetDebugLogPath(Dir.CStr());
-#endif
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "./";
-#endif
-}
-
 festring game::GetSaveDir()
 {
   return GetUserDataDir() + "Save/";
@@ -5826,7 +5790,7 @@ int HexToInt(festring fs)
 
 void game::LoadCustomCommandKeys()
 {
-  static festring fsFile = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  static festring fsFile = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   FILE *fl = fopen(fsFile.CStr(), "rt");
   if(!fl)return;
   
@@ -6054,7 +6018,7 @@ truth game::ConfigureCustomKeys()
       commandsystem::GetCommand(iCmdKeyIndex)->SetCustomKey(iNewKey);
   }
   
-  festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  festring fsFl = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   
   // backup existing
   festring fsFlBkp=fsFl+".bkp";

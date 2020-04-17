@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <vector>
 
 #ifdef WIN32
 #define stat _stat
@@ -325,6 +326,21 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   return iSelected;
 }
 
+/**
+ * this prevents all possibly troublesome characters in all OSs
+ */
+void iosystem::fixChars(festring& fs)
+{
+  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
+  {
+    if(fs[i]>='A' && fs[i]<='Z')continue;
+    if(fs[i]>='a' && fs[i]<='z')continue;
+    if(fs[i]>='0' && fs[i]<='9')continue;
+
+    fs[i] = '_';
+  }
+}
+
 /* Asks the user a question requiring a string answer. The answer is saved
    to Input. Input can also already have a default something pretyped for
    the user. Topic is the question or other topic for the question. Pos is the
@@ -346,7 +362,23 @@ int iosystem::StringQuestion(festring& Input,
                              stringkeyhandler StringKeyHandler)
 {
   bInUse=true;
-
+  
+  // history
+  festring fsHistFile = festring()+GetUserDataDir()+".QuestionHistory-"+Topic;
+  fixChars(fsHistFile);
+  fsHistFile<<".txt";
+  FILE *fl = fopen(fsHistFile.CStr(), "a+");
+  rewind(fl);
+  festring Line;
+  static const int iBuffSz=0xFF;
+  char str[iBuffSz];
+  std::vector<festring> vHist;
+  while(fgets(str, iBuffSz, fl)){
+    Line=str;
+    Line.Resize(Line.GetSize()-1);
+    vHist.push_back(Line); //removes trailing \n
+  }
+  
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -372,6 +404,9 @@ int iosystem::StringQuestion(festring& Input,
   FONT->Printf(DOUBLE_BUFFER, Pos, Color, "%s", Topic.CStr());
   Swap(B.Src, B.Dest);
 
+  bool bAbort = false;
+  int iHistIndex = 0;
+  if(vHist.size())iHistIndex=vHist.size()-1;
   for(int LastKey = 0, CursorPos = Input.GetSize();; LastKey = 0)
   {
     B.Bitmap = DOUBLE_BUFFER;
@@ -397,20 +432,22 @@ int iosystem::StringQuestion(festring& Input,
        character not available in the font */
 
     while(!(LastKey >= 0x20 && LastKey < 0x7F)
-          && LastKey != KEY_BACK_SPACE
-          && LastKey != SDLK_DELETE
-          && LastKey != KEY_END
-          && LastKey != KEY_ENTER
-          && LastKey != KEY_ESC
-          && LastKey != KEY_HOME 
-          && LastKey != KEY_LEFT 
-          && LastKey != KEY_RIGHT
+      && LastKey != KEY_BACK_SPACE
+      && LastKey != SDLK_DELETE
+      && LastKey != KEY_DOWN
+      && LastKey != KEY_END
+      && LastKey != KEY_ENTER
+      && LastKey != KEY_ESC
+      && LastKey != KEY_HOME 
+      && LastKey != KEY_LEFT 
+      && LastKey != KEY_RIGHT
+      && LastKey != KEY_UP
     ){
       LastKey = GET_KEY(false);
 
       if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
       {
-        LastKey = 0;
+        LastKey = 0; // to `continue;` below
         break;
       }
     }
@@ -420,7 +457,8 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_ESC && AllowExit){
       bInUse=false;
-      return ABORTED;
+      bAbort=true;
+      break;
     }
 
     if(LastKey == KEY_BACK_SPACE)
@@ -480,12 +518,40 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
+    if(LastKey == KEY_UP)
+    {
+      if(iHistIndex == (vHist.size()-1))
+        vHist.push_back(Input);
+      
+      --iHistIndex;
+      if(iHistIndex<0)iHistIndex=0;
+      Input=vHist[iHistIndex];
+      if(CursorPos>Input.GetSize())
+        CursorPos=Input.GetSize();
+
+      continue;
+    }
+    
+    if(LastKey == KEY_DOWN)
+    {
+      ++iHistIndex;
+      if(iHistIndex>=vHist.size())iHistIndex=vHist.size()-1;
+      Input=vHist[iHistIndex];
+      if(CursorPos>Input.GetSize())
+        CursorPos=Input.GetSize();
+
+      continue;
+    }
+    
     if(LastKey >= 0x20 && LastKey < 0x7F
        && (LastKey != ' ' || !Input.IsEmpty())
        && Input.GetSize() < MaxLetters)
       Input.Insert(static_cast<festring::sizetype>(CursorPos++),
                    static_cast<char>(LastKey));
   }
+  
+  if(bAbort)
+    return ABORTED;
 
   /* Delete all the trailing spaces */
 
@@ -499,6 +565,12 @@ int iosystem::StringQuestion(festring& Input,
 
   Input.Resize(LastAlpha + 1);
 
+  if(!vHist.size() || Input!=vHist[vHist.size()-1]){
+    //vHist.push_back(Input);
+    fprintf(fl, "%s\n", Input.CStr());
+  }
+  fclose(fl);
+  
   bInUse=false;
   return NORMAL_EXIT;
 }

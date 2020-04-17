@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
-  game::GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
+  GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
 
   if(argc > 1 && festring(argv[1]) == "--version")
   {
@@ -235,7 +235,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+        highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }
