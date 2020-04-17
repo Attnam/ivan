@@ -3856,6 +3856,8 @@ truth humanoid::AutoPlayAIequipConsumeZapReadApply()
 
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
       static itemvector vitA;vitA.clear();
+      if(GetLeftWielded())vitEqW.push_back(GetLeftWielded());
+      if(GetRightWielded())vitEqW.push_back(GetRightWielded());
       for(uint c = 0; c < vitEqW.size(); ++c){
         if(AutoPlayAIcanApply(vitEqW[c]))
           vitA.push_back(vitEqW[c]);
