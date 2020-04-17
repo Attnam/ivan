@@ -364,9 +364,10 @@ int iosystem::StringQuestion(festring& Input,
   bInUse=true;
   
   // history
-  festring fsHistFile = festring()+GetUserDataDir()+".QuestionHistory-"+Topic;
-  fixChars(fsHistFile);
-  fsHistFile<<".txt";
+  festring fsFixTopicToFileName = Topic;
+  fixChars(fsFixTopicToFileName);  
+  festring fsHistFile = festring()+GetUserDataDir()+".QuestionHistory_"+fsFixTopicToFileName+".txt";
+  DBG1(fsHistFile.CStr());
   FILE *fl = fopen(fsHistFile.CStr(), "a+");
   rewind(fl);
   festring Line;
