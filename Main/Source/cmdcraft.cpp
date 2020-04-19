@@ -1435,19 +1435,29 @@ struct srpCutWeb : public recipe{
       craftcore::FinishSpawning(rpd, craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,RAND()%6+3));
     }else{
       bool bGetStuckOnTheWeb=false;
-      bool bLoseWeapon=false; //TODO if has no weapon, lose one glove instead!
+      bool bLoseWeapon=false;
+      bool bLoseGlove=false;
       bool bCriticalFumble=false;
       int iFumblePower=10;
+      item* itGlove = ra?ra->GetGauntlet():NULL;
+      if(!itGlove)itGlove = la?la->GetGauntlet():NULL;
       if(craftcore::CheckFumble(rpd, bCriticalFumble, iFumblePower)){DBGLN;
         if(bCriticalFumble){DBGLN;
           bGetStuckOnTheWeb=true;
-          if(rpd.itTool!=NULL)
+          if(rpd.itTool){
             if(RAND()%100 < 50){DBGLN;
               bLoseWeapon=true;
             }
+          }else if(itGlove){
+            if(RAND()%100 < 50){DBGLN;
+              bLoseGlove=true;
+            }
+          }
         }else{DBGLN;
-          if(rpd.itTool!=NULL){DBGLN;
+          if(rpd.itTool){DBGLN;
             bLoseWeapon=true;
+          }else if(itGlove){
+            bLoseGlove=true;
           }else{DBGLN;
             bGetStuckOnTheWeb=true;
           }
@@ -1462,8 +1472,10 @@ struct srpCutWeb : public recipe{
           ADD_MESSAGE("You've got stuck on the web!");
           rpd.SetAlreadyExplained();
         }else{
-          if(rpd.itTool!=NULL){
+          if(rpd.itTool){
             bLoseWeapon=true;
+          }else if(itGlove){
+            bLoseGlove=true;
           }
         }
       }
@@ -1475,6 +1487,13 @@ struct srpCutWeb : public recipe{
         rpd.SetAlreadyExplained();
       }
 
+      if(bLoseGlove){
+        itGlove->RemoveFromSlot();
+        itGlove->MoveTo(rpd.lsqrPlaceAt->GetStack());
+        ADD_MESSAGE("You lost your %s!",itGlove->GetName(UNARTICLED).CStr());
+        rpd.SetAlreadyExplained();
+      }
+      
       if(bSelfPos && !bGetStuckOnTheWeb && !bLoseWeapon){
         w->StepOnEffect(h); //so every try will make it more difficult!! :)
       }
