@@ -2439,9 +2439,11 @@ struct srpForgeItem : public recipe{
         
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
-        CI.bMustBeTailorable = rpd.bTailoringMode = true;
+        CI.bMustBeTailorable = true;
         CI.bMixRemainingLump = false;
         bMainMatOk = choseIngredients<lump>(fsM,lVolM, rpd, iCfgM, CI); //TODO instead of <lump> should be a new item with new graphics called <cloth>
+        if(bMainMatOk)
+          rpd.bTailoringMode=true;
       }
     }
     if(!bMustTailor){
