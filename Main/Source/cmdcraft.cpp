@@ -1437,7 +1437,7 @@ struct srpCutWeb : public recipe{
       bool bGetStuckOnTheWeb=false;
       bool bLoseWeapon=false; //TODO if has no weapon, lose one glove instead!
       bool bCriticalFumble=false;
-      int iFumblePower=0;
+      int iFumblePower=10;
       if(craftcore::CheckFumble(rpd, bCriticalFumble, iFumblePower)){DBGLN;
         if(bCriticalFumble){DBGLN;
           bGetStuckOnTheWeb=true;
@@ -3630,7 +3630,7 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
       xplodXtra+=RAND()%5;
 
     bool bCriticalFumble=false;
-    int iFumblePower=0;
+    int iFumblePower=5;
     if(craftcore::CheckFumble(rpd,bCriticalFumble,iFumblePower)){
       if(!rpd.bSpawnBroken && bChangeTurns){
         rpd.iBaseTurnsToFinish/=2; //just complete the broken item (as AV gets halved) TODO repair system
