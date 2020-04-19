@@ -703,7 +703,16 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
       KeyPressed = KEY_PAGE_DOWN + 0xE000;
       break;
 
+    case SDLK_DELETE:
+      KeyPressed = KEY_DELETE + 0xE000;
+      break;
+
+    case SDLK_INSERT:
+      KeyPressed = KEY_INSERT + 0xE000;
+      break;
+
     case SDLK_KP_5:
+    case SDLK_KP_PERIOD:
       KeyPressed = iRestWaitKey;
       break;
     

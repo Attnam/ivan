@@ -235,6 +235,7 @@ class recipedata {
     item* GetTool2(){return itTool2;}
 
     bool IsFailedSuspendOrCancel(){return bFailedTerminateCancel || bFailedSuspend;}
+    void SetAlreadyExplained(){bAlreadyExplained=true;}
 };
 
 class craftcore {

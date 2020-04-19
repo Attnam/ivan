@@ -5916,7 +5916,7 @@ festring game::ToCharIfPossible(int i)
       return "PgUp";
     case KEY_DELETE:
       return "Del";
-    case 0x3FFF2049: //KEY_INSERT: //TODO everykeyboard generates this huge value???
+    case KEY_INSERT:
       return "Ins";
   }
   

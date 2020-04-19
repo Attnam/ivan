@@ -331,21 +331,23 @@ void craft::Handle()
     if(h){
       if(h->GetRightArm()){
         item* RightBackup = game::SearchItem(RightBackupID);
-
-        if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
-        {DBGLN;
-          RightBackup->RemoveFromSlot();
-          ActorLocal->SetRightWielded(RightBackup);
+        if(h->GetRightWielded() != RightBackup){
+          if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
+          {DBGLN;
+            RightBackup->RemoveFromSlot();
+            h->SetRightWielded(RightBackup);
+          }
         }
       }
 
       if(h->GetLeftArm()){
         item* LeftBackup = game::SearchItem(LeftBackupID);
-
-        if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
-        {DBGLN;
-          LeftBackup->RemoveFromSlot();
-          ActorLocal->SetLeftWielded(LeftBackup);
+        if(h->GetLeftWielded() != LeftBackup){
+          if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
+          {DBGLN;
+            LeftBackup->RemoveFromSlot();
+            h->SetLeftWielded(LeftBackup);
+          }
         }
       }
     }

@@ -1884,51 +1884,61 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(recipedata rpd)
+truth humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Craft = craft::Spawn(this);DBGLN;
-
-  if(rpd.GetTool()!=NULL){DBGLN;
-    if(GetRightArm())
-    {DBGLN;
-      item* Item = GetRightArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
-        GetRightArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetLeftArm())
-    {DBGLN;
-      item* Item = GetLeftArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
-        GetLeftArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetMainWielded() != rpd.GetTool())
-    {DBGLN;
-      Craft->SetMoveCraftTool(true);
-      rpd.GetTool()->RemoveFromSlot();
-
-      if(GetMainArm() && GetMainArm()->IsUsable())
-        GetMainArm()->SetWielded(rpd.GetTool());
-      else
-        GetSecondaryArm()->SetWielded(rpd.GetTool());
-    }
-    else
+  
+  bool b1OK=false;
+  bool b2OK=false;
+  item* it;
+  if(rpd.GetTool()!=NULL){
+    if(
+      (GetRightArm() && GetRightArm()->IsUsable() && GetRightWielded() == rpd.GetTool()) ||
+      (GetLeftArm()  && GetLeftArm()->IsUsable()  && GetLeftWielded()  == rpd.GetTool())
+    ){
+      b1OK=true;
       Craft->SetMoveCraftTool(false);
-  }DBGLN;
+    }
+    
+    if(!b1OK && GetRightArm() && GetRightArm()->IsUsable()){
+      if((it = GetRightWielded())){
+        Craft->SetRightBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
 
-  //TODO let the GetTool2() be equipped too
+      rpd.GetTool()->RemoveFromSlot();
+      SetRightWielded(rpd.GetTool());
 
-  Craft->SetCraftWhat(rpd);DBGLN;
-  SetAction(Craft);DBGLN;
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+    if(!b1OK && GetLeftArm() && GetLeftArm()->IsUsable()){
+      if((it = GetLeftWielded())){
+        Craft->SetLeftBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
+
+      rpd.GetTool()->RemoveFromSlot();
+      SetLeftWielded(rpd.GetTool());
+
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+  }
+  
+  //TODO let the GetTool2() be equipped too?
+
+  if(b1OK){
+    Craft->SetCraftWhat(rpd);DBGLN;
+    SetAction(Craft);DBGLN;
+    return true;
+  }
+  
+  ADD_MESSAGE("You have no usable arm.");
+  rpd.SetAlreadyExplained();
+  return false;
 }
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
