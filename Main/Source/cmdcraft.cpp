@@ -3282,6 +3282,16 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   return true; //spends current turn
 }
 
+item* recipedata::GetTool()
+{
+  return !itTool  && itToolID  ? game::SearchItem(itToolID)  : NULL;
+}
+
+item* recipedata::GetTool2()
+{
+  return !itTool2 && itTool2ID ? game::SearchItem(itTool2ID) : NULL;
+}
+
 /**
  *
  * @param bAllowBreak

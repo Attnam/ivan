@@ -231,8 +231,8 @@ class recipedata {
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
 
     void ClearRefs();
-    item* GetTool(){return itTool;}
-    item* GetTool2(){return itTool2;}
+    item* GetTool();
+    item* GetTool2();
 
     bool IsFailedSuspendOrCancel(){return bFailedTerminateCancel || bFailedSuspend;}
     void SetAlreadyExplained(){bAlreadyExplained=true;}

@@ -1887,11 +1887,12 @@ void humanoid::SetEquipment(int I, item* What)
 truth humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Craft = craft::Spawn(this);DBGLN;
+  DBG4(rpd.GetTool(),rpd.GetTool2(),GetRightArm()?GetRightArm()->IsUsable():0,GetLeftArm()?GetLeftArm()->IsUsable():0);
   
   bool b1OK=false;
   bool b2OK=false;
   item* it;
-  if(rpd.GetTool()!=NULL){
+  if(rpd.GetTool()){
     if(
       (GetRightArm() && GetRightArm()->IsUsable() && GetRightWielded() == rpd.GetTool()) ||
       (GetLeftArm()  && GetLeftArm()->IsUsable()  && GetLeftWielded()  == rpd.GetTool())
@@ -1926,6 +1927,8 @@ truth humanoid::SwitchToCraft(recipedata rpd)
       Craft->SetMoveCraftTool(true);
     }
     
+  }else{
+    b1OK=true; //can craft somethings w/o tools
   }
   
   //TODO let the GetTool2() be equipped too?
