@@ -1783,11 +1783,21 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       game::DrawEverything();
       
       HP=1; //only enough to continue testing normal gameplay
-      BuffPlayerKiller((character*)Killer); //to spice it up somewhat
-      if(GetAction())GetAction()->Terminate(false); //just to avoid messing any action
-      if(!game::IsInWilderness())Move(GetLevel()->GetRandomSquare(this), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+      BuffPlayerKiller((character*)Killer); //to spice it up
+      for(int c = 0; c < BodyParts; ++c){ //to be able to do something at least
+        if(!GetBodyPart(c) && CanCreateBodyPart(c)){
+          CreateBodyPart(c);
+          GetBodyPart(c)->SetHP(1);
+        }
+      }
+      if(GetNP() < HUNGER_LEVEL)
+        SetNP(HUNGER_LEVEL); //to avoid endless sleeping
+      if(GetAction())
+        GetAction()->Terminate(false); //just to avoid messing any action
+      if(Killer && !game::IsInWilderness())
+        Move(GetLevel()->GetRandomSquare(this), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
       
-      ADD_MESSAGE("But no! You are a cursed developer! You are forbidden to rest! And your doings will be forever forgotten...");
+      ADD_MESSAGE("But no! You are cursed! You are forbidden to rest! And your doings will be forever forgotten...");
       return;
     }
 #endif
