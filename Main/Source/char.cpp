@@ -1819,26 +1819,43 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     if(bCursedDeveloper){
       game::DrawEverything();
       
-      if(HP<=0)
-        HP=1; //only enough to continue testing normal gameplay
       bool bStay = BuffAndDebuffPlayerKiller((character*)Killer); //to spice it up
       if(!bStay)
         ((character*)Killer)->SetAssignedName(Killer->GetAssignedName()+"!"); //player killed count
-      for(int c = 0; c < BodyParts; ++c){ //to be able to do something at least
-        if(!GetBodyPart(c) && CanCreateBodyPart(c)){
-          CreateBodyPart(c);
-          if(GetBodyPart(c)->GetHP()<=0)
+      
+      // save life but just a little bit
+      for(int c = 0; c < BodyParts; ++c){ //only enough to continue testing normal gameplay
+        if(GetBodyPart(c)){
+          if(GetBodyPart(c)->GetHP()>GetBodyPart(c)->GetMaxHP()){ //TODO how it happens???
+            DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
+            GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+          }
+        }else{
+          if(CanCreateBodyPart(c)){
+            CreateBodyPart(c);
             GetBodyPart(c)->SetHP(1);
+          }
         }
+        DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
       }
+      CalculateBodyPartMaxHPs(0);
+      DBG2(HP,MaxHP);
+      if(HP>MaxHP) // it MUST be ok here!!!
+        ABORT("HP>MaxHP %d>%d",HP,MaxHP);
+      
       if(GetNP() < HUNGER_LEVEL)
         SetNP(HUNGER_LEVEL); //to avoid endless sleeping
+      
+      if(HasStateFlag(PANIC))
+        DeActivateTemporaryState(PANIC); //to be able to do something
+      
       if(GetAction())
         GetAction()->Terminate(false); //just to avoid messing any action
       
-      game::SetMapNote(GetLSquareUnder(),"You almost died here.");
-      if(!bStay && Killer && !game::IsInWilderness())
+      if(!bStay && Killer && !game::IsInWilderness()){
+        game::SetMapNote(GetLSquareUnder(),"Your cursed life was saved here.");
         Move(GetLevel()->GetRandomSquare(this), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+      }
       
       ADD_MESSAGE("But wait... you are cursed, therefore forbidden to R.I.P... and your doings will be forever forgotten...");
       return;
@@ -3847,7 +3864,8 @@ void character::GetPlayerCommand()
           BeginTemporaryState(PANIC, 500 + RAND_N(500));
         }
 
-        game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
+        if(!bCursedDeveloper)
+          game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
       }
       else if(ivanconfig::GetWarnAboutDanger())
       {
