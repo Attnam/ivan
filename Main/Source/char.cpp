@@ -1726,40 +1726,45 @@ bool bCursedDeveloper = false;
  * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
  * @return if player should stay (true) or teleport (false)
  */
-truth BuffAndDebuffPlayerKiller(character* Killer)
+truth BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev)
 {
   if(!bCursedDeveloper)return true;
   if(!Killer)return true;
   
+  riBuff=0;
+  riDebuff=0;
+  rbRev=false;
+  
   // BUFFs, every death makes it harder to player:
   if(!Killer->HasStateFlag(ESP)){Killer->GainIntrinsic(ESP);return false;}
-
+  riBuff++;
   if(!Killer->HasStateFlag(INFRA_VISION)){Killer->GainIntrinsic(INFRA_VISION);return false;}
-
+  riBuff++;
   if(!Killer->HasStateFlag(VAMPIRISM)){Killer->GainIntrinsic(VAMPIRISM);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(PANIC))
     if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(SLOW))
     if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return false;}
- 
+  riBuff++;
   if(!Killer->HasStateFlag(HICCUPS))
     if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(ETHEREAL_MOVING)){Killer->GainIntrinsic(ETHEREAL_MOVING);return false;}
-
+  riBuff++;
   if(!Killer->HasStateFlag(REGENERATION)){Killer->GainIntrinsic(REGENERATION);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(LEVITATION)){Killer->GainIntrinsic(LEVITATION);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(GAS_IMMUNITY)){Killer->GainIntrinsic(GAS_IMMUNITY);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(TELEPORT_LOCK)){Killer->GainIntrinsic(TELEPORT_LOCK);return false;}
-  
+  riBuff++;
   if(!Killer->HasStateFlag(POLYMORPH_LOCK)){Killer->GainIntrinsic(POLYMORPH_LOCK);return false;}
+  riBuff++;
   
   // DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
   if(!Killer->HasStateFlag(HICCUPS)){
@@ -1767,28 +1772,31 @@ truth BuffAndDebuffPlayerKiller(character* Killer)
     Killer->GainIntrinsic(HICCUPS);
     return false;
   }
+  riDebuff++;
   
   if(!Killer->HasStateFlag(SLOW)){
     Killer->DeActivateTemporaryState(HASTE);
     Killer->GainIntrinsic(SLOW);
     return false;
   }
+  riDebuff++;
   
   if(!Killer->HasStateFlag(PARASITE_TAPE_WORM)){Killer->GainIntrinsic(PARASITE_TAPE_WORM);return false;}
-  
+  riDebuff++;
   if(!Killer->HasStateFlag(CONFUSED)){Killer->GainIntrinsic(CONFUSED);return false;}
-  
+  riDebuff++;
   if(!Killer->HasStateFlag(LEPROSY)){Killer->GainIntrinsic(LEPROSY);return false;}
-  
+  riDebuff++;
   if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
-  
+  riDebuff++;
   if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
-  
+  riDebuff++;
   if(!Killer->HasStateFlag(PANIC)){
     Killer->DeActivateTemporaryState(FEARLESS);
     Killer->GainIntrinsic(PANIC);
     return true;
   }
+  riDebuff++;
   
   // Revenge, grant it will stop:
   game::GetCurrentLevel()->Explosion(
@@ -1796,6 +1804,8 @@ truth BuffAndDebuffPlayerKiller(character* Killer)
   
   ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
   Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+  
+  rbRev=true;
   
   return true;
 }
@@ -1819,9 +1829,11 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     if(bCursedDeveloper){
       game::DrawEverything();
       
-      bool bStay = BuffAndDebuffPlayerKiller((character*)Killer); //to spice it up
+      int iBuff,iDebuff;
+      bool bRev;
+      bool bStay = BuffAndDebuffPlayerKiller((character*)Killer,iBuff,iDebuff,bRev); //to spice it up
       if(!bStay)
-        ((character*)Killer)->SetAssignedName(Killer->GetAssignedName()+"!"); //player killed count
+        ((character*)Killer)->SetAssignedName(festring()+"[B"+iBuff+"D"+iDebuff+(bRev?"R":"")+"]"); //player killed count
       
       // save life but just a little bit
       for(int c = 0; c < BodyParts; ++c){ //only enough to continue testing normal gameplay
@@ -1829,6 +1841,10 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
           if(GetBodyPart(c)->GetHP()>GetBodyPart(c)->GetMaxHP()){ //TODO how it happens???
             DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
             GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+          }
+          if(GetBodyPart(c)->GetHP()<1){
+            DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
+            GetBodyPart(c)->SetHP(1);
           }
         }else{
           if(CanCreateBodyPart(c)){
@@ -5480,7 +5496,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
       else if(IsPlayer() || CanBeSeenByPlayer())
         ADD_MESSAGE("It vanishes.");
 
-      if(IsPlayer())
+      if(IsPlayer() && !bCursedDeveloper)
         game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
     }
 
