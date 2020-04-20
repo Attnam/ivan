@@ -2535,23 +2535,7 @@ truth largecat::SpecialSaveLife()
   if(!IsPlayer() && CanBeSeenByPlayer())
     ADD_MESSAGE("%s appears!", CHAR_NAME(INDEFINITE));
 
-  if(IsPlayer())
-    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
-
-  RestoreBodyParts();
-  ResetSpoiling();
-  ResetBurning();
-  RestoreHP();
-  RestoreStamina();
-  ResetStates();
-
-  if(GetNP() < SATIATED_LEVEL)
-    SetNP(SATIATED_LEVEL);
-
-  SendNewDrawRequest();
-
-  if(GetAction())
-    GetAction()->Terminate(false);
+  SaveLifeBase();
 
   return true;
 }

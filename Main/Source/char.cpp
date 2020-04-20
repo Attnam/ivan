@@ -1734,20 +1734,11 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       if(!bInstaResurrect && !game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))bInstaResurrect=true;
       if(bInstaResurrect)
       {
-        RestoreBodyParts();
-        ResetSpoiling();
-        if(IsBurning())
-        {
-          doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
-          doforbodyparts()(this, &bodypart::ResetThermalEnergies);
-          doforbodyparts()(this, &bodypart::ResetBurning);
-        }
-        RestoreHP();
-        RestoreStamina();
-        ResetStates();
-        SetNP(SATIATED_LEVEL);
-        SendNewDrawRequest();
-        if(IsPlayerAutoPlay())AutoPlayAITeleport(true);
+        SaveLifeBase();
+        
+        if(IsPlayerAutoPlay())
+          AutoPlayAITeleport(true);
+        
         return;
       }
     }
@@ -6914,6 +6905,32 @@ void character::LycanthropyHandler()
   }
 }
 
+void character::SaveLifeBase()
+{
+  if(IsPlayer() && !IsPlayerAutoPlay())
+    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
+
+  RestoreBodyParts();
+  ResetSpoiling();
+  if(IsBurning())
+  {
+    doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+    doforbodyparts()(this, &bodypart::ResetThermalEnergies);
+    doforbodyparts()(this, &bodypart::ResetBurning);
+  }
+  RestoreHP();
+  RestoreStamina();
+  ResetStates();
+
+  if(GetNP() < SATIATED_LEVEL)
+    SetNP(SATIATED_LEVEL);
+
+  SendNewDrawRequest();
+
+  if(GetAction())
+    GetAction()->Terminate(false);
+}
+
 void character::SaveLife()
 {
   if(TemporaryStateIsActivated(LIFE_SAVED))
@@ -6951,23 +6968,8 @@ void character::SaveLife()
     LifeSaver->RemoveFromSlot();
     LifeSaver->SendToHell();
   }
-
-  if(IsPlayer())
-    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
-
-  RestoreBodyParts();
-  ResetSpoiling();
-  RestoreHP();
-  RestoreStamina();
-  ResetStates();
-
-  if(GetNP() < SATIATED_LEVEL)
-    SetNP(SATIATED_LEVEL);
-
-  SendNewDrawRequest();
-
-  if(GetAction())
-    GetAction()->Terminate(false);
+  
+  SaveLifeBase();
 }
 
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)

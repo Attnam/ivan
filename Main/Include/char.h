@@ -688,6 +688,7 @@ class character : public entity, public id
   void LycanthropyHandler();
   void SearchingHandler();
   void SaveLife();
+  void SaveLifeBase();
   void BeginInvisibility();
   void BeginInfraVision();
   void BeginESP();

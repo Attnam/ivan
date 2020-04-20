@@ -61,8 +61,9 @@ long nuke::GetTotalExplosivePower() const
 { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
-
-//long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
+/*
+long nail::GetTruePrice() const { return item::GetTruePrice() << 1; }
+*/
 
 col16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
