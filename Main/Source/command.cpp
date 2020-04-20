@@ -1207,7 +1207,8 @@ truth commandsystem::AskFavour(character* Char)
   int Select = LIST_WAS_EMPTY;
   if(iTot>0){
     game::SetStandardListAttributes(felFavourList);
-    felFavourList.AddFlags(SELECTABLE);
+    if(vSelectableFavours.size()>0)
+      felFavourList.AddFlags(SELECTABLE);
     Select = felFavourList.Draw();
   }
   
