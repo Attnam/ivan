@@ -26,6 +26,7 @@
 #include "hiteffect.h" //TODO move to charsset.cpp?
 #include "lterras.h"
 #include "gods.h"
+#include "fluid.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -1787,8 +1788,9 @@ truth BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool
   riDebuff++;
   if(!Killer->HasStateFlag(LEPROSY)){Killer->GainIntrinsic(LEPROSY);return false;}
   riDebuff++;
-  if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
-  riDebuff++;
+// this is too much as adds worm mobs on the dungeon...
+//  if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
+//  riDebuff++;
   if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
   riDebuff++;
   if(!Killer->HasStateFlag(PANIC)){
@@ -1837,24 +1839,43 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       
       // save life but just a little bit
       for(int c = 0; c < BodyParts; ++c){ //only enough to continue testing normal gameplay
-        if(GetBodyPart(c)){
-          if(GetBodyPart(c)->GetHP()>GetBodyPart(c)->GetMaxHP()){ //TODO how it happens???
-            DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
-            GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+        bodypart* bp = GetBodyPart(c);
+        if(bp){
+          if(bp->GetHP()>bp->GetMaxHP()){ //TODO how it happens???
+            DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+            bp->SetHP(bp->GetMaxHP());
           }
-          if(GetBodyPart(c)->GetHP()<1){
-            DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
-            GetBodyPart(c)->SetHP(1);
+          if(bp->GetHP()<1){
+            DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+            if(GetBodyPart(TORSO_INDEX)==bp || GetBodyPart(GROIN_INDEX)==bp){
+//              fluidvector fv;
+//              bp->FillFluidVector(fv);
+//              for(int i=0;i<fv.size();i++){ //to clear all damage effects on it and prevent endless death loop
+//                DBG3("RemovingFluid", fv[i]->GetLiquid()?fv[i]->GetLiquid()->GetName().CStr():"", fv[i]->IsDangerous(this));
+//                bp->RemoveFluid(fv[i]);
+//              }
+//              bp->FastRestoreHP();
+              /**
+               * How to prevent endless die loop?
+               * Clear the bad effects? better not, let them continue working.
+               * A bit more of HP to the core body parts may suffice (funny head is not one lol).
+               */
+              static int iHpMinOk=10; //this is to fight mustard gas
+              bp->SetHP(GetMaxHP()>iHpMinOk ? iHpMinOk : GetMaxHP());
+              DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+            }else{
+              bp->SetHP(1);
+            }
           }
         }else{
           if(CanCreateBodyPart(c)){
-            CreateBodyPart(c);
-            GetBodyPart(c)->SetHP(1);
+            bp=CreateBodyPart(c);
+            bp->SetHP(1);
           }
         }
-        DBG4(c,GetBodyPart(c)->GetHP(),GetBodyPart(c)->GetMaxHP(),GetBodyPart(c)->GetBodyPartName().CStr());
+        DBGEXEC(if(bp)DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr()));
       }
-      CalculateBodyPartMaxHPs(0);
+      CalculateBodyPartMaxHPs(0); //this also calculates the overall current HP
       DBG2(HP,MaxHP);
       if(HP>MaxHP) // it MUST be ok here!!!
         ABORT("HP>MaxHP %d>%d",HP,MaxHP);
