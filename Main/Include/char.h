@@ -364,6 +364,7 @@ class character : public entity, public id
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
   truth TemporaryStateIsActivated(long What) const;
+  truth HasStateFlag(long Flag);
   truth EquipmentStateIsActivated(long What) const { return EquipmentState & What; }
   truth StateIsActivated(long What) const;
   truth LoseConsciousness(int, truth = false);

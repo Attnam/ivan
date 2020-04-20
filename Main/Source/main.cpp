@@ -141,7 +141,12 @@ int main(int argc, char** argv)
     std::cout << "IVAN_LISTDRAWABOVE=[true] #DEBUG output the draw above priority list to text console terminal" << std::endl;
     std::cout << "IVAN_DebugGenDungeonLevelLoopID=[DungeonLevelIndex] #DEBUG DungeonLevelIndex must be an integer matching a some dungeon level" << std::endl;
     std::cout << "IVAN_DebugGenDungeonLevelLoopMax=[integer] #DEBUG generate the dungeon level how many times" << std::endl;
-    std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG auto play AI will not leave that Dungeon Level after entering it" << std::endl;
+#ifdef WIZARD    
+    std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG wizard auto play AI will not leave that Dungeon Level after entering it" << std::endl;
+#endif
+#ifdef CURSEDDEVELOPER
+    std::cout << "IVAN_CURSEDDEVELOPER=[true] #DEBUG (only for developer tests) this will prevent player's death (and scoring) in normal (non wizard) gameplay" << std::endl;
+#endif
     return 0;
   }
   

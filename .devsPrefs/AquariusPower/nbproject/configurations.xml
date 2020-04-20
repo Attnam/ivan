@@ -182,6 +182,7 @@
               <pElem>/usr/include</pElem>
             </incDir>
             <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
               <Elem>DBGMSG</Elem>
               <Elem>FELIST_WAITKEYUP</Elem>
               <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>

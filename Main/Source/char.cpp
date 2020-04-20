@@ -1708,8 +1708,61 @@ void character::AutoPlayAITeleport(bool bDeathCountBased)
   }
 
   if(bTeleportNow)
-    Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there TODO and should be in sync! create TeleportRandomDirectly() ?
+    Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there
 }
+
+/**
+ * This is a developer environment variable to test the game without wizard mode.
+ */
+#ifdef CURSEDDEVELOPER
+bool bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
+#else
+bool bCursedDeveloper = false;
+#endif
+
+#ifdef CURSEDDEVELOPER
+/**
+ * this will make the NPC that kills the player more challenging for every kill
+ * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
+ */
+void BuffPlayerKiller(character* Killer)
+{
+  if(!bCursedDeveloper)return;
+  
+  if(!Killer)return;
+  
+  if(!Killer->HasStateFlag(ESP)){
+    Killer->GainIntrinsic(ESP);
+    Killer->GainIntrinsic(INFRA_VISION);
+    Killer->GainIntrinsic(FASTING);
+    Killer->GainIntrinsic(SEARCHING);
+    Killer->GainIntrinsic(POLYMORPH_LOCK);
+    Killer->GainIntrinsic(TELEPORT_LOCK);
+    return;
+  }
+  
+  if(!Killer->HasStateFlag(GAS_IMMUNITY)){
+    Killer->GainIntrinsic(GAS_IMMUNITY);
+    Killer->GainIntrinsic(VAMPIRISM);
+    Killer->GainIntrinsic(DISEASE_IMMUNITY);
+    return;
+  }
+  
+  if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return;}
+  
+  if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return;}
+ 
+  if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return;}
+  
+  if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return;}
+  
+  if(!Killer->HasStateFlag(ETHEREAL_MOVING)){Killer->GainIntrinsic(ETHEREAL_MOVING);return;}
+
+  if(!Killer->HasStateFlag(REGENERATION)){Killer->GainIntrinsic(REGENERATION);return;}
+  
+  if(!Killer->HasStateFlag(LEVITATION)){Killer->GainIntrinsic(LEVITATION);return;}
+}
+#endif
 
 void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 {
@@ -1724,7 +1777,21 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   if(IsPlayer())
   {
     ADD_MESSAGE("You die.");
-
+    
+#ifdef CURSEDDEVELOPER // so that this code wont be compiled to non developer players
+    if(bCursedDeveloper){
+      game::DrawEverything();
+      
+      HP=1; //only enough to continue testing normal gameplay
+      BuffPlayerKiller((character*)Killer); //to spice it up somewhat
+      if(GetAction())GetAction()->Terminate(false); //just to avoid messing any action
+      if(!game::IsInWilderness())Move(GetLevel()->GetRandomSquare(this), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+      
+      ADD_MESSAGE("But no! You are a cursed developer! You are forbidden to rest! And your doings will be forever forgotten...");
+      return;
+    }
+#endif
+    
     if(game::WizardModeIsActive())
     {
       game::DrawEverything();
@@ -2536,36 +2603,38 @@ truth character::TestForPickup(item* ToBeTested) const
 
 void character::AddScoreEntry(cfestring& Description, double Multiplier, truth AddEndLevel) const
 {
-  if(!game::WizardModeIsReallyActive())
+  if(game::WizardModeIsReallyActive())
+    return;
+  if(bCursedDeveloper)
+    return;
+  
+  highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
+
+  if(!HScore.CheckVersion())
   {
-    highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
+    if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                  CONST_S("The highscore version doesn't match.\rDo you want to erase "
+                          "previous records and start a new file?\rNote, if you answer "
+                          "no, the score of your current game will be lost!\r"),
+                  CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+      return;
 
-    if(!HScore.CheckVersion())
-    {
-      if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
-                    CONST_S("The highscore version doesn't match.\rDo you want to erase "
-                            "previous records and start a new file?\rNote, if you answer "
-                            "no, the score of your current game will be lost!\r"),
-                    CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-        return;
-
-      HScore.Clear();
-    }
-
-    festring Desc = game::GetPlayerName();
-    Desc << ", " << Description;
-
-    if(AddEndLevel)
-    {
-      if(game::IsInWilderness())
-        Desc << " in the wilderness";
-      else
-        Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
-    }
-
-    HScore.Add(long(game::GetScore() * Multiplier), Desc);
-    HScore.Save();
+    HScore.Clear();
   }
+
+  festring Desc = game::GetPlayerName();
+  Desc << ", " << Description;
+
+  if(AddEndLevel)
+  {
+    if(game::IsInWilderness())
+      Desc << " in the wilderness";
+    else
+      Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
+  }
+
+  HScore.Add(long(game::GetScore() * Multiplier), Desc);
+  HScore.Save();
 }
 
 truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFlags)
@@ -9106,6 +9175,10 @@ festring character::GetPanelName() const
 
   festring PanelName;
   if(!game::IsInWilderness()){
+#ifdef CURSEDDEVELOPER
+    if(bCursedDeveloper)
+      PanelName << "[Cursed Developer!] ";
+#endif
     PanelName << Name;
     if(ivanconfig::IsShowFullDungeonName()){
       PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true) << ')';
@@ -13129,6 +13202,11 @@ truth character::IsESPBlockedByEquipment() const
       return !(Item->IsBroken());
   }
   return false;
+}
+
+truth character::HasStateFlag(long Flag)
+{
+  return TemporaryState & Flag;
 }
 
 truth character::TemporaryStateIsActivated (long What) const
