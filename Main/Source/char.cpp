@@ -1724,43 +1724,80 @@ bool bCursedDeveloper = false;
 /**
  * this will make the NPC that kills the player more challenging for every kill
  * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
+ * @return if player should stay (true) or teleport (false)
  */
-void BuffPlayerKiller(character* Killer)
+truth BuffAndDebuffPlayerKiller(character* Killer)
 {
-  if(!bCursedDeveloper)return;
+  if(!bCursedDeveloper)return true;
+  if(!Killer)return true;
   
-  if(!Killer)return;
-  
-  if(!Killer->HasStateFlag(ESP)){
-    Killer->GainIntrinsic(ESP);
-    Killer->GainIntrinsic(INFRA_VISION);
-    Killer->GainIntrinsic(FASTING);
-    Killer->GainIntrinsic(SEARCHING);
-    Killer->GainIntrinsic(POLYMORPH_LOCK);
-    Killer->GainIntrinsic(TELEPORT_LOCK);
-    return;
-  }
-  
-  if(!Killer->HasStateFlag(GAS_IMMUNITY)){
-    Killer->GainIntrinsic(GAS_IMMUNITY);
-    Killer->GainIntrinsic(VAMPIRISM);
-    Killer->GainIntrinsic(DISEASE_IMMUNITY);
-    return;
-  }
-  
-  if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return;}
-  
-  if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return;}
- 
-  if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return;}
-  
-  if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return;}
-  
-  if(!Killer->HasStateFlag(ETHEREAL_MOVING)){Killer->GainIntrinsic(ETHEREAL_MOVING);return;}
+  // BUFFs, every death makes it harder to player:
+  if(!Killer->HasStateFlag(ESP)){Killer->GainIntrinsic(ESP);return false;}
 
-  if(!Killer->HasStateFlag(REGENERATION)){Killer->GainIntrinsic(REGENERATION);return;}
+  if(!Killer->HasStateFlag(INFRA_VISION)){Killer->GainIntrinsic(INFRA_VISION);return false;}
+
+  if(!Killer->HasStateFlag(VAMPIRISM)){Killer->GainIntrinsic(VAMPIRISM);return false;}
   
-  if(!Killer->HasStateFlag(LEVITATION)){Killer->GainIntrinsic(LEVITATION);return;}
+  if(!Killer->HasStateFlag(PANIC))
+    if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return false;}
+  
+  if(!Killer->HasStateFlag(SLOW))
+    if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return false;}
+ 
+  if(!Killer->HasStateFlag(HICCUPS))
+    if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return false;}
+  
+  if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return false;}
+  
+  if(!Killer->HasStateFlag(ETHEREAL_MOVING)){Killer->GainIntrinsic(ETHEREAL_MOVING);return false;}
+
+  if(!Killer->HasStateFlag(REGENERATION)){Killer->GainIntrinsic(REGENERATION);return false;}
+  
+  if(!Killer->HasStateFlag(LEVITATION)){Killer->GainIntrinsic(LEVITATION);return false;}
+  
+  if(!Killer->HasStateFlag(GAS_IMMUNITY)){Killer->GainIntrinsic(GAS_IMMUNITY);return false;}
+  
+  if(!Killer->HasStateFlag(TELEPORT_LOCK)){Killer->GainIntrinsic(TELEPORT_LOCK);return false;}
+  
+  if(!Killer->HasStateFlag(POLYMORPH_LOCK)){Killer->GainIntrinsic(POLYMORPH_LOCK);return false;}
+  
+  // DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
+  if(!Killer->HasStateFlag(HICCUPS)){
+    Killer->DeActivateTemporaryState(INVISIBLE);
+    Killer->GainIntrinsic(HICCUPS);
+    return false;
+  }
+  
+  if(!Killer->HasStateFlag(SLOW)){
+    Killer->DeActivateTemporaryState(HASTE);
+    Killer->GainIntrinsic(SLOW);
+    return false;
+  }
+  
+  if(!Killer->HasStateFlag(PARASITE_TAPE_WORM)){Killer->GainIntrinsic(PARASITE_TAPE_WORM);return false;}
+  
+  if(!Killer->HasStateFlag(CONFUSED)){Killer->GainIntrinsic(CONFUSED);return false;}
+  
+  if(!Killer->HasStateFlag(LEPROSY)){Killer->GainIntrinsic(LEPROSY);return false;}
+  
+  if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
+  
+  if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
+  
+  if(!Killer->HasStateFlag(PANIC)){
+    Killer->DeActivateTemporaryState(FEARLESS);
+    Killer->GainIntrinsic(PANIC);
+    return true;
+  }
+  
+  // Revenge, grant it will stop:
+  game::GetCurrentLevel()->Explosion(
+    game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+  
+  ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
+  Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+  
+  return true;
 }
 #endif
 
@@ -1782,22 +1819,28 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     if(bCursedDeveloper){
       game::DrawEverything();
       
-      HP=1; //only enough to continue testing normal gameplay
-      BuffPlayerKiller((character*)Killer); //to spice it up
+      if(HP<=0)
+        HP=1; //only enough to continue testing normal gameplay
+      bool bStay = BuffAndDebuffPlayerKiller((character*)Killer); //to spice it up
+      if(!bStay)
+        ((character*)Killer)->SetAssignedName(Killer->GetAssignedName()+"!"); //player killed count
       for(int c = 0; c < BodyParts; ++c){ //to be able to do something at least
         if(!GetBodyPart(c) && CanCreateBodyPart(c)){
           CreateBodyPart(c);
-          GetBodyPart(c)->SetHP(1);
+          if(GetBodyPart(c)->GetHP()<=0)
+            GetBodyPart(c)->SetHP(1);
         }
       }
       if(GetNP() < HUNGER_LEVEL)
         SetNP(HUNGER_LEVEL); //to avoid endless sleeping
       if(GetAction())
         GetAction()->Terminate(false); //just to avoid messing any action
-      if(Killer && !game::IsInWilderness())
+      
+      game::SetMapNote(GetLSquareUnder(),"You almost died here.");
+      if(!bStay && Killer && !game::IsInWilderness())
         Move(GetLevel()->GetRandomSquare(this), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
       
-      ADD_MESSAGE("But no! You are cursed! You are forbidden to rest! And your doings will be forever forgotten...");
+      ADD_MESSAGE("But wait... you are cursed, therefore forbidden to R.I.P... and your doings will be forever forgotten...");
       return;
     }
 #endif

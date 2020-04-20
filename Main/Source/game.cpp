@@ -1267,11 +1267,15 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+/**
+ * prepend
+ */
 void game::SetMapNote(lsquare* lsqrN,festring What)
 {
   festring finalWhat;
   finalWhat << game::MapNoteToken();
   finalWhat << What;
+  if(lsqrN->GetEngraved())finalWhat << " " << lsqrN->GetEngraved();
   lsqrN->Engrave(finalWhat);
 }
 
