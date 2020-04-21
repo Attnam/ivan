@@ -19,6 +19,7 @@
       <in>namegen.cc</in>
     </df>
     <df root="Main/Include" name="2">
+      <in>curseddeveloper.h</in>
       <in>dungeon.h</in>
     </df>
     <df root="FeLib/Include" name="3">
@@ -67,6 +68,7 @@
       <in>command.cpp</in>
       <in>cont.cpp</in>
       <in>coreset.cpp</in>
+      <in>curseddeveloper.cpp</in>
       <in>database.cpp</in>
       <in>dataset.cpp</in>
       <in>definesvalidator.cpp</in>
@@ -245,6 +247,8 @@
       </item>
       <item path="FeLib/Source/whandler.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="Main/Include/curseddeveloper.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Main/Include/dungeon.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="0">
@@ -276,6 +280,8 @@
       <item path="Main/Source/cont.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/coreset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/curseddeveloper.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
