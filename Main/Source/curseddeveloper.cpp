@@ -44,40 +44,35 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   // save life but just a little bit
   for(int c = 0; c < P->BodyParts; ++c){ //only enough to continue testing normal gameplay
     bodypart* bp = P->GetBodyPart(c);
-    if(bp){
-      if(bp->GetHP()>bp->GetMaxHP()){ //TODO how it happens???
-        DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-        bp->SetHP(bp->GetMaxHP());
-      }
-      if(bp->GetHP()<1){
-        DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-        if(P->GetBodyPart(TORSO_INDEX)==bp || P->GetBodyPart(GROIN_INDEX)==bp){
-//              fluidvector fv;
-//              bp->FillFluidVector(fv);
-//              for(int i=0;i<fv.size();i++){ //to clear all damage effects on it and prevent endless death loop
-//                DBG3("RemovingFluid", fv[i]->GetLiquid()?fv[i]->GetLiquid()->GetName().CStr():"", fv[i]->IsDangerous(this));
-//                bp->RemoveFluid(fv[i]);
-//              }
-//              bp->FastRestoreHP();
-          /**
-           * How to prevent endless die loop?
-           * Clear the bad effects? better not, let them continue working.
-           * A bit more of HP to the core body parts may suffice (funny head is not one lol).
-           */
-          static int iHpMinOk=10; //this is to fight mustard gas
-          bp->SetHP(P->GetMaxHP()>iHpMinOk ? iHpMinOk : P->GetMaxHP());
-          DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-        }else{
-          bp->SetHP(1);
-        }
-      }
-    }else{
-      if(P->CanCreateBodyPart(c)){
-        bp=P->CreateBodyPart(c);
-        bp->SetHP(1);
-      }
+    if(!bp && P->CanCreateBodyPart(c))
+      bp=P->CreateBodyPart(c);
+    if(!bp)continue;
+    
+    if(bp->GetHP() > bp->GetMaxHP()){ //TODO how does this happens???
+      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+      bp->SetHP(-1);
     }
-    DBGEXEC(if(bp)DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr()));
+    
+    /**
+     * How to prevent endless die loop?
+     * Clear the bad effects? better not, let them continue working.
+     * A bit more of HP to the core body parts may suffice (funny head is not one lol).
+     */
+    static int iTorsoHpMinOk=10; //this is to fight mustard gas
+    if(P->GetBodyPart(TORSO_INDEX)==bp && bp->GetHP() < iTorsoHpMinOk){
+      bp->SetHP(P->GetMaxHP()>iTorsoHpMinOk ? iTorsoHpMinOk : P->GetMaxHP());
+      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+      continue;
+    }    
+    
+    int iHpMinUsable = bp->GetMaxHP()/3 + (bp->GetMaxHP()%3>0 ? 1 : 0); //ceil
+    if(bp->GetHP() < iHpMinUsable){
+      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+      bp->SetHP(iHpMinUsable);
+      bp->SignalPossibleUsabilityChange();
+    }
+    
+    DBG5(c,iHpMinUsable,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
   }
   P->CalculateBodyPartMaxHPs(0); //this also calculates the overall current HP
   DBG2(P->HP,P->MaxHP);

@@ -30,6 +30,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(character)(0, 0, 0, "character");
 #include "actions.h"
 #include "balance.h"
 #include "bitmap.h"
+#include "bodypart.h"
 #include "command.h"
 #include "confdef.h"
 #include "curseddeveloper.h"
