@@ -14,7 +14,16 @@
 
 #include "dbgmsgproj.h"
 
+/**
+ * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+ * btw, lantern price is currently 10.
+ */
+int wizautoplay::iMaxValueless = 5;
+
+#ifdef WIZARD
+
 int wizautoplay::AutoPlayMode=AUTOPLAYMODE_DISABLED;
+
 character* wizautoplay::P=NULL;
 
 bool bSafePrayOnce=false;
@@ -48,12 +57,6 @@ void wizautoplay::AutoPlayAITeleport(bool bDeathCountBased)
 character* AutoPlayLastChar=NULL;
 const int iMaxWanderTurns=20;
 const int iMinWanderTurns=3;
-
-/**
- * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
- * btw, lantern price is currently 10.
- */
-int wizautoplay::iMaxValueless = 5;
 
 v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
@@ -1285,7 +1288,6 @@ void wizautoplay::IncAutoPlayMode() {
   AutoPlayModeApply();
 }
 
-#ifdef WIZARD
 void wizautoplay::AutoPlayModeApply(){
   int iTimeout=0;
   bool bPlayInBackground=false;
@@ -1333,7 +1335,6 @@ void wizautoplay::AutoPlayModeApply(){
 
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
-#endif
 
 void wizautoplay::AutoPlayCommandKey(character* C,int& Key,truth& HasActed,truth& ValidKeyPressed)
 {
@@ -1363,3 +1364,5 @@ void wizautoplay::AutoPlayCommandKey(character* C,int& Key,truth& HasActed,truth
     }
   }
 }
+
+#endif

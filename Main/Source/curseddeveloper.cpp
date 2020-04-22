@@ -18,15 +18,10 @@
 /**
  * This is a developer environment variable to test the game without wizard mode.
  */
+
 #ifdef CURSEDDEVELOPER
 bool cursedDeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
-#else
-bool cursedDeveloper::bCursedDeveloper = false;
-#endif
 
-#ifndef CURSEDDEVELOPER
-bool cursedDeveloper::LifeSaveJustABit(character* Killer){return false;}
-#else
 bool cursedDeveloper::LifeSaveJustABit(character* Killer)
 {
   if(!bCursedDeveloper)
@@ -200,4 +195,5 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   
   return true;
 }
+
 #endif //CURSEDDEVELOPER

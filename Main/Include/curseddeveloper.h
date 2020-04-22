@@ -14,12 +14,18 @@
 #define __CURSEDDEVELOPER_H__
 
 class cursedDeveloper {
+#ifdef CURSEDDEVELOPER
   public:
-    static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
-    static bool LifeSaveJustABit(character* Killer);
     static bool IsCursedDeveloper(){return bCursedDeveloper;};
+    static bool LifeSaveJustABit(character* Killer);
+    static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
   private:
     static bool bCursedDeveloper;
+#else
+  public:
+    static bool IsCursedDeveloper(){return false;}
+    static bool LifeSaveJustABit(character* Killer){return false;}
+#endif
 };
 
 #endif //__CURSEDDEVELOPER_H__

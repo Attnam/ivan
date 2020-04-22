@@ -22,6 +22,12 @@
 class wizautoplay
 {
   public:
+    static int GetMaxValueless(){return iMaxValueless;}
+  private:
+    static int iMaxValueless;
+    
+#ifdef WIZARD
+  public:
     static void AutoPlayCommandKey(character* C,int& Key,truth& HasActed,truth& ValidKeyPressed);
     static truth AutoPlayAICommand(int&);
     static truth AutoPlayAIPray();
@@ -39,28 +45,22 @@ class wizautoplay
     static truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
     static void AutoPlayAITeleport(bool bDeathCountBased);
     static void AutoPlayAIReset(bool bFailedToo);
-    static int GetMaxValueless(){return iMaxValueless;}
     static truth AutoPlayAIequipConsumeZapReadApply();
-    static truth IsPlayerAutoPlay(character* C);
-    
-#ifdef WIZARD
     static void IncAutoPlayMode();
-    static int GetAutoPlayMode() { return AutoPlayMode; }
     static void AutoPlayModeApply();
     static void DisableAutoPlayMode() {AutoPlayMode=AUTOPLAYMODE_DISABLED;AutoPlayModeApply();}
-#else
-    static int GetAutoPlayMode() { return AUTOPLAYMODE_DISABLED; }
-#endif
     
+    static truth IsPlayerAutoPlay(character* C);
+    static int GetAutoPlayMode() { return AutoPlayMode; }
   private:
     static truth IsPlayerAutoPlay(){return IsPlayerAutoPlay(P);};
-    /**
-     * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
-     * btw, lantern price is currently 10.
-     */
-    static int iMaxValueless;
     static character* P;
     static int AutoPlayMode;
+#else
+  public:
+    static truth IsPlayerAutoPlay(character* C){return false;}
+    static int GetAutoPlayMode() { return AUTOPLAYMODE_DISABLED; }
+#endif
 };
 
 #endif //__WIZAUTOPLAY_H__

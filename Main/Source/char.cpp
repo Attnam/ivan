@@ -1693,9 +1693,12 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   {
     ADD_MESSAGE("You die.");
     
+#ifdef CURSEDDEVELOPER    
     if(cursedDeveloper::LifeSaveJustABit((character*)Killer))
       return;
+#endif
     
+#ifdef WIZARD
     if(game::WizardModeIsActive())
     {
       game::DrawEverything();
@@ -1713,6 +1716,8 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
         return;
       }
     }
+#endif
+    
   }
   else if(CanBeSeenByPlayer() && !(DeathFlags & DISALLOW_MSG))
     ProcessAndAddMessage(GetDeathMessage());
@@ -4008,8 +4013,10 @@ void character::TeleportRandomly(truth Intentional)
   if(GetAction() && GetAction()->IsVoluntary())
     GetAction()->Terminate(false);
 
+#ifdef WIZARD
   if(wizautoplay::IsPlayerAutoPlay(this))
     wizautoplay::AutoPlayAIReset(true);
+#endif
 
   // There's a small chance that some warp gas/fluid is left behind.
   if(FromSquare->IsFlyable() && !RAND_N(1000))
