@@ -577,6 +577,7 @@ olterrain* crafthandle::SpawnTerrain(recipedata& rpd, festring& fsCreated){
   switch(rpd.otSpawnType){
     case CTT_FURNITURE:
       otSpawn=decoration::Spawn(rpd.otSpawnCfg);
+      game::CheckAddAutoMapNote(otSpawn->GetLSquareUnder());
       break;
     case CTT_DOOR:
       otSpawn=door::Spawn(rpd.otSpawnCfg);

@@ -5201,7 +5201,15 @@ void character::DrawPanel(truth AnimationDraw) const
                          v2(RES.X - 19 - (game::GetMaxScreenXSize() << 4), RES.Y));
   igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
                          v2(game::GetMaxScreenXSize() << 4, 9));
-  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
+  int iLeftPos=0;
+#ifdef CURSEDDEVELOPER
+    if(cursedDeveloper::IsCursedDeveloper()){
+      festring fsCD="(Cursed Developer) ";
+      iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
+      FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), YELLOW, fsCD.CStr(), GetPanelName().CStr());
+    }
+#endif
+  FONT->Printf(DOUBLE_BUFFER, v2(16+iLeftPos, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
   int PanelPosY = DrawStats(false);
@@ -8055,10 +8063,6 @@ festring character::GetPanelName() const
 
   festring PanelName;
   if(!game::IsInWilderness()){
-#ifdef CURSEDDEVELOPER
-    if(cursedDeveloper::IsCursedDeveloper())
-      PanelName << "[Cursed Developer!] ";
-#endif
     PanelName << Name;
     if(ivanconfig::IsShowFullDungeonName()){
       PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true) << ')';

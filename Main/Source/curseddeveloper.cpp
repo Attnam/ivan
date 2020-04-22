@@ -35,11 +35,11 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   character* P = game::GetPlayer();
   game::DrawEverything();
 
-  int iBuff=0,iDebuff=0;
+  int iKillerBuff=0,iKillerDebuff=0;
   bool bRev;
-  bool bStay = BuffAndDebuffPlayerKiller(Killer,iBuff,iDebuff,bRev); //to spice it up
+  bool bStay = BuffAndDebuffPlayerKiller(Killer,iKillerBuff,iKillerDebuff,bRev); //to spice it up
   if(!bStay)
-    Killer->SetAssignedName(festring()+"[B"+iBuff+"D"+iDebuff+(bRev?"R":"")+"]"); //player killed count
+    Killer->SetAssignedName(festring()+"[B"+iKillerBuff+"D"+iKillerDebuff+(bRev?"R":"")+"]"); //player killed count
 
   // save life but just a little bit
   for(int c = 0; c < P->BodyParts; ++c){ //only enough to continue testing normal gameplay
@@ -94,19 +94,20 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   if(!bStay && Killer && !game::IsInWilderness()){
     game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here.");
     
-    // teleport
-    P->Move(P->GetLevel()->GetRandomSquare(P), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
-    
-    // at resurrect spot
-    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(TELEPORT_FLUID, 30 * P->GetAttribute(MANA)));
-    if(iDebuff>0)
-      P->GetLSquareUnder()->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
+    //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+    P->TeleportRandomly(true);
   }
   
   // at resurrect spot
-  P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
-
-  ADD_MESSAGE("But wait... you are cursed, therefore forbidden to R.I.P... and your doings will be forever forgotten...");
+  if(iKillerDebuff>0){ // if enemy got over powerful, buff the player randomly
+    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
+    P->GetLSquareUnder()->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
+  }
+  
+  ADD_MESSAGE("But wait... you are cursed, forbidden to R.I.P... and your doings will be forever forgotten...");
+  
+  game::DrawEverything();
+  
   return true;
 }
 

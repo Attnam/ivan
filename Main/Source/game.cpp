@@ -1536,7 +1536,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
   //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
   int iLineHeightPixels=15; //line height in pixels
-  int iFontWidth=8; //font width
+  int iFontWidth=FONT->GetFontSize().X;
   int iM=3; //margin
 
   const static int iTotCol=5;
