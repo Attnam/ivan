@@ -126,19 +126,19 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   if(!bCursedDeveloper)return true;
   if(!Killer)return true;
   
-  riBuff=1;
   riDebuff=0;
   rbRev=false;
   
   // BUFFs, every death makes it harder to player:
+  riBuff=1;
   if(!Killer->HasStateFlag(ESP)){Killer->GainIntrinsic(ESP);return false;}
   riBuff++;
   if(!Killer->HasStateFlag(INFRA_VISION)){Killer->GainIntrinsic(INFRA_VISION);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(VAMPIRISM)){Killer->GainIntrinsic(VAMPIRISM);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(PANIC))
-    if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return false;}
+//  riBuff++;
+//  if(!Killer->HasStateFlag(VAMPIRISM)){Killer->GainIntrinsic(VAMPIRISM);return false;}
+//  riBuff++;
+//  if(!Killer->HasStateFlag(PANIC))
+//    if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return false;}
   riBuff++;
   if(!Killer->HasStateFlag(SLOW))
     if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return false;}
@@ -160,7 +160,9 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   riBuff++;
   if(!Killer->HasStateFlag(POLYMORPH_LOCK)){Killer->GainIntrinsic(POLYMORPH_LOCK);return false;}
   
-  // DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
+  /*************************
+   *  DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
+   */
   riDebuff=1;
   if(!Killer->HasStateFlag(HICCUPS)){
 //    Killer->DeActivateTemporaryState(INVISIBLE);
@@ -181,17 +183,17 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   if(!Killer->HasStateFlag(CONFUSED)){Killer->GainIntrinsic(CONFUSED);return false;}
   riDebuff++;
   if(!Killer->HasStateFlag(LEPROSY)){Killer->GainIntrinsic(LEPROSY);return false;}
-  riDebuff++;
+//  riDebuff++;
 // this is too much as adds worm mobs on the dungeon...
 //  if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
-//  riDebuff++;
-  if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
   riDebuff++;
-  if(!Killer->HasStateFlag(PANIC)){
-    Killer->DeActivateTemporaryState(FEARLESS);
-    Killer->GainIntrinsic(PANIC);
-    return true;
-  }
+  if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
+//  riDebuff++;
+//  if(!Killer->HasStateFlag(PANIC)){
+//    Killer->DeActivateTemporaryState(FEARLESS);
+//    Killer->GainIntrinsic(PANIC);
+//    return true;
+//  }
   
   // Revenge, grant it will stop:
   game::GetCurrentLevel()->Explosion(
