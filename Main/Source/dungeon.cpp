@@ -10,19 +10,21 @@
  *
  */
 
-#include "dungeon.h"
-#include "level.h"
-#include "script.h"
-#include "error.h"
-#include "game.h"
-#include "save.h"
-#include "femath.h"
-#include "bitmap.h"
-#include "graphics.h"
-#include "message.h"
 #include "audio.h"
+#include "bitmap.h"
 #include "database.h"
 #include "dbgmsgproj.h"
+#include "dungeon.h"
+#include "error.h"
+#include "femath.h"
+#include "game.h"
+#include "graphics.h"
+#include "level.h"
+#include "message.h"
+#include "save.h"
+#include "script.h"
+#include "wizautoplay.h"
+
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -125,7 +127,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
                              true, &game::BusyAnimation);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nPress any key to continue."),
-                             Displacement, WHITE, game::GetAutoPlayMode()<AUTOPLAYMODE_SLOW, 
+                             Displacement, WHITE, wizautoplay::GetAutoPlayMode()<AUTOPLAYMODE_SLOW, 
                              false, &game::BusyAnimation);
             game::SetEnterImage(0);
             delete EnterImage;

@@ -2020,8 +2020,20 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
       fs<<matS->GetName(UNARTICLED);
     }
     fs<<".";
+    
     if(matM||matS){
       ADD_MESSAGE("%s",fs.CStr());
+      itemvector v;
+      rpd.rc.H()->GetStack()->FillItemVector(v);
+      if(!it0->HasTag('m')){ //material info transfered to item from 
+        for(int i=0;i<v.size();i++){
+          if(dynamic_cast<materialmanual*>(v[i])){
+            it0->SetTag('m');
+            it0->SetLabel(it0->GetLabel()+"s"+matM->GetStrengthValue()+"f"+matM->GetFlexibility());
+          }
+          break;
+        }
+      }
       craftcore::CraftSkillAdvance(rpd);
     }else{
       ADD_MESSAGE("You can't inspect %s.",it0->GetName(INDEFINITE).CStr());

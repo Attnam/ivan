@@ -168,12 +168,6 @@ class areachangerequest { };
 
 typedef void (*dbgdrawoverlay)();
 
-#define AUTOPLAYMODE_DISABLED 0
-#define AUTOPLAYMODE_NOTIMEOUT 1
-#define AUTOPLAYMODE_SLOW 2
-#define AUTOPLAYMODE_FAST 3
-#define AUTOPLAYMODE_FRENZY 4
-
 #define AUTOSAVE_SUFFIX ".AutoSave"
 #define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
@@ -409,10 +403,6 @@ class game
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
-  static void IncAutoPlayMode();
-  static int GetAutoPlayMode() { return AutoPlayMode; }
-  static void AutoPlayModeApply();
-  static void DisableAutoPlayMode() {AutoPlayMode=AUTOPLAYMODE_DISABLED;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -421,7 +411,6 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
-  static int GetAutoPlayMode() { return AUTOPLAYMODE_DISABLED; }
 #endif
 
   static truth WizardModeIsReallyActive() { return WizardMode; }
@@ -593,7 +582,6 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
-  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;

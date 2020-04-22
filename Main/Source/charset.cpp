@@ -57,8 +57,10 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(character)(0, 0, 0, "character");
 #include "team.h"
 #include "traps.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "wsquare.h"
 
 #include "team.cpp"
 #include "char.cpp"
 #include "curseddeveloper.cpp"
+#include "wizautoplay.cpp"

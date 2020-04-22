@@ -170,7 +170,7 @@ truth pickaxe::Apply(character* User)
   }
 
   int Dir = game::DirectionQuestion(CONST_S("What direction do you want to dig? [press a direction key]"), false);
-  if(User->IsPlayerAutoPlay())Dir = clock()%8;
+  if(wizautoplay::IsPlayerAutoPlay(User))Dir = clock()%8;
   if(Dir == DIR_ERROR)
     return false;
 

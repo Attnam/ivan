@@ -21,6 +21,7 @@
     <df root="Main/Include" name="2">
       <in>curseddeveloper.h</in>
       <in>dungeon.h</in>
+      <in>wizautoplay.h</in>
     </df>
     <df root="FeLib/Include" name="3">
       <in>bitmap.h</in>
@@ -105,6 +106,7 @@
       <in>trap.cpp</in>
       <in>traps.cpp</in>
       <in>trapset.cpp</in>
+      <in>wizautoplay.cpp</in>
       <in>wmapset.cpp</in>
       <in>worldmap.cpp</in>
       <in>wskill.cpp</in>
@@ -251,6 +253,8 @@
       </item>
       <item path="Main/Include/dungeon.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Main/Include/wizautoplay.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/actions.cpp" ex="false" tool="1" flavor2="0">
@@ -354,6 +358,8 @@
       <item path="Main/Source/traps.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/trapset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wizautoplay.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Main/Source/wmapset.cpp" ex="false" tool="1" flavor2="0">
       </item>

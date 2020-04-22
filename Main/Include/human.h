@@ -172,7 +172,6 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
-  truth AutoPlayAIequipConsumeZapReadApply();
   static v2 GetSilhouetteWhere(){return SilhouetteWhere;}
   static v2 GetSilhouetteWhereDefault(){return SilhouetteWhereDefault;}
   static void SetSilhouetteWhere(v2 pos){SilhouetteWhere=pos;}

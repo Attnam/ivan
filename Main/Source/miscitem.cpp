@@ -1672,7 +1672,7 @@ truth itemcontainer::ContentsCanBeSeenBy(ccharacter* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) &&
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) &&
     !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
@@ -1707,7 +1707,7 @@ truth beartrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) &&
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) &&
      !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
@@ -4069,7 +4069,7 @@ truth gastrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer() && (!User->IsPlayerAutoPlay()) && 
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) && 
     !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 

@@ -35,7 +35,7 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   character* P = game::GetPlayer();
   game::DrawEverything();
 
-  int iBuff,iDebuff;
+  int iBuff=0,iDebuff=0;
   bool bRev;
   bool bStay = BuffAndDebuffPlayerKiller(Killer,iBuff,iDebuff,bRev); //to spice it up
   if(!bStay)
@@ -107,7 +107,7 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   if(!bCursedDeveloper)return true;
   if(!Killer)return true;
   
-  riBuff=0;
+  riBuff=1;
   riDebuff=0;
   rbRev=false;
   
@@ -140,9 +140,9 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   if(!Killer->HasStateFlag(TELEPORT_LOCK)){Killer->GainIntrinsic(TELEPORT_LOCK);return false;}
   riBuff++;
   if(!Killer->HasStateFlag(POLYMORPH_LOCK)){Killer->GainIntrinsic(POLYMORPH_LOCK);return false;}
-  riBuff++;
   
   // DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
+  riDebuff=1;
   if(!Killer->HasStateFlag(HICCUPS)){
     Killer->DeActivateTemporaryState(INVISIBLE);
     Killer->GainIntrinsic(HICCUPS);
@@ -173,7 +173,6 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
     Killer->GainIntrinsic(PANIC);
     return true;
   }
-  riDebuff++;
   
   // Revenge, grant it will stop:
   game::GetCurrentLevel()->Explosion(
