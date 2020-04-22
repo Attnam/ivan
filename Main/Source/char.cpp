@@ -3994,10 +3994,11 @@ void character::TeleportRandomly(truth Intentional)
   else if(IsPlayer())
   {
     // This is to prevent uncontrolled teleportation from going unnoticed by players.
-    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    if(!cursedDeveloper::IsCursedDeveloperTeleport())
+      game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
   }
 
-  if(IsPlayer())
+  if(IsPlayer() && !cursedDeveloper::IsCursedDeveloperTeleport())
     ADD_MESSAGE("A rainbow-colored whirlpool twists the existence around you. "
                 "You are sucked through a tunnel piercing a myriad of surreal "
                 "universes. Luckily you return to this dimension in one piece.");

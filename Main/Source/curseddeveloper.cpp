@@ -21,6 +21,7 @@
 
 #ifdef CURSEDDEVELOPER
 bool cursedDeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
+bool cursedDeveloper::bCursedDeveloperTeleport = false;
 
 bool cursedDeveloper::LifeSaveJustABit(character* Killer)
 {
@@ -33,8 +34,15 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   int iKillerBuff=0,iKillerDebuff=0;
   bool bRev;
   bool bStay = BuffAndDebuffPlayerKiller(Killer,iKillerBuff,iKillerDebuff,bRev); //to spice it up
-  if(!bStay)
-    Killer->SetAssignedName(festring()+"[B"+iKillerBuff+"D"+iKillerDebuff+(bRev?"R":"")+"]"); //player killed count
+  if(!bStay){
+    festring fsAN = Killer->GetAssignedName();
+    festring fsToken=" <[B";
+    ulong pos = fsAN.Find(fsToken);
+    if(pos!=festring::NPos)
+      fsAN.Erase(pos,fsAN.GetSize()-pos);
+    fsAN<<fsToken<<iKillerBuff<<"D"<<iKillerDebuff<<(bRev?"R":"")<<"]>";
+    Killer->SetAssignedName(fsAN);
+  }
 
   // save life but just a little bit
   for(int c = 0; c < P->BodyParts; ++c){ //only enough to continue testing normal gameplay
@@ -90,16 +98,17 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
     game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here.");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+    bCursedDeveloperTeleport=true;
     P->TeleportRandomly(true);
+    ADD_MESSAGE("You see a flash of dark light and teleport away from the killing blow!");
+    bCursedDeveloperTeleport=false;
   }
   
   // at resurrect spot
-  if(iKillerDebuff>0){ // if enemy got over powerful, buff the player randomly
+  if(iKillerDebuff>0) // if enemy got too powerful, buff the player randomly
     P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
-    P->GetLSquareUnder()->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
-  }
   
-  ADD_MESSAGE("But wait... you are cursed, forbidden to R.I.P... and your doings will be forever forgotten...");
+  ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   
   game::DrawEverything();
   
