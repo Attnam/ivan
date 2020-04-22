@@ -1995,6 +1995,21 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
   }
 };srpDismantle rpDismantle;
 
+void addMaterialInfo(character* C,item* it){
+  itemvector v;
+  material* matM = it->GetMainMaterial();
+  C->GetStack()->FillItemVector(v);
+  if(!it->HasTag('m')){ //material info transfered to item from 
+    for(int i=0;i<v.size();i++){
+      if(dynamic_cast<materialmanual*>(v[i])){
+        it->SetTag('m');
+        it->SetLabel(it->GetLabel()+"s"+matM->GetStrengthValue()+"f"+matM->GetFlexibility());
+        break;
+      }
+    }
+  }
+}
+
 struct srpInspect : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
     init("inspect","item materials");
@@ -2023,17 +2038,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
     
     if(matM||matS){
       ADD_MESSAGE("%s",fs.CStr());
-      itemvector v;
-      rpd.rc.H()->GetStack()->FillItemVector(v);
-      if(!it0->HasTag('m')){ //material info transfered to item from 
-        for(int i=0;i<v.size();i++){
-          if(dynamic_cast<materialmanual*>(v[i])){
-            it0->SetTag('m');
-            it0->SetLabel(it0->GetLabel()+"s"+matM->GetStrengthValue()+"f"+matM->GetFlexibility());
-          }
-          break;
-        }
-      }
+      addMaterialInfo(rpd.rc.H(),it0);
       craftcore::CraftSkillAdvance(rpd);
     }else{
       ADD_MESSAGE("You can't inspect %s.",it0->GetName(INDEFINITE).CStr());
@@ -2099,6 +2104,8 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
     }
 
     rpd.SetAlreadyExplained();
+    addMaterialInfo(rpd.rc.H(),it0);
+    addMaterialInfo(rpd.rc.H(),it1);
     craftcore::CraftSkillAdvance(rpd);
 
     return true;

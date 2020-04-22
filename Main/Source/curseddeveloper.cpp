@@ -87,11 +87,24 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
 
   if(P->GetAction())
     P->GetAction()->Terminate(false); //just to avoid messing any action
-
+  
+  // at death spot
+  P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
+  
   if(!bStay && Killer && !game::IsInWilderness()){
     game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here.");
+    
+    // teleport
     P->Move(P->GetLevel()->GetRandomSquare(P), true); //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
+    
+    // at resurrect spot
+    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(TELEPORT_FLUID, 30 * P->GetAttribute(MANA)));
+    if(iDebuff>0)
+      P->GetLSquareUnder()->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
   }
+  
+  // at resurrect spot
+  P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
 
   ADD_MESSAGE("But wait... you are cursed, therefore forbidden to R.I.P... and your doings will be forever forgotten...");
   return true;
@@ -180,7 +193,8 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   
   ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
   Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
-  
+  Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
+    
   rbRev=true;
   
   return true;
