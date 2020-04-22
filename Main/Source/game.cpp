@@ -1267,15 +1267,24 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-/**
- * prepend
- */
+//static int iMaxNoteLength=100;
+//void game::AppendMapNote(lsquare* lsqrN,festring What)
+//{
+//  festring finalWhat;
+//  finalWhat << game::MapNoteToken();
+//  finalWhat << What;
+//  if(lsqrN->GetEngraved())
+//    finalWhat << " " << lsqrN->GetEngraved();
+//  static int iMaxLength=100;
+//  if(finalWhat.GetSize()>iMaxLength)
+//    finalWhat.Resize(iMaxLength);
+//  lsqrN->Engrave(finalWhat);
+//}
 void game::SetMapNote(lsquare* lsqrN,festring What)
 {
   festring finalWhat;
   finalWhat << game::MapNoteToken();
   finalWhat << What;
-  if(lsqrN->GetEngraved())finalWhat << " " << lsqrN->GetEngraved();
   lsqrN->Engrave(finalWhat);
 }
 
@@ -1597,6 +1606,15 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
       col16 colMapNoteBkg2=colMapNoteBkg;
+      if(festring(vMapNotes[i].note).Find("@")!=festring::NPos)
+        colMapNoteBkg2=BLACK;
+      else
+      if(festring(vMapNotes[i].note).Find("?")!=festring::NPos)
+        colMapNoteBkg2=GREEN;
+      else
+      if(festring(vMapNotes[i].note).Find("!!!")!=festring::NPos)
+        colMapNoteBkg2=YELLOW;
+      else
       if(festring(vMapNotes[i].note).Find("!!")!=festring::NPos)
         colMapNoteBkg2=RED;
       else

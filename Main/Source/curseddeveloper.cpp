@@ -95,7 +95,8 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
   
   if(!bStay && Killer && !game::IsInWilderness()){
-    game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here.");
+    if(!P->GetLSquareUnder()->GetEngraved())
+      game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
     bCursedDeveloperTeleport=true;
@@ -141,9 +142,9 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   riBuff++;
   if(!Killer->HasStateFlag(SLOW))
     if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(HICCUPS))
-    if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return false;}
+//  riBuff++;
+//  if(!Killer->HasStateFlag(HICCUPS))
+//    if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return false;}
   riBuff++;
   if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return false;}
   riBuff++;
@@ -162,7 +163,7 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   // DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
   riDebuff=1;
   if(!Killer->HasStateFlag(HICCUPS)){
-    Killer->DeActivateTemporaryState(INVISIBLE);
+//    Killer->DeActivateTemporaryState(INVISIBLE);
     Killer->GainIntrinsic(HICCUPS);
     return false;
   }

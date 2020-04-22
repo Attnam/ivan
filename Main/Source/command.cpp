@@ -1085,9 +1085,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
             What=c;
             if(What.GetSize()>0){
               if(What[0]==game::MapNoteToken()){ //having map note token means it is already a map note, so let it be read/write at will
-                std::string str=What.CStr();
-                What.Empty();
-                What<<str.substr(1).c_str(); //removes token prefix TODO implement substr() at festring
+                What.Erase(0,1); //removes token prefix
               } else { // this is a case of non-map note "engraving" (like normal vanilla engraving from golemns)
                 if(!lsqrN->HasBeenSeen()){
                   /*****
