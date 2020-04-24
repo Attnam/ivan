@@ -21,7 +21,7 @@
 
 /* Team data for the game */
 
-Teams = 17;
+Teams = 19;
 
 /*
  * Description of hard-coded teams:
@@ -42,6 +42,8 @@ Teams = 17;
  * 14 == XINROCH_TOMB_KAMIKAZE_DWARF_TEAM == The fanatics in the gas chambers.
  * 15 == PRISONER_TEAM == Prisoners in the Cathedral Cellar.
  * 16 == TERRA_TEAM == Terra in the Crystal Cave.
+ * 17 == ASLONA_TEAM == People loyal to Aslona.
+ * 18 == REBEL_TEAM == The rebels.
  */
 
 Team ATTNAM_TEAM;
@@ -55,13 +57,13 @@ Team SUMO_TEAM;
   Relation 0, HOSTILE;
 }
 
-Team 4; /* Spawned hostile angels */
+Team ANGEL_TEAM;
 {
   Relation 0, HOSTILE;
   Relation 1, UNCARING;
 }
 
-Team 5; /* Dungeon shopkeepers */
+Team GUILD_TEAM;
 {
   Relation 1, UNCARING;
   KillEvilness = 100;
@@ -121,12 +123,33 @@ Team XINROCH_TOMB_KAMIKAZE_DWARF_TEAM;
   KillEvilness = 100;
 }
 
+Team PRISONER_TEAM;
+{
+  Relation 1, UNCARING;
+  /*Relation 17, FRIEND;
+  Relation 18, FRIEND;*/
+  KillEvilness = 100;
+}
+
 Team TERRA_TEAM;
 {
   Relation 1, UNCARING;
   Relation 2, HOSTILE;
   Relation 7, FRIEND;
   KillEvilness = 150;
+}
+
+Team ASLONA_TEAM;
+{
+  Relation 0, UNCARING;
+  Relation 18, HOSTILE;
+  KillEvilness = 50;
+}
+
+Team REBEL_TEAM;
+{
+  Relation 17, HOSTILE;
+  KillEvilness = 50;
 }
 
 /* Dungeons to be included in the game */

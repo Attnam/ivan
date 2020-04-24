@@ -26,6 +26,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 
 #include <algorithm>
 #include <ctime>
+#include <cmath>
 
 #include "char.h"
 #include "message.h"
@@ -49,6 +50,8 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 #include "rawbit.h"
 #include "balance.h"
 #include "iconf.h"
+#include "worldmap.h"
+#include "wterras.h"
 
 #include "item.cpp"
 #include "bodypart.cpp"

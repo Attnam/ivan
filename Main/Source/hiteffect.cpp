@@ -48,8 +48,16 @@ bool hiteffect::ItemEfRefExists() const
 
 bool hiteffect::WhoIsHitExists() const
 {
-  if(game::SearchCharacter(setup.lWhoIsHitID)==NULL)return false;
-  return setup.WhoIsHit->Exists();
+  if(setup.WhoIsHit){
+    if(game::SearchCharacter(setup.lWhoIsHitID)==NULL)return false;
+    return setup.WhoIsHit->Exists();
+  }else
+  if(setup.HitAtSquare){
+    return true;
+  }
+  
+  ABORT("either WhoIsHit or HitAtSquare must be set!");
+  return false; //DUMMY
 }
 
 bool hiteffect::WhoHitsExists() const
@@ -79,10 +87,10 @@ hiteffect::hiteffect(hiteffectSetup s)
   bldLum.Src=v2(); //reset
   bldLum.Bitmap->ClearToColor(TRANSPARENT_COLOR); //reset
 
-  setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
+  setup=s; DBG5(this,s.WhoHits,s.WhoIsHit,s.HitAtSquare,"WhoWhereHits");//DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
   setup.lWhoHitsID = setup.WhoHits->GetID();
-  setup.lWhoIsHitID = setup.WhoIsHit->GetID();
+  if(setup.WhoIsHit)setup.lWhoIsHitID = setup.WhoIsHit->GetID();
   if(setup.lItemEffectReferenceID==0)ABORT("invalid item ID for hiteffect");
   item* itemEffectReference = game::SearchItem(setup.lItemEffectReferenceID);
 
@@ -91,7 +99,11 @@ hiteffect::hiteffect(hiteffectSetup s)
   v2CamPos = game::GetCamera();
 
   v2HitFromSqrPos=s.WhoHits->GetPos();  DBGSV2(v2HitFromSqrPos);
-  v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGSV2(v2HitToSqrPos);
+  if(setup.WhoIsHit)
+    v2HitToSqrPos=s.WhoIsHit->GetPos();
+  else
+    v2HitToSqrPos=s.HitAtSquare->GetPos();
+  DBGSV2(v2HitToSqrPos);
   v2HitFromToSqrDiff = v2HitFromSqrPos-v2HitToSqrPos; DBGSV2(v2HitFromToSqrDiff);
   if(v2HitFromToSqrDiff.X!=0 && v2HitFromToSqrDiff.Y!=0){ DBGLN; //diagonal
     v2 v2FromXY(Min(v2HitFromSqrPos.X,v2HitToSqrPos.X),Min(v2HitFromSqrPos.Y,v2HitToSqrPos.Y)); DBGSV2(v2FromXY);
@@ -103,7 +115,7 @@ hiteffect::hiteffect(hiteffectSetup s)
     }
   }
 
-  bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
+  bWhoIsHitDied=false;if(s.WhoIsHit)bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
 
   LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder(); DBGLN;
 
@@ -115,7 +127,7 @@ hiteffect::hiteffect(hiteffectSetup s)
     bldLum.Luminance = lumHigh;
     break;
   case 3: //colored indicators where possible
-    if(setup.WhoIsHit->IsPlayer() || setup.WhoIsHit->IsPet()){
+    if(setup.WhoIsHit && (setup.WhoIsHit->IsPlayer() || setup.WhoIsHit->IsPet())){
       bldLum.Luminance = lumReddish;
     }else
     if(setup.WhoHits->IsPlayer()){
@@ -128,14 +140,14 @@ hiteffect::hiteffect(hiteffectSetup s)
     }
     break;
   case 4: //dynamic colored indicators or based on usefulness of the color indicator
-    if(setup.WhoIsHit->IsPlayer() || setup.WhoHits->IsPlayer()){ //player being hit or hitting is w/o doubts the origin of the attack
+    if((setup.WhoIsHit && setup.WhoIsHit->IsPlayer()) || setup.WhoHits->IsPlayer()){ //player being hit or hitting is w/o doubts the origin of the attack
       if(setup.Critical){
         bldLum.Luminance = lumReddish;
       }else{
         bldLum.Luminance = NORMAL_LUMINANCE; // do not highlight non critical strikes
       }
     }else
-    if(setup.WhoIsHit->IsPet()){
+    if(setup.WhoIsHit && setup.WhoIsHit->IsPet()){
       if(setup.Critical){
         bldLum.Luminance = lumReddish;
       }else{
@@ -342,6 +354,7 @@ void hiteffect::cleanup(){
   setup.LSquareUnder=NULL;
   setup.WhoHits=NULL;
   setup.WhoIsHit=NULL;
+  setup.HitAtSquare=NULL;
   setup.lItemEffectReferenceID=0;
 
   //not external reference, must be deleted at destructor: bmpHitEffect=NULL;
@@ -383,7 +396,13 @@ truth hiteffect::DrawStep()
     //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
     if(bAnimate && bWhoIsHitDied)bAnimate=false;
     if(bAnimate && !WhoIsHitExists())bAnimate=false;
-    if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=v2HitToSqrPos){
+    if(bDraw && bAnimate &&
+       (
+        (setup.HitAtSquare && setup.HitAtSquare->GetPos()!=v2HitToSqrPos)
+        ||
+        (setup.WhoIsHit    && setup.WhoIsHit->GetPos()!=v2HitToSqrPos)
+       )
+    ){
       /*
        * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
        *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,

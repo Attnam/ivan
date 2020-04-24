@@ -31,7 +31,7 @@ material
   /* Obligatory: Color */
   PriceModifier = 0;
   Emitation = 0;
-  NutritionValue = 0;
+  NutritionValue = 10;
   ConsumeWisdomLimit = NO_LIMIT;
   /* Obligatory: NameStem */
   /* NameStem by default: AdjectiveStem */
@@ -46,6 +46,7 @@ material
   /* Obligatory: AttachedGod */
   StepInWisdomLimit = NO_LIMIT;
   Acidicity = 0;
+  Hotness = 0;
   NaturalForm = lump;
   HardenedMaterial = NONE;
   SoftenedMaterial = NONE;
@@ -610,7 +611,7 @@ solid
   Config LINEN_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 150;
     Color = rgb16(255, 236, 139);
     NameStem = "linen cloth";
@@ -627,7 +628,7 @@ solid
   Config HEMP_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 150;
     Color = rgb16(80, 80, 176);
     NameStem = "hemp cloth";
@@ -644,7 +645,7 @@ solid
   Config WOOL_CLOTH;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 250;
     Color = rgb16(250, 240, 230);
     NameStem = "wool cloth";
@@ -661,7 +662,7 @@ solid
   Config FELT;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 250;
     Color = rgb16(111, 74, 37);
     NameStem = "felt";
@@ -677,7 +678,7 @@ solid
   Config FABRIC;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 200;
     Color = rgb16(176, 0, 0);
     NameStem = "expensive fabric";
@@ -695,7 +696,7 @@ solid
   Config ELF_CLOTH;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 300;
     Color = rgb16(39, 119, 20);
     NameStem = "elven cloth";
@@ -713,7 +714,7 @@ solid
   Config NYMPH_HAIR;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(100, 100, 200);
     NameStem = "nymph hair";
@@ -730,7 +731,7 @@ solid
   Config OMMEL_HAIR;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 400;
     Color = rgb16(160, 0, 0);
     NameStem = "ommel hair";
@@ -749,7 +750,7 @@ solid
   Config TROLL_WOOL;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(233, 216, 180);
     NameStem = "troll wool";
@@ -767,7 +768,7 @@ solid
   Config ANGEL_HAIR;
   {
     StrengthValue = 140;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(200, 200, 0);
     NameStem = "angel hair";
@@ -787,7 +788,7 @@ solid
   Config SPIDER_SILK;
   {
     StrengthValue = 180;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(160, 160, 160);
     NameStem = "spider silk";
@@ -806,7 +807,7 @@ solid
   Config GOSSAMER;
   {
     StrengthValue = 220;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 200;
     Color = rgb16(191, 62, 255);
     NameStem = "gossamer";
@@ -825,7 +826,7 @@ solid
   Config SPIRIT_CLOTH;
   {
     StrengthValue = 260;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 50;
     Color = rgb16(154, 50, 205);
     Emitation = rgb24(100, 100, 160);
@@ -846,7 +847,7 @@ solid
   Config HUMAN_SKIN;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 600;
     Color = rgb16(255, 193, 193);
     NameStem = "human skin";
@@ -862,7 +863,7 @@ solid
   Config WOLF_SKIN;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1500;
     Color = rgb16(168, 147, 125);
     NameStem = "wolf pelt";
@@ -879,7 +880,7 @@ solid
   Config BEAR_SKIN;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(247, 247, 247);
     NameStem = "polar bear fur";
@@ -896,7 +897,7 @@ solid
   Config SNAKE_SKIN;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(143, 188, 143);
     NameStem = "snake skin";
@@ -913,7 +914,7 @@ solid
   Config CROCODILE_SKIN;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(110, 139, 61);
     NameStem = "crocodile skin";
@@ -932,7 +933,7 @@ solid
   Config BASILISK_SKIN;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1000;
     Color = rgb16(0, 205, 102);
     NameStem = "basilisk skin";
@@ -951,7 +952,7 @@ solid
   Config NAGA_SKIN;
   {
     StrengthValue = 90;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(127, 255, 0);
     NameStem = "naga scale";
@@ -970,7 +971,7 @@ solid
   Config WYVERN_HIDE;
   {
     StrengthValue = 120;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1500;
     Color = rgb16(84, 139, 84);
     NameStem = "wyvern hide";
@@ -989,7 +990,7 @@ solid
   Config HYDRA_HIDE;
   {
     StrengthValue = 140;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(78, 238, 148);
     NameStem = "hydra hide";
@@ -1008,7 +1009,7 @@ solid
   Config LEATHER;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(111, 64, 37);
     NameStem = "leather";
@@ -1025,7 +1026,7 @@ solid
   Config BLACK_LEATHER;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(40, 40, 40);
     NameStem = "black leather";
@@ -1042,7 +1043,7 @@ solid
   Config HARDENED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 50, 30);
     NameStem = "hardened leather";
@@ -1059,7 +1060,7 @@ solid
   Config BOILED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(80, 50, 30);
     NameStem = "boiled leather";
@@ -1076,7 +1077,7 @@ solid
   Config QUILTED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 70, 30);
     NameStem = "quilted leather";
@@ -1093,7 +1094,7 @@ solid
   Config STUDDED_LEATHER;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(100, 50, 0);
     NameStem = "studded leather";
@@ -1110,7 +1111,7 @@ solid
   Config TROLL_HIDE;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(128, 100, 32);
     NameStem = "troll hide";
@@ -1127,7 +1128,7 @@ solid
   Config IMP_HIDE;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2000;
     Color = rgb16(100, 0, 0);
     NameStem = "imp hide";
@@ -1144,7 +1145,7 @@ solid
   Config DRAGON_HIDE;
   {
     StrengthValue = 160;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 2500;
     Color = rgb16(160, 60, 32);
     NameStem = "dragon hide";
@@ -1163,7 +1164,7 @@ solid
   Config OUROBOROS_HIDE;
   {
     StrengthValue = 240;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 3000;
     Color = rgb16(205, 102, 0);
     NameStem = "ouroboros hide";
@@ -1184,7 +1185,7 @@ solid
   Config OSTRICH_FEATHER;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 500;
     Color = rgb16(185, 176, 161);
     NameStem = "ostrich feather";
@@ -1201,7 +1202,7 @@ solid
   Config HARPY_FEATHER;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 400;
     Color = rgb16(210, 180, 140);
     NameStem = "harpy feather";
@@ -1218,7 +1219,7 @@ solid
   Config GRIFFON_FEATHER;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 300;
     Color = rgb16(218, 165, 32);
     NameStem = "griffon feather";
@@ -1235,7 +1236,7 @@ solid
   Config PHOENIX_FEATHER;
   {
     StrengthValue = 80;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 200;
     Color = rgb16(220, 220, 0);
     NameStem = "phoenix feather";
@@ -1254,7 +1255,7 @@ solid
   Config STYMPHALIAN_FEATHER;
   {
     StrengthValue = 150;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1200;
     Color = rgb16(150, 100, 50);
     NameStem = "stymphalian feather";
@@ -1273,7 +1274,7 @@ solid
   Config GOLDEN_EAGLE_FEATHER;
   {
     StrengthValue = 300;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 100;
     Color = rgb16(80, 80, 176);
     NameStem = "golden eagle feather";
@@ -1292,7 +1293,7 @@ solid
   Config SEA_WEED;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(46, 139, 87);
     NameStem = "seaweed";
@@ -1308,7 +1309,7 @@ solid
   Config FISH_SCALE;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 600;
     Color = rgb16(193, 205, 193);
     NameStem = "fish scale";
@@ -1324,7 +1325,7 @@ solid
   Config MERMAID_HAIR;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 200;
     Color = rgb16(0, 191, 255);
     NameStem = "mermaid hair";
@@ -1341,7 +1342,7 @@ solid
   Config SELKIE_SKIN;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1000;
     Color = rgb16(119, 136, 153);
     NameStem = "selkie skin";
@@ -1358,7 +1359,7 @@ solid
   Config SEA_SERPENT_SCALE;
   {
     StrengthValue = 115;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1100;
     Color = rgb16(0, 0, 139);
     NameStem = "sea serpent scale";
@@ -1377,7 +1378,7 @@ solid
   Config KRAKEN_HIDE;
   {
     StrengthValue = 150;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1300;
     Color = rgb16(205, 155, 155);
     NameStem = "kraken hide";
@@ -1396,7 +1397,7 @@ solid
   Config LEVIATHAN_HIDE;
   {
     StrengthValue = 175;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 1700;
     Color = rgb16(112, 128, 144);
     NameStem = "leviathan hide";
@@ -1416,7 +1417,7 @@ solid
   Config DREAM_CLOTH;
   {
     StrengthValue = 55;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(255, 20, 147);
     NameStem = "dream cloth";
@@ -1435,7 +1436,7 @@ solid
   Config RAINBOW_CLOTH;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(135, 206, 250);
     NameStem = "rainbow cloth";
@@ -1454,7 +1455,7 @@ solid
   Config SHADOW_CLOTH;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 150;
     Color = rgb16(138, 121, 93);
     NameStem = "shadow cloth";
@@ -1869,6 +1870,7 @@ solid
     StrengthValue = 75;
     ConsumeType = CT_METAL;
     Density = 19100;
+    NutritionValue = 2000;
     Color = rgb16(27, 226, 21);
     Emitation = rgb24(50, 160, 50);
     PriceModifier = 1500;
@@ -1890,6 +1892,7 @@ solid
     StrengthValue = 95;
     ConsumeType = CT_METAL;
     Density = 40000;
+    NutritionValue = 4000;
     Color = rgb16(236, 255, 0);
     Emitation = rgb24(160, 160, 100);
     PriceModifier = 2500;
@@ -1911,6 +1914,7 @@ solid
     StrengthValue = 115;
     ConsumeType = CT_METAL;
     Density = 100000;
+    NutritionValue = 8000;
     Color = rgb16(70, 173, 212);
     Emitation = rgb24(70, 120, 160);
     PriceModifier = 5000;
@@ -2149,7 +2153,7 @@ solid
   Config GRASS;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(32, 110, 32);
     NameStem = "grass";
@@ -2167,7 +2171,7 @@ solid
   Config DARK_GRASS;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(75, 100, 75);
     NameStem = "grass";
@@ -2185,7 +2189,7 @@ solid
   Config MYCELIUM;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 100;
     Color = rgb16(47, 79, 79);
     NameStem = "mycelium";
@@ -2202,7 +2206,7 @@ solid
   Config LEAF;
   {
     StrengthValue = 3;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(0, 160, 0);
     NameStem = "leaf";
@@ -2218,7 +2222,7 @@ solid
   Config PALM_LEAF;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(0, 160, 0);
     NameStem = "palm leaf";
@@ -2234,7 +2238,7 @@ solid
   Config WITCH_BARK;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(128, 128, 0);
     NameStem = "witchbark";
@@ -2251,7 +2255,7 @@ solid
   Config DARK_PETAL;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 300;
     Color = rgb16(0, 60, 0);
     NameStem = "dark petal";
@@ -2269,7 +2273,7 @@ solid
   Config STEEL_LEAF;
   {
     StrengthValue = 90;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 900;
     Color = rgb16(143, 188, 143);
     NameStem = "steeleaf";
@@ -2287,7 +2291,7 @@ solid
   Config CHLOROPHYTE;
   {
     StrengthValue = 125;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 1200;
     Color = rgb16(118, 169, 18);
     NameStem = "chlorophyte";
@@ -2307,7 +2311,7 @@ solid
   Config PAPYRUS;
   {
     StrengthValue = 3;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "papyrus";
@@ -2324,7 +2328,7 @@ solid
   Config PARCHMENT;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "parchment";
@@ -2341,7 +2345,7 @@ solid
   Config VELLUM;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 800;
     Color = rgb16(200, 200, 200);
     NameStem = "vellum";
@@ -2358,7 +2362,7 @@ solid
   Config PAPER_BOARD;
   {
     StrengthValue = 15;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 900;
     Color = rgb16(222, 222, 222);
     NameStem = "paperboard";
@@ -2377,7 +2381,7 @@ solid
   Config FUNGI_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 200;
     Color = rgb16(133, 99, 99);
     NameStem = "fungiwood";
@@ -2394,7 +2398,7 @@ solid
   Config SPRUCE_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 450;
     Color = rgb16(0, 89, 96);
     NameStem = "spruce wood";
@@ -2412,7 +2416,7 @@ solid
   Config SYCAMORE_WOOD;
   {
     StrengthValue = 32;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(102, 51, 0);
     NameStem = "sycamore wood";
@@ -2430,7 +2434,7 @@ solid
   Config ELM_WOOD;
   {
     StrengthValue = 40;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(130, 82, 1);
     NameStem = "elm wood";
@@ -2449,7 +2453,7 @@ solid
   Config ASH_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 850;
     Color = rgb16(159, 150, 136);
     NameStem = "ash wood";
@@ -2468,7 +2472,7 @@ solid
   Config CYPRESS_WOOD;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(166, 128, 100);
     NameStem = "cypress wood";
@@ -2488,7 +2492,7 @@ solid
   Config HOLLY_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 750;
     Color = rgb16(163, 105, 95);
     NameStem = "holly wood";
@@ -2506,7 +2510,7 @@ solid
   Config YEW_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(147, 95, 86);
     NameStem = "yew wood";
@@ -2524,7 +2528,7 @@ solid
   Config BEECH_WOOD;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 650;
     Color = rgb16(87, 51, 32);
     NameStem = "beech wood";
@@ -2542,7 +2546,7 @@ solid
   Config BAMBOO_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 400;
     Color = rgb16(83, 226, 86);
     NameStem = "bamboo";
@@ -2560,7 +2564,7 @@ solid
   Config MAHOGANY_WOOD;
   {
     StrengthValue = 55;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 850;
     Color = rgb16(103, 10, 10);
     NameStem = "mahogany wood";
@@ -2581,7 +2585,7 @@ solid
   Config BALSA_WOOD;
   {
     StrengthValue = 20;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 250;
     Color = rgb16(160, 108, 50);
     NameStem = "balsa wood";
@@ -2599,7 +2603,7 @@ solid
   Config PINE_WOOD;
   {
     StrengthValue = 25;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 400;
     Color = rgb16(208, 108, 42);
     NameStem = "pine wood";
@@ -2617,7 +2621,7 @@ solid
   Config FIR_WOOD;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(140, 96, 48);
     NameStem = "fir wood";
@@ -2635,7 +2639,7 @@ solid
   Config BIRCH_WOOD;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(130, 70, 32);
     NameStem = "birch wood";
@@ -2653,7 +2657,7 @@ solid
   Config OAK_WOOD;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(124, 50, 16);
     NameStem = "oak wood";
@@ -2672,7 +2676,7 @@ solid
   Config TEAK_WOOD;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 750;
     Color = rgb16(80, 40, 30);
     NameStem = "teak wood";
@@ -2691,7 +2695,7 @@ solid
   Config EBONY_WOOD;
   {
     StrengthValue = 65;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 1000;
     Color = rgb16(48, 48, 48);
     NameStem = "ebony wood";
@@ -2713,7 +2717,7 @@ solid
   Config KAURI_WOOD;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 800;
     Color = rgb16(140, 92, 42);
     NameStem = "kauri wood";
@@ -2734,7 +2738,7 @@ solid
   Config RATA_WOOD;
   {
     StrengthValue = 155;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 700;
     Color = rgb16(166, 44, 24);
     NameStem = "rata wood";
@@ -2755,7 +2759,7 @@ solid
   Config SIDGURE_WOOD; /* magical mango world-tree wood */
   {
     StrengthValue = 225;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 600;
     Color = rgb16(198, 110, 46);
     NameStem = "sidgure wood";
@@ -2931,7 +2935,7 @@ solid
   Config WAX;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_ANIMAL;
     Density = 900;
     Color = rgb16(240, 238, 176);
     NameStem = "wax";
@@ -3302,7 +3306,7 @@ solid
   Config AMBER;
   {
     StrengthValue = 95;
-    ConsumeType = CT_MINERAL; /* Or CT_MISC_ORGANIC? */
+    ConsumeType = CT_MINERAL; /* Or CT_MISC_ANIMAL? */
     Density = 1100;
     Color = rgb16(255, 191, 0);
     NameStem = "amber";
@@ -3716,7 +3720,7 @@ solid
     NameStem = "black jade";
     IntelligenceRequirement = 11;
     PriceModifier = 3000;
-    AttachedGod = SILVA;
+    AttachedGod = INFUSCOR;
     NaturalForm = stone;
     SoftenedMaterial = NEPHRITE;
     HardenedMaterial = RED_JADE;
@@ -3734,7 +3738,7 @@ solid
     NameStem = "red jade";
     IntelligenceRequirement = 19;
     PriceModifier = 3500;
-    AttachedGod = SILVA;
+    AttachedGod = CRUENTUS;
     NaturalForm = stone;
     SoftenedMaterial = BLACK_JADE;
     HardenedMaterial = GREEN_JADE;
@@ -3752,7 +3756,7 @@ solid
     NameStem = "green jade";
     IntelligenceRequirement = 25;
     PriceModifier = 4500;
-    AttachedGod = SILVA;
+    AttachedGod = SCABIES;
     NaturalForm = stone;
     SoftenedMaterial = RED_JADE;
     HardenedMaterial = BLUE_JADE;
@@ -3770,7 +3774,7 @@ solid
     NameStem = "blue jade";
     IntelligenceRequirement = 30;
     PriceModifier = 5500;
-    AttachedGod = SILVA;
+    AttachedGod = CLEPTIA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_JADE;
     HardenedMaterial = WHITE_JADE;
@@ -3788,9 +3792,10 @@ solid
     NameStem = "white jade";
     IntelligenceRequirement = 35;
     PriceModifier = 6500;
-    AttachedGod = SILVA;
+    AttachedGod = NEFAS;
     NaturalForm = stone;
     SoftenedMaterial = BLUE_JADE;
+    HardenedMaterial = BLACK_DIAMOND;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
@@ -3894,6 +3899,46 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_CRYSTAL;
+    HardenedMaterial = CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config CRYSTEEL;
+  {
+    StrengthValue = 200;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(100, 149, 237);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "crysteel";
+    Alpha = 150;
+    PriceModifier = 9000;
+    IntelligenceRequirement = 26;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = SUN_CRYSTAL;
+    HardenedMaterial = FLAWLESS_CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config FLAWLESS_CRYSTEEL;
+  {
+    StrengthValue = 255;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(70, 130, 180);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "flawless crysteel";
+    Alpha = 150;
+    PriceModifier = 10000;
+    IntelligenceRequirement = 35;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = CRYSTEEL;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
@@ -3957,6 +4002,7 @@ solid
     AttachedGod = INFUSCOR;
     HardenedMaterial = BRIM_STONE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config BRIM_STONE;
@@ -3970,6 +4016,7 @@ solid
     AttachedGod = INFUSCOR;
     SoftenedMaterial = SULFUR;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   /* Clays */
@@ -4139,6 +4186,7 @@ solid
 
 organic /* Substances that spoil but are not flesh. */
 {
+  NutritionValue = 20;
   SpoilModifier = 10000;
   BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
 
@@ -4147,7 +4195,7 @@ organic /* Substances that spoil but are not flesh. */
   Config PLANT_FIBER;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(111, 64, 37);
     NameStem = "plant fiber";
@@ -4163,7 +4211,7 @@ organic /* Substances that spoil but are not flesh. */
   Config MUTANT_PLANT_FIBER;
   {
     StrengthValue = 7;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(111, 64, 37);
     NameStem = "mutant plant fiber";
@@ -4180,7 +4228,7 @@ organic /* Substances that spoil but are not flesh. */
   Config BANANA_PEEL;
   {
     StrengthValue = 5;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MISC_PLANT;
     Density = 500;
     Color = rgb16(224, 224, 0);
     NameStem = "banana peel";
@@ -4619,7 +4667,7 @@ organic /* Substances that spoil but are not flesh. */
   Config RESIDUUM;
   {
     StrengthValue = 250;
-    ConsumeType = CT_MISC_ORGANIC;
+    ConsumeType = CT_MAGIC;
     Density = 10000;
     Color = rgb16(107, 255, 251);
     NameStem = "residuum";
@@ -4696,6 +4744,8 @@ gas
     Alpha = 150;
     AttachedGod = MORTIFER;
     HardenedMaterial = SOUL_STEEL;
+    EffectStrength = 3;
+    Effect = EFFECT_PHASE;
     NameFlags = Base|USE_AN;
     BodyFlags = Base|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   }
@@ -4742,6 +4792,7 @@ gas
     Alpha = 150;
     AttachedGod = SILVA;
     BreatheMessage = "Ugh. It smells horrible here.";
+    HardenedMaterial = MUSTARD_GAS;
     CategoryFlags = Base|IS_SCARY;
     InteractionFlags = Base|CAN_EXPLODE;
   }
@@ -4755,6 +4806,7 @@ gas
     BreatheMessage = "It smells like mustard here.";
     Effect = EFFECT_MUSTARD_GAS;
     StepInWisdomLimit = 8;
+    CategoryFlags = Base|IS_SCARY;
   }
 
   Config SLEEPING_GAS;
@@ -4777,6 +4829,46 @@ gas
     HardenedMaterial = TELEPORT_FLUID;
     StepInWisdomLimit = 10;
   }
+
+  Config LAUGHING_GAS;
+  {
+    Color = rgb16(255, 105, 180);
+    NameStem = "laughing gas";
+    Alpha = 100;
+    AttachedGod = DULCIS;
+    Effect = EFFECT_LAUGH;
+    BreatheMessage = "You laugh like a madman.";
+    StepInWisdomLimit = 10;
+  }
+
+  Config ACID_GAS;
+  {
+    Color = rgb16(160, 160, 0);
+    NameStem = "caustic fumes";
+    Alpha = 150;
+    AttachedGod = SCABIES;
+    HardenedMaterial = SULPHURIC_ACID;
+    Effect = EFFECT_ACID_GAS;
+    EffectStrength = 25;
+    Acidicity = 50;
+    BreatheMessage = "It burns!";
+    StepInWisdomLimit = 3;
+  }
+
+  Config FIRE_GAS;
+  {
+    Color = rgb16(225, 25, 25);
+    Emitation = rgb24(150, 120, 90);
+    NameStem = "burning vapors";
+    Alpha = 100;
+    AttachedGod = LEGIFER;
+    HardenedMaterial = NAPALM;
+    Effect = EFFECT_FIRE_GAS;
+    EffectStrength = 50;
+    Hotness = 75;
+    BreatheMessage = "It burns!";
+    StepInWisdomLimit = 3;
+  }
 }
 
 liquid
@@ -4792,7 +4884,7 @@ liquid
   Config ANTIDOTE_LIQUID;
   {
     StrengthValue = 1;
-    NutritionValue = 100;
+    NutritionValue = 10;
     Color = rgb16(128, 0, 128);
     NameStem = "antidote";
     Effect = EFFECT_ANTIDOTE;
@@ -4826,7 +4918,7 @@ liquid
   Config HEALING_LIQUID;
   {
     StrengthValue = 1;
-    NutritionValue = 250;
+    NutritionValue = 50;
     Color = rgb16(180, 0, 0);
     PriceModifier = 1500;
     NameStem = "healing potion";
@@ -4844,12 +4936,14 @@ liquid
     StrengthValue = 50;
     Flexibility = 50;
     Density = 50;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(220, 30, 220);
     Emitation = rgb24(139, 0, 139);
     NameStem = "raw liquefied magic";
     Alpha = 150;
+    EffectStrength = 250;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
     SoftenedMaterial = MAGIC_VAPOUR;
@@ -4862,14 +4956,31 @@ liquid
   {
     StrengthValue = 1;
     Density = 50;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(153, 50, 204);
     NameStem = "warp fluid";
     Alpha = 150;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_TELEPORTATION;
     SoftenedMaterial = TELEPORT_GAS;
+    CommonFlags = Base|IS_VALUABLE;
+  }
+
+  Config POLYMORPHINE;
+  {
+    StrengthValue = 1;
+    Density = 50;
+    NutritionValue = 0;
+    RustModifier = 0;
+    Color = rgb16(255, 20, 147);
+    NameStem = "polymorphine";
+    Alpha = 50;
+    PriceModifier = 500;
+    AttachedGod = SCABIES;
+    Effect = EFFECT_POLYJUICE;
+    SoftenedMaterial = CHAMELEON_FLESH;
     CommonFlags = Base|IS_VALUABLE;
   }
 
@@ -4892,7 +5003,7 @@ liquid
     NutritionValue = 1500;
     Color = rgb16(244, 164, 96);
     NameStem = "chicken soup";
-    Effect = EFFECT_HEAL; /* Chiken soup is good hwne you're ill! */
+    Effect = EFFECT_HEAL; /* Chicken soup is good when you're ill! */
     ConsumeEndMessage = CEM_HEALING_LIQUID;
     HitMessage = HM_HEALING_LIQUID;
     EffectStrength = 50;
@@ -4974,6 +5085,7 @@ liquid
     Color = rgb16(0, 15, 85);
     NameStem = "ink";
     Alpha = 175;
+    PriceModifier = 1000;
     AttachedGod = SOPHOS;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -4984,6 +5096,8 @@ liquid
     NutritionValue = -10;
     Color = rgb16(244, 244, 244);
     NameStem = "brine";
+    Effect = EFFECT_PUKE;
+    EffectStrength = 50;
     Alpha = 175;
     AttachedGod = SILVA;
     SoftenedMaterial = WATER;
@@ -5019,6 +5133,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|CAN_EXPLODE|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config VODKA;
@@ -5055,6 +5170,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config WHITE_WINE;
@@ -5072,6 +5188,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config RED_WINE;
@@ -5089,12 +5206,13 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(216, 120, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "beer";
@@ -5106,12 +5224,13 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config ELF_ALE;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(247, 148, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "elven ale";
@@ -5129,7 +5248,7 @@ liquid
   Config DWARF_BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(192, 72, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "dwarven stout";
@@ -5211,7 +5330,7 @@ liquid
     Effect = EFFECT_PEPSI;
     ConsumeEndMessage = CEM_PEPSI;
     HitMessage = HM_PEPSI;
-    AttachedGod = MELLIS;
+    AttachedGod = MORTIFER;
     RustModifier = 200;
     Acidicity = 10;
     PriceModifier = 10000;
@@ -5242,19 +5361,20 @@ liquid
     StrengthValue = 1;
     NutritionValue = 10;
     Color = rgb16(144, 144, 240);
-    NameStem = "mustard gas in liquid form";
+    NameStem = "liquefied mustard gas";
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
     SoftenedMaterial = MUSTARD_GAS;
     ConsumeWisdomLimit = 3;
+    PriceModifier = 300;
   }
 
   Config LIQUID_DARKNESS;
   {
     StrengthValue = 1;
     Density = 10;
-    NutritionValue = 1;
+    NutritionValue = -100;
     RustModifier = 0;
     Color = rgb16(0, 0, 0);
     NameStem = "liquid darkness";
@@ -5271,7 +5391,7 @@ liquid
   {
     StrengthValue = 1;
     Density = 10;
-    NutritionValue = 1;
+    NutritionValue = 0;
     RustModifier = 0;
     Color = rgb16(40, 80, 40);
     NameStem = "liquid fear";
@@ -5289,28 +5409,30 @@ liquid
   {
     StrengthValue = 5;
     Density = 2300;
-    NutritionValue = 0;
+    NutritionValue = 10000;
     Color = rgb16(40, 43, 42);
     NameStem = "asphalt";
     Flexibility = 25;
     AttachedGod = LORICATUS;
     Stickiness = 250;
+    Hotness = 10;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
+    ConsumeType = CT_MINERAL;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config VINEGAR;
   {
     StrengthValue = 1;
-    NutritionValue = 1000;
+    NutritionValue = 80;
     Color = rgb16(100, 100, 0);
     NameStem = "vinegar";
     Alpha = 150;
     Flexibility = 45;
     AttachedGod = SCABIES;
     RustModifier = 150;
-    Acidicity = 75;
+    Acidicity = 50;
     ConsumeWisdomLimit = 6;
     PriceModifier = 100;
     InteractionFlags = Base|AFFECT_INSIDE;
@@ -5328,6 +5450,7 @@ liquid
     Alpha = 175;
     Flexibility = 35;
     AttachedGod = SCABIES;
+    Effect = EFFECT_PUKE;
     RustModifier = 200;
     Acidicity = 10;
     InteractionFlags = Base|AFFECT_INSIDE;
@@ -5362,12 +5485,13 @@ liquid
   Config BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(100, 0, 0);
     NameStem = "blood";
     Alpha = 175;
     Flexibility = 40;
     AttachedGod = CRUENTUS;
+    HardenedMaterial = RED_ICE;
     RustModifier = 1;
     CategoryFlags = Base|IS_BLOOD|IS_GOLEM_MATERIAL;
   }
@@ -5375,9 +5499,22 @@ liquid
   Config GREEN_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(0, 128, 0);
     NameStem = "green blood"; /* goblin blood */
+    Alpha = 175;
+    Flexibility = 40;
+    AttachedGod = CRUENTUS;
+    RustModifier = 1;
+    CategoryFlags = IS_BLOOD;
+  }
+
+  Config BLACK_BLOOD;
+  {
+    StrengthValue = 1;
+    NutritionValue = 500;
+    Color = rgb16(40, 40, 40);
+    NameStem = "black blood"; /* orcish blood */
     Alpha = 175;
     Flexibility = 40;
     AttachedGod = CRUENTUS;
@@ -5388,7 +5525,7 @@ liquid
   Config BLUE_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(0, 0, 128);
     NameStem = "blue blood"; /* noble blood */
     Alpha = 175;
@@ -5396,12 +5533,13 @@ liquid
     AttachedGod = CRUENTUS;
     RustModifier = 1;
     CategoryFlags = IS_BLOOD;
+    PriceModifier = 1000;
   }
 
   Config PLANT_SAP;
   {
     StrengthValue = 1;
-    NutritionValue = 150;
+    NutritionValue = 250;
     Color = rgb16(126, 255, 126);
     NameStem = "sap"; /* plant blood */
     Alpha = 175;
@@ -5472,7 +5610,7 @@ liquid
     AttachedGod = CRUENTUS;
     CategoryFlags = IS_BLOOD;
     Effect = EFFECT_POISON;
-    HardenedMaterial = POISON_LIQUID;
+    HardenedMaterial = SICK_BLOOD;
     EffectStrength = 1000;
     ConsumeWisdomLimit = 3;
   }
@@ -5493,6 +5631,7 @@ liquid
     InteractionFlags = Base|AFFECT_INSIDE;
     StepInWisdomLimit = 10;
     NameFlags = Base|USE_AN;
+    PriceModifier = 1000;
   }
 
   Config SICK_BLOOD;
@@ -5508,7 +5647,7 @@ liquid
     InteractionFlags = Base|AFFECT_INSIDE;
     RustModifier = 100;
     Acidicity = 100;
-    Effect = EFFECT_POISON;
+    Effect = EFFECT_SICKNESS;
     EffectStrength = 1000;
     ConsumeWisdomLimit = 3;
   }
@@ -5516,7 +5655,7 @@ liquid
   Config LIGHT_FROG_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 40;
+    NutritionValue = 400;
     Color = rgb16(150, 0, 0);
     Emitation = rgb24(160, 100, 100);
     NameStem = "light frog blood";
@@ -5528,6 +5667,7 @@ liquid
     Effect = EFFECT_ANTIDOTE;
     ConsumeEndMessage = CEM_ANTIDOTE;
     EffectStrength = 100;
+    PriceModifier = 1500;
   }
 
   Config OMMEL_BLOOD;
@@ -5639,6 +5779,7 @@ liquid
     Alpha = 150;
     AttachedGod = SCABIES;
     Effect = EFFECT_POISON;
+    EffectStrength = 500;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
     CommonFlags = Base|CAN_BE_WISHED;
   }
@@ -5647,6 +5788,7 @@ liquid
   {
     StrengthValue = 30;
     Density = 11500;
+    NutritionValue = 5000;
     Flexibility = 40;
     RustModifier = 0;
     PriceModifier = 750;
@@ -5658,7 +5800,6 @@ liquid
     IntelligenceRequirement = 11;
     Alpha = 175;
     AttachedGod = NEFAS;
-    Effect = EFFECT_POISON;
     CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
     CommonFlags = Base|IS_VALUABLE|CAN_BE_WISHED;
   }
@@ -5694,7 +5835,45 @@ liquid
     RustModifier = 0;
   }
 
-  /* LAVA will require some further code. */
+  /* Hot stuff */
+
+  Config LAVA;
+  {
+    StrengthValue = 20;
+    Density = 2400;
+    Flexibility = 20;
+    RustModifier = 0;
+    PriceModifier = 750;
+    ConsumeType = CT_MINERAL;
+    Color = rgb16(207, 16, 32);
+    Emitation = rgb24(150, 120, 90);
+    NameStem = "lava";
+    AttachedGod = INFUSCOR;
+    HardenedMaterial = OBSIDIAN;
+    Hotness = 500;
+    Stickiness = 75;
+    ConsumeWisdomLimit = 2;
+    StepInWisdomLimit = 4;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|AFFECT_INSIDE;
+  }
+
+  Config NAPALM;
+  {
+    StrengthValue = 1;
+    NutritionValue = 5;
+    RustModifier = 0;
+    Color = rgb16(255, 127, 0);
+    NameStem = "napalm";
+    Alpha = 150;
+    Flexibility = 45;
+    AttachedGod = INFUSCOR;
+    Hotness = 150;
+    ConsumeWisdomLimit = 4;
+    PriceModifier = 100;
+    InteractionFlags = Base|AFFECT_INSIDE;
+    StepInWisdomLimit = 8;
+  }
 }
 
 flesh
@@ -5709,7 +5888,7 @@ flesh
   SpoilModifier = 10000;
   PriceModifier = 60;
   BodyFlags = Base|IS_ALIVE|IS_WARM|IS_WARM_BLOODED|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
-  InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
+  InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS|CAN_BURN;
   FireResistance = 0;
 
   /* Food meat */
@@ -5803,7 +5982,6 @@ flesh
     PriceModifier = 40;
     AttachedGod = MORTIFER;
     BodyFlags = Base&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config FROG_FLESH;
@@ -5840,7 +6018,6 @@ flesh
     NameStem = "human flesh";
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DOLPHIN_FLESH;
@@ -5917,7 +6094,6 @@ flesh
     EffectStrength = 10;
     ConsumeWisdomLimit = 10;
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config KOBOLD_FLESH;
@@ -5930,7 +6106,6 @@ flesh
     HitMessage = HM_KOBOLD_FLESH;
     PriceModifier = 0;
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
     BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
@@ -5938,7 +6113,6 @@ flesh
   {
     NameStem = "gibberling flesh";
     AttachedGod = MORTIFER;
-    InteractionFlags = Base|CAN_BURN;
     BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
@@ -5974,7 +6148,6 @@ flesh
     NameStem = "dwarf flesh";
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DAEMON_FLESH;
@@ -6060,7 +6233,6 @@ flesh
     NutritionValue = 15;
     ConsumeWisdomLimit = 15;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config OSTRICH_FLESH;
@@ -6104,7 +6276,6 @@ flesh
     PriceModifier = 100;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config MOOSE_FLESH;
@@ -6171,7 +6342,6 @@ flesh
     EffectStrength = 20;
     PriceModifier = 150;
     BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
-    InteractionFlags = Base|CAN_BURN;
   }
 
   Config SICK_SPIDER_FLESH;
@@ -6199,7 +6369,6 @@ flesh
     ConsumeWisdomLimit = 15;
     EffectStrength = 20;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
-    InteractionFlags = Base|CAN_BURN;
   }
 }
 

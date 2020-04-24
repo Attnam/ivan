@@ -600,6 +600,8 @@ void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
                             !(Flags & NO_SPECIAL_INFO));
     int ImageKey = game::AddToItemDrawVector(PileVector[p]);
     Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
+    if(!Item->GetDescriptiveInfo().IsEmpty())
+      Contents.SetLastEntryHelp(festring()<<Entry<<"\n\n"<<Item->GetDescriptiveInfo());
   }
 }
 

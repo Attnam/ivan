@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-#define STACK_OVERFLOW	(NULL)
+#define STACK_OVERFLOW  (NULL)
 
 /* Size has to be a size of power of 2 */
 typedef struct

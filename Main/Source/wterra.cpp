@@ -227,3 +227,11 @@ cfestring& owterrain::GetNameStem() const
 {
   return DataBase->NameStem;
 }
+
+int gwterrain::GetEntryDifficulty() const
+{
+  if(!(GetWalkability() & WALK)) // ocean
+    return 25;
+
+  return 10;
+}

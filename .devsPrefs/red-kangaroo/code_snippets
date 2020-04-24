@@ -1,0 +1,98 @@
+// Solicitus' banana prayer.
+void solicitus::PrayBadEffect()
+{
+  if(PLAYER->HasAllBodyParts()) //Checks if Player has all his limbs! Important because this effect crashes if you try it with missing limbs.
+  {
+    ADD_MESSAGE("A voice speaks. \"BANANAAAAAAAAAAAAAAA.\"");
+    PLAYER->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH)); //Change whole body to banana flesh.
+    ADD_MESSAGE("You feel like a banana.");
+  }
+  else
+    ADD_MESSAGE("\"No banana for you.\"");
+}
+
+
+
+// Sappho belt
+ITEM(sappho, chastitybelt)
+{
+ public:
+  virtual truth TryKey(item*, character*);
+  long GetGearStates() const;
+};
+
+truth sappho::TryKey(item* Key, character* Applier)
+{
+  /* BROKEN_LOCK should not be possible. */
+
+  if(Key->CanOpenLockType(HEART_SHAPED_LOCK))
+  {
+    if(Locked)
+    {
+      if(Applier->IsPlayer())
+        ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
+      else if(Applier->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+    else
+    {
+      if(Applier->IsPlayer())
+        ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
+      else if(Applier->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+
+    // Add a tiny chance that any key you use breaks.
+    if(!RAND_N(Key->GetMainMaterial()->GetStrengthValue()))
+    {
+      Key->Break(Applier);
+    }
+
+    // We're changing GearStates when the belt is locked/unlocked, so re-calculate.
+    if(Applier->Equips(this))
+      Applier->CalculateEquipmentState();
+
+    Locked = !Locked;
+  }
+  else
+  {
+    if(Applier->IsPlayer())
+      ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
+    else if(Applier->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.",
+                  Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
+  }
+
+  return true;
+}
+
+long sappho::GetGearStates() const
+{
+  if(IsBroken())
+    return 0;
+  else if(IsLocked())
+    return TELEPORT_LOCK|POLYMORPH_LOCK;
+  else
+    return LEVITATION;
+}
+
+sappho
+{
+  Possibility = 0;
+  Adjective = "seductive";
+  PostFix = "with a heart-shaped lock named Sappho";
+  Alias == "Sappho";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  CanBeBroken = false;
+  CreateLockConfigurations = false;
+  MainMaterialConfig == CHROME;
+  MaterialConfigChances == 100;
+  Price = 1000;
+}

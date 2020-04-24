@@ -22,8 +22,7 @@ level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
 lsquare* lterrain::GetNearLSquare(v2 Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
 lsquare* lterrain::GetNearLSquare(int x, int y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
 room* lterrain::GetRoom() const { return GetLSquareUnder()->GetRoom(); }
-void lterrain::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, 0, SpecialFlags); }
-void lterrain::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, 0, SpecialFlags); }
+material* lterrain::SetMainMaterial(material* NewMaterial, int SpecialFlags) { return SetMaterial(MainMaterial, NewMaterial, 0, SpecialFlags); }
 void lterrain::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
 
 void glterrain::InstallDataBase(int NewConfig) { databasecreator<glterrain>::InstallDataBase(this, NewConfig); }
@@ -524,6 +523,20 @@ void olterrain::ReceiveAcid(material*, long Modifier)
     {
       Damage += RAND() % Damage;
       ReceiveDamage(0, Damage, ACID);
+    }
+  }
+}
+
+void olterrain::ReceiveHeat(material*, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 10000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
     }
   }
 }

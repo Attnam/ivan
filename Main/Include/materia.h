@@ -60,6 +60,7 @@ struct materialdatabase : public databasebase
   int StepInWisdomLimit;
   int RustModifier;
   int Acidicity;
+  int Hotness;
   contentscript<item> NaturalForm;
   int HardenedMaterial;
   int SoftenedMaterial;
@@ -154,6 +155,7 @@ class material
   DATA_BASE_VALUE(int, AttachedGod);
   DATA_BASE_VALUE(int, RustModifier);
   DATA_BASE_VALUE(int, Acidicity);
+  DATA_BASE_VALUE(int, Hotness);
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
   DATA_BASE_VALUE(int, IntelligenceRequirement);
   DATA_BASE_VALUE(int, Stickiness);
@@ -164,6 +166,7 @@ class material
   static material* MakeMaterial(int, long = 0);
   virtual truth IsFlesh() const { return false; }
   virtual truth IsLiquid() const { return false; }
+  virtual truth IsGaseous() const { return false; }
   virtual cchar* GetConsumeVerb() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
@@ -191,7 +194,7 @@ class material
   virtual truth TryToRust(long, long = 0) { return false; }
   static const database* GetDataBase(int);
   virtual truth CanSpoil() const { return false; }
-  truth IsSolid() const { return !IsLiquid(); }
+  truth IsSolid() const { return !IsLiquid() && !IsGaseous(); }
   /* A dummy materialpredicate */
   truth True() const { return true; }
   void FinishConsuming(character*);
