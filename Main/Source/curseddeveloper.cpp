@@ -191,9 +191,9 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   ASRET(HICCUPS,riDebuff);
 //  ASRETD(SLOW,HASTE,riDebuff);
   ASRET(SLOW,riDebuff);
-  ASRET(PARASITE_TAPE_WORM,riDebuff);
+//  ASRET(PARASITE_TAPE_WORM,riDebuff);
   ASRET(CONFUSED,riDebuff);
-  ASRET(LEPROSY,riDebuff);
+//  ASRET(LEPROSY,riDebuff);
   ASRET(POISONED,riDebuff);
   
   // Revenge, grant it will stop:
