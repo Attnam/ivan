@@ -144,6 +144,10 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           "",
                                           false);
+truthoption ivanconfig::OverloadedFight(  "OverloadedFight",
+                                          "Allow fighting while overloaded",
+                                          "Moving is, of course, still denied.",
+                                          false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
                                           "Auto pick up thrown weapons",
                                           "Automatically annotate any thrown weapon and pick it up without loosing a turn when you step on its square.",
@@ -1125,6 +1129,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
   configsystem::AddOption(fsCategory,&AutoPickUpMatching);
   configsystem::AddOption(fsCategory,&DropBeforeOffering);
+  configsystem::AddOption(fsCategory,&OverloadedFight);
 
   fsCategory="Game Window";
   configsystem::AddOption(fsCategory,&Contrast);

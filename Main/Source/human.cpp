@@ -463,12 +463,14 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
-  if(GetBurdenState() == OVER_LOADED)
-  {
-    if(IsPlayer())
-      ADD_MESSAGE("You cannot fight while carrying so much.");
+  if(!ivanconfig::IsOverloadedFight()){
+    if(GetBurdenState() == OVER_LOADED)
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You cannot fight while carrying so much.");
 
-    return false;
+      return false;
+    }
   }
 
   int c, AttackStyles;
