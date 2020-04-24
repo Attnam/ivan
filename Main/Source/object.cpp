@@ -19,6 +19,8 @@
 #include "game.h"
 #include "bitmap.h"
 #include "save.h"
+#include "iconf.h"
+#include "dbgmsgproj.h"
 
 v2 RightArmSparkleValidityArray[128];
 v2 LeftArmSparkleValidityArray[128];
@@ -28,7 +30,7 @@ v2 LeftLegSparkleValidityArray[45];
 v2 NormalSparkleValidityArray[256];
 v2 PossibleSparkleBuffer[256];
 
-object::object() : entity(0), MainMaterial(0), Burning(0) { }
+object::object() : entity(0), MainMaterial(0), VisualEffects(0), Burning(0) { }
 int object::GetSpecialFlags() const { return ST_NORMAL; }
 col16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
 cbitmap*const* object::GetPicture() const { return GraphicData.Picture; }
@@ -93,11 +95,6 @@ void object::InitMaterial(material*& Material, material* NewMaterial, long Defau
     Material->SetMotherEntity(this);
     SignalEmitationIncrease(Material->GetEmitation());
   }
-}
-
-void object::ChangeMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
-{
-  delete SetMaterial(Material, NewMaterial, DefaultVolume, SpecialFlags);
 }
 
 material* object::SetMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
@@ -473,13 +470,41 @@ truth object::AddBurningAdjective(festring& String, truth Articled) const
   }
 }
 
+col24 object::CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
+{
+  if(!ivanconfig::IsUseLightEmiterBasedOnVolume())
+    return Emit;
+  
+  /**
+   * a good light emmiting crystal stone is about 100 to 200 cm3
+   * smaller stones/sticks/lumps or etc, should emit less light...
+   */
+  //static col24 colBlack24 = MakeRGB24(0,0,0);
+  if(vol<100){
+    if(Emit != 0){//colBlack24){
+      float fPerc = (50.0+(vol/2))/100.0; //there is at least 1 square of light only from 50 on, less than 50 is full darkness
+      col24 cRed = GetRed24(Emit)*fPerc;
+      col24 cGreen = GetGreen24(Emit)*fPerc;
+      col24 cBlue = GetBlue24(Emit)*fPerc;
+      Emit = MakeRGB24(cRed, cGreen, cBlue);
+      DBG7("EmitDbgVol",Emit,vol,fPerc,cRed,cGreen,cBlue);
+    }
+  }
+  
+  return Emit;
+}
+
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
+  DBG5("EmitDbgBase",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
 
   if(MainMaterial)
   {
-    game::CombineLights(Emitation, MainMaterial->GetEmitation());
+    DBG4(MainMaterial->GetEmitation(),GetRed24(MainMaterial->GetEmitation()),GetGreen24(MainMaterial->GetEmitation()),GetBlue24(MainMaterial->GetEmitation()));
+    game::CombineLights(Emitation,
+      CalcEmitationBasedOnVolume( MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) );
+    DBG5("EmitDbgFinal",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
@@ -487,6 +512,7 @@ void object::CalculateEmitation()
       game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel,
                                                120 - 8 * CurrentBurnLevel,
                                                90 - 6 * CurrentBurnLevel));
+      DBG5("EmitDbgFinalBurning",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     }
   }
 }

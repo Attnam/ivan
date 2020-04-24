@@ -812,19 +812,6 @@ leg::~leg()
   delete GetBoot();
 }
 
-truth corpse::IsDestroyable(ccharacter* Char) const
-{
-  for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-  {
-    bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-    if(BodyPart && !BodyPart->IsDestroyable(Char))
-      return false;
-  }
-
-  return true;
-}
-
 long corpse::GetTruePrice() const
 {
   long Price = 0;
@@ -2644,10 +2631,19 @@ truth corpse::SuckSoul(character* Soul, character* Summoner)
 
 double arm::GetTypeDamage(ccharacter* Enemy) const
 {
-  if(!GetWielded() || !GetWielded()->IsGoodWithPlants() || !Enemy->IsPlant())
-    return Damage;
-  else
-    return Damage * 1.5;
+  double ActualDamage = GetDamage();
+
+  if(GetWielded())
+  {
+    if(GetWielded()->IsGoodWithPlants() && Enemy->IsPlant())
+      ActualDamage *= 1.5;
+    if(GetWielded()->IsGoodWithUndead() && Enemy->IsUndead())
+      ActualDamage *= 1.5;
+    if(HasSadistWeapon() && Enemy->IsMasochist())
+      ActualDamage *= 0.75;
+  }
+
+  return ActualDamage;
 }
 
 void largetorso::Draw(blitdata& BlitData) const
@@ -3244,15 +3240,56 @@ void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Mod
         if(Master->IsPlayer())
         {
           cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
-          ADD_MESSAGE("Acidous %s dissolves your %s.", MName.CStr(), TName);
+          ADD_MESSAGE("Caustic %s dissolves your %s.", MName.CStr(), TName);
         }
         else
-          ADD_MESSAGE("Acidous %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
+          ADD_MESSAGE("Caustic %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
       }
 
       Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
       ulong DeathFlags = Material->IsStuckTo(Master) ? IGNORE_TRAPS : 0;
       Master->CheckDeath(CONST_S("dissolved by ") + Material->GetName(), 0, DeathFlags);
+    }
+  }
+}
+
+void bodypart::ReceiveHeat(material* Material, cfestring& LocationName, long Modifier)
+{
+  if(Master && MainMaterial->GetInteractionFlags() & CAN_BURN)
+  {
+    long Tries = Modifier / 1000;
+    Modifier -= Tries * 1000;
+    int Damage = 0;
+
+    for(long c = 0; c < Tries; ++c)
+      if(!(RAND() % 100))
+        ++Damage;
+
+    if(Modifier && !(RAND() % 100000 / Modifier))
+      ++Damage;
+
+    if(Damage)
+    {
+      ulong Minute = game::GetTotalMinutes();
+      character* Master = this->Master;
+
+      if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
+      {
+        Master->SetLastAcidMsgMin(Minute); // I don't really think we need to track acid and heat damage messages separately.
+        cfestring MName = Material->GetName(false, false);
+
+        if(Master->IsPlayer())
+        {
+          cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
+          ADD_MESSAGE("Scorching %s burns your %s.", MName.CStr(), TName);
+        }
+        else
+          ADD_MESSAGE("Scorching %s burns %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
+      }
+
+      Master->ReceiveBodyPartDamage(0, Damage, FIRE, GetBodyPartIndex(), YOURSELF, false, false, false);
+      ulong DeathFlags = Material->IsStuckTo(Master) ? IGNORE_TRAPS : 0;
+      Master->CheckDeath(CONST_S("burnt to death by ") + Material->GetName(), 0, DeathFlags);
     }
   }
 }
@@ -3500,6 +3537,7 @@ void bodypart::UpdateFlags()
   else
     Flags &= ~BADLY_HURT;
 
+  Master->ValidateTrapData();
   if(Master->BodyPartIsStuck(GetBodyPartIndex()))
     Flags |= STUCK;
   else

@@ -34,8 +34,7 @@ class object : public entity, public id
   virtual void UpdatePictures();
   material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
-  virtual void SetSecondaryMaterial(material*, int = 0) { }
-  virtual void ChangeSecondaryMaterial(material*, int = 0) { }
+  virtual material* SetSecondaryMaterial(material*, int = 0) { return 0; }
   virtual int GetMaterials() const { return 1; }
   virtual material* GetMaterial(int) const { return MainMaterial; }
   cbitmap*const* GetPicture() const;
@@ -47,6 +46,7 @@ class object : public entity, public id
   virtual int GetForcedVisualEffects() const { return 0; }
   int GetAnimationFrames() const { return GraphicData.AnimationFrames; }
   virtual truth IsAnimated() const { return GraphicData.AnimationFrames > 1; }
+  static col24 CalcEmitationBasedOnVolume(col24 Emit,ulong vol);
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   virtual const fearray<long>& GetMaterialConfigChances() const = 0;
@@ -67,7 +67,6 @@ class object : public entity, public id
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);
   material* SetMaterial(material*&, material*, long, int);
-  void ChangeMaterial(material*&, material*, long, int);
   virtual truth CalculateHasBe() const;
   virtual int GetGraphicsContainerIndex() const = 0;
   virtual col16 GetMaterialColorA(int) const;

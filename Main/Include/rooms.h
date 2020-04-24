@@ -99,4 +99,26 @@ ROOM(sumoarena, room)
   virtual truth CheckDestroyTerrain(character*);
 };
 
+ROOM(ownedarea, room)
+{
+ public:
+  virtual truth PickupItem(character*, item*, int);
+  virtual truth DropItem(character*, item*, int);
+  virtual void KickSquare(character*, lsquare*);
+  virtual truth ConsumeItem(character*, item*, int);
+  virtual truth AllowDropGifts() const { return false; }
+  virtual truth Drink(character*) const;
+  virtual truth HasDrinkHandler() const { return true; }
+  virtual truth Dip(character*) const;
+  virtual truth HasDipHandler() const { return true; }
+  virtual void TeleportSquare(character*, lsquare*);
+  virtual truth AllowSpoil(citem*) const { return false; }
+  virtual truth AllowKick(ccharacter*, const lsquare*) const;
+  virtual void HostileAction(character*) const;
+  virtual truth AllowAltarPolymorph() const { return false; }
+  virtual truth AllowFoodSearch() const { return false; }
+  virtual void AddItemEffect(item*);
+  character* FindRandomExplosiveReceiver() const;
+};
+
 #endif

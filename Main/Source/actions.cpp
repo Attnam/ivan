@@ -161,11 +161,23 @@ void consume::Terminate(truth Finished)
 
   if(Finished)
   {
-    if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
+    if(Consuming && Consuming->Exists())
     {
-      Consuming->RemoveFromSlot();
-      Actor->GetStackUnder()->AddItem(Consuming);
-      Actor->DexterityAction(2);
+      truth PlayerWantsToDiscard = ivanconfig::GetAutoDropLeftOvers();
+      if(Consuming->GetSecondaryMaterial())
+      {
+        PlayerWantsToDiscard = (
+          ivanconfig::GetAutoDropLeftOvers() &&
+          (Consuming->GetSecondaryMaterial()->GetVolume() == 0) // don't drop after tasting
+        );
+      }
+
+      if(!game::IsInWilderness() && (!Actor->IsPlayer() || PlayerWantsToDiscard))
+      {
+        Consuming->RemoveFromSlot();
+        Actor->GetStackUnder()->AddItem(Consuming);
+        Actor->DexterityAction(2);
+      }
     }
   }
   else if(Consuming && Consuming->Exists())
@@ -268,7 +280,16 @@ void craft::Handle()
   if(rpd.bSuccesfullyCompleted)
   {
     Actor->DexterityAction(rpd.iAddDexterity); //TODO is this necessary/useful? below also affects dex
-
+    
+    /**
+     * the minimum to advance 1st level on success is at GetLevelMap(1)
+     */
+    int iAddCraftSkill = Actor->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
+    if(rpd.fDifficulty <= 1.0)iAddCraftSkill/=3.0; // too easy stuff will learn less
+    if(rpd.bSpawnBroken) iAddCraftSkill /= 10; // learns something if fumble
+    if(iAddCraftSkill<1) iAddCraftSkill=1; // add a minimum
+    Actor->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
+    
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
     if(!Actor->IsEnabled())
       return;
@@ -310,33 +331,37 @@ void craft::Handle()
     if(h){
       if(h->GetRightArm()){
         item* RightBackup = game::SearchItem(RightBackupID);
-
-        if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
-        {DBGLN;
-          RightBackup->RemoveFromSlot();
-          ActorLocal->SetRightWielded(RightBackup);
+        if(h->GetRightWielded() != RightBackup){
+          if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
+          {DBGLN;
+            RightBackup->RemoveFromSlot();
+            h->SetRightWielded(RightBackup);
+          }
         }
       }
 
       if(h->GetLeftArm()){
         item* LeftBackup = game::SearchItem(LeftBackupID);
-
-        if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
-        {DBGLN;
-          LeftBackup->RemoveFromSlot();
-          ActorLocal->SetLeftWielded(LeftBackup);
+        if(h->GetLeftWielded() != LeftBackup){
+          if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
+          {DBGLN;
+            LeftBackup->RemoveFromSlot();
+            h->SetLeftWielded(LeftBackup);
+          }
         }
       }
     }
   }
 
   /**
-   * explosions may trigger something that apparently terminates the action and so also deletes it's recipedata
-   * TODO what is being triggered?
+   * TODO: CONFIRM IF STILL HAPPENING: explosions may trigger something that apparently terminates the action and so also deletes it's recipedata, what is being triggered?
    */
   if(!rpdBkp.v2XplodAt.Is0() && rpdBkp.xplodStr>0){
+    if(rpdBkp.xplodStr>9)rpdBkp.xplodStr=9; // to limit the "fire sparks" size to one square
     game::GetCurrentLevel()->Explosion(
       ActorLocal, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
+    if(rpdBkp.GetTool()) rpdBkp.GetTool()->ReceiveDamage( rpdBkp.rc.H(),rpdBkp.xplodStr,FIRE);
+    if(rpdBkp.GetTool2())rpdBkp.GetTool2()->ReceiveDamage(rpdBkp.rc.H(),rpdBkp.xplodStr,FIRE);
     ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
   }
 
@@ -446,25 +471,28 @@ void dig::Handle()
       Terminate(true);
   }
 
-  if(StoppedDigging)
+  humanoid* h = dynamic_cast<humanoid*>(Actor);
+  if(StoppedDigging && h)
   {
-    if(MoveDigger && Actor->GetMainWielded())
-      Actor->GetMainWielded()->MoveTo(Actor->GetStack());
+    if(MoveDigger && h->GetMainWielded())
+      h->GetMainWielded()->MoveTo(h->GetStack());
 
-    item* RightBackup = game::SearchItem(RightBackupID);
-
-    if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
-    {
-      RightBackup->RemoveFromSlot();
-      Actor->SetRightWielded(RightBackup);
+    if(h->GetRightArm()){
+      item* RightBackup = game::SearchItem(RightBackupID);
+      if(RightBackup && RightBackup->Exists() && h->IsOver(RightBackup))
+      {
+        RightBackup->RemoveFromSlot();
+        h->SetRightWielded(RightBackup);
+      }
     }
 
-    item* LeftBackup = game::SearchItem(LeftBackupID);
-
-    if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
-    {
-      LeftBackup->RemoveFromSlot();
-      Actor->SetLeftWielded(LeftBackup);
+    if(h->GetLeftArm()){
+      item* LeftBackup = game::SearchItem(LeftBackupID);
+      if(LeftBackup && LeftBackup->Exists() && h->IsOver(LeftBackup))
+      {
+        LeftBackup->RemoveFromSlot();
+        h->SetLeftWielded(LeftBackup);
+      }
     }
   }
 

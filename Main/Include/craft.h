@@ -129,6 +129,7 @@ class recipedata {
   friend struct srpForge;
   friend struct srpJoinLumps;
   friend struct srpWorkBench;
+  friend struct srpTWorkBench;
   friend struct srpResistanceVS;
   friend struct srpCutWeb;
   
@@ -214,6 +215,8 @@ class recipedata {
     v2 v2WorkbenchLocation;
     int iRemainingTurnsToFinish;
     bool bGradativeCraftOverride;
+    bool bTailoringMode;
+    v2 v2TailoringWorkbenchLocation;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
@@ -228,10 +231,11 @@ class recipedata {
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
 
     void ClearRefs();
-    item* GetTool(){return itTool;}
-    item* GetTool2(){return itTool2;}
+    item* GetTool();
+    item* GetTool2();
 
     bool IsFailedSuspendOrCancel(){return bFailedTerminateCancel || bFailedSuspend;}
+    void SetAlreadyExplained(){bAlreadyExplained=true;}
 };
 
 class craftcore {
@@ -269,7 +273,8 @@ class craftcore {
     static bool IsWooden(material* mat);
     static bool IsBone(material* mat);
 
-    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE);
+    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE, long volume = 0);
+    static void FinishSpawning(recipedata& rpd,item* itSpawn);
 
     static void AddSuspended(const recipedata& rpd);
     static void RemoveIfSuspended(const recipedata&rpd);
@@ -285,6 +290,7 @@ class craftcore {
     
     static int CitType(item* it);
     static bool CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower);
+    static void CraftSkillAdvance(recipedata&);
 };
 
 class crafthandle {

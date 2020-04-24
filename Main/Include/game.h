@@ -169,6 +169,7 @@ class areachangerequest { };
 typedef void (*dbgdrawoverlay)();
 
 #define AUTOSAVE_SUFFIX ".AutoSave"
+#define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
 {
  public:
@@ -181,6 +182,7 @@ class game
   static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
+  static void SetDropTag(item* it);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();
@@ -279,6 +281,7 @@ class game
   static int GetDirectionForVector(v2);
   static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
+  static int GetGodAlignmentVsPlayer(god* G);
   static void CreateGods();
   static int GetScreenXSize();
   static int GetScreenYSize();
@@ -345,16 +348,23 @@ class game
   static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
+  static int GetGloomyCaveStoryState() { return GloomyCaveStoryState; }
+  static void SetGloomyCaveStoryState(int What) { GloomyCaveStoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
   static int GetFreedomStoryState() { return FreedomStoryState; }
   static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
+  static int GetAslonaStoryState() { return AslonaStoryState; }
+  static void SetAslonaStoryState(int What) { AslonaStoryState = What; }
+  static int GetRebelStoryState() { return RebelStoryState; }
+  static void SetRebelStoryState(int What) { RebelStoryState = What; }
   static truth PlayerIsGodChampion() { return PlayerIsChampion; }
   static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
+  static truth PlayerHasBoat() { return HasBoat; }
+  static void GivePlayerBoat() { HasBoat = true; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
-  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetBoneDir();
@@ -385,16 +395,14 @@ class game
   static bool ToggleShowMapNotes();
   static bool CheckAddAutoMapNote(square* =NULL);
   static int CheckAutoPickup(square* sqr = NULL);
+  static void UpdateAutoPickUpMatching();
   static int RotateMapNotes();
   static char MapNoteToken();
+  static bool IsAutoPickupMatch(cfestring fsName);
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
-  static void IncAutoPlayMode();
-  static int GetAutoPlayMode() { return AutoPlayMode; }
-  static void AutoPlayModeApply();
-  static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -403,7 +411,6 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
-  static int GetAutoPlayMode() { return 0; }
 #endif
 
   static truth WizardModeIsReallyActive() { return WizardMode; }
@@ -495,6 +502,11 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
+  static truth ConfigureCustomKeys();
+  static festring ToCharIfPossible(int i);
+  static truth ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys);
+  static festring GetMoveKeyDesc(int i);
+  static void LoadCustomCommandKeys();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -504,6 +516,7 @@ class game
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
+  static int  MoveCustomCommandKey[];
   static cv2 MoveVector[];
   static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
@@ -546,8 +559,11 @@ class game
   static int Teams;
   static int Dungeons;
   static int StoryState;
+  static int GloomyCaveStoryState;
   static int XinrochTombStoryState;
   static int FreedomStoryState;
+  static int AslonaStoryState;
+  static int RebelStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;
@@ -566,7 +582,6 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
-  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;
@@ -584,6 +599,7 @@ class game
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
   static truth PlayerIsChampion; // This marks the player as a champion of some god.
+  static truth HasBoat; // Whether the player can sail the oceans of world map.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

@@ -312,7 +312,6 @@ int soundsystem::addFile(festring filename) {
 }
 
 bool eol = false;
-
 festring getstr(FILE *f, truth word)
 {
   if(eol && word) return CONST_S("");
@@ -329,6 +328,7 @@ festring getstr(FILE *f, truth word)
   }
 }
 
+FILE *debf = NULL;
 void soundsystem::initSound()
 {
   const char *error;
@@ -336,8 +336,8 @@ void soundsystem::initSound()
 
   if(SoundState == 0)
   {
-    festring fsSndDbgFile = game::GetUserDataDir() + "ivanSndDebug.txt";
-    FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
+    festring fsSndDbgFile = GetUserDataDir() + "ivanSndDebug.txt";
+    debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0)
@@ -362,6 +362,9 @@ void soundsystem::initSound()
     if(!fNew) SoundState = -1;
 
     truth bDbg=false; //TODO global command line for debug messages
+#ifdef DBGMSG
+    bDbg=true;
+#endif
     if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
     if(fNew)
     {
@@ -469,16 +472,24 @@ void soundsystem::deInitSound()
 
 SoundFile *soundsystem::findMatchingSound(festring Buffer)
 {
-  for(int i = patterns.size() - 1; i >= 0; i--)
-  if(*patterns[i].re)
-  if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
-    return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  if(Buffer.IsEmpty() || Buffer.CStr()[0]=='"') //skips all chat messages lowering config file regex complexity
+    return NULL;
+  
+  for(int i = patterns.size() - 1; i >= 0; i--){
+    if(*patterns[i].re)
+      if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+        return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  }
   return NULL;
 }
 
 void soundsystem::playSound(festring Buffer)
 {
-  if(!ivanconfig::GetPlaySounds()) return;
+  if(!ivanconfig::GetPlaySounds())
+    return;
+  if(ivanconfig::GetSfxVolume()==0)
+    return;
+  
   initSound();
   if(SoundState == 1)
   {
@@ -493,17 +504,18 @@ void soundsystem::playSound(festring Buffer)
 
     if(*sf->chunk)
     {
-			for(int i=0; i<16; i++)
-			{
-				if(!Mix_Playing(i))
-				{
-					Mix_PlayChannel(i, *sf->chunk, 0);
-//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
-		//    Mix_SetPosition(i, angle, dist);
-					return;
-				}
-			}
-		}
+      for(int iChannel=0; iChannel<16; iChannel++)
+      {
+        if(!Mix_Playing(iChannel))
+        {
+          Mix_Volume(iChannel, ivanconfig::GetSfxVolume());
+          Mix_PlayChannel(iChannel, *sf->chunk, 0);
+          //TODO why this causes SEGFAULT?!! -> //DBGEXEC( fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", iChannel, sf->filename.CStr()) );
+          //TODO? Mix_SetPosition(i, angle, dist);
+          return;
+        }
+      }
+    }
   }
 }
 

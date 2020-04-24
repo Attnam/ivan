@@ -36,7 +36,7 @@ void DefinesValidatorAppend(std::string s)
 
   static bool bDummyInit = [](){
     DefinesValidator.open(
-        festring(game::GetUserDataDir() + "definesvalidator.h").CStr(),
+        festring(GetUserDataDir() + "definesvalidator.h").CStr(),
         std::ios::binary);
     return true;}();
 
@@ -77,7 +77,7 @@ void DefinesValidatorTop()
   DefinesValidatorAppend(" public:");
   DefinesValidatorAppend("  static void init();");
   DefinesValidatorAppend("  static void DevConsCmd(std::string);");
-  DefinesValidatorAppend("  static void GenerateDefinesValidator(std::string);");
+  DefinesValidatorAppend("  static void GenerateDefinesValidator(festring);");
   DefinesValidatorAppend("");
   DefinesValidatorAppend(" static void Validate() {");
   DefinesValidatorAppend("  std::stringstream ssErrors;");
@@ -118,16 +118,16 @@ void DefinesValidatorClose(){
   DefinesValidator.close();
 }
 #include "definesvalidator.h" //tip: 1st run this was commented
-void CmdDevConsGenDefVal(std::string strOpt){
-  definesvalidator::GenerateDefinesValidator(strOpt);
+void CmdDevConsGenDefVal(festring fsOpt){
+  definesvalidator::GenerateDefinesValidator(fsOpt);
 }
 void definesvalidator::init(){
   devcons::AddDevCmd("DefVal", CmdDevConsGenDefVal,
     "<generate|validate> generate the validator at user config path or validate the file 'define.dat' (may abort)");
 }
-void definesvalidator::GenerateDefinesValidator(std::string strOpt)
+void definesvalidator::GenerateDefinesValidator(festring fsOpt)
 {
-  if(strOpt=="generate"){
+  if(fsOpt=="generate"){
     DefinesValidatorTop();
 
     for(const valuemap::value_type& p : game::GetGlobalValueMap())
@@ -136,10 +136,10 @@ void definesvalidator::GenerateDefinesValidator(std::string strOpt)
     DefinesValidatorClose();
     ADD_MESSAGE("generated the defines validator");
   }else
-  if(strOpt=="validate"){
+  if(fsOpt=="validate"){
     definesvalidator::Validate(); //tip: 1st run this was commented
     ADD_MESSAGE("validated 'defines.dat'");
   }else{
-    ADD_MESSAGE("invalid option: '%s'",strOpt.c_str());
+    ADD_MESSAGE("invalid option: '%s'",fsOpt.CStr());
   }
 }

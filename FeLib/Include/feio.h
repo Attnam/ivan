@@ -29,6 +29,7 @@ class iosystem
   static festring ContinueMenu(col16, col16, cfestring&, const int iSaveFileVersion, bool bAllowImportOldSavegame);
   static void SetSkipSeekSave(skipseeksave);
   static void SetSaveGameSortMode(int i);
+  static void fixChars(festring& fs);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,
                             truth, truth, stringkeyhandler = 0);
@@ -46,6 +47,8 @@ class iosystem
                          truth = true, bitmapeditor = 0);
   static truth IsOnMenu();
   static bool IsInUse();
+  static bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>(),bool bConfirmMode=true);
+  static void AlertConfirmMsgDraw(bitmap* Buffer);
 };
 
 #endif

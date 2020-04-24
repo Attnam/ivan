@@ -2,7 +2,9 @@
  * !!!WARNING!!!
  *  This file cannot be included in other .h files TODO why?
  *  These macros cannot be used at inline methods declared in .h files TODO why?
- *  If you do this, it may SEGFAULT only when being run. Compiler and linker will warn nothing about the problem!
+ *  If you do this, it may SEGFAULT only when being run. 
+ *   Compiler and linker will warn nothing about the problem!
+ *  On linux this check can be added prior to compile: `egrep "dbgmsgproj.h" * -rnI --include "*.h"`
  */
 
 #ifndef INCLUDE_DBGMSGPROJ_H_
@@ -23,7 +25,7 @@
 
     #include "dbgmsg.h"
 
-    /********************************************************************************************
+    /************************************************************
      * CUSTOM / PROJECT SPECIFIC, modify at will
      ************************************************************/
     #ifndef DBGMSG_OBJ //do NOT define DBGMSG_OBJ this in your project cpp files!
@@ -128,7 +130,7 @@
 
     #define DBGCHAR(ch,info)
     #define DBGITEM(it,info)
-    #define DBGABORT(x...)
+    #define DBGABORT(x,...)
 
   #endif //DBGMSG
 

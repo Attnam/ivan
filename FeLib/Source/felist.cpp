@@ -521,7 +521,8 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
         }
         //TODO copy the entiry list if not selectable? nah...?
       }else
-      if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+      if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp))
+      {
         festring fs;
         felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
         if(fle!=NULL){
@@ -532,13 +533,14 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
           fs<<"\n";
         }
         fs<<
-          "[List Help:]\n"
-          " F1 - show this message\n"
-          " Ctrl+F - filter entries\n"
-          " Ctrl+DEL - clear filter\n"
-          " Home/End/PageUp/PageDown - navigate thru pages\n"
-          " ESC - exit the list\n"
-          " SPACE - continue (next page or exit if at last one)\n";
+          "Commands:\n"
+          " F1           show help\n"
+          " Ctrl + F     filter entries\n"
+          " Ctrl + Del   clear filter\n"
+          " Home / End   navigate pages\n"
+          " PgUp / PgDn\n"
+          " Esc          exit menu\n"
+          " Space        next page\n";
         specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fs);
         bJustRefreshOnce=true;
         break;
@@ -650,7 +652,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       break;
     }
 
-    if((Flags & SELECTABLE) && Pressed == UpKey)
+    if((Flags & SELECTABLE) && (Pressed == UpKey || Pressed == KEY_UP))
     {DBGLN;
       if(Selected)
       {
@@ -675,7 +677,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       continue;
     }
 
-    if((Flags & SELECTABLE) && Pressed == DownKey)
+    if((Flags & SELECTABLE) && (Pressed == DownKey || Pressed == KEY_DOWN))
     {DBGLN;
       if(!LastEntryVisible || Selected != Selectables - 1)
       {
@@ -971,7 +973,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
         int iPgTot = Entry.size()/PageLength + (Entry.size()%PageLength>0 ? 1 : 0);
         if(iPgTot==0)iPgTot=1;
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-                     "- Page %d/%d (Press F1 to show help info) -",iPg,iPgTot);
+                     "- Page %d/%d (Press F1 for help) -",iPg,iPgTot);
         LastFillBottom += 30;
       }
       else

@@ -436,8 +436,8 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, .
     {
       v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
           //printf("X=%4d -- Y=%d\n", F.X, F.Y);
-      MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3) + 1, Pos.Y + 1), v2(8, 8), &ShadeCol);
-      MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2(8, 8), &Color);
+      MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3) + 1, Pos.Y + 1), v2FontSize, &ShadeCol);
+      MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2FontSize, &Color);
     }
   }
   else
@@ -451,7 +451,7 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, .
                    TRANSPARENT_COLOR,
                    0 };
 
-    for(int c = 0; Buffer[c]; ++c, B.Dest.X += 8)
+    for(int c = 0; Buffer[c]; ++c, B.Dest.X += v2FontSize.X)
     {
       B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
       B.Src.Y = (Buffer[c] - 0x20) & 0xF0;

@@ -12,6 +12,8 @@
 
 /* Compiled through materset.cpp */
 
+#include "dbgmsgproj.h"
+
 materialprototype::materialprototype(const materialprototype* Base,
                                      materialspawner Spawner,
                                      materialcloner Cloner,
@@ -83,6 +85,22 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
   if(!Amount)
     return false;
 
+  /**
+   * Pos is used to prepare a seed for temporary random state.
+   * Some rare times, mother entity is nowhere (square under is NULL) and the game would crash...
+   * So... why not just use the Char pos? it is random anyway... right?
+   */
+  v2 Pos;
+  if(Pos.Is0() && GetMotherEntity() && GetMotherEntity()->GetSquareUnderEntity()){
+    Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+  }else{
+    DBGSTK;DBG3("_BUG_TRACK_:Workaround for mother entity being nowhere to prevent crash",GetMotherEntity(),Char);
+  }
+  if(Pos.Is0() && Char && Char->GetSquareUnder())
+    Pos=Char->GetPos();
+  if(Pos.Is0() && game::GetCurrentLevel())
+    Pos=game::GetCurrentLevel()->GetRandomSquare(); //TODO any better idea?
+  
   switch(GetEffect())
   {
    case EFFECT_POISON: Char->BeginTemporaryState(POISONED, Amount); break;
@@ -95,13 +113,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
     {
       if(!Char->StateIsActivated(DISEASE_IMMUNITY))
       {
-        Char->BeginTemporaryState(LYCANTHROPY, Amount);
-        break;
+        if(!RAND_N(Char->GetAttribute(ENDURANCE)))
+          Char->GainIntrinsic(LYCANTHROPY);
+        else
+          Char->BeginTemporaryState(LYCANTHROPY, Amount);
       }
-      else
-      {
-        break;
-      }
+
+      break;
     }
    case EFFECT_SCHOOL_FOOD: Char->ReceiveSchoolFood(Amount); break;
    case EFFECT_ANTIDOTE: Char->ReceiveAntidote(Amount); break;
@@ -111,7 +129,6 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_SKUNK_SMELL: Char->BeginTemporaryState(POISONED, Amount); break;
    case EFFECT_MAGIC_MUSHROOM:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
@@ -124,14 +141,12 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_EVIL, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_GOOD, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
@@ -143,7 +158,6 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_TELEPORT_CONTROL: Char->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
    case EFFECT_MUSHROOM:
     {
-      v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MUSHROOM, Amount,
                                 Volume % 250 + Pos.X + Pos.Y + 1);
       break;
@@ -158,23 +172,25 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_VAMPIRISM:
     {
       if(!Char->StateIsActivated(DISEASE_IMMUNITY))
-      {
         Char->BeginTemporaryState(VAMPIRISM, Amount);
-        break;
-      }
-      else
-      {
-        break;
-      }
+
+      break;
     }
    case EFFECT_PANACEA:
     {
       Char->ReceiveHeal(Amount);
       Char->ReceiveAntidote(Amount);
+      Char->RestoreStamina();
       break;
     }
    case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
-   case EFFECT_PANIC: Char->BeginTemporaryState(PANIC, Amount); break;
+   case EFFECT_PANIC:
+    {
+      if(!Char->StateIsActivated(FEARLESS) && Char->GetPanicLevel() > 0)
+        Char->BeginTemporaryState(PANIC, Amount);
+
+      break;
+    }
    case EFFECT_TRAIN_WISDOM:
     {
       Char->EditExperience(WISDOM, Amount, 1 << 14);
@@ -187,6 +203,18 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       Char->TeleportRandomly(false);
       break;
     }
+   case EFFECT_LAUGH:
+    {
+      game::CallForAttention(Char->GetPos(), Amount);
+      Char->BeginTemporaryState(HICCUPS, Amount);
+      break;
+    }
+   case EFFECT_POLYJUICE: Char->PolymorphRandomly(Amount, 999999, Amount * 10); break;
+   //case EFFECT_PUKE: Char->VomitAtRandomDirection(Amount); break;
+   case EFFECT_SICKNESS: Char->ReceiveSickness(Amount); break;
+   case EFFECT_PHASE: Char->BeginTemporaryState(ETHEREAL_MOVING, Amount); break;
+   case EFFECT_ACID_GAS: Char->SpillFluid(0, liquid::Spawn(SULPHURIC_ACID, Amount)); break;
+   case EFFECT_FIRE_GAS: Char->ReceiveFlames(Amount); break;
    default: return false;
   }
 
@@ -196,7 +224,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
 material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
+
+  if(Eater->StateIsActivated(VAMPIRISM) && (GetCategoryFlags() & IS_BLOOD))
+  {
+    Amount *= 10; // Vampires are nourished by blood.
+  }
   Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
+
   if(Amount && Volume)
   {
     if(DisablesPanicWhenConsumed() && Eater->TemporaryStateIsActivated(PANIC))

@@ -13,6 +13,7 @@
 /* Compiled through dataset.cpp */
 
 #include <stack>
+#include "error.h"
 
 int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray,
                       long* TempTableInfo, int Type, int Configs, int TempTables)
@@ -100,25 +101,25 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
         continue;
       }
       int Type = protocontainer<type>::SearchCodeName(Word);
-      if (!Type) ABORT("Odd term <%s> encountered in %s datafile line %ld!", Word.CStr(), protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      if (!Type) ABORT("Odd term <%s> encountered in %s datafile line %ld!", Word.CStr(), const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
       prototype *Proto = protocontainer<type>::GetProtoData()[Type];
       if (!Proto) ABORT("Something weird with <%s>!", Word.CStr());
       if (Proto->Base && !Proto->Base->ConfigData)
       {
-        ABORT("Database has no description of <%s>!", Proto->Base->GetClassID());
+        ABORT("Database has no description of <%s>!", const_cast<char*>(Proto->Base->GetClassID()));
       }
       database *DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
       DataBase->InitDefaults(Proto, 0);
       TempConfig[0] = DataBase;
       int Configs = 1;
-      if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
       //for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
       for (;;)
       {
         inFile->ReadWord(Word, false);
         if (Word == "" && inFile->Eof())
         {
-          if (infStack.empty()) ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+          if (infStack.empty()) ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
           delete inFile;
           inFile = infStack.top();
           infStack.pop();
@@ -150,10 +151,10 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             database *ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
             ConfigDataBase->InitDefaults(Proto, ConfigNumber);
             TempConfig[Configs++] = ConfigDataBase;
-            if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+            if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
             for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
-              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
+              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%ld, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), ConfigNumber, inFile->TellLine());
             }
             ConfigDataBase->PostProcess();
           }
@@ -166,7 +167,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
           fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
           continue;
         }
-        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), inFile->TellLine());
+        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), inFile->TellLine());
       }
       DataBase->PostProcess();
       //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
@@ -505,6 +506,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(GhostCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
+  ADD_MEMBER(IsUndead);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
   ADD_MEMBER(AllowedDungeons);
 }
@@ -594,6 +596,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(WieldedBitmapPos);
   ADD_MEMBER(IsQuestItem);
   ADD_MEMBER(IsGoodWithPlants);
+  ADD_MEMBER(IsGoodWithUndead);
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(CanBePickedUp);
   ADD_MEMBER(CoverPercentile);
@@ -620,6 +623,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BreakMsg);
   ADD_MEMBER(IsSadistWeapon);
   ADD_MEMBER(AllowedDungeons);
+  ADD_MEMBER(DescriptiveInfo);
 }
 
 template <class type>
@@ -743,6 +747,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(StepInWisdomLimit);
   ADD_MEMBER(RustModifier);
   ADD_MEMBER(Acidicity);
+  ADD_MEMBER(Hotness);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
   ADD_MEMBER(SoftenedMaterial);
@@ -945,12 +950,31 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   const prototype* Proto = Instance->FindProtoType();
   FindDataBase(Instance->DataBase, Proto, Config);
 
-  if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", Proto->GetClassID(), Config);
+  if(!Instance->DataBase){
+    if(genericException::IsGenNewLvl())
+      throw genericException([Proto,Config]{festring fsE;fsE << "UndefinedConfigurationSought,\"" << const_cast<char*>(Proto->GetClassID()) << "\","<<Config;return fsE.CStr();}());
+    else
+      ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+  }
 }
 
+template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)
+{
+  const prototype* Proto = Instance->FindProtoType();
+  FindDataBase(Instance->DataBase, Proto, Config);
+
+  if(!Instance->DataBase){
+    FindDataBase(Instance->DataBase, Proto, OldConfig); //restore DataBase field
+    return false;
+  }
+  
+  return true;
+}
+
+// this allows final compilation linking step to succeed! It apparently requires each type to be explicitly declared once;
 #define INST_INSTALL_DATABASE(type)\
-template void databasecreator<type>::InstallDataBase(type*, int)
+template void databasecreator<type>::InstallDataBase(type*, int);\
+template truth databasecreator<type>::InstallDataBaseIfPossible(type*, int, int)
 
 INST_INSTALL_DATABASE(material);
 INST_INSTALL_DATABASE(character);

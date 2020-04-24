@@ -139,12 +139,11 @@ OLTERRAIN(fountain, olterrain)
   virtual truth SitOn(character*);
   virtual truth Drink(character*);
   virtual truth HasDrinkEffect() const { return true; }
-  virtual void DryOut();
+  virtual void DryOut(character*);
   virtual truth DipInto(item*, character*);
   virtual truth IsDipDestination() const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
-  virtual void SetSecondaryMaterial(material*, int = 0);
-  virtual void ChangeSecondaryMaterial(material*, int = 0);
+  virtual material* SetSecondaryMaterial(material*, int = 0);
   void InitMaterials(material*, material*, truth = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -239,6 +238,8 @@ OLTERRAIN(coffin, olterraincontainer)
   virtual v2 GetBitmapPos(int Frame) const
   { return Opened ? GetOpenBitmapPos(Frame) : olterraincontainer::GetBitmapPos(Frame); }
   virtual void GenerateGhost(lsquare*);
+  virtual void GenerateUndead();
+  virtual void PostConstruct();
   truth Opened;
 };
 

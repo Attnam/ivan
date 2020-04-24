@@ -25,7 +25,7 @@ class definesvalidator{
  public:
   static void init();
   static void DevConsCmd(std::string);
-  static void GenerateDefinesValidator(std::string);
+  static void GenerateDefinesValidator(festring);
 
  static void Validate() {
   std::stringstream ssErrors;
@@ -53,6 +53,14 @@ class definesvalidator{
   bsB = ACIDOUS_BLOOD;
   if(bsA!=bsB)
     ssErrors << "Defined ACIDOUS_BLOOD with value 16427 from .dat file mismatches hardcoded c++ define value of " << ACIDOUS_BLOOD << "!" << std::endl;
+#endif 
+
+  
+#ifdef ACID_GAS // DO NOT MODIFY!
+  bsA = 12303;
+  bsB = ACID_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined ACID_GAS with value 12303 from .dat file mismatches hardcoded c++ define value of " << ACID_GAS << "!" << std::endl;
 #endif 
 
   
@@ -280,6 +288,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef AMULET_OF_FASTING // DO NOT MODIFY!
+  bsA = 9;
+  bsB = AMULET_OF_FASTING;
+  if(bsA!=bsB)
+    ssErrors << "Defined AMULET_OF_FASTING with value 9 from .dat file mismatches hardcoded c++ define value of " << AMULET_OF_FASTING << "!" << std::endl;
+#endif 
+
+  
 #ifdef AMULET_OF_LIFE_SAVING // DO NOT MODIFY!
   bsA = 1;
   bsB = AMULET_OF_LIFE_SAVING;
@@ -341,6 +357,14 @@ class definesvalidator{
   bsB = ANGEL_HAIR;
   if(bsA!=bsB)
     ssErrors << "Defined ANGEL_HAIR with value 4137 from .dat file mismatches hardcoded c++ define value of " << ANGEL_HAIR << "!" << std::endl;
+#endif 
+
+  
+#ifdef ANGEL_TEAM // DO NOT MODIFY!
+  bsA = 4;
+  bsB = ANGEL_TEAM;
+  if(bsA!=bsB)
+    ssErrors << "Defined ANGEL_TEAM with value 4 from .dat file mismatches hardcoded c++ define value of " << ANGEL_TEAM << "!" << std::endl;
 #endif 
 
   
@@ -409,10 +433,10 @@ class definesvalidator{
 
   
 #ifdef ARANEA // DO NOT MODIFY!
-  bsA = 3;
+  bsA = 5;
   bsB = ARANEA;
   if(bsA!=bsB)
-    ssErrors << "Defined ARANEA with value 3 from .dat file mismatches hardcoded c++ define value of " << ARANEA << "!" << std::endl;
+    ssErrors << "Defined ARANEA with value 5 from .dat file mismatches hardcoded c++ define value of " << ARANEA << "!" << std::endl;
 #endif 
 
   
@@ -501,6 +525,22 @@ class definesvalidator{
   bsB = ASH_WOOD;
   if(bsA!=bsB)
     ssErrors << "Defined ASH_WOOD with value 4230 from .dat file mismatches hardcoded c++ define value of " << ASH_WOOD << "!" << std::endl;
+#endif 
+
+  
+#ifdef ASLONA_CASTLE // DO NOT MODIFY!
+  bsA = 8;
+  bsB = ASLONA_CASTLE;
+  if(bsA!=bsB)
+    ssErrors << "Defined ASLONA_CASTLE with value 8 from .dat file mismatches hardcoded c++ define value of " << ASLONA_CASTLE << "!" << std::endl;
+#endif 
+
+  
+#ifdef ASLONA_TEAM // DO NOT MODIFY!
+  bsA = 17;
+  bsB = ASLONA_TEAM;
+  if(bsA!=bsB)
+    ssErrors << "Defined ASLONA_TEAM with value 17 from .dat file mismatches hardcoded c++ define value of " << ASLONA_TEAM << "!" << std::endl;
 #endif 
 
   
@@ -808,6 +848,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef BEAM_SOFTEN_MATERIAL // DO NOT MODIFY!
+  bsA = 15;
+  bsB = BEAM_SOFTEN_MATERIAL;
+  if(bsA!=bsB)
+    ssErrors << "Defined BEAM_SOFTEN_MATERIAL with value 15 from .dat file mismatches hardcoded c++ define value of " << BEAM_SOFTEN_MATERIAL << "!" << std::endl;
+#endif 
+
+  
 #ifdef BEAM_STRIKE // DO NOT MODIFY!
   bsA = 1;
   bsB = BEAM_STRIKE;
@@ -829,6 +877,14 @@ class definesvalidator{
   bsB = BEAM_TELEPORT;
   if(bsA!=bsB)
     ssErrors << "Defined BEAM_TELEPORT with value 3 from .dat file mismatches hardcoded c++ define value of " << BEAM_TELEPORT << "!" << std::endl;
+#endif 
+
+  
+#ifdef BEAM_WALL_CREATION // DO NOT MODIFY!
+  bsA = 16;
+  bsB = BEAM_WALL_CREATION;
+  if(bsA!=bsB)
+    ssErrors << "Defined BEAM_WALL_CREATION with value 16 from .dat file mismatches hardcoded c++ define value of " << BEAM_WALL_CREATION << "!" << std::endl;
 #endif 
 
   
@@ -1032,6 +1088,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef BLACK_BLOOD // DO NOT MODIFY!
+  bsA = 16441;
+  bsB = BLACK_BLOOD;
+  if(bsA!=bsB)
+    ssErrors << "Defined BLACK_BLOOD with value 16441 from .dat file mismatches hardcoded c++ define value of " << BLACK_BLOOD << "!" << std::endl;
+#endif 
+
+  
 #ifdef BLACK_DIAMOND // DO NOT MODIFY!
   bsA = 4299;
   bsB = BLACK_DIAMOND;
@@ -1072,6 +1136,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef BLACK_MARKET // DO NOT MODIFY!
+  bsA = 7;
+  bsB = BLACK_MARKET;
+  if(bsA!=bsB)
+    ssErrors << "Defined BLACK_MARKET with value 7 from .dat file mismatches hardcoded c++ define value of " << BLACK_MARKET << "!" << std::endl;
+#endif 
+
+  
 #ifdef BLACK_SAND // DO NOT MODIFY!
   bsA = 24582;
   bsB = BLACK_SAND;
@@ -1093,6 +1165,14 @@ class definesvalidator{
   bsB = BLINK_DOG_FLESH;
   if(bsA!=bsB)
     ssErrors << "Defined BLINK_DOG_FLESH with value 20527 from .dat file mismatches hardcoded c++ define value of " << BLINK_DOG_FLESH << "!" << std::endl;
+#endif 
+
+  
+#ifdef BLOAT // DO NOT MODIFY!
+  bsA = 4;
+  bsB = BLOAT;
+  if(bsA!=bsB)
+    ssErrors << "Defined BLOAT with value 4 from .dat file mismatches hardcoded c++ define value of " << BLOAT << "!" << std::endl;
 #endif 
 
   
@@ -1165,6 +1245,14 @@ class definesvalidator{
   bsB = BLUE_SIREN;
   if(bsA!=bsB)
     ssErrors << "Defined BLUE_SIREN with value 6 from .dat file mismatches hardcoded c++ define value of " << BLUE_SIREN << "!" << std::endl;
+#endif 
+
+  
+#ifdef BLUE_SNAKE // DO NOT MODIFY!
+  bsA = 3;
+  bsB = BLUE_SNAKE;
+  if(bsA!=bsB)
+    ssErrors << "Defined BLUE_SNAKE with value 3 from .dat file mismatches hardcoded c++ define value of " << BLUE_SNAKE << "!" << std::endl;
 #endif 
 
   
@@ -1277,6 +1365,14 @@ class definesvalidator{
   bsB = BOOT_OF_AGILITY;
   if(bsA!=bsB)
     ssErrors << "Defined BOOT_OF_AGILITY with value 2 from .dat file mismatches hardcoded c++ define value of " << BOOT_OF_AGILITY << "!" << std::endl;
+#endif 
+
+  
+#ifdef BOOT_OF_DISPLACEMENT // DO NOT MODIFY!
+  bsA = 4;
+  bsB = BOOT_OF_DISPLACEMENT;
+  if(bsA!=bsB)
+    ssErrors << "Defined BOOT_OF_DISPLACEMENT with value 4 from .dat file mismatches hardcoded c++ define value of " << BOOT_OF_DISPLACEMENT << "!" << std::endl;
 #endif 
 
   
@@ -1448,14 +1544,6 @@ class definesvalidator{
 #endif 
 
   
-#ifdef Base // DO NOT MODIFY!
-  bsA = 73;
-  bsB = Base;
-  if(bsA!=bsB)
-    ssErrors << "Defined Base with value 73 from .dat file mismatches hardcoded c++ define value of " << Base << "!" << std::endl;
-#endif 
-
-  
 #ifdef CACTUS // DO NOT MODIFY!
   bsA = 20;
   bsB = CACTUS;
@@ -1477,6 +1565,14 @@ class definesvalidator{
   bsB = CAN_BE_DESTROYED;
   if(bsA!=bsB)
     ssErrors << "Defined CAN_BE_DESTROYED with value 16 from .dat file mismatches hardcoded c++ define value of " << CAN_BE_DESTROYED << "!" << std::endl;
+#endif 
+
+  
+#ifdef CAN_BE_DETECTED // DO NOT MODIFY!
+  bsA = 128;
+  bsB = CAN_BE_DETECTED;
+  if(bsA!=bsB)
+    ssErrors << "Defined CAN_BE_DETECTED with value 128 from .dat file mismatches hardcoded c++ define value of " << CAN_BE_DETECTED << "!" << std::endl;
 #endif 
 
   
@@ -1573,6 +1669,14 @@ class definesvalidator{
   bsB = CARROT_FLESH;
   if(bsA!=bsB)
     ssErrors << "Defined CARROT_FLESH with value 8200 from .dat file mismatches hardcoded c++ define value of " << CARROT_FLESH << "!" << std::endl;
+#endif 
+
+  
+#ifdef CASTLE // DO NOT MODIFY!
+  bsA = 17;
+  bsB = CASTLE;
+  if(bsA!=bsB)
+    ssErrors << "Defined CASTLE with value 17 from .dat file mismatches hardcoded c++ define value of " << CASTLE << "!" << std::endl;
 #endif 
 
   
@@ -2145,10 +2249,10 @@ class definesvalidator{
 
   
 #ifdef CRAZED_FARMER // DO NOT MODIFY!
-  bsA = 3;
+  bsA = 4;
   bsB = CRAZED_FARMER;
   if(bsA!=bsB)
-    ssErrors << "Defined CRAZED_FARMER with value 3 from .dat file mismatches hardcoded c++ define value of " << CRAZED_FARMER << "!" << std::endl;
+    ssErrors << "Defined CRAZED_FARMER with value 4 from .dat file mismatches hardcoded c++ define value of " << CRAZED_FARMER << "!" << std::endl;
 #endif 
 
   
@@ -2184,6 +2288,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef CRYSTEEL // DO NOT MODIFY!
+  bsA = 4328;
+  bsB = CRYSTEEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined CRYSTEEL with value 4328 from .dat file mismatches hardcoded c++ define value of " << CRYSTEEL << "!" << std::endl;
+#endif 
+
+  
 #ifdef CT_BONE // DO NOT MODIFY!
   bsA = 32;
   bsB = CT_BONE;
@@ -2201,10 +2313,10 @@ class definesvalidator{
 
   
 #ifdef CT_GAS // DO NOT MODIFY!
-  bsA = 512;
+  bsA = 1024;
   bsB = CT_GAS;
   if(bsA!=bsB)
-    ssErrors << "Defined CT_GAS with value 512 from .dat file mismatches hardcoded c++ define value of " << CT_GAS << "!" << std::endl;
+    ssErrors << "Defined CT_GAS with value 1024 from .dat file mismatches hardcoded c++ define value of " << CT_GAS << "!" << std::endl;
 #endif 
 
   
@@ -2213,6 +2325,14 @@ class definesvalidator{
   bsB = CT_LIQUID;
   if(bsA!=bsB)
     ssErrors << "Defined CT_LIQUID with value 16 from .dat file mismatches hardcoded c++ define value of " << CT_LIQUID << "!" << std::endl;
+#endif 
+
+  
+#ifdef CT_MAGIC // DO NOT MODIFY!
+  bsA = 2048;
+  bsB = CT_MAGIC;
+  if(bsA!=bsB)
+    ssErrors << "Defined CT_MAGIC with value 2048 from .dat file mismatches hardcoded c++ define value of " << CT_MAGIC << "!" << std::endl;
 #endif 
 
   
@@ -2240,19 +2360,27 @@ class definesvalidator{
 #endif 
 
   
-#ifdef CT_MISC_ORGANIC // DO NOT MODIFY!
-  bsA = 128;
-  bsB = CT_MISC_ORGANIC;
+#ifdef CT_MISC_ANIMAL // DO NOT MODIFY!
+  bsA = 256;
+  bsB = CT_MISC_ANIMAL;
   if(bsA!=bsB)
-    ssErrors << "Defined CT_MISC_ORGANIC with value 128 from .dat file mismatches hardcoded c++ define value of " << CT_MISC_ORGANIC << "!" << std::endl;
+    ssErrors << "Defined CT_MISC_ANIMAL with value 256 from .dat file mismatches hardcoded c++ define value of " << CT_MISC_ANIMAL << "!" << std::endl;
+#endif 
+
+  
+#ifdef CT_MISC_PLANT // DO NOT MODIFY!
+  bsA = 128;
+  bsB = CT_MISC_PLANT;
+  if(bsA!=bsB)
+    ssErrors << "Defined CT_MISC_PLANT with value 128 from .dat file mismatches hardcoded c++ define value of " << CT_MISC_PLANT << "!" << std::endl;
 #endif 
 
   
 #ifdef CT_PLASTIC // DO NOT MODIFY!
-  bsA = 256;
+  bsA = 512;
   bsB = CT_PLASTIC;
   if(bsA!=bsB)
-    ssErrors << "Defined CT_PLASTIC with value 256 from .dat file mismatches hardcoded c++ define value of " << CT_PLASTIC << "!" << std::endl;
+    ssErrors << "Defined CT_PLASTIC with value 512 from .dat file mismatches hardcoded c++ define value of " << CT_PLASTIC << "!" << std::endl;
 #endif 
 
   
@@ -2265,10 +2393,10 @@ class definesvalidator{
 
   
 #ifdef CULTIST // DO NOT MODIFY!
-  bsA = 2;
+  bsA = 3;
   bsB = CULTIST;
   if(bsA!=bsB)
-    ssErrors << "Defined CULTIST with value 2 from .dat file mismatches hardcoded c++ define value of " << CULTIST << "!" << std::endl;
+    ssErrors << "Defined CULTIST with value 3 from .dat file mismatches hardcoded c++ define value of " << CULTIST << "!" << std::endl;
 #endif 
 
   
@@ -2277,6 +2405,14 @@ class definesvalidator{
   bsB = CURE_ALL_LIQUID;
   if(bsA!=bsB)
     ssErrors << "Defined CURE_ALL_LIQUID with value 16386 from .dat file mismatches hardcoded c++ define value of " << CURE_ALL_LIQUID << "!" << std::endl;
+#endif 
+
+  
+#ifdef CURTAIN // DO NOT MODIFY!
+  bsA = 3;
+  bsB = CURTAIN;
+  if(bsA!=bsB)
+    ssErrors << "Defined CURTAIN with value 3 from .dat file mismatches hardcoded c++ define value of " << CURTAIN << "!" << std::endl;
 #endif 
 
   
@@ -2333,6 +2469,14 @@ class definesvalidator{
   bsB = DARK_BREAD;
   if(bsA!=bsB)
     ssErrors << "Defined DARK_BREAD with value 8204 from .dat file mismatches hardcoded c++ define value of " << DARK_BREAD << "!" << std::endl;
+#endif 
+
+  
+#ifdef DARK_FOREST // DO NOT MODIFY!
+  bsA = 15;
+  bsB = DARK_FOREST;
+  if(bsA!=bsB)
+    ssErrors << "Defined DARK_FOREST with value 15 from .dat file mismatches hardcoded c++ define value of " << DARK_FOREST << "!" << std::endl;
 #endif 
 
   
@@ -2501,6 +2645,14 @@ class definesvalidator{
   bsB = DIAMOND;
   if(bsA!=bsB)
     ssErrors << "Defined DIAMOND with value 4298 from .dat file mismatches hardcoded c++ define value of " << DIAMOND << "!" << std::endl;
+#endif 
+
+  
+#ifdef DIRE // DO NOT MODIFY!
+  bsA = 1;
+  bsB = DIRE;
+  if(bsA!=bsB)
+    ssErrors << "Defined DIRE with value 1 from .dat file mismatches hardcoded c++ define value of " << DIRE << "!" << std::endl;
 #endif 
 
   
@@ -2688,6 +2840,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef EFFECT_ACID_GAS // DO NOT MODIFY!
+  bsA = 44;
+  bsB = EFFECT_ACID_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_ACID_GAS with value 44 from .dat file mismatches hardcoded c++ define value of " << EFFECT_ACID_GAS << "!" << std::endl;
+#endif 
+
+  
 #ifdef EFFECT_ANTIDOTE // DO NOT MODIFY!
   bsA = 9;
   bsB = EFFECT_ANTIDOTE;
@@ -2736,6 +2896,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef EFFECT_FIRE_GAS // DO NOT MODIFY!
+  bsA = 45;
+  bsB = EFFECT_FIRE_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_FIRE_GAS with value 45 from .dat file mismatches hardcoded c++ define value of " << EFFECT_FIRE_GAS << "!" << std::endl;
+#endif 
+
+  
 #ifdef EFFECT_GOOD_WONDER_STAFF_VAPOUR // DO NOT MODIFY!
   bsA = 18;
   bsB = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
@@ -2781,6 +2949,14 @@ class definesvalidator{
   bsB = EFFECT_KOBOLD_FLESH;
   if(bsA!=bsB)
     ssErrors << "Defined EFFECT_KOBOLD_FLESH with value 5 from .dat file mismatches hardcoded c++ define value of " << EFFECT_KOBOLD_FLESH << "!" << std::endl;
+#endif 
+
+  
+#ifdef EFFECT_LAUGH // DO NOT MODIFY!
+  bsA = 39;
+  bsB = EFFECT_LAUGH;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_LAUGH with value 39 from .dat file mismatches hardcoded c++ define value of " << EFFECT_LAUGH << "!" << std::endl;
 #endif 
 
   
@@ -2920,11 +3096,27 @@ class definesvalidator{
 #endif 
 
   
+#ifdef EFFECT_PHASE // DO NOT MODIFY!
+  bsA = 43;
+  bsB = EFFECT_PHASE;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_PHASE with value 43 from .dat file mismatches hardcoded c++ define value of " << EFFECT_PHASE << "!" << std::endl;
+#endif 
+
+  
 #ifdef EFFECT_POISON // DO NOT MODIFY!
   bsA = 1;
   bsB = EFFECT_POISON;
   if(bsA!=bsB)
     ssErrors << "Defined EFFECT_POISON with value 1 from .dat file mismatches hardcoded c++ define value of " << EFFECT_POISON << "!" << std::endl;
+#endif 
+
+  
+#ifdef EFFECT_POLYJUICE // DO NOT MODIFY!
+  bsA = 40;
+  bsB = EFFECT_POLYJUICE;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_POLYJUICE with value 40 from .dat file mismatches hardcoded c++ define value of " << EFFECT_POLYJUICE << "!" << std::endl;
 #endif 
 
   
@@ -2936,6 +3128,22 @@ class definesvalidator{
 #endif 
 
   
+#ifdef EFFECT_PUKE // DO NOT MODIFY!
+  bsA = 41;
+  bsB = EFFECT_PUKE;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_PUKE with value 41 from .dat file mismatches hardcoded c++ define value of " << EFFECT_PUKE << "!" << std::endl;
+#endif 
+
+  
+#ifdef EFFECT_REGENERATION // DO NOT MODIFY!
+  bsA = 37;
+  bsB = EFFECT_REGENERATION;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_REGENERATION with value 37 from .dat file mismatches hardcoded c++ define value of " << EFFECT_REGENERATION << "!" << std::endl;
+#endif 
+
+  
 #ifdef EFFECT_SCHOOL_FOOD // DO NOT MODIFY!
   bsA = 8;
   bsB = EFFECT_SCHOOL_FOOD;
@@ -2944,11 +3152,27 @@ class definesvalidator{
 #endif 
 
   
+#ifdef EFFECT_SICKNESS // DO NOT MODIFY!
+  bsA = 42;
+  bsB = EFFECT_SICKNESS;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_SICKNESS with value 42 from .dat file mismatches hardcoded c++ define value of " << EFFECT_SICKNESS << "!" << std::endl;
+#endif 
+
+  
 #ifdef EFFECT_SKUNK_SMELL // DO NOT MODIFY!
   bsA = 13;
   bsB = EFFECT_SKUNK_SMELL;
   if(bsA!=bsB)
     ssErrors << "Defined EFFECT_SKUNK_SMELL with value 13 from .dat file mismatches hardcoded c++ define value of " << EFFECT_SKUNK_SMELL << "!" << std::endl;
+#endif 
+
+  
+#ifdef EFFECT_TELEPORTATION // DO NOT MODIFY!
+  bsA = 38;
+  bsB = EFFECT_TELEPORTATION;
+  if(bsA!=bsB)
+    ssErrors << "Defined EFFECT_TELEPORTATION with value 38 from .dat file mismatches hardcoded c++ define value of " << EFFECT_TELEPORTATION << "!" << std::endl;
 #endif 
 
   
@@ -3320,6 +3544,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef FIRE_GAS // DO NOT MODIFY!
+  bsA = 12304;
+  bsB = FIRE_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined FIRE_GAS with value 12304 from .dat file mismatches hardcoded c++ define value of " << FIRE_GAS << "!" << std::endl;
+#endif 
+
+  
 #ifdef FIR_WOOD // DO NOT MODIFY!
   bsA = 4239;
   bsB = FIR_WOOD;
@@ -3349,6 +3581,14 @@ class definesvalidator{
   bsB = FLAT_BREAD;
   if(bsA!=bsB)
     ssErrors << "Defined FLAT_BREAD with value 8205 from .dat file mismatches hardcoded c++ define value of " << FLAT_BREAD << "!" << std::endl;
+#endif 
+
+  
+#ifdef FLAWLESS_CRYSTEEL // DO NOT MODIFY!
+  bsA = 4329;
+  bsB = FLAWLESS_CRYSTEEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined FLAWLESS_CRYSTEEL with value 4329 from .dat file mismatches hardcoded c++ define value of " << FLAWLESS_CRYSTEEL << "!" << std::endl;
 #endif 
 
   
@@ -3504,6 +3744,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef FUNGAL_CAVE // DO NOT MODIFY!
+  bsA = 11;
+  bsB = FUNGAL_CAVE;
+  if(bsA!=bsB)
+    ssErrors << "Defined FUNGAL_CAVE with value 11 from .dat file mismatches hardcoded c++ define value of " << FUNGAL_CAVE << "!" << std::endl;
+#endif 
+
+  
 #ifdef FUNGI_WOOD // DO NOT MODIFY!
   bsA = 4226;
   bsB = FUNGI_WOOD;
@@ -3517,6 +3765,14 @@ class definesvalidator{
   bsB = FURNACE;
   if(bsA!=bsB)
     ssErrors << "Defined FURNACE with value 27 from .dat file mismatches hardcoded c++ define value of " << FURNACE << "!" << std::endl;
+#endif 
+
+  
+#ifdef FUSANGA_LEVEL // DO NOT MODIFY!
+  bsA = 3;
+  bsB = FUSANGA_LEVEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined FUSANGA_LEVEL with value 3 from .dat file mismatches hardcoded c++ define value of " << FUSANGA_LEVEL << "!" << std::endl;
 #endif 
 
   
@@ -3600,6 +3856,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef GIANT_GOLD // DO NOT MODIFY!
+  bsA = 4;
+  bsB = GIANT_GOLD;
+  if(bsA!=bsB)
+    ssErrors << "Defined GIANT_GOLD with value 4 from .dat file mismatches hardcoded c++ define value of " << GIANT_GOLD << "!" << std::endl;
+#endif 
+
+  
 #ifdef GIANT_LIGHT // DO NOT MODIFY!
   bsA = 6;
   bsB = GIANT_LIGHT;
@@ -3661,6 +3925,14 @@ class definesvalidator{
   bsB = GOBLINOID_FLESH;
   if(bsA!=bsB)
     ssErrors << "Defined GOBLINOID_FLESH with value 20488 from .dat file mismatches hardcoded c++ define value of " << GOBLINOID_FLESH << "!" << std::endl;
+#endif 
+
+  
+#ifdef GOBLIN_FORT // DO NOT MODIFY!
+  bsA = 10;
+  bsB = GOBLIN_FORT;
+  if(bsA!=bsB)
+    ssErrors << "Defined GOBLIN_FORT with value 10 from .dat file mismatches hardcoded c++ define value of " << GOBLIN_FORT << "!" << std::endl;
 #endif 
 
   
@@ -3888,6 +4160,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef GREEN_SNAKE // DO NOT MODIFY!
+  bsA = 2;
+  bsB = GREEN_SNAKE;
+  if(bsA!=bsB)
+    ssErrors << "Defined GREEN_SNAKE with value 2 from .dat file mismatches hardcoded c++ define value of " << GREEN_SNAKE << "!" << std::endl;
+#endif 
+
+  
 #ifdef GRIFFON_FEATHER // DO NOT MODIFY!
   bsA = 4162;
   bsB = GRIFFON_FEATHER;
@@ -3925,6 +4205,14 @@ class definesvalidator{
   bsB = GROUND;
   if(bsA!=bsB)
     ssErrors << "Defined GROUND with value 3 from .dat file mismatches hardcoded c++ define value of " << GROUND << "!" << std::endl;
+#endif 
+
+  
+#ifdef GUILD_TEAM // DO NOT MODIFY!
+  bsA = 5;
+  bsB = GUILD_TEAM;
+  if(bsA!=bsB)
+    ssErrors << "Defined GUILD_TEAM with value 5 from .dat file mismatches hardcoded c++ define value of " << GUILD_TEAM << "!" << std::endl;
 #endif 
 
   
@@ -4337,10 +4625,10 @@ class definesvalidator{
 
   
 #ifdef HOARD_MASTER // DO NOT MODIFY!
-  bsA = 2;
+  bsA = 3;
   bsB = HOARD_MASTER;
   if(bsA!=bsB)
-    ssErrors << "Defined HOARD_MASTER with value 2 from .dat file mismatches hardcoded c++ define value of " << HOARD_MASTER << "!" << std::endl;
+    ssErrors << "Defined HOARD_MASTER with value 3 from .dat file mismatches hardcoded c++ define value of " << HOARD_MASTER << "!" << std::endl;
 #endif 
 
   
@@ -4600,6 +4888,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef IRINOX // DO NOT MODIFY!
+  bsA = 14;
+  bsB = IRINOX;
+  if(bsA!=bsB)
+    ssErrors << "Defined IRINOX with value 14 from .dat file mismatches hardcoded c++ define value of " << IRINOX << "!" << std::endl;
+#endif 
+
+  
 #ifdef IRON // DO NOT MODIFY!
   bsA = 28674;
   bsB = IRON;
@@ -4808,6 +5104,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef KATANA // DO NOT MODIFY!
+  bsA = 24;
+  bsB = KATANA;
+  if(bsA!=bsB)
+    ssErrors << "Defined KATANA with value 24 from .dat file mismatches hardcoded c++ define value of " << KATANA << "!" << std::endl;
+#endif 
+
+  
 #ifdef KAURI_WOOD // DO NOT MODIFY!
   bsA = 4244;
   bsB = KAURI_WOOD;
@@ -4853,6 +5157,14 @@ class definesvalidator{
   bsB = KING;
   if(bsA!=bsB)
     ssErrors << "Defined KING with value 4 from .dat file mismatches hardcoded c++ define value of " << KING << "!" << std::endl;
+#endif 
+
+  
+#ifdef KING_LEVEL // DO NOT MODIFY!
+  bsA = 5;
+  bsB = KING_LEVEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined KING_LEVEL with value 5 from .dat file mismatches hardcoded c++ define value of " << KING_LEVEL << "!" << std::endl;
 #endif 
 
   
@@ -4933,6 +5245,22 @@ class definesvalidator{
   bsB = LATEX;
   if(bsA!=bsB)
     ssErrors << "Defined LATEX with value 4184 from .dat file mismatches hardcoded c++ define value of " << LATEX << "!" << std::endl;
+#endif 
+
+  
+#ifdef LAUGHING_GAS // DO NOT MODIFY!
+  bsA = 12302;
+  bsB = LAUGHING_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined LAUGHING_GAS with value 12302 from .dat file mismatches hardcoded c++ define value of " << LAUGHING_GAS << "!" << std::endl;
+#endif 
+
+  
+#ifdef LAVA // DO NOT MODIFY!
+  bsA = 16443;
+  bsB = LAVA;
+  if(bsA!=bsB)
+    ssErrors << "Defined LAVA with value 16443 from .dat file mismatches hardcoded c++ define value of " << LAVA << "!" << std::endl;
 #endif 
 
   
@@ -5272,14 +5600,6 @@ class definesvalidator{
 #endif 
 
   
-#ifdef MAGE_STAFF // DO NOT MODIFY!
-  bsA = 18;
-  bsB = MAGE_STAFF;
-  if(bsA!=bsB)
-    ssErrors << "Defined MAGE_STAFF with value 18 from .dat file mismatches hardcoded c++ define value of " << MAGE_STAFF << "!" << std::endl;
-#endif 
-
-  
 #ifdef MAGIC_CRYSTAL // DO NOT MODIFY!
   bsA = 4201;
   bsB = MAGIC_CRYSTAL;
@@ -5309,6 +5629,14 @@ class definesvalidator{
   bsB = MAGIC_VAPOUR;
   if(bsA!=bsB)
     ssErrors << "Defined MAGIC_VAPOUR with value 12295 from .dat file mismatches hardcoded c++ define value of " << MAGIC_VAPOUR << "!" << std::endl;
+#endif 
+
+  
+#ifdef MAGMA // DO NOT MODIFY!
+  bsA = 3;
+  bsB = MAGMA;
+  if(bsA!=bsB)
+    ssErrors << "Defined MAGMA with value 3 from .dat file mismatches hardcoded c++ define value of " << MAGMA << "!" << std::endl;
 #endif 
 
   
@@ -5433,10 +5761,10 @@ class definesvalidator{
 
   
 #ifdef MASTER_TORTURER // DO NOT MODIFY!
-  bsA = 1;
+  bsA = 2;
   bsB = MASTER_TORTURER;
   if(bsA!=bsB)
-    ssErrors << "Defined MASTER_TORTURER with value 1 from .dat file mismatches hardcoded c++ define value of " << MASTER_TORTURER << "!" << std::endl;
+    ssErrors << "Defined MASTER_TORTURER with value 2 from .dat file mismatches hardcoded c++ define value of " << MASTER_TORTURER << "!" << std::endl;
 #endif 
 
   
@@ -5549,6 +5877,14 @@ class definesvalidator{
   bsB = MODERATELY_BURNT;
   if(bsA!=bsB)
     ssErrors << "Defined MODERATELY_BURNT with value 2 from .dat file mismatches hardcoded c++ define value of " << MODERATELY_BURNT << "!" << std::endl;
+#endif 
+
+  
+#ifdef MONDEDR // DO NOT MODIFY!
+  bsA = 13;
+  bsB = MONDEDR;
+  if(bsA!=bsB)
+    ssErrors << "Defined MONDEDR with value 13 from .dat file mismatches hardcoded c++ define value of " << MONDEDR << "!" << std::endl;
 #endif 
 
   
@@ -5717,6 +6053,14 @@ class definesvalidator{
   bsB = NANO_FIBER;
   if(bsA!=bsB)
     ssErrors << "Defined NANO_FIBER with value 4183 from .dat file mismatches hardcoded c++ define value of " << NANO_FIBER << "!" << std::endl;
+#endif 
+
+  
+#ifdef NAPALM // DO NOT MODIFY!
+  bsA = 16444;
+  bsB = NAPALM;
+  if(bsA!=bsB)
+    ssErrors << "Defined NAPALM with value 16444 from .dat file mismatches hardcoded c++ define value of " << NAPALM << "!" << std::endl;
 #endif 
 
   
@@ -6328,6 +6672,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef PHASE // DO NOT MODIFY!
+  bsA = 3;
+  bsB = PHASE;
+  if(bsA!=bsB)
+    ssErrors << "Defined PHASE with value 3 from .dat file mismatches hardcoded c++ define value of " << PHASE << "!" << std::endl;
+#endif 
+
+  
 #ifdef PHOENIX_FEATHER // DO NOT MODIFY!
   bsA = 4163;
   bsB = PHOENIX_FEATHER;
@@ -6552,6 +6904,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef POLYMORPHINE // DO NOT MODIFY!
+  bsA = 16442;
+  bsB = POLYMORPHINE;
+  if(bsA!=bsB)
+    ssErrors << "Defined POLYMORPHINE with value 16442 from .dat file mismatches hardcoded c++ define value of " << POLYMORPHINE << "!" << std::endl;
+#endif 
+
+  
 #ifdef POLYMORPH_CONTROL // DO NOT MODIFY!
   bsA = 8;
   bsB = POLYMORPH_CONTROL;
@@ -6696,6 +7056,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef PYRAMID // DO NOT MODIFY!
+  bsA = 12;
+  bsB = PYRAMID;
+  if(bsA!=bsB)
+    ssErrors << "Defined PYRAMID with value 12 from .dat file mismatches hardcoded c++ define value of " << PYRAMID << "!" << std::endl;
+#endif 
+
+  
 #ifdef PYRITE // DO NOT MODIFY!
   bsA = 4325;
   bsB = PYRITE;
@@ -6792,6 +7160,46 @@ class definesvalidator{
 #endif 
 
   
+#ifdef REBEL // DO NOT MODIFY!
+  bsA = 19;
+  bsB = REBEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined REBEL with value 19 from .dat file mismatches hardcoded c++ define value of " << REBEL << "!" << std::endl;
+#endif 
+
+  
+#ifdef REBEL_CAMP // DO NOT MODIFY!
+  bsA = 9;
+  bsB = REBEL_CAMP;
+  if(bsA!=bsB)
+    ssErrors << "Defined REBEL_CAMP with value 9 from .dat file mismatches hardcoded c++ define value of " << REBEL_CAMP << "!" << std::endl;
+#endif 
+
+  
+#ifdef REBEL_LIEUTENANT // DO NOT MODIFY!
+  bsA = 2;
+  bsB = REBEL_LIEUTENANT;
+  if(bsA!=bsB)
+    ssErrors << "Defined REBEL_LIEUTENANT with value 2 from .dat file mismatches hardcoded c++ define value of " << REBEL_LIEUTENANT << "!" << std::endl;
+#endif 
+
+  
+#ifdef REBEL_SOLDIER // DO NOT MODIFY!
+  bsA = 1;
+  bsB = REBEL_SOLDIER;
+  if(bsA!=bsB)
+    ssErrors << "Defined REBEL_SOLDIER with value 1 from .dat file mismatches hardcoded c++ define value of " << REBEL_SOLDIER << "!" << std::endl;
+#endif 
+
+  
+#ifdef REBEL_TEAM // DO NOT MODIFY!
+  bsA = 18;
+  bsB = REBEL_TEAM;
+  if(bsA!=bsB)
+    ssErrors << "Defined REBEL_TEAM with value 18 from .dat file mismatches hardcoded c++ define value of " << REBEL_TEAM << "!" << std::endl;
+#endif 
+
+  
 #ifdef RECTANGLE // DO NOT MODIFY!
   bsA = 1;
   bsB = RECTANGLE;
@@ -6853,6 +7261,14 @@ class definesvalidator{
   bsB = RED_SIREN;
   if(bsA!=bsB)
     ssErrors << "Defined RED_SIREN with value 7 from .dat file mismatches hardcoded c++ define value of " << RED_SIREN << "!" << std::endl;
+#endif 
+
+  
+#ifdef RED_SNAKE // DO NOT MODIFY!
+  bsA = 1;
+  bsB = RED_SNAKE;
+  if(bsA!=bsB)
+    ssErrors << "Defined RED_SNAKE with value 1 from .dat file mismatches hardcoded c++ define value of " << RED_SNAKE << "!" << std::endl;
 #endif 
 
   
@@ -7080,6 +7496,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef RING_OF_SPEED // DO NOT MODIFY!
+  bsA = 18;
+  bsB = RING_OF_SPEED;
+  if(bsA!=bsB)
+    ssErrors << "Defined RING_OF_SPEED with value 18 from .dat file mismatches hardcoded c++ define value of " << RING_OF_SPEED << "!" << std::endl;
+#endif 
+
+  
 #ifdef RING_OF_TELEPORTATION // DO NOT MODIFY!
   bsA = 4;
   bsB = RING_OF_TELEPORTATION;
@@ -7184,6 +7608,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef ROOM_OWNED_AREA // DO NOT MODIFY!
+  bsA = 7;
+  bsB = ROOM_OWNED_AREA;
+  if(bsA!=bsB)
+    ssErrors << "Defined ROOM_OWNED_AREA with value 7 from .dat file mismatches hardcoded c++ define value of " << ROOM_OWNED_AREA << "!" << std::endl;
+#endif 
+
+  
 #ifdef ROOM_SHOP // DO NOT MODIFY!
   bsA = 2;
   bsB = ROOM_SHOP;
@@ -7229,6 +7661,22 @@ class definesvalidator{
   bsB = ROUND_LOCK;
   if(bsA!=bsB)
     ssErrors << "Defined ROUND_LOCK with value 2048 from .dat file mismatches hardcoded c++ define value of " << ROUND_LOCK << "!" << std::endl;
+#endif 
+
+  
+#ifdef ROYAL // DO NOT MODIFY!
+  bsA = 18;
+  bsB = ROYAL;
+  if(bsA!=bsB)
+    ssErrors << "Defined ROYAL with value 18 from .dat file mismatches hardcoded c++ define value of " << ROYAL << "!" << std::endl;
+#endif 
+
+  
+#ifdef ROYAL_STAFF // DO NOT MODIFY!
+  bsA = 1;
+  bsB = ROYAL_STAFF;
+  if(bsA!=bsB)
+    ssErrors << "Defined ROYAL_STAFF with value 1 from .dat file mismatches hardcoded c++ define value of " << ROYAL_STAFF << "!" << std::endl;
 #endif 
 
   
@@ -7360,6 +7808,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef SEA // DO NOT MODIFY!
+  bsA = 3;
+  bsB = SEA;
+  if(bsA!=bsB)
+    ssErrors << "Defined SEA with value 3 from .dat file mismatches hardcoded c++ define value of " << SEA << "!" << std::endl;
+#endif 
+
+  
 #ifdef SEARCHING // DO NOT MODIFY!
   bsA = 65536;
   bsB = SEARCHING;
@@ -7485,6 +7941,30 @@ class definesvalidator{
   bsB = SHIELD_BEAM;
   if(bsA!=bsB)
     ssErrors << "Defined SHIELD_BEAM with value 2 from .dat file mismatches hardcoded c++ define value of " << SHIELD_BEAM << "!" << std::endl;
+#endif 
+
+  
+#ifdef SHIELD_OF_ELECTRICITY_RESISTANCE // DO NOT MODIFY!
+  bsA = 4;
+  bsB = SHIELD_OF_ELECTRICITY_RESISTANCE;
+  if(bsA!=bsB)
+    ssErrors << "Defined SHIELD_OF_ELECTRICITY_RESISTANCE with value 4 from .dat file mismatches hardcoded c++ define value of " << SHIELD_OF_ELECTRICITY_RESISTANCE << "!" << std::endl;
+#endif 
+
+  
+#ifdef SHIELD_OF_FIRE_RESISTANCE // DO NOT MODIFY!
+  bsA = 3;
+  bsB = SHIELD_OF_FIRE_RESISTANCE;
+  if(bsA!=bsB)
+    ssErrors << "Defined SHIELD_OF_FIRE_RESISTANCE with value 3 from .dat file mismatches hardcoded c++ define value of " << SHIELD_OF_FIRE_RESISTANCE << "!" << std::endl;
+#endif 
+
+  
+#ifdef SHIELD_OF_MAGIC_RESISTANCE // DO NOT MODIFY!
+  bsA = 5;
+  bsB = SHIELD_OF_MAGIC_RESISTANCE;
+  if(bsA!=bsB)
+    ssErrors << "Defined SHIELD_OF_MAGIC_RESISTANCE with value 5 from .dat file mismatches hardcoded c++ define value of " << SHIELD_OF_MAGIC_RESISTANCE << "!" << std::endl;
 #endif 
 
   
@@ -8144,6 +8624,22 @@ class definesvalidator{
 #endif 
 
   
+#ifdef TELEPORT_FLUID // DO NOT MODIFY!
+  bsA = 16439;
+  bsB = TELEPORT_FLUID;
+  if(bsA!=bsB)
+    ssErrors << "Defined TELEPORT_FLUID with value 16439 from .dat file mismatches hardcoded c++ define value of " << TELEPORT_FLUID << "!" << std::endl;
+#endif 
+
+  
+#ifdef TELEPORT_GAS // DO NOT MODIFY!
+  bsA = 12301;
+  bsB = TELEPORT_GAS;
+  if(bsA!=bsB)
+    ssErrors << "Defined TELEPORT_GAS with value 12301 from .dat file mismatches hardcoded c++ define value of " << TELEPORT_GAS << "!" << std::endl;
+#endif 
+
+  
 #ifdef TELEPORT_LOCK // DO NOT MODIFY!
   bsA = 268435456;
   bsB = TELEPORT_LOCK;
@@ -8160,11 +8656,27 @@ class definesvalidator{
 #endif 
 
   
+#ifdef TENT_WALL // DO NOT MODIFY!
+  bsA = 9;
+  bsB = TENT_WALL;
+  if(bsA!=bsB)
+    ssErrors << "Defined TENT_WALL with value 9 from .dat file mismatches hardcoded c++ define value of " << TENT_WALL << "!" << std::endl;
+#endif 
+
+  
 #ifdef TERRA // DO NOT MODIFY!
   bsA = 7;
   bsB = TERRA;
   if(bsA!=bsB)
     ssErrors << "Defined TERRA with value 7 from .dat file mismatches hardcoded c++ define value of " << TERRA << "!" << std::endl;
+#endif 
+
+  
+#ifdef TERRA_TEAM // DO NOT MODIFY!
+  bsA = 16;
+  bsB = TERRA_TEAM;
+  if(bsA!=bsB)
+    ssErrors << "Defined TERRA_TEAM with value 16 from .dat file mismatches hardcoded c++ define value of " << TERRA_TEAM << "!" << std::endl;
 #endif 
 
   
@@ -8512,6 +9024,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef UR_STEEL // DO NOT MODIFY!
+  bsA = 28685;
+  bsB = UR_STEEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined UR_STEEL with value 28685 from .dat file mismatches hardcoded c++ define value of " << UR_STEEL << "!" << std::endl;
+#endif 
+
+  
 #ifdef USE_ADJECTIVE_AN // DO NOT MODIFY!
   bsA = 2;
   bsB = USE_ADJECTIVE_AN;
@@ -8680,6 +9200,22 @@ class definesvalidator{
 #endif 
 
   
+#ifdef VICE_ROY // DO NOT MODIFY!
+  bsA = 1;
+  bsB = VICE_ROY;
+  if(bsA!=bsB)
+    ssErrors << "Defined VICE_ROY with value 1 from .dat file mismatches hardcoded c++ define value of " << VICE_ROY << "!" << std::endl;
+#endif 
+
+  
+#ifdef VINEGAR // DO NOT MODIFY!
+  bsA = 16440;
+  bsB = VINEGAR;
+  if(bsA!=bsB)
+    ssErrors << "Defined VINEGAR with value 16440 from .dat file mismatches hardcoded c++ define value of " << VINEGAR << "!" << std::endl;
+#endif 
+
+  
 #ifdef VITRELLOY // DO NOT MODIFY!
   bsA = 4191;
   bsB = VITRELLOY;
@@ -8824,6 +9360,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef WAND_OF_SOFTEN_MATERIAL // DO NOT MODIFY!
+  bsA = 17;
+  bsB = WAND_OF_SOFTEN_MATERIAL;
+  if(bsA!=bsB)
+    ssErrors << "Defined WAND_OF_SOFTEN_MATERIAL with value 17 from .dat file mismatches hardcoded c++ define value of " << WAND_OF_SOFTEN_MATERIAL << "!" << std::endl;
+#endif 
+
+  
 #ifdef WAND_OF_STRIKING // DO NOT MODIFY!
   bsA = 2;
   bsB = WAND_OF_STRIKING;
@@ -8888,6 +9432,14 @@ class definesvalidator{
 #endif 
 
   
+#ifdef WAR_MASK // DO NOT MODIFY!
+  bsA = 13;
+  bsB = WAR_MASK;
+  if(bsA!=bsB)
+    ssErrors << "Defined WAR_MASK with value 13 from .dat file mismatches hardcoded c++ define value of " << WAR_MASK << "!" << std::endl;
+#endif 
+
+  
 #ifdef WATER // DO NOT MODIFY!
   bsA = 16398;
   bsB = WATER;
@@ -8921,10 +9473,10 @@ class definesvalidator{
 
   
 #ifdef WEAPON_SKILL_CATEGORIES // DO NOT MODIFY!
-  bsA = 11;
+  bsA = 12;
   bsB = WEAPON_SKILL_CATEGORIES;
   if(bsA!=bsB)
-    ssErrors << "Defined WEAPON_SKILL_CATEGORIES with value 11 from .dat file mismatches hardcoded c++ define value of " << WEAPON_SKILL_CATEGORIES << "!" << std::endl;
+    ssErrors << "Defined WEAPON_SKILL_CATEGORIES with value 12 from .dat file mismatches hardcoded c++ define value of " << WEAPON_SKILL_CATEGORIES << "!" << std::endl;
 #endif 
 
   
@@ -8981,6 +9533,14 @@ class definesvalidator{
   bsB = WHITE_JADE;
   if(bsA!=bsB)
     ssErrors << "Defined WHITE_JADE with value 4307 from .dat file mismatches hardcoded c++ define value of " << WHITE_JADE << "!" << std::endl;
+#endif 
+
+  
+#ifdef WHITE_STEEL // DO NOT MODIFY!
+  bsA = 28684;
+  bsB = WHITE_STEEL;
+  if(bsA!=bsB)
+    ssErrors << "Defined WHITE_STEEL with value 28684 from .dat file mismatches hardcoded c++ define value of " << WHITE_STEEL << "!" << std::endl;
 #endif 
 
   

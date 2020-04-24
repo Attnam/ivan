@@ -54,6 +54,7 @@ truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslo
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 truth item::IsBroken() const { return GetConfig() & BROKEN; }
+truth item::IsFood() const { return DataBase->Category & FOOD; }
 cchar* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
@@ -67,29 +68,27 @@ truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eat
 truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
-{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
-{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+material* item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ return SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
 { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
 item::item(citem& Item)
 : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight),
+  iRotateFlyingThrownStep(Item.iRotateFlyingThrownStep),
   Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
+
   CloneMotherID = new idholder(Item.ID);
   idholder* TI = CloneMotherID;
-
   for(idholder* II = Item.CloneMotherID; II; II = II->Next)
     TI = TI->Next = new idholder(II->ID);
-
   TI->Next = 0;
-  Slot = new slot*[SquaresUnder];
 
+  Slot = new slot*[SquaresUnder];
   for(int c = 0; c < SquaresUnder; ++c)
     Slot[c] = 0;
 }
@@ -124,7 +123,10 @@ item::~item()
 
 void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrownRotation)
 {
-  iRotateFlyingThrownStep=0; //simple granted reset
+  if(ivanconfig::GetRotateTimesPerSquare() > 0)
+  {
+    iRotateFlyingThrownStep=0; //simple granted reset
+  }
   lsquare* LandingSquare=NULL;
 
   int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
@@ -221,7 +223,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
       if(Draw)
         while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
 
-      if(iRotateFlyingThrownStep!=0){
+      if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){
         if(iRotateTimes==1){
           iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1; //next rotation step on next square
         }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
@@ -245,7 +247,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
 
   }
 
-  if(iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
     iRotateFlyingThrownStep=4; //default rotation is w/o the rotation flags at the switch(){}
     //force redraw at default rotation to avoid another spin when player moves TODO how to let it stay in the last rotation?
     RemoveFromSlot();LandingSquare->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square...
@@ -332,6 +334,58 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
   }
 }
 
+truth item::Polymorph(character* Polymorpher, character* Wielder)
+{
+  if(!IsPolymorphable())
+    return false;
+  else if(!Wielder->Equips(this))
+    return false;
+  else
+  {
+    if(Polymorpher && Wielder)
+    {
+      Polymorpher->Hostility(Wielder);
+    }
+
+    item* NewItem = protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true);
+    int EquipSlot = GetEquipmentIndex();
+
+    if(Wielder->IsPlayer())
+      ADD_MESSAGE("Your %s polymorphs into %s.", CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s's %s polymorphs into %s.", Wielder->CHAR_NAME(DEFINITE), CHAR_NAME(UNARTICLED), NewItem->CHAR_NAME(INDEFINITE));
+
+    RemoveFromSlot();
+    SendToHell();
+
+    switch (EquipSlot)
+    {
+      /*
+      case HELMET_INDEX: Wielder->SetHelmet(NewItem); break;
+      case AMULET_INDEX: Wielder->SetAmulet(NewItem); break;
+      case CLOAK_INDEX: Wielder->SetCloak(NewItem); break;
+      case BODY_ARMOR_INDEX: Wielder->SetBodyArmor(NewItem); break;
+      case BELT_INDEX: Wielder->SetBelt(NewItem); break;
+      */
+      case RIGHT_WIELDED_INDEX: Wielder->SetRightWielded(NewItem); break;
+      case LEFT_WIELDED_INDEX: Wielder->SetLeftWielded(NewItem); break;
+      /*
+      case RIGHT_RING_INDEX: Wielder->SetRightRing(NewItem); break;
+      case LEFT_RING_INDEX: Wielder->SetLeftRing(NewItem); break;
+      case RIGHT_GAUNTLET_INDEX: Wielder->SetRightGauntlet(NewItem); break;
+      case LEFT_GAUNTLET_INDEX: Wielder->SetLeftGauntlet(NewItem); break;
+      case RIGHT_BOOT_INDEX: Wielder->SetRightBoot(NewItem); break;
+      case LEFT_BOOT_INDEX: Wielder->SetLeftBoot(NewItem); break;
+      */
+      default: Wielder->ReceiveItemAsPresent(NewItem); break;
+    }
+
+    if(Wielder->IsPlayer())
+      game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
+    return true;
+  }
+}
+
 /* Returns truth that tells whether the alchemical conversion really happened. */
 
 truth item::Alchemize(character* Midas, stack* CurrentStack)
@@ -350,7 +404,7 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
 
     long Price = GetTruePrice();
 
-    if(Price)
+    if(Midas && Price)
     {
       Price /= 4; /* slightly lower than with 10 Cha */
       ADD_MESSAGE("Gold pieces clatter on the floor.");
@@ -388,9 +442,9 @@ truth item::SoftenMaterial()
   material* SecondaryMaterial = GetSecondaryMaterial();
 
   if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+    delete SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-  ChangeMainMaterial(TempMaterial);
+  delete SetMainMaterial(TempMaterial);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
@@ -474,12 +528,10 @@ void item::SetLabel(cfestring& What)
 
 void item::AddName(festring& Name, int Case) const
 {
-  if(label.GetSize())
-    Name << label << " "; //this way user can decide how it should look, with or w/o delimiters and which ones
-//    Name << "{"<<label<<"}" << " ";
-//    Name << "#"<<label << " ";
-
   object::AddName(Name,Case);
+
+  if(label.GetSize())
+    Name << " inscribed " << label;
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -797,11 +849,6 @@ item* item::Duplicate(ulong Flags)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
                              Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
-  idholder* I = new idholder(ID);
-  I->Next = CloneMotherID;
-  CloneMotherID = I;
-  game::RemoveItemID(ID);
-  ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }
@@ -982,6 +1029,9 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 
 void item::Break(character* Breaker, int)
 {
+  if(!CanBeBroken() || IsBroken())
+    return;
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
 
@@ -1023,7 +1073,10 @@ void item::Be()
         game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
     }
     else
+    {
       --LifeExpectancy;
+      //TODO fluids emitation on weapons require updating in case it lowers with time, this didnt work: if(Fluid)CalculateEmitation();
+    }
   }
 }
 
@@ -1374,6 +1427,20 @@ void item::SetConfig(int NewConfig, int SpecialFlags)
     UpdatePictures();
 }
 
+truth item::SetConfigIfPossible(int NewConfig, int SpecialFlags)
+{
+  if(databasecreator<item>::InstallDataBaseIfPossible(this, NewConfig, GetConfig())){
+    CalculateAll();
+
+    if(!(SpecialFlags & NO_PIC_UPDATE))
+      UpdatePictures();
+    
+    return true;
+  }
+  
+  return false;
+}
+
 god* item::GetMasterGod() const
 {
   return game::GetGod(GetConfig());
@@ -1434,7 +1501,7 @@ void item::Draw(blitdata& BlitData) const
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
 
   bitmap* bmp = GraphicData.Picture[F];
-  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
     static blitdata B = [](){B=DEFAULT_BLITDATA; //to reuse tmp bitmap memory
       B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
       B.Border = TILE_V2; return B; }();
@@ -1637,8 +1704,12 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
       if(Slot[c])
       {
         lsquare* Square = GetLSquareUnder(c);
-        Square->SendNewDrawRequest();
-        Square->SendMemorizedUpdateRequest();
+        if(Square){ //TODO is this fix ok? let it crash elsewhere better to track the problem...
+          Square->SendNewDrawRequest();
+          Square->SendMemorizedUpdateRequest();
+        }else{
+          DBG4("Is nowhere to be found, how!?",Square,GetNameSingular().CStr(),SquaresUnder);
+        }
       }
 }
 
@@ -1646,10 +1717,15 @@ void item::CalculateEmitation()
 {
   object::CalculateEmitation();
 
-  if(Fluid)
-    for(int c = 0; c < SquaresUnder; ++c)
-      for(const fluid* F = Fluid[c]; F; F = F->Next)
-        game::CombineLights(Emitation, F->GetEmitation());
+  if(Fluid){
+    for(int c = 0; c < SquaresUnder; ++c){
+      for(const fluid* F = Fluid[c]; F; F = F->Next){
+        DBG2(F->GetEmitation(),F->GetLiquid()->GetVolume());
+        game::CombineLights(Emitation,
+          CalcEmitationBasedOnVolume( F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
+      }
+    }
+  }
 }
 
 void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const
@@ -1812,6 +1888,20 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
     {
       Damage += RAND() % Damage;
       ReceiveDamage(0, Damage, ACID);
+    }
+  }
+}
+
+void item::ReceiveHeat(material*, cfestring&, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 1000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
     }
   }
 }
@@ -2173,6 +2263,13 @@ truth itemlock::TryKey(item* Key, character* Applier)
         ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
         ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+
+    // Add a tiny chance that any key you use breaks, so that there is some value in having
+    // multiples of a key, and in keys of better materials.
+    if(!RAND_N(Key->GetMainMaterial()->GetStrengthValue()))
+    {
+      Key->Break(Applier);
     }
 
     Locked = !Locked;

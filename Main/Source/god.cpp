@@ -21,7 +21,7 @@ int god::GetBasicAlignment() const { return NEUTRAL; }
 void god::Pray()
 {
   LastPray = 0;
-  if(!Timer)
+  if(!Timer){
     if(Relation >= -RAND_N(500))
     {
       ADD_MESSAGE("You feel %s is pleased.", GetName());
@@ -79,7 +79,7 @@ void god::Pray()
       game::ApplyDivineAlignmentBonuses(this, 10, false);
       PLAYER->EditExperience(WISDOM, -50, 1 << 10);
     }
-  else
+  }else{
     if(Relation > RAND_N(500) && Timer < RAND_N(500000))
     {
       ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
@@ -109,6 +109,9 @@ void god::Pray()
           ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
       }
     }
+  }
+  
+  fsLastKnownRelation = PrintRelation();
 }
 
 festring god::GetCompleteDescription() const
@@ -267,29 +270,46 @@ character* god::CreateAngel(team* Team, int LifeBase)
   return 0;
 }
 
-void god::PrintRelation() const
+cfestring god::PrintRelation() const
 {
   cchar* VerbalRelation;
+  cchar* fsIs;
+  cchar* fsWas;
 
-  if(GetRelation() == 1000)
-    VerbalRelation = "greets you as a Champion of the Cause!";
-  else if(GetRelation() > 750)
-    VerbalRelation = "is extremely pleased.";
-  else if(GetRelation() > 250)
-    VerbalRelation = "is very pleased.";
-  else if(GetRelation() > 50)
-    VerbalRelation = "is pleased.";
-  else if(GetRelation() > -50)
-    VerbalRelation = "is content.";
-  else if(GetRelation() > -250)
-    VerbalRelation = "is angry.";
-  else if(GetRelation() > -750)
-    VerbalRelation = "is very angry.";
-  else if(GetRelation() > -1000)
-    VerbalRelation = "is extremely angry.";
-  else VerbalRelation = "hates you more than any other mortal.";
+  if(GetRelation() == 1000){
+    fsIs="greets";fsWas="greeted";
+    VerbalRelation = "you as a Champion of the Cause!";
+  }else if(GetRelation() > 750){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "extremely pleased.";
+  }else if(GetRelation() > 250){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "very pleased.";
+  }else if(GetRelation() > 50){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "pleased.";
+  }else if(GetRelation() > -50){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "content.";
+  }else if(GetRelation() > -250){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "angry.";
+  }else if(GetRelation() > -750){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "very angry.";
+  }else if(GetRelation() > -1000){
+    fsIs="is";fsWas="was";
+    VerbalRelation = "extremely angry.";
+  }else {
+    fsIs="hates";fsWas="hated";
+    VerbalRelation = "you more than any other mortal.";
+  }
 
-  ADD_MESSAGE("%s %s", GetName(), VerbalRelation);
+  ADD_MESSAGE("%s %s %s", GetName(), fsIs, VerbalRelation);
+
+  festring fsLKR;
+  fsLKR<<GetName()<<" "<<fsWas<<" "<<VerbalRelation;
+  return fsLKR;
 }
 
 truth god::ReceiveOffer(item* Sacrifice)
@@ -311,7 +331,7 @@ truth god::ReceiveOffer(item* Sacrifice)
       }
       else
       {
-        ADD_MESSAGE("%s will not be received as a sacrifice.", Sacrifice->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s cannot be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
       }
       return false;
     }
@@ -338,7 +358,8 @@ truth god::ReceiveOffer(item* Sacrifice)
     else
       ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
-    PrintRelation();
+    fsLastKnownRelation = PrintRelation();
+    
     int RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
     if(OfferValue > 0 && Relation > 250 && !(RAND() % RandModifier))
@@ -409,7 +430,7 @@ truth god::TryToAttachBodyPart(character* Char)
                && !RAND_N(Max(MaterialVector[c]->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1))))
         {
           BodyPart = Char->GenerateRandomBodyPart();
-          BodyPart->ChangeMainMaterial(MaterialVector[c]->SpawnMore());
+          delete BodyPart->SetMainMaterial(MaterialVector[c]->SpawnMore());
           Char->UpdatePictures();
           festring MadeOf;
 
@@ -479,7 +500,7 @@ truth god::TryToHardenBodyPart(character* Char)
          && !RAND_N(12000 / (GetRelation() + 2000))
          && !RAND_N(Max(Material->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1)))
       {
-        BodyPart->ChangeMainMaterial(Material->SpawnMore());
+        delete BodyPart->SetMainMaterial(Material->SpawnMore());
         ADD_MESSAGE("%s changes your %s to %s.",
                     GetName(), BodyPart->GetBodyPartName().CStr(),
                     Material->GetName(false, false).CStr());
@@ -497,6 +518,11 @@ truth god::TryToHardenBodyPart(character* Char)
 cchar* god::GetPersonalPronoun() const
 {
   return GetSex() == MALE ? "He" : "She";
+}
+
+cchar* god::GetLastKnownRelation() const
+{
+  return fsLastKnownRelation.CStr();
 }
 
 cchar* god::GetObjectPronoun() const
@@ -530,11 +556,19 @@ void god::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());
   SaveFile << Relation << Timer << Known << LastPray;
+  SaveFile << fsLastKnownRelation;
+  SaveFile << knownSpellsID;
 }
 
 void god::Load(inputfile& SaveFile)
 {
   SaveFile >> Relation >> Timer >> Known >> LastPray;
+  if(game::GetCurrentSavefileVersion()>=134){
+    SaveFile >> fsLastKnownRelation;
+  }
+  if(game::GetCurrentSavefileVersion()>=135){
+    SaveFile >> knownSpellsID;
+  }
 }
 
 void god::ApplyDivineTick()
@@ -543,4 +577,46 @@ void god::ApplyDivineTick()
     --Timer;
   if(LastPray > -1 && LastPray < 336000)
     ++LastPray;
+}
+
+std::vector<std::pair<int,festring>> god::vFavID;
+
+bool god::Favour(int iWhat, int iDebit)
+{
+  if(Relation < 0){
+    ADD_MESSAGE("%s ignores your plea and makes sure you understand it...",GetName());
+    PrayBadEffect();
+    fsLastKnownRelation = PrintRelation();
+    return false;
+  }
+  
+  if(Relation < iDebit){ // warns, punishes and provides a last favour before becoming negative relation
+    ADD_MESSAGE("You hear a booming voice: \"Don't push your luck... puny mortal!\"");
+    PrayBadEffect();
+    return true;
+  }
+  
+  return true;
+}
+
+festring god::GetFavourName(int iID)
+{
+  if(vFavID.size()==0) FavourInit();
+  
+  for(auto FI = vFavID.begin(); FI != vFavID.end(); ++FI){
+    if(FI->first==iID)
+      return FI->second;
+  }
+  
+  ABORT("invalid favour ID %d",iID);
+  return ""; //dummy
+}
+
+void god::AddFavourID(int i,festring fs)
+{
+//  std::pair<int,festring> IDname;
+//  IDname.first = i;
+//  IDname.second = fs;
+//  vFavID.push_back(IDname);
+  vFavID.push_back(std::make_pair(i,fs));
 }

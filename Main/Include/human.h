@@ -14,6 +14,7 @@
 #define __HUMAN_H__
 
 #include "char.h"
+#include "confdef.h"
 
 CHARACTER(humanoid, character)
 {
@@ -69,7 +70,7 @@ CHARACTER(humanoid, character)
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
-  virtual void SwitchToCraft(recipedata rpd);
+  virtual truth SwitchToCraft(recipedata rpd);
   virtual void SwitchToDig(item*, v2);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;
@@ -156,7 +157,7 @@ CHARACTER(humanoid, character)
   virtual int GetAttributeAverage() const;
   virtual truth CanVomit() const;
   virtual truth CheckApply() const;
-  virtual truth CanForceVomit() const { return TorsoIsAlive() && HasAUsableArm(); }
+  virtual truth CanForceVomit() const { return CanVomit() && HasAUsableArm(); }
   virtual truth IsTransparent() const;
   virtual void ModifySituationDanger(double&) const;
   virtual int RandomizeTryToUnStickBodyPart(ulong) const;
@@ -171,7 +172,6 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
-  truth AutoPlayAIequip();
   static v2 GetSilhouetteWhere(){return SilhouetteWhere;}
   static v2 GetSilhouetteWhereDefault(){return SilhouetteWhereDefault;}
   static void SetSilhouetteWhere(v2 pos){SilhouetteWhere=pos;}
@@ -451,7 +451,7 @@ CHARACTER(zombie, humanoid)
   virtual void BeTalkedTo();
   virtual truth BodyPartIsVital(int) const;
   virtual void CreateBodyParts(int);
-  virtual truth AllowSpoil() const { return true; }
+  virtual truth AllowSpoil() const { return GetConfig() != ZOMBIE_OF_KHAZ_ZADM; }
   void SetDescription(cfestring What) { Description = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -460,7 +460,7 @@ CHARACTER(zombie, humanoid)
   virtual void PostConstruct();
   virtual void AddPostFix(festring&, int) const;
   virtual void GetAICommand();
-  virtual truth AllowExperience() const { return false; }
+  virtual truth AllowExperience() const { return GetConfig() == ZOMBIE_OF_KHAZ_ZADM; }
   festring Description;
 };
 
@@ -526,8 +526,27 @@ CHARACTER(xinrochghost, ghost)
 
 CHARACTER(imp, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+ protected:
+  virtual truth CanVomit() const { return true; }
+  virtual void PostConstruct();
+};
+
+CHARACTER(crimsonimp, imp)
+{
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+  virtual void CreateCorpse(lsquare*);
+};
+
+CHARACTER(mirrorimp, imp)
+{
+ public:
+  virtual truth IsMagicDrinker() const { return true; }
+  virtual truth DrinkMagic(const beamdata&);
+ protected:
+  virtual void CreateCorpse(lsquare*);
 };
 
 CHARACTER(mistress, humanoid)
@@ -622,6 +641,8 @@ CHARACTER(orc, humanoid)
 
 CHARACTER(cossack, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(bananagrower, humanoid)
@@ -662,6 +683,8 @@ CHARACTER(elder, humanoid)
 {
  public:
   elder() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void GetAICommand();
   virtual void CreateBodyParts(int);
@@ -754,6 +777,7 @@ CHARACTER(siren, humanoid)
   virtual void GetAICommand();
   virtual truth MoveRandomly();
  protected:
+  virtual void PostConstruct();
   virtual truth TryToSing();
 };
 
@@ -763,6 +787,12 @@ CHARACTER(punisher, humanoid)
 
 CHARACTER(child, humanoid)
 {
+ public:
+  virtual truth MoveRandomly();
+  virtual truth IsKing() const { return GetConfig() == KING; }
+  virtual truth MustBeRemovedFromBone() const;
+ protected:
+  virtual void BeTalkedTo();
 };
 
 CHARACTER(bum, humanoid)
@@ -783,9 +813,71 @@ CHARACTER(terra, priest)
 {
  public:
   terra() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void BeTalkedTo();
   truth HasBeenSpokenTo;
+};
+
+CHARACTER(aslonawizard, humanoid)
+{
+ public:
+  aslonawizard() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void GetAICommand();
+  int GetSpellAPCost() const;
+  virtual void BeTalkedTo();
+  virtual void CreateCorpse(lsquare*);
+  truth HasBeenSpokenTo;
+};
+
+CHARACTER(aslonacaptain, guard)
+{
+ public:
+  aslonacaptain() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
+};
+
+CHARACTER(aslonapriest, priest)
+{
+ public:
+  aslonapriest() : HasBeenSpokenTo(false) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
+};
+
+CHARACTER(gasghoul, zombie)
+{
+ public:
+  virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
+  virtual truth AllowSpoil() const { return false; }
+};
+
+CHARACTER(harvan, humanoid)
+{
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
+};
+
+CHARACTER(lordregent, humanoid)
+{
+ public:
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
+ protected:
+  virtual void SpecialBodyPartSeverReaction();
 };
 
 #endif

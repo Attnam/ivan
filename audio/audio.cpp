@@ -158,6 +158,7 @@ int audio::Loop(void *ptr)
 
          festring MusFile = MusDir + CurrentTrack;
 
+         MPB_ResetMIDI(); // fix to some music transitions that leave MIDI in wrong state (keeps playing some single instrument note until next music is played)
          PlayMIDIFile(MusFile, 1);
       }
       isTrackPlaying = false;
@@ -451,7 +452,7 @@ void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
    message.push_back(event->parameter1);
    if( ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_PROGRAM_CHANGE) && ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_CHANNEL_PRESSURE))
    {
-	   message.push_back(event->parameter2);
+     message.push_back(event->parameter2);
    }
    audio::SendMIDIEvent( &message );
 }

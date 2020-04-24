@@ -460,8 +460,11 @@ void liquid::TouchEffect(item* Item, cfestring& LocationName)
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
 
-  if(Item->IsBurning())
+  if(Item->IsBurning() && !GetHotness() && !GetExplosivePower())
     Item->FightFire(this, LocationName, Volume);
+
+  if(GetHotness())
+    Item->ReceiveHeat(this, LocationName, Volume * GetHotness());
 
   character* Char = Item->GetBodyPartMaster();
 
@@ -476,6 +479,9 @@ void liquid::TouchEffect(lterrain* Terrain)
 
   if(GetAcidicity())
     Terrain->ReceiveAcid(this, Volume * GetAcidicity());
+
+  if(GetHotness())
+    Terrain->ReceiveHeat(this, Volume * GetHotness());
 }
 
 void liquid::TouchEffect(character* Char, int BodyPartIndex)
@@ -485,6 +491,9 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
 
   if(Char->IsEnabled() && GetAcidicity())
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, CONST_S(""), Volume * GetAcidicity() >> 1);
+
+  if(Char->IsEnabled() && GetHotness())
+    Char->GetBodyPart(BodyPartIndex)->ReceiveHeat(this, CONST_S(""), Volume * GetHotness() >> 1);
 
   if(Char->IsEnabled())
     Effect(Char, BodyPartIndex, Volume >> 9);

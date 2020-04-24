@@ -35,6 +35,7 @@ template <class type> class databasecreator
   static void ReadFrom(inputfile&);
   static void FindDataBase(const database*&, const prototype*, int);
   static void InstallDataBase(type*, int);
+  static truth InstallDataBaseIfPossible(type*, int, int);
   static void CreateDataBaseMemberMap();
   static int CreateDivineConfigurations(const prototype*, database**, int);
  private:

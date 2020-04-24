@@ -26,7 +26,7 @@ class bugfixdp{
 
   private:
     static character* BugWorkaroundDupPlayer();
-    static void DevConsCmd(std::string strCmdParams);
+    static void DevConsCmd(festring fsCmdParams);
 
     static void GatherAllItemInLevel();
     static bool ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);

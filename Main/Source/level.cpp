@@ -20,6 +20,7 @@
 #define PREFERRED 8
 #define ICE_TERRAIN 16
 #define STONE_TERRAIN 32
+#define EXPANSIVE 64
 
 level::level()
 : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0),
@@ -328,12 +329,14 @@ void level::Generate(int Index)
   Map = reinterpret_cast<lsquare***>(area::Map);
   SquareStack = new lsquare*[XSizeTimesYSize];
 
-  if((Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
+  /*if((Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
      || (Index == 0 && GetDungeon()->GetIndex() == ATTNAM))
     NightAmbientLuminance = MakeRGB24(95, 95, 95);
-
+  */
   if((Index == 0) && (GetDungeon()->GetIndex() == XINROCH_TOMB))
     NightAmbientLuminance = MakeRGB24(105, 95, 95);
+  else if(IsOnGround())
+    NightAmbientLuminance = MakeRGB24(95, 95, 95);
 
   int x, y;
 
@@ -390,12 +393,18 @@ void level::ApplyLSquareScript(const squarescript* Script)
   {
     v2 Pos;
 
-    if(Script->GetPosition()->GetRandom())
-      Pos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders());
-    else
-      Pos = Script->GetPosition()->GetVector();
+    while(true)
+    {
+      if(Script->GetPosition()->GetRandom())
+        Pos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders());
+      else
+        Pos = Script->GetPosition()->GetVector();
 
-    Map[Pos.X][Pos.Y]->ApplyScript(Script, 0);
+      Map[Pos.X][Pos.Y]->ApplyScript(Script, 0);
+
+      if(CheckExpansiveArea(GetLSquare(Pos)->GetOLTerrain(), Pos.X, Pos.Y, !Script->GetPosition()->GetRandom()))
+        break;
+    }
   }
 }
 
@@ -449,7 +458,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
   for(x = Pos.X - 1; x <= Pos.X + Size.X; ++x)
     for(y = Pos.Y - 1; y <= Pos.Y + Size.Y; ++y)
-      if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
+      if(IsValidPos(x, y) && FlagMap[x][y] & (FORBIDDEN|PREFERRED|EXPANSIVE))
         return false;
 
   room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Spawn();
@@ -561,15 +570,22 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
   if(CharacterMap)
   {
-    v2 CharPos(Pos + *CharacterMap->GetPos());
-    const contentscript<character>* CharacterScript;
+    v2 CharPos = Pos + *CharacterMap->GetPos();
+    v2 CharSize = *CharacterMap->GetSize();
 
-    for(int x = 0; x < CharacterMap->GetSize()->X; ++x)
+    if(!IsValidPos(CharPos) || !IsValidPos(CharPos + CharSize - v2(1, 1)))
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu CharacterMap(%dx%d) at (%d,%d)!",
+            GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), CharSize.X, CharSize.Y, CharPos.X, CharPos.Y);
+
+    for(x = 0; x < CharSize.X; ++x)
     {
       game::BusyAnimation();
 
-      for(y = 0; y < CharacterMap->GetSize()->Y; ++y)
-        if(IsValidScript(CharacterScript = CharacterMap->GetContentScript(x, y)))
+      for(y = 0; y < CharSize.Y; ++y)
+      {
+        const contentscript<character>* CharacterScript = CharacterMap->GetContentScript(x, y);
+
+        if(IsValidScript(CharacterScript))
         {
           character* Char = CharacterScript->Instantiate();
           Char->SetGenerationDanger(Difficulty);
@@ -586,6 +602,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
           if(CharacterScript->GetFlags() & IS_MASTER)
             RoomClass->SetMasterID(Char->GetID());
         }
+      }
     }
   }
 
@@ -593,15 +610,22 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
   if(ItemMap)
   {
-    v2 ItemPos(Pos + *ItemMap->GetPos());
-    const fearray<contentscript<item>>* ItemScript;
+    v2 ItemPos = Pos + *ItemMap->GetPos();
+    v2 ItemSize = *ItemMap->GetSize();
 
-    for(int x = 0; x < ItemMap->GetSize()->X; ++x)
+    if(!IsValidPos(ItemPos) || !IsValidPos(ItemPos + ItemSize - v2(1, 1)))
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu ItemMap(%dx%d) at (%d,%d)!",
+            GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), ItemSize.X, ItemSize.Y, ItemPos.X, ItemPos.Y);
+
+    for(x = 0; x < ItemSize.X; ++x)
     {
       game::BusyAnimation();
 
-      for(y = 0; y < ItemMap->GetSize()->Y; ++y)
-        if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
+      for(y = 0; y < ItemSize.Y; ++y)
+      {
+        const fearray<contentscript<item>>* ItemScript = ItemMap->GetContentScript(x, y);
+
+        if(IsValidScript(ItemScript))
           for(uint c1 = 0; c1 < ItemScript->Size; ++c1)
           {
             const interval* TimesPtr = ItemScript->Data[c1].GetTimes();
@@ -623,6 +647,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
               }
             }
           }
+      }
     }
   }
 
@@ -630,17 +655,25 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
   if(GTerrainMap)
   {
-    v2 GTerrainPos(Pos + *GTerrainMap->GetPos());
-    const contentscript<glterrain>* GTerrainScript;
+    v2 GTerrainPos = Pos + *GTerrainMap->GetPos();
+    v2 GTerrainSize = *GTerrainMap->GetSize();
 
-    for(int x = 0; x < GTerrainMap->GetSize()->X; ++x)
+    if(!IsValidPos(GTerrainPos) || !IsValidPos(GTerrainPos + GTerrainSize - v2(1, 1)))
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu GTerrainMap(%dx%d) at (%d,%d)!",
+            GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), GTerrainSize.X, GTerrainSize.Y, GTerrainPos.X, GTerrainPos.Y);
+
+    for(x = 0; x < GTerrainSize.X; ++x)
     {
       game::BusyAnimation();
 
-      for(y = 0; y < GTerrainMap->GetSize()->Y; ++y)
-        if(IsValidScript(GTerrainScript = GTerrainMap->GetContentScript(x, y)))
+      for(y = 0; y < GTerrainSize.Y; ++y)
+      {
+        v2 SquarePos = v2(GTerrainPos.X + x, GTerrainPos.Y + y);
+        const contentscript<glterrain>* GTerrainScript = GTerrainMap->GetContentScript(x, y);
+
+        if(IsValidScript(GTerrainScript))
         {
-          lsquare* Square = Map[GTerrainPos.X + x][GTerrainPos.Y + y];
+          lsquare* Square = GetLSquare(SquarePos);
           Square->ChangeGLTerrain(GTerrainScript->Instantiate());
 
           if(GTerrainScript->IsInside())
@@ -651,6 +684,11 @@ truth level::MakeRoom(const roomscript* RoomScript)
               Square->Flags &= ~INSIDE;
           }
         }
+
+        // Forbid generating random impassable OTerrain around it.
+        if(GTerrainScript->IsExpansive() && *GTerrainScript->IsExpansive())
+          AddFlag(SquarePos, EXPANSIVE);
+      }
     }
   }
 
@@ -658,19 +696,29 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
   if(OTerrainMap)
   {
-    v2 OTerrainPos(Pos + *OTerrainMap->GetPos());
-    const contentscript<olterrain>* OTerrainScript;
+    v2 OTerrainPos = Pos + *OTerrainMap->GetPos();
+    v2 OTerrainSize = *OTerrainMap->GetSize();
 
-    for(int x = 0; x < OTerrainMap->GetSize()->X; ++x)
+    if(!IsValidPos(OTerrainPos) || !IsValidPos(OTerrainPos + OTerrainSize - v2(1, 1)))
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu OTerrainMap(%dx%d) at (%d,%d)!",
+            GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), OTerrainSize.X, OTerrainSize.Y, OTerrainPos.X, OTerrainPos.Y);
+
+    for(x = 0; x < OTerrainSize.X; ++x)
     {
       game::BusyAnimation();
 
-      for(y = 0; y < OTerrainMap->GetSize()->Y; ++y)
-        if(IsValidScript(OTerrainScript = OTerrainMap->GetContentScript(x, y)))
+      for(y = 0; y < OTerrainSize.Y; ++y)
+      {
+        v2 SquarePos = v2(OTerrainPos.X + x, OTerrainPos.Y + y);
+        const contentscript<olterrain>* OTerrainScript = OTerrainMap->GetContentScript(x, y);
+
+        if(IsValidScript(OTerrainScript))
         {
-          olterrain* Terrain = OTerrainScript->Instantiate();
-          Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
+          olterrain* OLTerrain = OTerrainScript->Instantiate();
+          CheckExpansiveArea(OLTerrain, SquarePos.X, SquarePos.Y, true);
+          GetLSquare(SquarePos)->ChangeOLTerrain(OLTerrain);
         }
+      }
     }
   }
 
@@ -684,18 +732,50 @@ truth level::MakeRoom(const roomscript* RoomScript)
     {
       v2 SquarePos;
 
-      if(Script.GetPosition()->GetRandom())
+      while(true)
       {
-        const rect* ScriptBorders = Script.GetPosition()->GetBorders();
-        rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - v2(1, 1));
-        SquarePos = GetRandomSquare(0, Script.GetPosition()->GetFlags(), &Borders);
-      }
-      else
-        SquarePos = Pos + Script.GetPosition()->GetVector();
+        if(Script.GetPosition()->GetRandom())
+        {
+          const rect* ScriptBorders = Script.GetPosition()->GetBorders();
+          rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - v2(1, 1));
+          SquarePos = GetRandomSquare(0, Script.GetPosition()->GetFlags(), &Borders);
+        }
+        else
+          SquarePos = Pos + Script.GetPosition()->GetVector();
 
-      Map[SquarePos.X][SquarePos.Y]->ApplyScript(&Script, RoomClass);
+        Map[SquarePos.X][SquarePos.Y]->ApplyScript(&Script, RoomClass);
+
+        if(CheckExpansiveArea(GetLSquare(SquarePos)->GetOLTerrain(), SquarePos.X, SquarePos.Y, !Script.GetPosition()->GetRandom()))
+          break;
+      }
     }
   }
+
+  return true;
+}
+
+truth level::CheckExpansiveArea(olterrain* OLTerrain, int X, int Y, truth Abort) const
+{
+  if(OLTerrain == NULL)
+    return true;
+
+  for(int x = X - 1; x <= X + 1; ++x)
+    for(int y = Y - 1; y <= Y + 1; ++y)
+      if(IsValidPos(x, y) && FlagMap[x][y] & EXPANSIVE)
+      {
+        lsquare* LSquare = GetLSquare(x, y);
+        glterrain* GLTerrain = LSquare->GetGLTerrain();
+        int Flags = GLTerrain->GetWalkability();
+
+        if((Flags & WALK) && !(OLTerrain->GetWalkability() & WALK))
+        {
+          if(Abort)
+            ABORT("Dungeon#%d Level#%d GLTerrain[%d][%d] may be blocked by OLTerrain[%d][%d]!",
+                  GetDungeon()->GetIndex(), Index, x, y, X, Y);
+
+          return false;
+        }
+      }
 
   return true;
 }
@@ -1174,13 +1254,15 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-        for(character* p : game::GetTeam(c)->GetMember())
+        for(character* p : game::GetTeam(c)->GetMember()){
+          p->ValidateTrapData();
           if(p->IsEnabled() && Leader->CanBeSeenBy(p)
              && Leader->SquareUnderCanBeSeenBy(p, true) && p->CanFollow())
           {
             ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
             return false;
           }
+        }
 
   truth TakeAll = true;
 
@@ -1194,7 +1276,8 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(character* p : game::GetTeam(c)->GetMember())
+      for(character* p : game::GetTeam(c)->GetMember()){
+        p->ValidateTrapData();
         if(p->IsEnabled() && p != Leader
            && (TakeAll
                || (Leader->CanBeSeenBy(p)
@@ -1212,6 +1295,7 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
             p->Remove();
           }
         }
+      }
 
   return true;
 }
@@ -1434,7 +1518,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     Border.push_back(v2(Pos.X, y));
     Border.push_back(v2(Pos.X + Size.X - 1, y));
   }
-  // Maze rooms only: put in the doors, in the corners. 
+  // Maze rooms only: put in the doors, in the corners.
   if(Shape == MAZE_ROOM)
   {
     int MazeDoors = RAND() % 4;
@@ -2539,6 +2623,22 @@ void level::CheckSunLight()
       AmbientLuminance = NightAmbientLuminance;
     }
   }
+  else if(IsOnGround())
+  {
+    double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+    if(Cos > 0.31)
+    {
+      int E = int(100 + (Cos - 0.30) * 30);
+      SunLightEmitation = MakeRGB24(E, E, E);
+      AmbientLuminance = MakeRGB24(E - 8, E - 8, E - 8);
+    }
+    else
+    {
+      SunLightEmitation = 0;
+      AmbientLuminance = NightAmbientLuminance;
+    }
+  }
   else
     return;
 
@@ -2958,13 +3058,13 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 {
   if(!ivanconfig::IsEnhancedLights())
     return 0;
-  
+
   if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
    return 0;
 
   if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
     return 0;
-  
+
   cint XMin = Max(game::GetCamera().X, 0);
   cint YMin = Max(game::GetCamera().Y, 0);
   cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
@@ -2992,8 +3092,8 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
       }
 
       if(!bTryReveal){
-        // TODO the farer, less range around the emmiter should be seen        
-        
+        // TODO the farer, less range around the emmiter should be seen
+
 //        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
 //          continue;
 
@@ -3011,7 +3111,7 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
             fLBorder = fLBorderLanternLOSM16 + fLBStep*LOSMdelta;
           }
           if(!bTryReveal && hasLight(Square->Luminance,0xFF*fLBorder))
-            bTryReveal=true; 
+            bTryReveal=true;
         }
       }
 
@@ -3214,12 +3314,12 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
     if(Neighbour && Neighbour->IsFlyable())
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
 
-                if(Neighbour)
+    if(Neighbour)
     {
       character* Victim = Neighbour->GetCharacter();
 
       if(Victim && Terrorist)
-                                Terrorist->Hostility(Victim);
+        Terrorist->Hostility(Victim);
     }
   }
 }

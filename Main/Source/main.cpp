@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 
 #ifdef __DJGPP__
 #include <go32.h>
@@ -76,7 +77,7 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
-  game::GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
+  GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
 
   if(argc > 1 && festring(argv[1]) == "--version")
   {
@@ -84,6 +85,71 @@ int main(int argc, char** argv)
     return 0;
   }
 
+  if(argc > 1 && festring(argv[1]) == "--defgen")
+  {
+    std::cout << "Generate defines validator file. " << std::endl;
+    game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
+    definesvalidator::GenerateDefinesValidator("generate");
+    std::cout << "Finished: Generate DefinesValidator" << std::endl;
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--defval")
+  {
+    std::cout << "Validate defines. " << std::endl;
+    game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
+    definesvalidator::GenerateDefinesValidator("validate");
+    std::cout << "Finished: Validate defines" << std::endl;
+    return 0;
+  }
+
+//  if(argc > 1 && festring(argv[1]) == "--genmvkeys")
+//  {
+//    festring fsFl = game::GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+//    FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
+//    for(int i=0;i<=8;i++){
+//      switch(i){
+//        case 0: std::cout << "Upper Left" << std::endl; break;
+//        case 1: std::cout << "Up" << std::endl; break;
+//        case 2: std::cout << "Upper Right" << std::endl; break;
+//        case 3: std::cout << "Left" << std::endl; break;
+//        case 4: std::cout << "Right" << std::endl; break;
+//        case 5: std::cout << "Lower Left" << std::endl; break;
+//        case 6: std::cout << "Down" << std::endl; break;
+//        case 7: std::cout << "Lower Right" << std::endl; break;
+//        case 8: std::cout << "Stop" << std::endl; break;
+//      }
+//      //fprintf(fl, "%04d\n", globalwindowhandler::GetKey());
+//      fprintf(fl, "%04X\n", globalwindowhandler::ReadKey());
+//    }
+//    fclose(fl);
+//  }
+  
+  if(argc > 1 && festring(argv[1]) == "--help")
+  {
+    std::cout << "Command line options:" << std::endl;
+    std::cout << "--defgen Generate defines validator source file. " << std::endl;
+    std::cout << "--defval Validate defines. " << std::endl;
+//    std::cout << "--genmvkeys Generate custom move keys cfg file. " << std::endl;
+    std::cout << "--version Show current game version. " << std::endl;
+    std::cout << std::endl;
+    std::cout << "Environment Variables:" << std::endl;
+    std::cout << "IVAN_SHOWFPS=[true] # show FPS at top right" << std::endl;
+    std::cout << "IVAN_DebugShowTinyDungeon=[true] #DEBUG always show tiny dungeon above stretched one" << std::endl;
+    std::cout << "IVAN_LISTDRAWABOVE=[true] #DEBUG output the draw above priority list to text console terminal" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopID=[DungeonLevelIndex] #DEBUG DungeonLevelIndex must be an integer matching a some dungeon level" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopMax=[integer] #DEBUG generate the dungeon level how many times" << std::endl;
+#ifdef WIZARD    
+    std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG wizard auto play AI will not leave that Dungeon Level after entering it" << std::endl;
+#endif
+#ifdef CURSEDDEVELOPER
+    std::cout << "IVAN_CURSEDDEVELOPER=[true] #DEBUG (only for developer tests) this will prevent player's death (and scoring) in normal (non wizard) gameplay" << std::endl;
+#endif
+    return 0;
+  }
+  
 #ifdef __DJGPP__
 
   /* Saves numlock state and toggles it off */
@@ -174,7 +240,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+        highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }

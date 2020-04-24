@@ -21,10 +21,13 @@
 #include "error.h"
 #include "feio.h"
 #include "felist.h"
+#include "festring.h"
 #include "game.h"
 #include "message.h"
 #include "stack.h"
 #include "specialkeys.h"
+#include "confdef.h"
+#include "lterras.h"
 
 /**
  * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
@@ -39,20 +42,104 @@
  * Any information/functionality that provides an advantage must be considered a cheat, therefore WIZARD MODE!!!
  */
 
-#ifdef WIZARD
-void ListChars(std::string strFilter){
-  ulong idFilter=0;
-  if(!strFilter.empty())
-    idFilter=atoi(strFilter.c_str());
+std::vector<character*> vCharLastSearch;
+std::vector<item*>      vItemLastSearch;
 
-  DEVCMDMSG("params: %d",idFilter);
+#ifdef WIZARD
+truth IsValidChar(character* C){
+  if(!C->Exists())
+    return false;
+  if(C->IsDead())
+    return false;
+  if(!C->GetLSquareUnder())
+    return false;
+  if(!C->IsEnabled())
+    return false;
+  return true;
+}
+void TeleToChar(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(!IsValidChar(C))
+      continue;
+    
+    if(C->GetName(DEFINITE).Find(fsFilter)!=festring::NPos){
+      game::GetPlayer()->TeleportNear(C);
+      return;
+    }
+  }
+}
+void TeleToMe(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(!IsValidChar(C))
+      continue;
+    
+    if(C->GetName(DEFINITE).Find(fsFilter)!=festring::NPos){
+      C->TeleportNear(game::GetPlayer());
+      DEVCMDMSG2P("%d %s",C,C->GetName(DEFINITE).CStr());
+    }
+  }
+}
+void FillWithWalls(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  int iAround=0;
+  if(!fsFilter.IsEmpty())
+    iAround=atoi(fsFilter.CStr());
+  int iCount=0;
+  ulong Tick = game::GetLOSTick();
+  v2 v2PPos=game::GetPlayer()->GetPos();
+  for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
+
+    if(lsqr->GetOLTerrain())continue;
+    if(lsqr->GetCharacter())continue;
+    if(!(lsqr->GetGLTerrain()->GetWalkability() & WALK))continue;
+    if(iAround>0){
+      if(lsqr->GetPos().X > v2PPos.X+iAround)continue;
+      if(lsqr->GetPos().X < v2PPos.X-iAround)continue;
+      if(lsqr->GetPos().Y > v2PPos.Y+iAround)continue;
+      if(lsqr->GetPos().Y < v2PPos.Y-iAround)continue;
+    }
+    
+    lsqr->ChangeOLTerrainAndUpdateLights(wall::Spawn(STONE_WALL));
+    lsqr->Reveal(Tick);
+    iCount++;
+  }}
+  DEVCMDMSG1P("new walls: %d",iCount);
+}
+void ListChars(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  ulong idFilter=0;
+  if(!fsFilter.IsEmpty())
+    idFilter=atoi(fsFilter.CStr());
+
+  DEVCMDMSG2P("params: NameHas=\"%s\" or ID=%d",fsFilter.CStr(),idFilter);
 
 //  std::vector<character*> vc = game::GetAllCharacters();
 //  for(int i=0;i<vc.size();i++){
   characteridmap map = game::GetCharacterIDMapCopy();
+  vCharLastSearch.clear();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
-    if(idFilter!=0 && idFilter!=C->GetID())continue;
+    if(!IsValidChar(C))
+      continue;
+    
+    if(idFilter!=0){
+      if(idFilter!=C->GetID())
+        continue;
+    }else{
+      if(C->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+        continue;
+    }
 
     festring fsPos="NULL";
     if(C->GetSquareUnder()!=NULL){
@@ -69,37 +156,131 @@ void ListChars(std::string strFilter){
     if(PB!=NULL)
       fsMsg << " PB='"<<PB->GetID() <<"/"<< PB->GetName(DEFINITE)<<"'";
     fsMsg << ".";
-    DEVCMDMSG("%s",fsMsg.CStr());
-//    DEVCMDMSG("%sid=%d[%d] (%s) '%s'.",
-////    ADD_MESSAGE("%sid=%d (%d,%d) '%s'.",
-//      C->IsPlayer()?"@":" ",
-//      C->GetID(),
-//      itr->first,
-//      fsPos.CStr(),
-//      C->GetName(DEFINITE).CStr()
-//    );
+    DEVCMDMSG1P("%s",fsMsg.CStr());
+    vCharLastSearch.push_back(C);
   }
+  DEVCMDMSG1P("total:%d",vCharLastSearch.size());
 }
-void ListItems(std::string strParams){
-  ulong idCharFilter=0;
-  ulong idFilter=0;
+void DelChars(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  ulong count=0;
+  if(!fsParams.IsEmpty())
+    count=atoi(fsParams.CStr());
+  
+  if(count==0 || count>vCharLastSearch.size())
+    count=vCharLastSearch.size();
 
-  if(!strParams.empty()){
+  DEVCMDMSG1P("params: count=%d",count);
+  
+  int iRm=0;
+  for(int i=count-1;i>=0;i--){
+    character* C = vCharLastSearch[i];
+    if(!C->Exists() || C->IsPlayer() || C->IsPet())continue;
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",C->GetID(),C->GetName(DEFINITE).CStr());
+    C->Die();
+    vCharLastSearch.pop_back();
+    iRm++;
+  }
+  DEVCMDMSG2P("total=%d, remaining=%d",iRm,vCharLastSearch.size());
+}
+festring fsDummy;
+entity* GetOwner(item* it,festring& rfsType = fsDummy){
+  if(!it->GetLSquareUnder())
+    return NULL;
+  
+  slot* Slot = it->GetSlot();
+  if(!Slot->GetSquareUnder())
+    return NULL;
+  
+  const entity* ent;
+  if(dynamic_cast<gearslot*>(Slot)!=NULL){
+    ent=((gearslot*)Slot)->FindCarrier();
+    rfsType="gear";
+  }else
+  if(dynamic_cast<bodypartslot*>(Slot)!=NULL){
+    ent=((bodypartslot*)Slot)->GetMaster();
+    rfsType="bodypart";
+  }else
+  if(dynamic_cast<stackslot*>(Slot)!=NULL){
+    stackslot* sl = ((stackslot*)Slot);
+    if(sl->GetMotherStack()!=NULL)
+      ent=sl->GetMotherStack()->GetMotherEntity();
+    else
+      ent=sl->FindCarrier();
+    rfsType="stack";
+  }else
+    ent=NULL;
+  
+  return (entity*)ent;
+}
+character* GetOwnerChar(item* it,festring& rfsType = fsDummy){
+  entity* ent = GetOwner(it,rfsType);
+  if(dynamic_cast<character*>(ent)!=NULL)
+    return (character*)ent;
+  return NULL;
+}
+void DelItems(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  ulong count=0;
+  if(!fsParams.IsEmpty())
+    count=atoi(fsParams.CStr());
+  
+  if(count==0 || count>vItemLastSearch.size())
+    count=vItemLastSearch.size();
+
+  DEVCMDMSG1P("params: count=%d",count);
+  
+  int iRm=0;
+  item* it;
+  character* C;
+  for(int i=count-1;i>=0;i--){
+    it = vItemLastSearch[i];
+    if(!it->Exists())continue;
+    
+    C = GetOwnerChar(it);
+    if(C && (C->IsPlayer() || C->IsPet()))continue;
+    DEVCMDMSG2P("Go to hell! id=%d name=\"%s\"",it->GetID(),it->GetName(DEFINITE).CStr());
+    it->RemoveFromSlot();
+    it->SendToHell();
+    vItemLastSearch.pop_back();
+    iRm++;
+  }
+  DEVCMDMSG2P("total=%d, remaining=%d",iRm,vItemLastSearch.size());
+}
+void ListItems(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  ulong idCharFilter=0;
+  ulong idItemFilter=0;
+  festring fsFilter;
+  vCharLastSearch.clear();
+  vItemLastSearch.clear();
+  bool bItemMode=false;
+
+  if(!fsParams.IsEmpty()){
     std::string part;
-    std::stringstream iss(strParams);
+    std::stringstream iss(fsParams.CStr());
     if(iss >> part){
       if(part=="c"){
-        if(iss >> part)
-          idCharFilter=atoi(part.c_str());
+        if(iss >> part){
+          fsFilter=part.c_str();
+          idCharFilter=atoi(fsFilter.CStr());
+        }
+        bItemMode=false;
       }
       if(part=="i"){
-        if(iss >> part)
-          idFilter=atoi(part.c_str());
+        if(iss >> part){
+          fsFilter=part.c_str();
+          idItemFilter=atoi(fsFilter.CStr());
+        }
+        bItemMode=true;
       }
     }
   }
 
-  DEVCMDMSG("params: %d %d",idFilter,idCharFilter);
+  DEVCMDMSG3P("params: ItemID=%d CharID=%d ItemOrCharNameHas=\"%s\"",idItemFilter,idCharFilter,fsFilter.CStr());
 
   itemidmap map = game::GetItemIDMapCopy();
   for(itemidmap::iterator itr = map.begin();itr!=map.end();itr++){
@@ -111,67 +292,65 @@ void ListItems(std::string strParams){
 
     //TODO could check app memory range if pointer is within limits...
     if( //TODO items could have a random key to detect if they were not deleted improperly or w/e, could still segfault when reading it tho...
+      !it->Exists() ||
       it->GetVolume()==0 ||
       it->GetID()==0 ||
+      it->GetLSquareUnder()==NULL ||
       it->GetSquaresUnder()==0 ||
       it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
-      false
+      false //dummy
     ){
-      DEVCMDMSG("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
+      DEVCMDMSG3P("item REFERENCE INVALID at consistent list ID=%d 0x%X \"%s\"",itr->first,it,it->GetName(DEFINITE).CStr()); //was the item deleted or what happened?
+      continue;
     }
 
-    if(idFilter!=0 && idFilter!=it->GetID())
-      continue;
-
-    slot* Slot = it->GetSlot();
-
-    const entity* ent;
+    if(bItemMode){
+      if(idItemFilter!=0){
+        if(idItemFilter!=it->GetID())
+          continue;
+      }else{
+        if(it->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+          continue;
+      }
+    }
+      
     festring fsType;
-    if(dynamic_cast<gearslot*>(Slot)!=NULL){
-      ent=((gearslot*)Slot)->FindCarrier();
-      fsType="gear";
-    }else
-    if(dynamic_cast<bodypartslot*>(Slot)!=NULL){
-      ent=((bodypartslot*)Slot)->GetMaster();
-      fsType="bodypart";
-    }else
-    if(dynamic_cast<stackslot*>(Slot)!=NULL){
-      stackslot* sl = ((stackslot*)Slot);
-      ent=sl->FindCarrier();
-      if(sl->GetMotherStack()!=NULL)
-        ent=sl->GetMotherStack()->GetMotherEntity();
-      fsType="stack";
-    }else
-      ent=NULL;
+    const entity* ent=GetOwner(it,fsType);
 
     festring fsDec;
-    citem* entI;
-    ccharacter* entC;
+    citem* ownerI=NULL;
+    ccharacter* ownerC=NULL;
     if(dynamic_cast<citem*>(ent)){
-      entI=(citem*)ent;
-      entC=NULL;
+      ownerI=(citem*)ent;
+      ownerC=NULL;
       if(dynamic_cast<const corpse*>(ent)){
         const corpse* CP = (const corpse*)ent;
-        entC = CP->GetDeceased();
+        ownerC = CP->GetDeceased();
         fsDec=",Dec";
       }
     }else
     if(dynamic_cast<ccharacter*>(ent)){
-      entI=NULL;
-      entC=(ccharacter*)ent;
+      ownerI=NULL;
+      ownerC=(ccharacter*)ent;
     }else{
-      entI=NULL;
-      entC=NULL;
+      ownerI=NULL;
+      ownerC=NULL;
     }
 
-    if(idCharFilter!=0)
-      if(entC==NULL || entC->GetID()!=idCharFilter)
-        continue;
+    if(!bItemMode){
+      if(idCharFilter!=0){
+        if(ownerC==NULL || ownerC->GetID()!=idCharFilter)
+          continue;
+      }else{
+        if(ownerC==NULL || ownerC->GetName(DEFINITE).Find(fsFilter)==festring::NPos)
+          continue;
+      }
+    }
 
-    bool bPlayerStuff = entC!=NULL && entC->IsPlayer();
+    bool bPlayerStuff = ownerC!=NULL && ownerC->IsPlayer();
 
     festring fsPB;
-    if(entC!=NULL && entC->GetPolymorphBackup()!=NULL && entC->GetPolymorphBackup()->IsPlayer())
+    if(ownerC!=NULL && ownerC->GetPolymorphBackup()!=NULL && ownerC->GetPolymorphBackup()->IsPlayer())
       fsPB=",PB";
 
     festring fsPos="NULL";
@@ -180,7 +359,7 @@ void ListItems(std::string strParams){
       fsPos<<it->GetPos().X<<","<<it->GetPos().Y;
     }
 
-    DEVCMDMSG("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
+    DEVCMDMSG15P("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
       bPlayerStuff?"@":" ",
       it->GetID(),
 
@@ -188,17 +367,30 @@ void ListItems(std::string strParams){
 
       it->GetName(DEFINITE).CStr(),
 
-      entC!=NULL ? entC->GetID() : 0,
-      entC!=NULL ? entC->GetName(DEFINITE).CStr() : "NoEntC",
+      ownerC!=NULL ? ownerC->GetID() : 0,
+      ownerC!=NULL ? ownerC->GetName(DEFINITE).CStr() : "NoEntC",
 
-      entI!=NULL ? entI->GetID() : 0,
-      entI!=NULL ? entI->GetName(DEFINITE).CStr() : "NoEntI",
+      ownerI!=NULL ? ownerI->GetID() : 0,
+      ownerI!=NULL ? ownerI->GetName(DEFINITE).CStr() : "NoEntI",
 
       fsType.CStr(),
       fsPB.CStr(),
-      fsDec.CStr()
+      fsDec.CStr(),
+      
+      0,0,0,0 //dummy
     );
+    if(ownerC!=NULL){
+      bool bSkip=false;
+      for(auto pCchk = vCharLastSearch.begin(); pCchk != vCharLastSearch.end(); ++pCchk){
+        bSkip = (*pCchk == ownerC);
+        if(bSkip)break;
+      }
+      if(!bSkip)
+        vCharLastSearch.push_back((character*)ownerC);
+    }
+    vItemLastSearch.push_back(it);
   }
+  DEVCMDMSG2P("total: Chars=%d Items=%d",vCharLastSearch.size(),vItemLastSearch.size());
 }
 #endif
 
@@ -209,11 +401,13 @@ void devcons::Init()
 
 const int iVarTot=10;
 float afVars[iVarTot];
-void devcons::SetVar(std::string strParams)
+void devcons::SetVar(festring fsParams)
 {
-  if(!strParams.empty()){
+  if(!game::WizardModeIsReallyActive())return;
+  
+  if(!fsParams.IsEmpty()){
     std::string part;
-    std::stringstream iss(strParams);
+    std::stringstream iss(fsParams.CStr());
     
     iss >> part;
     int index = atoi(part.c_str()); //TODO use string IDs instead of index and create a map
@@ -242,9 +436,14 @@ void devcons::OpenCommandsConsole()
     ADDCMD(Help,"show this help",false);
     AddDevCmd("?",Help,"show this help",false);
 #ifdef WIZARD
+    ADDCMD(FillWithWalls,"[distance:int] all empty (of OLTerrain) squares (optionally around player max distance).",true);
+    ADDCMD(DelChars,"[count:int] delete characters (from the list filled on the previous command) up to count if set.",true);
+    ADDCMD(DelItems,"[count:int] delete items (from the list filled on the previous command) up to count if set.",true);
+    ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
+    ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
     ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
-    ADDCMD(ListChars,"[filterCharID:ulong] list all characters on current dungeon level",true);
-    ADDCMD(ListItems,"[[c|i] <filterID:ulong>] filter by char or item ID. List all items on current dungeon level, including on characters inventory and containers",true);
+    ADDCMD(TeleToChar,"<filterName:string> teleports near 1st character matching filter.",true);
+    ADDCMD(TeleToMe,"<filterName:string> teleports all NPCs matching filter to you.",true);
 #endif
     return true;
   }();
@@ -271,7 +470,7 @@ void devcons::OpenCommandsConsole()
   for(;;){
     static festring fsFullCmd;
     festring fsQ;
-    if(game::WizardModeIsActive())
+    if(game::WizardModeIsReallyActive())
       fsQ="Developer(WIZ) ";
     fsQ<<"Console Command (try 'help' or '?'):";
     //TODO key up/down commands history and save/load to a txt file
@@ -284,12 +483,12 @@ void devcons::OpenCommandsConsole()
   bOpenCommandsConsole=false;
 }
 
-typedef void (*callcmd)(std::string);
+//typedef void (*callcmd)(festring&);
 
 struct DevCmd{
-  std::string strCmd="";
-  std::string strCmdLowerCase="";
-  std::string strHelp="";
+  festring fsCmd="";
+  festring fsCmdLowerCase="";
+  festring fsHelp="";
   callcmd Call=NULL;
   bool bWizardModeOnly=false;
 };
@@ -300,42 +499,47 @@ void devcons::AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp,bool bWiza
 {
   callcmd cc = Find(fsCmd.CStr());
   if(cc!=NULL) //TODO ignore if equal?
-    ABORT("command %s already set %x %x",fsCmd.CStr(),cc,Call);
+    ABORT("command %s already set %p %p",fsCmd.CStr(),cc,Call);
 
   DevCmd dc;
-  dc.strCmd=fsCmd.CStr();
-  dc.strCmdLowerCase=fsCmd.CStr();
-  std::transform(dc.strCmdLowerCase.begin(), dc.strCmdLowerCase.end(), dc.strCmdLowerCase.begin(), ::tolower);
-  dc.strHelp=fsHelp.CStr();
+  dc.fsCmd=fsCmd.CStr();
+  
+  std::string strCmdLowerCase=fsCmd.CStr();
+  std::transform(strCmdLowerCase.begin(), strCmdLowerCase.end(), strCmdLowerCase.begin(), ::tolower);
+  dc.fsCmdLowerCase=strCmdLowerCase.c_str();
+  
+  dc.fsHelp=fsHelp.CStr();
   dc.Call = Call;
   dc.bWizardModeOnly=bWizardModeOnly;
 
-  int i=dc.strCmd.find(" ");
+  int i=std::string(dc.fsCmd.CStr()).find(" ");
   if(i!=std::string::npos)
-    ABORT("command must not contain spaces '%s'",dc.strCmd.c_str());
+    ABORT("command must not contain spaces '%s'",dc.fsCmd.CStr());
 
   vCmd.push_back(dc);
 }
 
-void devcons::Help(std::string strFilter)
+void devcons::Help(festring fsFilter)
 {
+  festring fsWM;
   for(int j=0;j<vCmd.size();j++){
-    if(!vCmd[j].bWizardModeOnly || game::WizardModeIsActive())
-      DEVCMDMSG("%s - %s%s",
-//      ADD_MESSAGE("%s%s - %s%s",cPrompt,
-        vCmd[j].strCmd.c_str(),
-        vCmd[j].bWizardModeOnly?"(WIZ) ":"",
-        vCmd[j].strHelp.c_str());
+    if(vCmd[j].bWizardModeOnly){
+      fsWM="(WIZ) ";
+    }else{
+      fsWM="";
+    }
+    DEVCMDMSG3P("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
-  DEVCMDMSG("%s","Ps.: main commands are case insensitive.");
+  DEVCMDMSG1P("%s","Ps.: main commands are case insensitive.");
 }
 
-callcmd devcons::Find(std::string strCmd)
+callcmd devcons::Find(festring fsCmd)
 {
+  std::string strCmd = fsCmd.CStr();
   std::transform(strCmd.begin(), strCmd.end(), strCmd.begin(), ::tolower);
   for(int j=0;j<vCmd.size();j++){
-    if(vCmd[j].strCmdLowerCase==strCmd)
+    if(vCmd[j].fsCmdLowerCase==strCmd.c_str())
       return vCmd[j].Call;
   }
   return NULL;
@@ -359,15 +563,20 @@ void devcons::runCommand(festring fsFullCmd)
   }
 
 //  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
-  DEVCMDMSG("Trying to run: %s ('%s' '%s')",strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
+  DEVCMDMSG1P("%s",DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG DEVCMDMSGTAG );
+  DEVCMDMSG3P("Trying to run: %s ('%s' '%s')",
+    festring(strFullCmd.c_str()).CStr(),
+    festring(strCmd.c_str()).CStr(),
+    festring(strParams.c_str()).CStr()
+  );
 
-  callcmd cc = Find(strCmd);
+  callcmd cc = Find(strCmd.c_str());
   if(cc){
-    cc(strParams);
+    cc(strParams.c_str());
 //    ADD_MESSAGE("%scommand %s completed",cPrompt,strCmd.c_str());
-    DEVCMDMSG("command %s completed",strCmd.c_str());
+    DEVCMDMSG1P(" <<< command %s completed",strCmd.c_str());
   }else{
 //    ADD_MESSAGE("%scommand %s not found",cPrompt,strCmd.c_str());
-    DEVCMDMSG("command %s not found",strCmd.c_str());
+    DEVCMDMSG1P(" <<< command %s not found",strCmd.c_str());
   }
 }

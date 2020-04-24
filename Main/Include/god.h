@@ -38,6 +38,7 @@ class godprototype
   cchar* ClassID;
 };
 
+typedef bool (*CallFavourType)(god*);
 class god
 {
  public:
@@ -47,6 +48,7 @@ class god
   virtual void Pray();
   virtual cchar* GetName() const = 0;
   virtual cchar* GetDescription() const = 0;
+  cchar* GetLastKnownRelation() const;
   cchar* GetPersonalPronoun() const;
   cchar* GetObjectPronoun() const;
   virtual int GetAlignment() const = 0;
@@ -62,7 +64,7 @@ class god
   truth ReceiveOffer(item*);
   virtual int GetBasicAlignment() const;
   int GetRelation() const { return Relation; }
-  void PrintRelation() const;
+  cfestring PrintRelation() const;
   void SetIsKnown(truth What) { Known = What; }
   truth IsKnown() const { return Known; }
   void PlayerKickedAltar() { AdjustRelation(-100); }
@@ -82,12 +84,23 @@ class god
   virtual int GetSex() const = 0;
   void SignalRandomAltarGeneration(const std::vector<v2>&);
   virtual truth LikesVomit() const { return false; }
- protected:
+  virtual bool Favour(int iWhat, int iDebit=0);
+  static festring GetFavourName(int iID);
+  const std::vector<int> GetKnownSpells() const { return knownSpellsID; }
+  bool CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit, int iDbtDefault);
+protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
   int Relation, LastPray;
+  festring fsLastKnownRelation;
   long Timer;
   truth Known;
+  
+  static std::vector<std::pair<int,festring>> vFavID;
+  static void AddFavourID(int i,festring fs);
+  static void FavourInit();
+  int CalcDebit(int iDebit,int iDefault);
+  std::vector<int> knownSpellsID;
 };
 
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__

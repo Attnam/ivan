@@ -203,7 +203,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   SDL_WM_SetCaption(Title, 0);
 #else
-  Flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+  Flags |= SDL_WINDOW_ALLOW_HIGHDPI|SDL_WINDOW_HIDDEN;
 
   Window = SDL_CreateWindow(Title,
                             SDL_WINDOWPOS_UNDEFINED,
@@ -634,7 +634,7 @@ void graphics::AddDrawAboveAll(drawabove da, int iPriority, const char* desc)
     vDrawaboveTmp.erase(vDrawaboveTmp.begin()+iIndexLP);
   }
 
-  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //to help on development, so all priorities can be adjusted easily
+  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //output to terminal to help on development, so all priorities can be adjusted easily
   bool bCOut = c!=NULL && strcmp(c,"true")==0;
   festring fsDrawAbovePriority;
   for(int i=0;i<vDrawabove.size();i++){

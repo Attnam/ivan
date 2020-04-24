@@ -19,7 +19,7 @@ cd build
 cmake ..  # ".." refers to the parent directory of "build"
 make
 make install
-
+Note: This will make changes to /usr/bin, and you have to either run "sudo make install" instead, or log in as root.  
 Note: Wizard Mode is disabled by default. To enable it run:
 
 mkdir build
@@ -47,34 +47,52 @@ make -f ivandj.mak
 
 --------------------------------------
 
-Under Windows - Visual Studio:
+Under Windows - Microsoft Visual Studio 2017 (or better):
+
+You will need to install the C++ tools with CMake support, along with Git integrations from the Visual Studio Installer. 
+We will not be using Visual Studio in the traditional way with everything squished into a solution file. 
+Instead we will use Visual Studio to open a repo folder with a top-level CMakeLists.txt, in conjunction with a CMakeSettings.json file to create the cmake build files.
+Then we will use msvc to compile ivan.exe, with the help of libraries we install from vcpkg using Powershell (PS). 
+
+Install vcpkg and install the needed libraries using Powershell:
+Here is a condensed summary of applicable instructions from https://github.com/microsoft/vcpkg
+Create a folder named "tools" under C:\ and clone the vcpkg repository from github:
+PS C:\tools> git clone https://github.com/Microsoft/vcpkg.git
+PS C:\tools> cd vcpkg
+PS C:\tools\vcpkg> ./bootstrap-vcpkg.sh
+PS C:\tools\vcpkg> .\vcpkg integrate install
+
+Install the following libraries:
+PS C:\tools\vcpkg> .\vcpkg install sdl2 sdl2-mixer libpng pcre
+
+Verify the libraries are installed with this command:
+PS C:\tools\vcpkg> .\vcpkg list
+libpng:x86-windows                                 1.6.37-1         libpng is a library implementing an interface fo...
+pcre:x86-windows                                   8.41-2           Perl Compatible Regular Expresions
+sdl2-mixer:x86-windows                             2.0.4-2          Multi-channel audio mixer library for SDL.
+sdl2:x86-windows                                   2.0.9-3          Simple DirectMedia Layer is a cross-platform dev...
+zlib:x86-windows                                   1.2.11-5         A compression library
 
 
-Install SDL2
+Clone attnam/ivan into a directory (for example C:\Users\yourname\source\repos\ivan)
 
-Download SDL2-devel-2.0.4-VC.zip from http://www.libsdl.org/
-and install somewhere in system, e.g. D:\Apps\SDL2-2.0.4
+Open Microsoft Visual Studio (2017)
 
+Go File->Open Folder
 
-Set system environment variable SDL2DIR to "D:\Apps\SDL2-2.0.4".
-Make sure to open command prompt after that (so this variable is taken into account).
+Select C:\Users\yourname\source\repos\ivan
 
-Alternatively set it just in current command prompt:
+Some stuff will happen automatically. The CMakeSettings.json file will be found, and the CMake cache will be generated.
 
-D:\buildy\ivan>set SDL2DIR=D:\Apps\SDL2-2.0.4
+Next to the green "play" button is some text (Select Startup Item...) in a gray dropdown menu. Select "ivan.exe (Install) (ivan\ivan.exe)".
 
+"Build" will appear in the menu next to "CMake". Click Build->ivan.exe (Install) (ivan\ivan.exe) F7
 
-Compile IVAN
+This will build ivan.exe and install all the components, automatically copying the required dlls as well.
 
-Either use cmake-gui if system environment variable was set, or:
+The build folder is located in C:\Users\yourname\CMakeBuilds\some-long-code-here-abcdef123456\install\x86-Release\ivan
+Go there and hit ivan.exe, and you're playing IVAN built using Microsoft Visual Studio!!!
 
-D:\buildy\ivan>mkdir vs2015
-D:\buildy\ivan>cd vs2015
-D:\buildy\ivan\vs2015>cmake -G "Visual Studio 14 2015" .. -DCMAKE_INSTALL_PREFIX=D:/buildy/ivan/inst_vs2015
-
-Now open and compile D:\buildy\ivan\vs2015\ivan.sln in VS2015 IDE.
-
-Now you can run ivan from D:/buildy/ivan/inst_vs2015/ivan/ directory.
 
 --------------------------------------
 

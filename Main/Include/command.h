@@ -23,15 +23,17 @@ class command
   command(truth (*)(character*), cchar*, char, char, char, truth, truth = false);
   truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   cchar* GetDescription() const { return Description; }
-  char GetKey() const;
+  int GetKey() const;
   truth IsUsableInWilderness() const { return UsableInWilderness; }
   truth IsWizardModeFunction() const { return WizardModeFunction; }
+  int SetCustomKey(int iKey){ int iKeyBkp=Key4; Key4 = iKey; return iKeyBkp; }
  private:
   truth (*LinkedFunction)(character*);
   cchar* Description;
   char Key1;
   char Key2;
   char Key3;
+  int Key4; // custom keys can be more than 1 char long as ex.: KEY_HOME is 0x147 or 0x0147
   truth UsableInWilderness;
   truth WizardModeFunction;
 };
@@ -43,6 +45,7 @@ class commandsystem
   static truth IsForRegionListItem(int iIndex);
   static truth IsForRegionSilhouette(int iIndex);
   static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
+  static void PlayerDiedWeaponSkills();
   static void SaveSwapWeapons(outputfile& SaveFile);
   static void LoadSwapWeapons(inputfile& SaveFile);
   static void ClearSwapWeapons();
@@ -71,6 +74,7 @@ class commandsystem
   static truth Open(character*);
   static truth PickUp(character*);
   static truth Pray(character*);
+  static truth AskFavour(character*);
   static truth Craft(character*);
   static truth Quit(character*);
   static truth Read(character*);
