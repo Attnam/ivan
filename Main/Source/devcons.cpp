@@ -58,6 +58,8 @@ truth IsValidChar(character* C){
   return true;
 }
 void TeleToChar(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
   characteridmap map = game::GetCharacterIDMapCopy();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
@@ -71,6 +73,8 @@ void TeleToChar(festring fsFilter){
   }
 }
 void TeleToMe(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
   characteridmap map = game::GetCharacterIDMapCopy();
   for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
     character* C = itr->second;
@@ -84,6 +88,8 @@ void TeleToMe(festring fsFilter){
   }
 }
 void FillWithWalls(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
   int iAround=0;
   if(!fsFilter.IsEmpty())
     iAround=atoi(fsFilter.CStr());
@@ -110,6 +116,8 @@ void FillWithWalls(festring fsFilter){
   DEVCMDMSG1P("new walls: %d",iCount);
 }
 void ListChars(festring fsFilter){
+  if(!game::WizardModeIsReallyActive())return;
+  
   ulong idFilter=0;
   if(!fsFilter.IsEmpty())
     idFilter=atoi(fsFilter.CStr());
@@ -154,6 +162,8 @@ void ListChars(festring fsFilter){
   DEVCMDMSG1P("total:%d",vCharLastSearch.size());
 }
 void DelChars(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
   ulong count=0;
   if(!fsParams.IsEmpty())
     count=atoi(fsParams.CStr());
@@ -211,6 +221,8 @@ character* GetOwnerChar(item* it,festring& rfsType = fsDummy){
   return NULL;
 }
 void DelItems(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
   ulong count=0;
   if(!fsParams.IsEmpty())
     count=atoi(fsParams.CStr());
@@ -238,6 +250,8 @@ void DelItems(festring fsParams){
   DEVCMDMSG2P("total=%d, remaining=%d",iRm,vItemLastSearch.size());
 }
 void ListItems(festring fsParams){
+  if(!game::WizardModeIsReallyActive())return;
+  
   ulong idCharFilter=0;
   ulong idItemFilter=0;
   festring fsFilter;
@@ -389,6 +403,8 @@ const int iVarTot=10;
 float afVars[iVarTot];
 void devcons::SetVar(festring fsParams)
 {
+  if(!game::WizardModeIsReallyActive())return;
+  
   if(!fsParams.IsEmpty()){
     std::string part;
     std::stringstream iss(fsParams.CStr());
@@ -454,7 +470,7 @@ void devcons::OpenCommandsConsole()
   for(;;){
     static festring fsFullCmd;
     festring fsQ;
-    if(game::WizardModeIsActive())
+    if(game::WizardModeIsReallyActive())
       fsQ="Developer(WIZ) ";
     fsQ<<"Console Command (try 'help' or '?'):";
     //TODO key up/down commands history and save/load to a txt file
@@ -507,14 +523,12 @@ void devcons::Help(festring fsFilter)
 {
   festring fsWM;
   for(int j=0;j<vCmd.size();j++){
-    if(!vCmd[j].bWizardModeOnly || game::WizardModeIsActive()){
-      if(vCmd[j].bWizardModeOnly){
-        fsWM="(WIZ) ";
-      }else{
-        fsWM="";
-      }
+    if(vCmd[j].bWizardModeOnly){
+      fsWM="(WIZ) ";
+    }else{
+      fsWM="";
     }
-      DEVCMDMSG3P("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
+    DEVCMDMSG3P("%s - %s%s",vCmd[j].fsCmd.CStr(),fsWM.CStr(),vCmd[j].fsHelp.CStr());
   }
 //  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
   DEVCMDMSG1P("%s","Ps.: main commands are case insensitive.");
