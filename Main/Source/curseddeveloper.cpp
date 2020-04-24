@@ -95,10 +95,9 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   if(!game::IsInWilderness())
     P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
   
-  if(!bStay && Killer && !game::IsInWilderness()){
-    if(!game::IsInWilderness())
-      if(!P->GetLSquareUnder()->GetEngraved())
-        game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
+  if(!bStay && Killer && !game::IsInWilderness() && iKillerDebuff==0){
+    if(!P->GetLSquareUnder()->GetEngraved())
+      game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
     if(Killer->GetSquaresUnder()>1){
