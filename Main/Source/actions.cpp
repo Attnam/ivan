@@ -471,25 +471,28 @@ void dig::Handle()
       Terminate(true);
   }
 
-  if(StoppedDigging)
+  humanoid* h = dynamic_cast<humanoid*>(Actor);
+  if(StoppedDigging && h)
   {
-    if(MoveDigger && Actor->GetMainWielded())
-      Actor->GetMainWielded()->MoveTo(Actor->GetStack());
+    if(MoveDigger && h->GetMainWielded())
+      h->GetMainWielded()->MoveTo(h->GetStack());
 
-    item* RightBackup = game::SearchItem(RightBackupID);
-
-    if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
-    {
-      RightBackup->RemoveFromSlot();
-      Actor->SetRightWielded(RightBackup);
+    if(h->GetRightArm()){
+      item* RightBackup = game::SearchItem(RightBackupID);
+      if(RightBackup && RightBackup->Exists() && h->IsOver(RightBackup))
+      {
+        RightBackup->RemoveFromSlot();
+        h->SetRightWielded(RightBackup);
+      }
     }
 
-    item* LeftBackup = game::SearchItem(LeftBackupID);
-
-    if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
-    {
-      LeftBackup->RemoveFromSlot();
-      Actor->SetLeftWielded(LeftBackup);
+    if(h->GetLeftArm()){
+      item* LeftBackup = game::SearchItem(LeftBackupID);
+      if(LeftBackup && LeftBackup->Exists() && h->IsOver(LeftBackup))
+      {
+        LeftBackup->RemoveFromSlot();
+        h->SetLeftWielded(LeftBackup);
+      }
     }
   }
 

@@ -92,11 +92,13 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
     P->GetAction()->Terminate(false); //just to avoid messing any action
   
   // at death spot
-  P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
+  if(!game::IsInWilderness())
+    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
   
   if(!bStay && Killer && !game::IsInWilderness()){
-    if(!P->GetLSquareUnder()->GetEngraved())
-      game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
+    if(!game::IsInWilderness())
+      if(!P->GetLSquareUnder()->GetEngraved())
+        game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
     if(Killer->GetSquaresUnder()>1){
@@ -118,7 +120,8 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   
   // at resurrect spot
   if(iKillerDebuff>0) // if enemy got too powerful, buff the player randomly
-    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
+    if(!game::IsInWilderness())
+      P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   
@@ -194,12 +197,15 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   ASRET(POISONED,riDebuff);
   
   // Revenge, grant it will stop:
-  game::GetCurrentLevel()->Explosion(
-    game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+  if(!game::IsInWilderness() && game::GetCurrentLevel())
+    game::GetCurrentLevel()->Explosion(
+      game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
   
   ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
-  Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
-  Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
+  if(!game::IsInWilderness()){
+    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
+  }
     
   rbRev=true;
   
