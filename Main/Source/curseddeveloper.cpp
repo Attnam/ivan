@@ -99,10 +99,21 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
       game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
-    bCursedDeveloperTeleport=true;
-    P->TeleportRandomly(true);
-    ADD_MESSAGE("You see a flash of dark light and teleport away from the killing blow!");
-    bCursedDeveloperTeleport=false;
+    if(Killer->GetSquaresUnder()>1){
+      bCursedDeveloperTeleport=true;
+      P->TeleportRandomly(true);
+      ADD_MESSAGE("You see a flash of dark light and teleport away from the killing blow!");
+      bCursedDeveloperTeleport=false;
+    }else{
+      bool bRestoreTL=false;
+      if(Killer->HasStateFlag(TELEPORT_LOCK)){
+        Killer->DeActivateTemporaryState(TELEPORT_LOCK);
+        bRestoreTL=true;
+      }
+      Killer->TeleportRandomly(true);
+      if(bRestoreTL)
+        Killer->GainIntrinsic(TELEPORT_LOCK);
+    }
   }
   
   // at resurrect spot
@@ -114,6 +125,31 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
   game::DrawEverything();
   
   return true;
+}
+
+bool AddState(character* Killer,long Flag,cchar* FlagName,long FlagD,cchar* FlagNameD,int& iB)
+{
+  if(FlagD && Killer->HasStateFlag(FlagD)){
+    DBG5("DEACTIVATING",Killer->GetName(DEFINITE).CStr(),FlagD,FlagNameD,iB);
+    Killer->DeActivateTemporaryState(FlagD);
+  }
+  
+  DBG5("TRYADD",Killer->GetName(DEFINITE).CStr(),Flag,FlagName,iB);
+  if(!Killer->HasStateFlag(Flag)){
+    Killer->GainIntrinsic(Flag);
+    if(Killer->HasStateFlag(Flag)){
+      iB++;
+      DBG2("SUCCEED TO ADD!!!",iB);
+      return true;
+    }else{
+      DBG1("FAILED TO ADD");
+    }
+  }else{
+    iB++;
+    DBG1("HAS ALREADY");
+  }
+  
+  return false;
 }
 
 /**
@@ -128,72 +164,34 @@ bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   
   riDebuff=0;
   rbRev=false;
-  
+
   // BUFFs, every death makes it harder to player:
   riBuff=1;
-  if(!Killer->HasStateFlag(ESP)){Killer->GainIntrinsic(ESP);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(INFRA_VISION)){Killer->GainIntrinsic(INFRA_VISION);return false;}
-//  riBuff++;
-//  if(!Killer->HasStateFlag(VAMPIRISM)){Killer->GainIntrinsic(VAMPIRISM);return false;}
-//  riBuff++;
-//  if(!Killer->HasStateFlag(PANIC))
-//    if(!Killer->HasStateFlag(FEARLESS)){Killer->GainIntrinsic(FEARLESS);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(SLOW))
-    if(!Killer->HasStateFlag(HASTE)){Killer->GainIntrinsic(HASTE);return false;}
-//  riBuff++;
-//  if(!Killer->HasStateFlag(HICCUPS))
-//    if(!Killer->HasStateFlag(INVISIBLE)){Killer->GainIntrinsic(INVISIBLE);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(SWIMMING)){Killer->GainIntrinsic(SWIMMING);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(ETHEREAL_MOVING)){Killer->GainIntrinsic(ETHEREAL_MOVING);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(REGENERATION)){Killer->GainIntrinsic(REGENERATION);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(LEVITATION)){Killer->GainIntrinsic(LEVITATION);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(GAS_IMMUNITY)){Killer->GainIntrinsic(GAS_IMMUNITY);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(TELEPORT_LOCK)){Killer->GainIntrinsic(TELEPORT_LOCK);return false;}
-  riBuff++;
-  if(!Killer->HasStateFlag(POLYMORPH_LOCK)){Killer->GainIntrinsic(POLYMORPH_LOCK);return false;}
+#define ASRET(e,b)    if(AddState(Killer,e,#e,0,NULL,b))return false;
+#define ASRETD(e,d,b) if(AddState(Killer,e,#e,d,#d,b))return false;
+  ASRET(ESP,riBuff);
+  ASRET(INFRA_VISION,riBuff);
+//  ASRETD(HASTE,SLOW,riBuff);
+  ASRET(HASTE,riBuff);
+  ASRET(SWIMMING,riBuff);
+  ASRET(ETHEREAL_MOVING,riBuff);
+  ASRET(REGENERATION,riBuff);
+  ASRET(LEVITATION,riBuff);
+  ASRET(GAS_IMMUNITY,riBuff);
+  ASRET(TELEPORT_LOCK,riBuff);
+  ASRET(POLYMORPH_LOCK,riBuff);
   
   /*************************
    *  DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
    */
   riDebuff=1;
-  if(!Killer->HasStateFlag(HICCUPS)){
-//    Killer->DeActivateTemporaryState(INVISIBLE);
-    Killer->GainIntrinsic(HICCUPS);
-    return false;
-  }
-  riDebuff++;
-  
-  if(!Killer->HasStateFlag(SLOW)){
-    Killer->DeActivateTemporaryState(HASTE);
-    Killer->GainIntrinsic(SLOW);
-    return false;
-  }
-  riDebuff++;
-  
-  if(!Killer->HasStateFlag(PARASITE_TAPE_WORM)){Killer->GainIntrinsic(PARASITE_TAPE_WORM);return false;}
-  riDebuff++;
-  if(!Killer->HasStateFlag(CONFUSED)){Killer->GainIntrinsic(CONFUSED);return false;}
-  riDebuff++;
-  if(!Killer->HasStateFlag(LEPROSY)){Killer->GainIntrinsic(LEPROSY);return false;}
-//  riDebuff++;
-// this is too much as adds worm mobs on the dungeon...
-//  if(!Killer->HasStateFlag(PARASITE_MIND_WORM)){Killer->GainIntrinsic(PARASITE_MIND_WORM);return false;}
-  riDebuff++;
-  if(!Killer->HasStateFlag(POISONED)){Killer->GainIntrinsic(POISONED);return false;}
-//  riDebuff++;
-//  if(!Killer->HasStateFlag(PANIC)){
-//    Killer->DeActivateTemporaryState(FEARLESS);
-//    Killer->GainIntrinsic(PANIC);
-//    return true;
-//  }
+  ASRET(HICCUPS,riDebuff);
+//  ASRETD(SLOW,HASTE,riDebuff);
+  ASRET(SLOW,riDebuff);
+  ASRET(PARASITE_TAPE_WORM,riDebuff);
+  ASRET(CONFUSED,riDebuff);
+  ASRET(LEPROSY,riDebuff);
+  ASRET(POISONED,riDebuff);
   
   // Revenge, grant it will stop:
   game::GetCurrentLevel()->Explosion(
