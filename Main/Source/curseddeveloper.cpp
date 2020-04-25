@@ -50,6 +50,13 @@ bool curseddeveloper::CreateBP(int iIndex)
 {
   character* P = game::GetPlayer();
   
+  if(dynamic_cast<humanoid*>(P))
+  {
+    //ok
+  }
+  else if(iIndex!=TORSO_INDEX) //can be polymorphed into non humanoid
+    return false;
+  
   bodypart* bp = P->GetBodyPart(iIndex);
   if(!bp && P->CanCreateBodyPart(iIndex))
     bp=P->CreateBodyPart(iIndex);
