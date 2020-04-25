@@ -896,8 +896,7 @@ col16 ivanconfig::CheckChangeColor(col16 col)
       GetGreen16(col)<iG &&
       GetBlue16(col) <iB
     ){
-      static col16 iVeryDarkGray = [](){float f=0.66;
-        return MakeRGB16(GetRed16(DARK_GRAY)*f,GetGreen16(DARK_GRAY)*f,GetBlue16(DARK_GRAY)*f);}();
+      static col16 iVeryDarkGray = [](){float f=0.66;return MakeRGB16(iR*f,iG*f,iB*f);}();
       return iVeryDarkGray;
     }
   }
