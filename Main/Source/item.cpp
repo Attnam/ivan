@@ -1513,7 +1513,7 @@ void item::Draw(blitdata& BlitData) const
   }
   cbitmap* P = bmp;
 
-  if(BlitData.CustomData & ALLOW_CONTRAST){
+  if(GetMainMaterial() && (BlitData.CustomData & ALLOW_CONTRAST)){
     col16 col = ivanconfig::CheckChangeColor(GetMainMaterial()->GetColor());
     if(col!=GetMainMaterial()->GetColor())
       BlitData.Bitmap->Fill(BlitData.Dest,TILE_V2,col);
