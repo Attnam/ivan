@@ -12372,3 +12372,20 @@ truth character::WillGetTurnSoon() const
 {
   return GetAP() >= 900;
 }
+
+truth character::OverloadedKickFailCheck()
+{
+  if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED){
+    if(IsPlayer())
+      ADD_MESSAGE("You try to kick, lose balance and fall down.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tries to kick, loses balance and falls down.", CHAR_NAME(DEFINITE));
+
+    ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL);
+    CheckDeath(CONST_S("was overloaded, tried to kick and fell down"), 0);
+    
+    EditAP(-500);
+    return true;
+  }
+  return false;
+}

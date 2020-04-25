@@ -464,14 +464,11 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
-  if(!ivanconfig::IsOverloadedFight()){
-    if(GetBurdenState() == OVER_LOADED)
-    {
-      if(IsPlayer())
-        ADD_MESSAGE("You cannot fight while carrying so much.");
+  if(!ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED){
+    if(IsPlayer())
+      ADD_MESSAGE("You cannot fight while carrying so much.");
 
-      return false;
-    }
+    return false;
   }
 
   int c, AttackStyles;
@@ -550,6 +547,9 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
    case USE_LEGS:
     if(HasTwoUsableLegs())
     {
+      if(OverloadedKickFailCheck())        
+        return false;
+    
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
       Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);

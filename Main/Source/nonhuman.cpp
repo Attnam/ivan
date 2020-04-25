@@ -359,6 +359,8 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_LEGS:
+    if(OverloadedKickFailCheck())        
+      return false;
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
     Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);
