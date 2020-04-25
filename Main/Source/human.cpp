@@ -498,7 +498,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   
   if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED && GetHead()){
     if(Chosen == USE_LEGS)
-      Chosen = USE_HEAD;
+      Chosen = USE_HEAD; //TODO why this is not working for player!?!?!?!?
   }
 
   switch(Chosen)

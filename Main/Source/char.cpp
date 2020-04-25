@@ -12384,7 +12384,9 @@ truth character::OverloadedKickFailCheck()
     ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL); //based on banana peel slip
     CheckDeath(CONST_S("was overloaded, tried to kick and fell down"), 0);
     
-    EditAP(-100000 / APBonus(GetAttribute(AGILITY))); //based on kick command
+    if(!IsPlayer()) // if player, the -AP would accumulate while the game turn would NOT increase messing the gameplay
+      EditAP(-100000 / APBonus(GetAttribute(AGILITY))); //based on kick command anyway
+    
     return true;
   }
   return false;
