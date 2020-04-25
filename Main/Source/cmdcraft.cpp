@@ -2005,6 +2005,8 @@ void addMaterialInfo(character* C,item* it){
       if(dynamic_cast<materialmanual*>(v[i])){
         it->SetTag('m');
         it->SetLabel(it->GetLabel()+"s"+matM->GetStrengthValue()+"f"+matM->GetFlexibility());
+        ADD_MESSAGE("You consult %s about %s. It has a strength of %d and a flexibility of %i.",
+          v[i]->GetName(DEFINITE).CStr(),matM->GetNameStem().CStr(),matM->GetStrengthValue(),matM->GetFlexibility());
         break;
       }
     }
