@@ -34,9 +34,9 @@
     </df>
     <df root="Main/Include" name="2">
     </df>
-    <df root="SDL2-2.0.4/include" name="4">
+    <df root="SDL2-2.0.4/include" name="3">
     </df>
-    <df root="FeLib/Include" name="3">
+    <df root="FeLib/Include" name="4">
     </df>
     <logicalFolder name="Modules"
                    displayName="Modules"
@@ -160,6 +160,7 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <codeAssistance>
+        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -167,6 +168,15 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>/usr/include</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
+              <Elem>WIZARD</Elem>
+            </preprocessorList>
+          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
@@ -194,7 +204,15 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>CMakeFiles/CMakeTmp</pElem>
+            </incDir>
+          </cTool>
           <ccTool>
+            <incDir>
+              <pElem>CMakeFiles/CMakeTmp</pElem>
+            </incDir>
             <preprocessorList>
               <Elem>DBGMSG</Elem>
               <Elem>FELIST_WAITKEYUP</Elem>
@@ -793,18 +811,6 @@
             <Elem>UNIX</Elem>
             <Elem>USE_SDL</Elem>
           </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="usr/share/cmake-3.10/Modules">
-        <cTool>
-          <incDir>
-            <pElem>CMakeFiles/CMakeTmp</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>CMakeFiles/CMakeTmp</pElem>
-          </incDir>
         </ccTool>
       </folder>
       <item path="fantasyname/example.cc" ex="false" tool="1" flavor2="11">

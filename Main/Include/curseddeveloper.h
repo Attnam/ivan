@@ -20,6 +20,10 @@ class cursedDeveloper {
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
     static bool LifeSaveJustABit(character* Killer);
     static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
+    static void RestoreLimbs(festring fsCmdParams);
+    static bool HealTorso(bodypart* bp);
+    static bool HealBP(int iIndex,int iMode,int iMinHpOK=0);
+    static bool CreateBP(int iIndex);
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;
