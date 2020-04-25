@@ -13,7 +13,7 @@
 #ifndef __CURSEDDEVELOPER_H__
 #define __CURSEDDEVELOPER_H__
 
-class cursedDeveloper {
+class curseddeveloper {
 #ifdef CURSEDDEVELOPER
   public:
     static bool IsCursedDeveloper(){return bCursedDeveloper;};

@@ -21,14 +21,14 @@
  */
 
 #ifdef CURSEDDEVELOPER
-bool cursedDeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
-bool cursedDeveloper::bCursedDeveloperTeleport = false;
+bool curseddeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
+bool curseddeveloper::bCursedDeveloperTeleport = false;
 
 #define HEAL_1 1
 #define HEAL_MINOK 2
 #define HEAL_MAX 3
 
-void cursedDeveloper::RestoreLimbs(festring fsCmdParams)
+void curseddeveloper::RestoreLimbs(festring fsCmdParams)
 {
   int iMode = fsCmdParams.IsEmpty() ? 0 : atoi(fsCmdParams.CStr());
   
@@ -46,7 +46,7 @@ void cursedDeveloper::RestoreLimbs(festring fsCmdParams)
     ABORT("HP>MaxHP %d>%d",P->HP,P->MaxHP);
 }
 
-bool cursedDeveloper::CreateBP(int iIndex)
+bool curseddeveloper::CreateBP(int iIndex)
 {
   character* P = game::GetPlayer();
   
@@ -62,7 +62,7 @@ bool cursedDeveloper::CreateBP(int iIndex)
   return bp!=NULL;
 }
 
-bool cursedDeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
+bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
 {
   if(!CreateBP(iIndex))return false;
   
@@ -118,13 +118,13 @@ bool cursedDeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
 //  return false;
 //}
 
-bool cursedDeveloper::LifeSaveJustABit(character* Killer)
+bool curseddeveloper::LifeSaveJustABit(character* Killer)
 {
   if(!bCursedDeveloper)
     return false;
   
   static bool bInitDevCmdDummy = [](){
-    devcons::AddDevCmd("RestoreLimbs",cursedDeveloper::RestoreLimbs,
+    devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
       "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
     return true;}();
   
@@ -227,7 +227,7 @@ bool AddState(character* Killer,long Flag,cchar* FlagName,long FlagD,cchar* Flag
  * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
  * @return if player should stay (true) or teleport (false)
  */
-bool cursedDeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev)
+bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev)
 {
   if(!bCursedDeveloper)return true;
   if(!Killer)return true;

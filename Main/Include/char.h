@@ -287,7 +287,7 @@ class character : public entity, public id
  public:
   friend class databasecreator<character>;
   friend class corpse;
-  friend class cursedDeveloper;
+  friend class curseddeveloper;
   friend class wizautoplay;
   typedef characterprototype prototype;
   typedef characterdatabase database;

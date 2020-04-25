@@ -1694,7 +1694,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     ADD_MESSAGE("You die.");
     
 #ifdef CURSEDDEVELOPER    
-    if(cursedDeveloper::LifeSaveJustABit((character*)Killer))
+    if(curseddeveloper::LifeSaveJustABit((character*)Killer))
       return;
 #endif
     
@@ -2514,7 +2514,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(game::WizardModeIsReallyActive())
     return;
-  if(cursedDeveloper::IsCursedDeveloper())
+  if(curseddeveloper::IsCursedDeveloper())
     return;
   
   highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
@@ -2705,7 +2705,7 @@ void character::GetPlayerCommand()
           BeginTemporaryState(PANIC, 500 + RAND_N(500));
         }
 
-        if(!cursedDeveloper::IsCursedDeveloper())
+        if(!curseddeveloper::IsCursedDeveloper())
           game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
       }
       else if(ivanconfig::GetWarnAboutDanger())
@@ -3994,11 +3994,11 @@ void character::TeleportRandomly(truth Intentional)
   else if(IsPlayer())
   {
     // This is to prevent uncontrolled teleportation from going unnoticed by players.
-    if(!cursedDeveloper::IsCursedDeveloperTeleport())
+    if(!curseddeveloper::IsCursedDeveloperTeleport())
       game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
   }
 
-  if(IsPlayer() && !cursedDeveloper::IsCursedDeveloperTeleport())
+  if(IsPlayer() && !curseddeveloper::IsCursedDeveloperTeleport())
     ADD_MESSAGE("A rainbow-colored whirlpool twists the existence around you. "
                 "You are sucked through a tunnel piercing a myriad of surreal "
                 "universes. Luckily you return to this dimension in one piece.");
@@ -4297,7 +4297,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
       else if(IsPlayer() || CanBeSeenByPlayer())
         ADD_MESSAGE("It vanishes.");
 
-      if(IsPlayer() && !cursedDeveloper::IsCursedDeveloper())
+      if(IsPlayer() && !curseddeveloper::IsCursedDeveloper())
         game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
     }
 
@@ -5211,7 +5211,7 @@ void character::DrawPanel(truth AnimationDraw) const
                          v2(game::GetMaxScreenXSize() << 4, 9));
   int iLeftPos=0;
 #ifdef CURSEDDEVELOPER
-    if(cursedDeveloper::IsCursedDeveloper()){
+    if(curseddeveloper::IsCursedDeveloper()){
       festring fsCD="(Cursed Developer) ";
       iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
       FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), YELLOW, fsCD.CStr(), GetPanelName().CStr());
