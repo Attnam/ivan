@@ -495,6 +495,11 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       if(Chosen == USE_LEGS && HasTwoUsableLegs())
         Chosen = USE_HEAD;
     }
+  
+  if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED && GetHead()){
+    if(Chosen == USE_LEGS)
+      Chosen = USE_HEAD;
+  }
 
   switch(Chosen)
   {

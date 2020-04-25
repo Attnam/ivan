@@ -12381,10 +12381,10 @@ truth character::OverloadedKickFailCheck()
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s tries to kick, loses balance and falls down.", CHAR_NAME(DEFINITE));
 
-    ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL);
+    ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL); //based on banana peel slip
     CheckDeath(CONST_S("was overloaded, tried to kick and fell down"), 0);
     
-    EditAP(-500);
+    EditAP(-100000 / APBonus(GetAttribute(AGILITY))); //based on kick command
     return true;
   }
   return false;

@@ -330,8 +330,10 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(AttackStyle & USE_LEGS)
   {
     room* Room = GetNearLSquare(HitPos)->GetRoom();
-
     if(Room && !Room->AllowKick(this, GetNearLSquare(HitPos)))
+      AttackStyle &= ~USE_LEGS;
+    
+    if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED && RAND()%3!=0)
       AttackStyle &= ~USE_LEGS;
   }
 
