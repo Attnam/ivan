@@ -1,4 +1,4 @@
-version: 0.50.9.{build}
+version: 0.90.{build} # Has no bearing on actual IVAN version - haha!
 
 branches:
   only:
@@ -12,6 +12,9 @@ environment:
 
 init:
     - cmd: set PATH=C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
+
+cache: C:\msys64\var\cache\pacman\pkg
+# N.B. you might need this nifty PS command to clear the cache one day: Remove-Item c:\msys64\var\cache\pacman\pkg -Recurse -Force
 
 build_script:
     - ps: |
@@ -29,11 +32,13 @@ build_script:
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
         
-        cd C:/projects/ivan
+        cd $env:APPVEYOR_BUILD_FOLDER
+        $thisclone = Split-Path -Path $env:APPVEYOR_BUILD_FOLDER -Leaf
         
-        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan/build 
+        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX="C:/projects/$thisclone/build" 
         cmake . 
         make -j4 install
         

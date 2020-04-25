@@ -203,7 +203,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   SDL_WM_SetCaption(Title, 0);
 #else
-  Flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+  Flags |= SDL_WINDOW_ALLOW_HIGHDPI|SDL_WINDOW_HIDDEN;
 
   Window = SDL_CreateWindow(Title,
                             SDL_WINDOWPOS_UNDEFINED,

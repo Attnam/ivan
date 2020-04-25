@@ -13,6 +13,8 @@
 /* Compiled through dataset.cpp */
 
 #include "confdef.h"
+#include "miscitem.h"
+#include "stack.h"
 
 #include "dbgmsgproj.h"
 
@@ -130,9 +132,9 @@ character* protosystem::BalancedCreateMonster()
     }
   }
 
+  ABORT("BalancedCreateMonster failed!");
   /* This line is never reached, but it prevents warnings given by some (stupid) compilers. */
-
-  return 0;
+  return NULL;
 }
 
 item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory,
@@ -274,10 +276,13 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialFlags)
 {
   std::vector<configid> Possible;
-  character* Monster = 0;
+  character* Monster = NULL;
 
-  for(int c = 0; !Monster; ++c)
+  for(int i = 0; !Monster; ++i)
   {
+    if(i == -1)
+      break;  // this means the algorithm is bad
+
     for(int Type = 1; Type < protocontainer<character>::GetSize(); ++Type)
     {
       const character::prototype* Proto = protocontainer<character>::GetProto(Type);
@@ -326,39 +331,123 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
     Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
   }
 
+  if(Monster == NULL)
+    ABORT("Failed to create monster!");
   return Monster;
 }
 
 template <class type>
-std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, cfestring& Identifier)
+static void ScoreFlexibleName(
+    const typename type::database* DataBase,
+    cfestring& Identifier,
+    festring& Name,
+    festring::sizetype& NamePos,
+    int& NameScore,
+    std::pair<int, int>& Result)
 {
-  std::pair<int, int> Result(0, 0);
+  // noop
+}
+
+template <>
+void ScoreFlexibleName<item>(
+    const item::database* DataBase,
+    cfestring& Identifier,
+    festring& Name,
+    festring::sizetype& NamePos,
+    int& NameScore,
+    std::pair<int, int>& Result)
+{
+  if(!DataBase->FlexibleNameSingular.IsEmpty() && DataBase->NameSingular != DataBase->FlexibleNameSingular)
+  {
+    if((NamePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->FlexibleNameSingular + ' ')) != festring::NPos)
+    {
+      Name = DataBase->FlexibleNameSingular;
+      NameScore = DataBase->FlexibleNameSingular.GetSize();
+
+      if(Result.second > 0)  // view NameSingular plus FlexibleNameSingular as one
+        --Result.second;
+    }
+    else if(Result.second < 1)
+      ++Result.second;
+  }
+}
+
+template <class type>
+static std::pair<int, int> ScoreName(const typename type::database* DataBase, cfestring& Identifier)
+{
+  std::pair<int, int> Result(0, 0);  // (score, misses)
+  festring Name;
+  festring::sizetype NamePos, AdjectivePos, PostfixPos, AliasPos;
+  int NameScore, AdjectiveScore, PostfixScore, AliasScore;
+
+  NameScore = AdjectiveScore = PostfixScore = AliasScore = 0;
+  NamePos = AdjectivePos = PostfixPos = AliasPos = festring::NPos;
 
   if(!DataBase->NameSingular.IsEmpty())
-    ++Result.second;
+  {
+    if((NamePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ')) != festring::NPos)
+    {
+      Name = DataBase->NameSingular;
+      NameScore = DataBase->NameSingular.GetSize();
+    }
+    else
+      ++Result.second;
+  }
 
-  if(festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ') != festring::NPos)
-    Result.first += DataBase->NameSingular.GetSize();
+  if(NamePos == festring::NPos)
+    ScoreFlexibleName<type>(DataBase, Identifier, Name, NamePos, NameScore, Result);
 
   if(!DataBase->Adjective.IsEmpty())
-    ++Result.second;
-
-  if(DataBase->Adjective.GetSize()
-     && festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ') != festring::NPos)
-    Result.first += DataBase->Adjective.GetSize();
+  {
+    if((AdjectivePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ')) != festring::NPos)
+    {
+      if(NamePos == festring::NPos || AdjectivePos < NamePos)
+        AdjectiveScore = DataBase->Adjective.GetSize();
+      else
+        AdjectiveScore = DataBase->Adjective.GetSize() / 2;
+    }
+    else
+      ++Result.second;
+  }
 
   if(!DataBase->PostFix.IsEmpty())
-    ++Result.second;
-
-  if(DataBase->PostFix.GetSize()
-     && festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ') != festring::NPos)
-    Result.first += DataBase->PostFix.GetSize();
+  {
+    if((PostfixPos = festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ')) != festring::NPos)
+    {
+      if(NamePos == festring::NPos || PostfixPos >= NamePos + Name.GetSize() + 1)
+        PostfixScore = DataBase->PostFix.GetSize();
+      else
+        PostfixScore = DataBase->PostFix.GetSize() / 2;
+    }
+    else
+      ++Result.second;
+  }
 
   for(uint c = 0; c < DataBase->Alias.Size; ++c)
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos
-       && (Result.first == 0 || DataBase->Alias[c].GetSize() > Result.first))
-      Result.first += DataBase->Alias[c].GetSize();
+  {
+    cfestring& Alias = DataBase->Alias[c];
 
+    if((AliasPos = festring::IgnoreCaseFind(Identifier, " " + Alias + ' ')) != festring::NPos)
+    {
+      if(AdjectivePos != festring::NPos && AdjectivePos >= AliasPos)
+        AdjectivePos /= 2;
+
+      if(PostfixPos != festring::NPos && PostfixPos < AliasPos + Alias.GetSize() + 1)
+        PostfixScore /= 2;
+
+      if(AliasPos == AdjectivePos)
+        AliasScore += (Alias.GetSize() + DataBase->Adjective.GetSize()) / 2;
+      else if(AliasPos + Alias.GetSize() == PostfixPos + DataBase->PostFix.GetSize())
+        AliasScore += (Alias.GetSize() + DataBase->PostFix.GetSize()) / 2;
+      else
+        AliasScore += Alias.GetSize();
+
+      if(NamePos == festring::NPos)
+        --Result.second;
+    }
+  }
+
+  Result.first = NameScore + AdjectiveScore + PostfixScore + AliasScore;
   return Result;
 }
 
@@ -367,8 +456,10 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
   typedef typename type::prototype prototype;
   typedef typename type::database database;
 
-  festring Identifier;
-  Identifier << ' ' << What << ' ';
+  festring Identifier = " " + What + ' ';
+  Identifier.ShrinkWhitespace();
+
+  truth BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
   truth Illegal = false, Conflict = false;
   std::pair<const prototype*, int> ID(0, 0);
   std::pair<int, int> Best(0, 0);
@@ -382,22 +473,23 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
     for(int c = 0; c < ConfigSize; ++c)
       if(!ConfigData[c]->IsAbstract)
       {
-        truth BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
+        truth IsBroken = ConfigData[c]->Config & BROKEN
+          || festring::IgnoreCaseFind(" " + ConfigData[c]->Adjective + ' ', " broken ") != festring::NPos;
 
-        if(BrokenRequested == !(ConfigData[c]->Config & BROKEN))
+        if(BrokenRequested == !IsBroken)
           continue;
 
-        std::pair<int, int> Correct = CountCorrectNameLetters<type>(ConfigData[c], Identifier);
+        std::pair<int, int> Score = ScoreName<type>(ConfigData[c], Identifier);
 
-        if(Correct == Best)
+        if(Score == Best)
           Conflict = true;
-        else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
+        else if(Score.first > Best.first || (Score.first == Best.first && Score.second < Best.second))
         {
           if(ConfigData[c]->CanBeWished || game::WizardModeIsActive())
           {
             ID.first = Proto;
             ID.second = ConfigData[c]->Config;
-            Best = Correct;
+            Best = Score;
             Conflict = false;
           }
           else
@@ -446,11 +538,25 @@ character* protosystem::CreateMonster(cfestring& What, int SpecialFlags, truth O
     return 0;
 }
 
+static void EmptyContainer(item* Item)
+{
+  if (materialcontainer* Container = dynamic_cast<materialcontainer*>(Item))
+  {
+    delete Container->RemoveSecondaryMaterial();
+  }
+  else if (itemcontainer* Container = dynamic_cast<itemcontainer*>(Item))
+    Container->GetContained()->Clean();
+}
+
 item* protosystem::CreateItemToCraft(cfestring& What)
 {
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, false);
   if(ID.first)
-    return ID.first->Spawn(ID.second);
+  {
+    item* Item = ID.first->Spawn(ID.second);
+    EmptyContainer(Item);
+    return Item;
+  }
   return NULL;
 }
 
@@ -461,6 +567,10 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
   if(ID.first)
   {
     item* Item = ID.first->Spawn(ID.second);
+
+    if(festring::IgnoreCaseFind(" " + What + ' ', " empty ") != festring::NPos)
+      EmptyContainer(Item);
+
     if(game::WizardModeIsActive())
         // If WizMode prompt player to confirm wish
     {
@@ -498,7 +608,7 @@ material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output
       if(ConfigData[c2]->NameStem == What)
       {
         if(
-            (ConfigData[c2]->CommonFlags & CAN_BE_WISHED) || 
+            (ConfigData[c2]->CommonFlags & CAN_BE_WISHED) ||
             (DetectMode && (ConfigData[c2]->CommonFlags & CAN_BE_DETECTED)) ||
             game::WizardModeIsActive()
         ){

@@ -63,7 +63,7 @@ void team::Hostility(team* Enemy)
         if(PLAYER->CanHear())
           ADD_MESSAGE("You hear an alarm ringing.");
 
-        if(game::GetStoryState() != 2)
+        if(game::GetGloomyCaveStoryState() != 2)
         {
           v2 AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : v2(28, 20);
           int Seen = 0;

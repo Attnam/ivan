@@ -247,7 +247,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
 //          if(it!=wL && it!=wR && !hasItem(iv,it))cW = colNotOnInv;
 
-          if(!it->Exists())ABORT("item doesnt exist! %d %s",it->GetID(),it->GetName(DEFINITE).CStr()); //this may segfault tho...
+          if(!it->Exists())ABORT("item doesnt exist! %lu %s",it->GetID(),it->GetName(DEFINITE).CStr()); //this may segfault tho...
           it->AddInventoryEntry(Char, fs, 1, true);
           Cfgs.AddEntry(fs, cW, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
         }
@@ -403,7 +403,7 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     if(Arm && it){
       std::vector<item*> iv;
       stk->FillItemVector(iv);
-      if(hasItem(iv,it) || it->GetSquareUnder()==Char->GetSquareUnder()){
+      if(hasItem(iv,it) || (it->GetSquareUnder()==Char->GetSquareUnder() && !it->GetRoom()) ) {
         it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
         h->SetEquipment(awRL[iArm],it);
         bDidSwap=true;

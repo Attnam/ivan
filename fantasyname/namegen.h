@@ -140,126 +140,126 @@ namespace NameGen {
 
 class Generator
 {
-	typedef enum wrappers {
-		capitalizer,
-		reverser
-	} wrappers_t;
+  typedef enum wrappers {
+    capitalizer,
+    reverser
+  } wrappers_t;
 
-	typedef enum group_types {
-		symbol,
-		literal
-	} group_types_t;
+  typedef enum group_types {
+    symbol,
+    literal
+  } group_types_t;
 
 
-	class Group {
-		std::stack<wrappers_t> wrappers;
-		std::vector<std::unique_ptr<Generator>> set;
+  class Group {
+    std::stack<wrappers_t> wrappers;
+    std::vector<std::unique_ptr<Generator>> set;
 
-	public:
-		group_types_t type;
+  public:
+    group_types_t type;
 
-		Group(group_types_t type_);
+    Group(group_types_t type_);
 
                 std::unique_ptr<Generator> produce();
-		void split();
-		void wrap(wrappers_t type);
-		void add(std::unique_ptr<Generator>&& g);
+    void split();
+    void wrap(wrappers_t type);
+    void add(std::unique_ptr<Generator>&& g);
 
-		virtual void add(char c);
-	};
-
-
-	class GroupSymbol : public Group {
-	public:
-		GroupSymbol();
-		void add(char c);
-	};
+    virtual void add(char c);
+  };
 
 
-	class GroupLiteral : public Group {
-	public:
-		GroupLiteral();
-	};
+  class GroupSymbol : public Group {
+  public:
+    GroupSymbol();
+    void add(char c);
+  };
+
+
+  class GroupLiteral : public Group {
+  public:
+    GroupLiteral();
+  };
 
 protected:
-	std::vector<std::unique_ptr<Generator>> generators;
+  std::vector<std::unique_ptr<Generator>> generators;
 
 public:
-	static const std::unordered_map<std::string, const std::vector<std::string>>& SymbolMap();
+  static const std::unordered_map<std::string, const std::vector<std::string>>& SymbolMap();
 
-	Generator();
-	Generator(const std::string& pattern, bool collapse_triples=true);
-	Generator(std::vector<std::unique_ptr<Generator>>&& generators_);
+  Generator();
+  Generator(const std::string& pattern, bool collapse_triples=true);
+  Generator(std::vector<std::unique_ptr<Generator>>&& generators_);
 
-	virtual ~Generator() = default;
+  virtual ~Generator() = default;
 
-	virtual size_t combinations();
-	virtual size_t min();
-	virtual size_t max();
-	virtual std::string toString();
+  virtual size_t combinations();
+  virtual size_t min();
+  virtual size_t max();
+  virtual std::string toString();
 
-	void add(std::unique_ptr<Generator>&& g);
+  void add(std::unique_ptr<Generator>&& g);
 };
 
 
 class Random : public Generator
 {
 public:
-	Random();
-	Random(std::vector<std::unique_ptr<Generator>>&& generators_);
+  Random();
+  Random(std::vector<std::unique_ptr<Generator>>&& generators_);
 
-	size_t combinations();
-	size_t min();
-	size_t max();
-	std::string toString();
+  size_t combinations();
+  size_t min();
+  size_t max();
+  std::string toString();
 };
 
 
 class Sequence : public Generator
 {
 public:
-	Sequence();
-	Sequence(std::vector<std::unique_ptr<Generator>>&& generators_);
+  Sequence();
+  Sequence(std::vector<std::unique_ptr<Generator>>&& generators_);
 };
 
 
 class Literal : public Generator
 {
-	std::string value;
+  std::string value;
 
 public:
-	Literal(const std::string& value_);
+  Literal(const std::string& value_);
 
-	size_t combinations();
-	size_t min();
-	size_t max();
-	std::string toString();
+  size_t combinations();
+  size_t min();
+  size_t max();
+  std::string toString();
 };
 
 
 class Reverser : public Generator {
 public:
-	Reverser(std::unique_ptr<Generator>&& g);
+  Reverser(std::unique_ptr<Generator>&& g);
 
-	std::string toString();
+  std::string toString();
 };
 
 
 class Capitalizer : public Generator
 {
 public:
-	Capitalizer(std::unique_ptr<Generator>&& g);
+  Capitalizer(std::unique_ptr<Generator>&& g);
 
-	std::string toString();
+  std::string toString();
 };
 
 
 class Collapser : public Generator
 {
 public:
-	Collapser(std::unique_ptr<Generator>&& g);
+  Collapser(std::unique_ptr<Generator>&& g);
 
-	std::string toString();
+  std::string toString();
 };
 
 }

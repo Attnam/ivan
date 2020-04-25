@@ -111,21 +111,21 @@ typedef struct {
 
 typedef struct
 {
-	uint8_t   eventType;
+  uint8_t   eventType;
     uint8_t   parameter1;
     uint8_t   parameter2;   
 } MIDI_CHAN_EVENT_t;
 
 typedef struct
 {
-	uint8_t   eventType;
+  uint8_t   eventType;
     uint32_t  length;
     uint8_t*  data;   
 } MIDI_SYSEX_EVENT_t;
 
 typedef struct
 {
-	uint8_t   eventType;
+  uint8_t   eventType;
     uint8_t   metaType;
     uint32_t  length;
     uint8_t*  data;   
@@ -136,10 +136,10 @@ typedef struct
     uint32_t  deltaTime;
     union
     {
-    	uint8_t   eventType;
-    	MIDI_CHAN_EVENT_t  chanEvent;
-    	MIDI_SYSEX_EVENT_t sysExEvent;
-       	MIDI_META_EVENT_t  metaEvent;
+      uint8_t   eventType;
+      MIDI_CHAN_EVENT_t  chanEvent;
+      MIDI_SYSEX_EVENT_t sysExEvent;
+         MIDI_META_EVENT_t  metaEvent;
     } event;
     
 } MIDI_EVENT_t;
@@ -174,35 +174,35 @@ typedef struct
     uint8_t  keyScale;
 } MIDI_CURRENT_TRACK_STATE_t;
 
-#define FAST_FWD_ACTIVE	(0x1)
+#define FAST_FWD_ACTIVE  (0x1)
 #define FAST_FWD_STATUS_MASK (0x07)
 
-#define FAST_FWD_IGNORE_CHANNEL_MASK		(0x80)
+#define FAST_FWD_IGNORE_CHANNEL_MASK    (0x80)
 
-#define FAST_FWD_IGNORE_PARAM1		(0xFF)
-#define FAST_FWD_IGNORE_PARAM2		(0xFF)
-#define FAST_FWD_NON_ZERO_PARAM2	(FAST_FWD_IGNORE_PARAM2-1)
+#define FAST_FWD_IGNORE_PARAM1    (0xFF)
+#define FAST_FWD_IGNORE_PARAM2    (0xFF)
+#define FAST_FWD_NON_ZERO_PARAM2  (FAST_FWD_IGNORE_PARAM2-1)
 
 typedef enum {
    FAST_FW_FIND_NULL = 0,
-	FAST_FWD_FIND_COMMAND = 1,
-	FAST_FWD_FIND_PARAM1,
-	FAST_FWD_FIND_PARAM2,
+  FAST_FWD_FIND_COMMAND = 1,
+  FAST_FWD_FIND_PARAM1,
+  FAST_FWD_FIND_PARAM2,
 } MPB_FF_MODE_t;
 
 typedef struct
 {
-	MPB_FF_MODE_t foundEventStatus :3; //MPB_FF_MODE_t type
-	MPB_FF_MODE_t searchMode :3; //MPB_FF_MODE_t type
-	uint8_t foundEventFlag	 :2;
+  MPB_FF_MODE_t foundEventStatus :3; //MPB_FF_MODE_t type
+  MPB_FF_MODE_t searchMode :3; //MPB_FF_MODE_t type
+  uint8_t foundEventFlag   :2;
 } MPB_FastFwd_t;
 
 typedef struct
 {
-	//Number of notes per track
-	uint16_t noteCount;
-	//Even with multiple program changes, it records the first one
-	uint8_t	 programNumber;
+  //Number of notes per track
+  uint16_t noteCount;
+  //Even with multiple program changes, it records the first one
+  uint8_t   programNumber;
 } MIDI_CHANNEL_STATS_t;
 
 #define MIDI_MAX_FILENAME (32)
@@ -232,7 +232,7 @@ typedef struct
     MidiPlaybackState_t playbackState;
     int8_t transpose;
 
-    MPB_FastFwd_t	 FastFwd_Status;
+    MPB_FastFwd_t   FastFwd_Status;
     MIDI_CHAN_EVENT_t FastFwd_Event;
 
     uint16_t channelStateBitmap;

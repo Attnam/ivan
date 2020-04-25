@@ -128,7 +128,7 @@
 
     #define DBGCHAR(ch,info)
     #define DBGITEM(it,info)
-    #define DBGABORT(x...)
+    #define DBGABORT(x,...)
 
   #endif //DBGMSG
 
