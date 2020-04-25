@@ -172,6 +172,10 @@ truthoption ivanconfig::DropBeforeOffering("DropBeforeOffering",
                                           "Drop the item on altar in case it is not accepted",
                                           "Automatically drop offered items on an altar to prevent them from cluttering your inventory should the god not accept your gift. Beware it may be owned floor!",
                                           false);
+truthoption ivanconfig::AllowContrastBackground("AllowContrastBackground",
+                                          "Better contrast background to dark items and materials",
+                                          "",
+                                          false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
                                           "Show item volume in cm3",
                                           "",
@@ -880,6 +884,26 @@ void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
   }
 }
 
+col16 ivanconfig::CheckChangeColor(col16 col)
+{
+  if(IsAllowContrastBackground()){
+    static col16 colRef = DARK_GRAY;
+    static col16 iR = GetRed16(colRef);
+    static col16 iG = GetGreen16(colRef);
+    static col16 iB = GetBlue16(colRef);
+    if(
+      GetRed16(col)  <iR &&
+      GetGreen16(col)<iG &&
+      GetBlue16(col) <iB
+    ){
+      static col16 iVeryDarkGray = [](){float f=0.66;
+        return MakeRGB16(GetRed16(DARK_GRAY)*f,GetGreen16(DARK_GRAY)*f,GetBlue16(DARK_GRAY)*f);}();
+      return iVeryDarkGray;
+    }
+  }
+  return col;
+}
+
 void ivanconfig::AutoPickUpMatchingChanger(stringoption* O, cfestring& What)
 {
   if(O!=NULL){
@@ -1162,6 +1186,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&AllowContrastBackground);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

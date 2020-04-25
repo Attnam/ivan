@@ -2138,9 +2138,12 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 
           if(Equipment->AllowAlphaEverywhere())
             B1.CustomData |= ALLOW_ALPHA;
-
+          
+          if(ivanconfig::IsAllowContrastBackground())
+            B1.CustomData |= ALLOW_CONTRAST;
           Equipment->Draw(B1);
           B1.CustomData &= ~ALLOW_ALPHA;
+          B1.CustomData &= ~ALLOW_CONTRAST;
 
 //          if(eqMHover==Equipment){
 //            v2 v2M = globalwindowhandler::GetMouseLocation();

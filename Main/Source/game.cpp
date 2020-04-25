@@ -3129,6 +3129,8 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
+  if(ivanconfig::IsAllowContrastBackground())
+    B.CustomData |= ALLOW_CONTRAST;
   B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
   B.Border = { TILE_SIZE, TILE_SIZE };
   B.Luminance = ivanconfig::GetContrastLuminance();
@@ -6132,8 +6134,12 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
     if(ItemVector[c]->AllowAlphaEverywhere())
       B.CustomData |= ALLOW_ALPHA;
 
+    if(ivanconfig::IsAllowContrastBackground())
+      B.CustomData |= ALLOW_CONTRAST;
+    
     ItemVector[c]->Draw(B);
     B.CustomData &= ~ALLOW_ALPHA;
+    B.CustomData &= ~ALLOW_CONTRAST;
   }
 
   if(ItemVector.size() > 3)

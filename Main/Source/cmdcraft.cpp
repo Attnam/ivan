@@ -651,6 +651,7 @@ struct ci{ //create item info/helper/data/config/param
   float fUsablePercVol=1.0;
   bool bMustBeTailorable=false;
   bool bMixRemainingLump=true;
+  bool bAddEquippedItemsToChoiceList=false;
 };
 struct recipe{
   festring action;
@@ -1074,7 +1075,7 @@ struct recipe{
     if(reqVol==0)
       ABORT("ingredient required 0 volume?");
 
-    const itemvector vi = vitInv(rpd);
+    const itemvector vi = vitInv(rpd,true,CI.bAddEquippedItemsToChoiceList);
     prepareFilter<T>(rpd,vi,reqVol,CI);
 
     int iWeakest=-1;
@@ -1219,13 +1220,27 @@ struct recipe{
       CIok);
   }
 
-  static itemvector vitInv(recipedata& rpd){
+  static itemvector vitInv(recipedata& rpd,bool bAllowWielded=true,bool bAllowAllEquipped=false){
     itemvector vi;
 
     //prefer already equipped
-    if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
-    if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
-
+    if(bAllowWielded){ //TODO not showing on list...
+      if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
+      if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
+    }
+    
+    if(bAllowAllEquipped){ //TODO not showing on list...
+      for(int c = 0; c < rpd.rc.H()->GetEquipments(); ++c){
+        if( 
+          c!=RIGHT_WIELDED_INDEX && 
+          c!=LEFT_WIELDED_INDEX &&
+          rpd.rc.H()->GetEquipment(c)
+        ){
+          vi.push_back(rpd.rc.H()->GetEquipment(c));
+        }
+      }
+    }
+    
     rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
 
     return vi;
@@ -2021,6 +2036,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
 
   virtual bool work(recipedata& rpd){
     ci CI;
+    CI.bAddEquippedItemsToChoiceList=true;
     if(!choseOneIngredient<item>(rpd,&CI)){
       rpd.SetAlreadyExplained();
       return false;
@@ -2059,6 +2075,7 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
 
   virtual bool work(recipedata& rpd){
     ci CI;
+    CI.bAddEquippedItemsToChoiceList=true;
     CI.iMinMainMaterStr=1;
     if(!choseOneIngredient<item>(rpd,&CI)){
       rpd.SetAlreadyExplained();

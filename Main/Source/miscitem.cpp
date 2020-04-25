@@ -3776,7 +3776,7 @@ void materialmanual::FinishReading(character* Reader)
       Entry << Material[c]->GetFlexibility();
       Entry.Resize(70);
       Entry << Material[c]->GetDensity();
-      List.AddEntry(Entry, Material[c]->GetColor());
+      List.AddEntry(Entry, ivanconfig::CheckChangeColor(Material[c]->GetColor()));
     }
 
     List.Draw();

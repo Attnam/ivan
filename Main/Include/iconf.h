@@ -26,6 +26,7 @@ class ivanconfig
   static cfestring& GetAutoPickUpMatching() { return AutoPickUpMatching.Value; }
   static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
   static truth IsDropBeforeOffering() { return DropBeforeOffering.Value; }
+  static truth IsAllowContrastBackground() { return AllowContrastBackground.Value; };
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -79,6 +80,7 @@ class ivanconfig
   static long GetVolume() { return Volume.Value; }
   static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static col16 CheckChangeColor(col16 col);
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -211,6 +213,7 @@ class ivanconfig
   static truthoption WaitNeutralsMoveAway;
   static truthoption AllWeightIsRelevant;
   static truthoption DropBeforeOffering;
+  static truthoption AllowContrastBackground;
   static truthoption ShowVolume;
   static truthoption EnhancedLights;
 
