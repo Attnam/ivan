@@ -11,6 +11,7 @@
  */
 
 #include "dbgmsgproj.h"
+#include "devcons.h"
 
 #include <bitset>
 #include <cmath>
@@ -23,10 +24,109 @@
 bool cursedDeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
 bool cursedDeveloper::bCursedDeveloperTeleport = false;
 
+#define HEAL_1 1
+#define HEAL_MINOK 2
+#define HEAL_MAX 3
+
+void cursedDeveloper::RestoreLimbs(festring fsCmdParams)
+{
+  int iMode = fsCmdParams.IsEmpty() ? 0 : atoi(fsCmdParams.CStr());
+  
+  character* P = game::GetPlayer();
+  
+  // save life but just a little bit
+  for(int c = 0; c < P->BodyParts; ++c){ //only enough to continue testing normal gameplay
+    if(!CreateBP(c))continue;
+    
+    HealBP(c,iMode);
+  }
+  P->CalculateBodyPartMaxHPs(0); //this also calculates the overall current HP
+  DBG2(P->HP,P->MaxHP);
+  if(P->HP>P->MaxHP) // it MUST be ok here!!!
+    ABORT("HP>MaxHP %d>%d",P->HP,P->MaxHP);
+}
+
+bool cursedDeveloper::CreateBP(int iIndex)
+{
+  character* P = game::GetPlayer();
+  
+  bodypart* bp = P->GetBodyPart(iIndex);
+  if(!bp && P->CanCreateBodyPart(iIndex))
+    bp=P->CreateBodyPart(iIndex);
+  
+  if(bp && bp->GetHP() > bp->GetMaxHP()){ //TODO how does this happens???
+    DBG4(iIndex,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+    bp->SetHP(-1); //to allow properly fixing
+  }
+  
+  return bp!=NULL;
+}
+
+bool cursedDeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
+{
+  if(!CreateBP(iIndex))return false;
+  
+  character* P = game::GetPlayer();
+  
+  /**
+   * How to prevent endless die loop?
+   * Clear the bad effects? better not, let them continue working.
+   * A bit more of HP to the core body parts may suffice (funny head is not one lol).
+   */
+  bodypart* bp = P->GetBodyPart(iIndex);
+  if(bp && bp->GetHP() < bp->GetMaxHP()){
+    int iHpMinUsable = bp->GetMaxHP()/3 + (bp->GetMaxHP()%3>0 ? 1 : 0); //ceil
+    
+    int iHpRestore = 0;
+    switch(iMode){
+      case HEAL_1: iHpRestore = 1; break;
+      case HEAL_MINOK: iHpRestore = iHpMinUsable; break;
+      case HEAL_MAX: iHpRestore = bp->GetMaxHP(); break;
+    }
+    
+    if(iResHPoverride>0)iHpRestore=iResHPoverride;
+    
+    if(bp->GetHP() < iHpRestore){
+      DBG4(iIndex,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+      bp->SetHP(iHpRestore);
+      bp->SignalPossibleUsabilityChange();
+    }
+    
+    DBG5(iIndex,iHpMinUsable,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+    
+//    bp->SetHP(P->GetMaxHP()>iMinHpOK ? iMinHpOK : P->GetMaxHP());
+//    DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+    return true;
+  }    
+  return false;
+}
+//bool cursedDeveloper::HealTorso(bodypart* bp)
+//{
+//  character* P = game::GetPlayer();
+//  
+//  /**
+//   * How to prevent endless die loop?
+//   * Clear the bad effects? better not, let them continue working.
+//   * A bit more of HP to the core body parts may suffice (funny head is not one lol).
+//   */
+//  static int iTorsoHpMinOk=10; //this is to fight mustard gas
+//  if(P->GetBodyPart(TORSO_INDEX)==bp && bp->GetHP() < iTorsoHpMinOk){
+//    bp->SetHP(P->GetMaxHP()>iTorsoHpMinOk ? iTorsoHpMinOk : P->GetMaxHP());
+//    DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
+//    return true;
+//  }    
+//  return false;
+//}
+
 bool cursedDeveloper::LifeSaveJustABit(character* Killer)
 {
   if(!bCursedDeveloper)
     return false;
+  
+  static bool bInitDevCmdDummy = [](){
+    devcons::AddDevCmd("RestoreLimbs",cursedDeveloper::RestoreLimbs,
+      "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
+    return true;}();
   
   character* P = game::GetPlayer();
   game::DrawEverything();
@@ -44,44 +144,12 @@ bool cursedDeveloper::LifeSaveJustABit(character* Killer)
     Killer->SetAssignedName(fsAN);
   }
 
-  // save life but just a little bit
-  for(int c = 0; c < P->BodyParts; ++c){ //only enough to continue testing normal gameplay
-    bodypart* bp = P->GetBodyPart(c);
-    if(!bp && P->CanCreateBodyPart(c))
-      bp=P->CreateBodyPart(c);
-    if(!bp)continue;
-    
-    if(bp->GetHP() > bp->GetMaxHP()){ //TODO how does this happens???
-      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-      bp->SetHP(-1);
-    }
-    
-    /**
-     * How to prevent endless die loop?
-     * Clear the bad effects? better not, let them continue working.
-     * A bit more of HP to the core body parts may suffice (funny head is not one lol).
-     */
-    static int iTorsoHpMinOk=10; //this is to fight mustard gas
-    if(P->GetBodyPart(TORSO_INDEX)==bp && bp->GetHP() < iTorsoHpMinOk){
-      bp->SetHP(P->GetMaxHP()>iTorsoHpMinOk ? iTorsoHpMinOk : P->GetMaxHP());
-      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-      continue;
-    }    
-    
-    int iHpMinUsable = bp->GetMaxHP()/3 + (bp->GetMaxHP()%3>0 ? 1 : 0); //ceil
-    if(bp->GetHP() < iHpMinUsable){
-      DBG4(c,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-      bp->SetHP(iHpMinUsable);
-      bp->SignalPossibleUsabilityChange();
-    }
-    
-    DBG5(c,iHpMinUsable,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
-  }
-  P->CalculateBodyPartMaxHPs(0); //this also calculates the overall current HP
-  DBG2(P->HP,P->MaxHP);
-  if(P->HP>P->MaxHP) // it MUST be ok here!!!
-    ABORT("HP>MaxHP %d>%d",P->HP,P->MaxHP);
-
+  // automatic minimal to save life
+//  HealTorso(P->GetTorso());
+  HealBP(HEAD_INDEX,HEAL_1);
+  HealBP(TORSO_INDEX,0,10);//10hp is min to fight mustard gas
+  HealBP(GROIN_INDEX,HEAL_1);
+  
   if(P->GetNP() < HUNGER_LEVEL)
     P->SetNP(HUNGER_LEVEL); //to avoid endless sleeping
 
