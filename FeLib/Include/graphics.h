@@ -167,4 +167,4 @@ class graphics
   static rawbitmap* DefaultFont;
 };
 
-#endif
+#endif //__GRAPHICS_H__

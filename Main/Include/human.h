@@ -70,7 +70,7 @@ CHARACTER(humanoid, character)
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
-  virtual void SwitchToCraft(recipedata rpd);
+  virtual truth SwitchToCraft(recipedata rpd);
   virtual void SwitchToDig(item*, v2);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;
@@ -172,7 +172,6 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
-  truth AutoPlayAIequip();
   static v2 GetSilhouetteWhere(){return SilhouetteWhere;}
   static v2 GetSilhouetteWhereDefault(){return SilhouetteWhereDefault;}
   static void SetSilhouetteWhere(v2 pos){SilhouetteWhere=pos;}

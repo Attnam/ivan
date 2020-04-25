@@ -67,11 +67,12 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "wsquare.h"
 
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 134 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 135 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 119 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -154,6 +155,7 @@ cint game::MoveNormalCommandKey[] =
 { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 cint game::MoveAbnormalCommandKey[] = { '7', '8', '9', 'u', 'o', 'j', 'k', 'l', '.' };
 cint game::MoveNetHackCommandKey[] = { 'y', 'k', 'u', 'h', 'l', 'b', 'j', 'n', '.' };
+int  game::MoveCustomCommandKey[] = { '.', '.', '.', '.', '.', '.', '.', '.', '.' };
 
 cv2 game::MoveVector[] =
 { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
@@ -192,7 +194,6 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
-int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -295,6 +296,7 @@ int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
+  DBG2(ID,Char->GetID()); // do not use GetName() here, will crash!:  ,Char->GetName(INDEFINITE).CStr());
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID)
@@ -308,6 +310,7 @@ void game::RemoveCharacterID(ulong ID)
 }
 void game::AddItemID(item* Item, ulong ID)
 {
+  DBG2(ID,Item->GetID());// do not use GetName() here, will crash!:  ,Item->GetName(INDEFINITE).CStr());
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 
@@ -338,7 +341,10 @@ void game::UpdateItemID(item* Item, ulong ID)
 }
 void game::AddTrapID(entity* Trap, ulong ID)
 {
-  if(ID) TrapIDMap.insert(std::make_pair(ID, Trap));
+  if(ID){
+    DBG2(ID,Trap->GetTrapID()); // do not use GetTrapType() here, will crash!: ,Trap->GetTrapType());
+    TrapIDMap.insert(std::make_pair(ID, Trap));
+  }
 }
 void game::RemoveTrapID(ulong ID)
 {
@@ -347,8 +353,10 @@ void game::RemoveTrapID(ulong ID)
     if(itr == TrapIDMap.end() || itr->second == NULL){
       if(!bugfixdp::IsFixing())
         ABORT("AlreadyErased:TrapID %lu",ID);
-    }else
+    }else{
+      DBG1(ID);
       TrapIDMap.erase(itr);
+    }
   }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
@@ -1259,6 +1267,19 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+//static int iMaxNoteLength=100;
+//void game::AppendMapNote(lsquare* lsqrN,festring What)
+//{
+//  festring finalWhat;
+//  finalWhat << game::MapNoteToken();
+//  finalWhat << What;
+//  if(lsqrN->GetEngraved())
+//    finalWhat << " " << lsqrN->GetEngraved();
+//  static int iMaxLength=100;
+//  if(finalWhat.GetSize()>iMaxLength)
+//    finalWhat.Resize(iMaxLength);
+//  lsqrN->Engrave(finalWhat);
+//}
 void game::SetMapNote(lsquare* lsqrN,festring What)
 {
   festring finalWhat;
@@ -1321,6 +1342,16 @@ int game::RotateMapNotes()
     iMapNotesRotation=0;
 
   return iMapNotesRotation;
+}
+
+void game::SetDropTag(item* it)
+{
+  if(ivanconfig::IsAutoPickupThrownItems()){
+    it->ClearTag('t'); //throw: to avoid auto-pickup
+    if(game::IsAutoPickupMatch(it->GetName(DEFINITE))){
+      it->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
+    }
+  }
 }
 
 std::vector<festring> afsAutoPickupMatch;
@@ -1437,6 +1468,7 @@ bool game::CheckAddAutoMapNote(square* sqr)
     olt->GetConfig() == CHAIR ||
     olt->GetConfig() == FORGE ||
     olt->GetConfig() == WORK_BENCH ||
+    olt->GetConfig() == TAILORING_BENCH ||
     false
   ){
     olt->AddName(fs,INDEFINITE);
@@ -1513,7 +1545,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
   //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
   int iLineHeightPixels=15; //line height in pixels
-  int iFontWidth=8; //font width
+  int iFontWidth=FONT->GetFontSize().X;
   int iM=3; //margin
 
   const static int iTotCol=5;
@@ -1574,6 +1606,15 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
       col16 colMapNoteBkg2=colMapNoteBkg;
+      if(festring(vMapNotes[i].note).Find("@")!=festring::NPos)
+        colMapNoteBkg2=BLACK;
+      else
+      if(festring(vMapNotes[i].note).Find("?")!=festring::NPos)
+        colMapNoteBkg2=GREEN;
+      else
+      if(festring(vMapNotes[i].note).Find("!!!")!=festring::NPos)
+        colMapNoteBkg2=YELLOW;
+      else
       if(festring(vMapNotes[i].note).Find("!!")!=festring::NPos)
         colMapNoteBkg2=RED;
       else
@@ -1653,6 +1694,7 @@ void game::DrawMapOverlay(bitmap* buffer)
   static v2 v2BmpSize(0,0);
   static v2 v2TopLeftFinal(0,0);
   static v2 v2MapScrSizeFinal(0,0);
+  static v2 v2MinTopLeft(10,10); // this prevents a crash related to drawing lines too near top and left game gfx buffer edges
   static bitmap* bmpFinal;
 
   bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
@@ -1725,8 +1767,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 //      v2 v2VisibleDungeonScrSize=v2CL*TILE_SIZE;
     v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
     v2TopLeft = v2Center -v2MapScrSize/2;
-    if(v2TopLeft.X<0)v2TopLeft.X=0;
-    if(v2TopLeft.Y<0)v2TopLeft.Y=0;
+    if(v2TopLeft.X<v2MinTopLeft.X)v2TopLeft.X=v2MinTopLeft.X;
+    if(v2TopLeft.Y<v2MinTopLeft.Y)v2TopLeft.Y=v2MinTopLeft.Y;
 //        v2(
 //          RES.X/2 -(v2CL.X * iMapTileSize)/2,
 //          RES.Y/2 -(v2CL.Y * iMapTileSize)/2);
@@ -1989,8 +2031,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
     if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
-    if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
-    if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    if(v2TopLeftFinal.X<v2MinTopLeft.X)v2TopLeftFinal.X=v2MinTopLeft.X;
+    if(v2TopLeftFinal.Y<v2MinTopLeft.Y)v2TopLeftFinal.Y=v2MinTopLeft.Y;
     DBGSV2(v2TopLeftFinal);
 
     // prepare notes
@@ -3087,6 +3129,8 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
+  if(ivanconfig::IsAllowContrastBackground())
+    B.CustomData |= ALLOW_CONTRAST;
   B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
   B.Border = { TILE_SIZE, TILE_SIZE };
   B.Luminance = ivanconfig::GetContrastLuminance();
@@ -3567,21 +3611,6 @@ int game::Load(cfestring& saveName)
   return LOADED;
 }
 
-/**
- * this prevents all possibly troublesome characters in all OSs
- */
-void fixChars(festring& fs)
-{
-  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
-  {
-    if(fs[i]>='A' && fs[i]<='Z')continue;
-    if(fs[i]>='a' && fs[i]<='z')continue;
-    if(fs[i]>='0' && fs[i]<='9')continue;
-
-    fs[i] = '_';
-  }
-}
-
 bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
   std::string strChk;
   strChk = fs.CStr();
@@ -3619,7 +3648,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
   else
   {
     // this is important in case player name changes like when using the fantasy name generator
-    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    festring fsPN; fsPN<<PlayerName; iosystem::fixChars(fsPN);
     std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
     if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
       CurrentBaseSaveFileName.Empty();
@@ -3630,7 +3659,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;
-      fixChars(CurrentBaseSaveFileName);
+      iosystem::fixChars(CurrentBaseSaveFileName);
     }
 
     PathAndBaseSaveName << CurrentBaseSaveFileName;
@@ -4052,6 +4081,38 @@ int game::GetPlayerAlignment()
   return -4;
 }
 
+int game::GetGodAlignmentVsPlayer(god* G)
+{
+  switch(G->GetAlignment()){
+    case ALPP: return  4; //L++
+    case ALP:  return  3; //L+
+    case AL:   return  2; //L
+    case ALM:  return  1; //L-
+    
+    /**
+     * There are 15 gods, 11 god alignments and 9 player alignments, so lets make it work:
+     * Neutrality has 1 less god, so 1 less source of favours (and no major/extreme god).
+     * These 3 neutral gods returning 0 will compensate by using less favour cost, to all of them,
+     * for a neutrally aligned player at gods.cpp/CalcDebit().
+     * (the alternative would be to expand player alignments to 11 to match gods' ones, anyone up to it?)
+     * 
+     * Btw, these "N" matches the base Neutral alignment for these gods.
+     * And... it won't match very well the description at GetVerbalPlayerAlignment(), but that shouldn't be a problem.
+     */
+    case ANP:  return  0; //N+ 
+    case AN:   return  0; //N=
+    case ANM:  return  0; //N- 
+    
+    case ACP:  return -1; //C+
+    case AC:   return -2; //C
+    case ACM:  return -3; //C-
+    case ACMM: return -4; //C--
+  }
+  
+  ABORT("unsupported alignment %d",G->GetAlignment());
+  return -1000; //dummy
+}
+
 cchar* game::GetVerbalPlayerAlignment()
 {
   switch(GetPlayerAlignment()){
@@ -4198,7 +4259,7 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  if(game::GetAutoPlayMode()==0)
+  if(wizautoplay::GetAutoPlayMode()==AUTOPLAYMODE_DISABLED)
     for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
@@ -4496,7 +4557,11 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
         stack* Stack = LSquare->GetStack();
 
         if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
-          Stack->DrawContents(Player, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
+          Stack->DrawContents(Player, "Items here", 
+            NO_SELECT| // that square may have an adjacent square with a wall lantern, checking for Stack->GetItem(0) prevents a SEGFAULT
+            (GetSeeWholeMapCheatMode() || (Stack->GetItem(0) && Stack->GetItem(0)->GetRoom()) || Player->GetLSquareUnder()==LSquare ?
+              0 : NO_SPECIAL_INFO)
+          );
         else
           ADD_MESSAGE("You see no items here.");
       }
@@ -4772,7 +4837,6 @@ truth game::LeaveArea(charactervector& Group, truth AllowHostiles, truth AlliesF
 }
 
 /* Used always when the player enters an area. */
-
 void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 {
   if(Area != WORLD_MAP)
@@ -5264,27 +5328,6 @@ festring game::GetDataDir()
 #endif
 }
 
-festring game::GetUserDataDir()
-{
-#ifdef UNIX
-  festring Dir;
-  Dir << getenv("HOME");
-#ifdef MAC_APP
-  Dir << "/Library/Application Support/IVAN/";
-#else
-  Dir << "/.ivan/";
-#endif
-#ifdef DBGMSG
-  dbgmsg::SetDebugLogPath(Dir.CStr());
-#endif
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "./";
-#endif
-}
-
 festring game::GetSaveDir()
 {
   return GetUserDataDir() + "Save/";
@@ -5536,69 +5579,6 @@ truth game::MassacreListsEmpty()
 }
 
 #ifdef WIZARD
-
-void game::AutoPlayModeApply(){
-  int iTimeout=0;
-  bool bPlayInBackground=false;
-
-  const char* msg;
-  switch(game::AutoPlayMode){
-  case 0:
-    // disabled
-    msg="%s says \"I can rest now.\"";
-    break;
-  case 1:
-    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
-    msg="%s says \"I won't rest!\"";
-    break;
-  case 2: // TIMEOUTs key press from here to below
-    msg="%s says \"I can't wait anymore!\"";
-    iTimeout=(1000);
-    bPlayInBackground=true;
-    break;
-  case 3:
-    msg="%s says \"I am in a hurry!\"";
-    iTimeout=(1000/2);
-    bPlayInBackground=true;
-    break;
-  case 4:
-    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
-    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
-    bPlayInBackground=true;
-    break;
-  }
-  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
-
-  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
-
-  if(!ivanconfig::IsXBRZScale()){
-    /**
-     * TODO
-     * This is an horrible gum solution...
-     * I still have no idea why this happens.
-     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
-     * But the debug log shows the correct timeouts :(, clueless for now...
-     */
-    iTimeout/=2;
-  }
-
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
-}
-
-void game::IncAutoPlayMode() {
-//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
-//    if(AutoPlayMode>=2){
-//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
-//      AutoPlayModeApply();
-//    }
-//  }
-
-  ++AutoPlayMode;
-  if(AutoPlayMode>4)AutoPlayMode=0;
-
-  AutoPlayModeApply();
-}
-
 void game::SeeWholeMap()
 {
   if(SeeWholeMapCheatMode < 2)
@@ -5608,7 +5588,6 @@ void game::SeeWholeMap()
 
   GetCurrentArea()->SendNewDrawRequest();
 }
-
 #endif
 
 void game::CreateBone()
@@ -5760,6 +5739,275 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
+int HexToInt(festring fs)
+{
+  std::string str = fs.CStr();
+  std::string strHex = str.substr(str.size() -1 -4); // -1 is "\n"
+  int iVal=0;
+  sscanf(strHex.c_str(),"%x",&iVal);
+  return iVal;
+}
+
+void game::LoadCustomCommandKeys()
+{
+  static festring fsFile = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  FILE *fl = fopen(fsFile.CStr(), "rt");
+  if(!fl)return;
+  
+  festring Line;
+  festring fsMatch;
+  festring fsPostFix="\"=0x";
+  static const int iBuffSz=0xFF;
+  char str[iBuffSz];
+  while(fgets(str, iBuffSz, fl)){
+    Line=str;
+    command* cmd;
+    for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
+      fsMatch.Empty();
+      fsMatch<<cmd->GetDescription()<<fsPostFix;
+      if(Line.Find(fsMatch)==1){ // after "
+        cmd->SetCustomKey(HexToInt(Line));
+        break;
+      }
+    }
+    
+    int iVal;
+    for(int c=0;c<8;c++){
+      fsMatch.Empty();
+      fsMatch<<GetMoveKeyDesc(c)<<fsPostFix;
+      if(Line.Find(fsMatch)==1){ // after "
+        game::MoveCustomCommandKey[c]=HexToInt(Line);
+        break;
+      }
+    }  
+  }
+  
+  fclose(fl);
+}
+
+festring game::GetMoveKeyDesc(int i)
+{
+  switch(i){
+    case 0: return "MoveKey Upper Left";
+    case 1: return "MoveKey Up";
+    case 2: return "MoveKey Upper Right";
+    case 3: return "MoveKey Left";
+    case 4: return "MoveKey Right";
+    case 5: return "MoveKey Lower Left";
+    case 6: return "MoveKey Down";
+    case 7: return "MoveKey Lower Right";
+    //case 8: return "MoveKey Stop"; //skip the last to keep as '.'
+    default: ABORT("invalid move key index %d",i);
+  }
+  return ""; //dummy
+}
+
+truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
+{
+  //TODO these SYSTEM messages messes the gameplay message log... but is better than a popup?
+  bool bValid=true;
+  festring fsDesc;
+  
+  // conflicts check
+  if(bValid){
+    command *cmd;
+    for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
+      if(!bMoveKeys && c==iIgnoreIndex)continue;
+      if(iNewKey==cmd->GetKey()){
+        fsDesc=cmd->GetDescription();
+        bValid=false;
+        break;
+      }
+    }
+  }
+  if(bValid){
+    for(int c=0;c<8;c++){
+      if(bMoveKeys && c==iIgnoreIndex)continue;
+      if(iNewKey == game::MoveCustomCommandKey[c]){
+        fsDesc=GetMoveKeyDesc(c).CStr();
+        bValid=false;
+        break;
+      }
+    }  
+  }
+  if(!bValid){
+    ADD_MESSAGE("SYSTEM: conflicting key '%s'(code is %d or 0x%04X) with command \"%s\", retry...",
+      ToCharIfPossible(iNewKey).CStr(),iNewKey,iNewKey,fsDesc.CStr());
+  }
+  
+  // general invalid key codes
+  if(bValid){
+    if(iNewKey<0x20){
+      ADD_MESSAGE("SYSTEM: invalid key code 0x%04X, retry...",iNewKey);
+      bValid=false;
+    }
+  }
+  
+  return bValid;
+}
+
+festring IntToHexStr(int i)
+{
+  static char hexbuf[100];
+  sprintf(hexbuf, "0x%04X", i);
+  festring fs;fs=hexbuf;
+  return fs;
+}
+
+festring game::ToCharIfPossible(int i)
+{
+  switch(i){ // these are above 0xFF 
+    //TODO complete this list, if has no #define, use the hexa directly.
+    case KEY_UP: 
+      return "Up";
+    case KEY_DOWN: 
+      return "Down";
+    case KEY_RIGHT: 
+      return "Right";
+    case KEY_LEFT: 
+      return "Left";
+    case KEY_HOME: 
+      return "Home";
+    case KEY_END: 
+      return "End";
+    case KEY_PAGE_DOWN: 
+      return "PgDn";
+    case KEY_PAGE_UP: 
+      return "PgUp";
+    case KEY_DELETE:
+      return "Del";
+    case KEY_INSERT:
+      return "Ins";
+  }
+  
+  if(i>=0 && i<=0xFF) //these are mapped at fonts gfx files
+    return festring()+(char)i;
+  
+  return IntToHexStr(i);
+}
+
+void WriteCustomKeyBindingsCfgFile(FILE *fl,festring fsDesc,int iKey){
+  fprintf(fl, "\"%s\"=0x%04X\n", fsDesc.CStr(), iKey);
+  fflush(fl);
+}
+
+/**
+ * Command's (and movement keys) descriptions are used as identifiers at the config file.
+ * These descriptions shall not clash and preferably should not be changed.
+ * @return 
+ */
+truth game::ConfigureCustomKeys()
+{
+  game::LoadCustomCommandKeys(); //in case there is anything already set
+  
+  felist fel(CONST_S("Configure custom keys:"));
+  bool bRet=true;
+  command* cmd;
+  while(true){
+    fel.Empty();
+    int iMoveKeyStart=0;
+    bool bWizIni=false;
+    festring fsEntry;
+    for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
+      fsEntry=cmd->GetDescription(); 
+      fsEntry.Resize(60);
+      fsEntry<<"'"<<ToCharIfPossible(cmd->GetKey())<<"' ";
+      fsEntry<<IntToHexStr(cmd->GetKey());
+      
+      if(!bWizIni && cmd->IsWizardModeFunction()){
+        fel.AddEntry("Wizard mode keys:", DARK_GRAY, 20, NO_IMAGE, false);
+        bWizIni=true;
+      }
+      
+      fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
+      iMoveKeyStart++;
+    }
+    fel.AddEntry("Movement keys:", DARK_GRAY, 20, NO_IMAGE, false);
+    for(int c=0;c<8;c++){
+      fsEntry=GetMoveKeyDesc(c);
+      fsEntry.Resize(60);
+      fsEntry<<"'"<<ToCharIfPossible(game::MoveCustomCommandKey[c])<<"' ";
+      fsEntry<<IntToHexStr(game::MoveCustomCommandKey[c]);
+      fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
+    }
+
+    game::SetStandardListAttributes(fel);
+    fel.AddFlags(SELECTABLE);
+    uint Select = fel.Draw();
+    if(Select==ESCAPED || Select==NOTHING_SELECTED || Select==LIST_WAS_EMPTY){
+      bRet=false;
+      break;
+    }
+    
+    bool bIsMoveKeys = Select >= iMoveKeyStart;
+    int iMvKeyIndex = bIsMoveKeys ? Select-iMoveKeyStart : -1;
+    int iCmdKeyIndex = bIsMoveKeys ? -1 : Select+1;
+    int iNewKey;
+    bool bIgnore=false;
+    festring fsC = " (currently is set to '";
+    while(true){
+      cmd=NULL;
+      festring fsAsk = "Press a key to assign to the command \"";
+      
+      if(bIsMoveKeys){
+        fsAsk<<GetMoveKeyDesc(iMvKeyIndex)<<"\"";
+        fsAsk<<fsC<<ToCharIfPossible(game::MoveCustomCommandKey[iMvKeyIndex]);
+      }else{
+        cmd = commandsystem::GetCommand(iCmdKeyIndex); //commands begin at index 1
+        fsAsk<<cmd->GetDescription()<<"\"";
+        fsAsk<<fsC<<ToCharIfPossible(cmd->GetKey());
+      }
+      fsAsk<<"' ";
+      fsAsk<<IntToHexStr( bIsMoveKeys ? game::MoveCustomCommandKey[iMvKeyIndex] : cmd->GetKey());
+      fsAsk<<")";
+        
+      iNewKey=game::AskForKeyPress(fsAsk);
+      if(iNewKey==KEY_ESC){bIgnore=true;break;}
+
+      if(bIsMoveKeys){
+        if(ValidateCustomCmdKey(iNewKey,iMvKeyIndex,true))
+          break;
+      }else{
+        if(ValidateCustomCmdKey(iNewKey,iCmdKeyIndex,false))
+          break;
+      }
+    }
+    if(bIgnore)continue;
+    
+    if(!bRet)break;
+    
+    if(bIsMoveKeys)
+      game::MoveCustomCommandKey[iMvKeyIndex]=iNewKey;
+    else
+      commandsystem::GetCommand(iCmdKeyIndex)->SetCustomKey(iNewKey);
+  }
+  
+  festring fsFl = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
+  
+  // backup existing
+  festring fsFlBkp=fsFl+".bkp";
+  std::ifstream  src(fsFl.CStr()   , std::ios::binary);
+  std::ofstream  dst(fsFlBkp.CStr(), std::ios::binary);
+  dst << src.rdbuf();
+  
+  // write a new in full
+  FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
+  festring fsWriteLine;
+  int iNewKey;
+  for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c)
+    WriteCustomKeyBindingsCfgFile(fl,cmd->GetDescription(),cmd->GetKey());
+  for(int c=0;c<8;c++)
+    WriteCustomKeyBindingsCfgFile(fl,GetMoveKeyDesc(c),game::MoveCustomCommandKey[c]);
+  fclose(fl);
+  
+  if(bRet)game::LoadCustomCommandKeys(); //this here is more to validate if all went ok
+  return bRet;
+}
+
+
+/**
+ * check all other command keys versus MOVEMENT command keys on their specific branch
+ */
 void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
 {
   static const int iTot=9;
@@ -5775,6 +6023,8 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
       pa=game::MoveAbnormalCommandKey; Key=Key2; break;
     case DIR_HACK:
       pa=game::MoveNetHackCommandKey; Key=Key3; break;
+/*TODO case DIR_CUSTOM: 
+         pa=game::MoveCustomCommandKey; Key=???; break; */
     }
 
     for(int j=0;j<iTot;j++){
@@ -5788,6 +6038,9 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
 
 int game::GetMoveCommandKey(int I)
 {
+  if(ivanconfig::IsSetupCustomKeys())
+    return MoveCustomCommandKey[I];
+  
   switch(ivanconfig::GetDirectionKeyMap())
   {
   case DIR_NORM:
@@ -5881,8 +6134,12 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
     if(ItemVector[c]->AllowAlphaEverywhere())
       B.CustomData |= ALLOW_ALPHA;
 
+    if(ivanconfig::IsAllowContrastBackground())
+      B.CustomData |= ALLOW_CONTRAST;
+    
     ItemVector[c]->Draw(B);
     B.CustomData &= ~ALLOW_ALPHA;
+    B.CustomData &= ~ALLOW_CONTRAST;
   }
 
   if(ItemVector.size() > 3)
@@ -6188,7 +6445,7 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
-  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+  if(wizautoplay::IsPlayerAutoPlay(Wisher))return ABORTED;
 
   for(;;)
   {
@@ -6649,6 +6906,7 @@ double game::GetGameSituationDanger()
 {
   double SituationDanger = 0;
   character* Player = GetPlayer();
+  Player->ValidateTrapData();
   truth PlayerStuck = Player->IsStuck();
   v2 PlayerPos = Player->GetPos();
   character* TruePlayer = Player;
@@ -6663,6 +6921,7 @@ double game::GetGameSituationDanger()
         if(Enemy->IsEnabled() && Enemy->CanAttack()
            && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
         {
+          Enemy->ValidateTrapData();
           truth EnemyStuck = Enemy->IsStuck();
           v2 EnemyPos = Enemy->GetPos();
           truth Sees = TruePlayer->CanBeSeenBy(Enemy);
@@ -6683,6 +6942,7 @@ double game::GetGameSituationDanger()
                   v2 FriendPos = Friend->GetPos();
                   truth Sees = TrueEnemy->CanBeSeenBy(Friend);
 
+                  Friend->ValidateTrapData();
                   if(Friend->IsStuck())
                   {
                     Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);

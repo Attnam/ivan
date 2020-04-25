@@ -203,6 +203,7 @@ ITEM(scrollofearthquake, scroll)
 {
  public:
   virtual void FinishReading(character*);
+  static void EarthQuakeMagic(festring fsMsgHitNPC = cfestring());
 };
 
 ITEM(scrollofbodyswitch, scroll)
@@ -363,14 +364,16 @@ ITEM(stone, item)
   virtual truth WeightIsIrrelevant() const { return true; }
 };
 
-//ITEM(ingot, item)
-//{
-// public:
-//  virtual long GetTruePrice() const;
-//  virtual truth IsLuxuryItem(ccharacter*) const { return GetTruePrice() > 0; }
-// protected:
-//  virtual truth WeightIsIrrelevant() const { return true; }
-//};
+/*
+ITEM(nail, item)
+{
+ public:
+  virtual long GetTruePrice() const;
+  virtual truth IsLuxuryItem(ccharacter*) const { return GetTruePrice() > 0; }
+ protected:
+  virtual truth WeightIsIrrelevant() const { return true; }
+};
+*/
 
 ITEM(scrolloftaming, scroll)
 {

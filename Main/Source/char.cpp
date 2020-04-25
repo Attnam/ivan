@@ -23,10 +23,6 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
-#include "hiteffect.h" //TODO move to charsset.cpp?
-#include "lterras.h"
-#include "gods.h"
-
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
 #include <bitset>
@@ -769,9 +765,20 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
-  if(RAND() % int(100 + ToHitValue / DodgeValue * (100 + Success)) < 100
-     && !Critical && !ForceHit)
-  {
+  /**
+   * SIGFPE happened once when: 
+   *  ToHitValue = -2.1331964070645735 (why < 0 ???);
+   *  DodgeValue = 2.3094010767585029;
+   *  Success = 8; 
+   *  result thru linux `bc <<< "scale=16;100 + -2.1331964070645735/2.3094010767585029 * (100+8)"`
+   *   was = .2402768919010060
+   */
+  int a = int(100 + ToHitValue / DodgeValue * (100 + Success));
+  if(
+    ((a>=-1 && a<=1) || ((RAND() % a) < 100)) &&
+    !Critical && 
+    !ForceHit
+  ){
     Enemy->AddMissMessage(this);
     EditExperience(AGILITY, 150, 1 << 7);
     EditExperience(PERCEPTION, 75, 1 << 7);
@@ -1213,7 +1220,7 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
 
 void character::GetAICommand()
 {
-  if(!IsPlayerAutoPlay()){
+  if(!wizautoplay::IsPlayerAutoPlay(this)){
     SeekLeader(GetLeader());
 
     if(FollowLeader(GetLeader()))
@@ -1505,7 +1512,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
               {
                 /* not sure if this is better than "the door is locked", but I guess it _might_ be slightly better */
                 ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr());
-                if(!IsPlayerAutoPlay())return false;
+                if(!wizautoplay::IsPlayerAutoPlay(this))return false;
               }
 
               if(Important && CheckKick())
@@ -1555,6 +1562,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
   }
   else
   {
+    ValidateTrapData();
     if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround()
        && game::TruthQuestion(CONST_S("Do you want to leave ")
                               + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex())
@@ -1671,34 +1679,6 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-bool bSafePrayOnce=false;
-void character::AutoPlayAITeleport(bool bDeathCountBased)
-{
-  bool bTeleportNow=false;
-
-  if(bDeathCountBased){ // this is good to prevent autoplay AI getting stuck endless dieing
-    static int iDieMax=10;
-    static int iDieTeleportCountDown=iDieMax;
-    if(iDieTeleportCountDown==0){ //this helps on defeating not so strong enemies in spot
-      if(IsPlayerAutoPlay())
-        bTeleportNow=true;
-      iDieTeleportCountDown=iDieMax;
-      bSafePrayOnce=true;
-    }else{
-      static v2 v2DiePos(0,0);
-      if(v2DiePos==GetPos()){
-        iDieTeleportCountDown--;
-      }else{
-        v2DiePos=GetPos();
-        iDieTeleportCountDown=iDieMax;
-      }
-    }
-  }
-
-  if(bTeleportNow)
-    Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there TODO and should be in sync! create TeleportRandomDirectly() ?
-}
-
 void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 {
   /* Note: This function musn't delete any objects, since one of these may be
@@ -1712,33 +1692,32 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   if(IsPlayer())
   {
     ADD_MESSAGE("You die.");
-
+    
+#ifdef CURSEDDEVELOPER    
+    if(cursedDeveloper::LifeSaveJustABit((character*)Killer))
+      return;
+#endif
+    
+#ifdef WIZARD
     if(game::WizardModeIsActive())
     {
       game::DrawEverything();
 
       bool bInstaResurrect=false;
-      if(!bInstaResurrect && IsPlayerAutoPlay())bInstaResurrect=true;
+      if(!bInstaResurrect && wizautoplay::IsPlayerAutoPlay(this))bInstaResurrect=true;
       if(!bInstaResurrect && !game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))bInstaResurrect=true;
       if(bInstaResurrect)
       {
-        RestoreBodyParts();
-        ResetSpoiling();
-        if(IsBurning())
-        {
-          doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
-          doforbodyparts()(this, &bodypart::ResetThermalEnergies);
-          doforbodyparts()(this, &bodypart::ResetBurning);
-        }
-        RestoreHP();
-        RestoreStamina();
-        ResetStates();
-        SetNP(SATIATED_LEVEL);
-        SendNewDrawRequest();
-        if(IsPlayerAutoPlay())AutoPlayAITeleport(true);
+        SaveLifeBase();
+        
+        if(wizautoplay::IsPlayerAutoPlay(this))
+          wizautoplay::AutoPlayAITeleport(true);
+        
         return;
       }
     }
+#endif
+    
   }
   else if(CanBeSeenByPlayer() && !(DeathFlags & DISALLOW_MSG))
     ProcessAndAddMessage(GetDeathMessage());
@@ -2533,36 +2512,38 @@ truth character::TestForPickup(item* ToBeTested) const
 
 void character::AddScoreEntry(cfestring& Description, double Multiplier, truth AddEndLevel) const
 {
-  if(!game::WizardModeIsReallyActive())
+  if(game::WizardModeIsReallyActive())
+    return;
+  if(cursedDeveloper::IsCursedDeveloper())
+    return;
+  
+  highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
+
+  if(!HScore.CheckVersion())
   {
-    highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+    if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                  CONST_S("The highscore version doesn't match.\rDo you want to erase "
+                          "previous records and start a new file?\rNote, if you answer "
+                          "no, the score of your current game will be lost!\r"),
+                  CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+      return;
 
-    if(!HScore.CheckVersion())
-    {
-      if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
-                    CONST_S("The highscore version doesn't match.\rDo you want to erase "
-                            "previous records and start a new file?\rNote, if you answer "
-                            "no, the score of your current game will be lost!\r"),
-                    CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-        return;
-
-      HScore.Clear();
-    }
-
-    festring Desc = game::GetPlayerName();
-    Desc << ", " << Description;
-
-    if(AddEndLevel)
-    {
-      if(game::IsInWilderness())
-        Desc << " in the wilderness";
-      else
-        Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
-    }
-
-    HScore.Add(long(game::GetScore() * Multiplier), Desc);
-    HScore.Save();
+    HScore.Clear();
   }
+
+  festring Desc = game::GetPlayerName();
+  Desc << ", " << Description;
+
+  if(AddEndLevel)
+  {
+    if(game::IsInWilderness())
+      Desc << " in the wilderness";
+    else
+      Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
+  }
+
+  HScore.Add(long(game::GetScore() * Multiplier), Desc);
+  HScore.Save();
 }
 
 truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFlags)
@@ -2591,6 +2572,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
       ++SpecifierParts;
     }
 
+    ValidateTrapData();
     if(!(DeathFlags & IGNORE_TRAPS) && IsStuck())
     {
       if(SpecifierParts++)
@@ -2703,923 +2685,6 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
   return !Item->EffectIsGood() && RAND() % int(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
-character* AutoPlayLastChar=NULL;
-const int iMaxWanderTurns=20;
-const int iMinWanderTurns=3;
-
-/**
- * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
- * btw, lantern price is currently 10.
- */
-static int iMaxValueless = 5;
-
-v2 v2KeepGoingTo=v2(0,0);
-v2 v2TravelingToAnotherDungeon=v2(0,0);
-int iWanderTurns=iMinWanderTurns;
-bool bAutoPlayUseRandomNavTargetOnce=false;
-std::vector<v2> vv2DebugDrawSqrPrevious;
-v2 v2LastDropPlayerWasAt=v2(0,0);
-std::vector<v2> vv2FailTravelToTargets;
-std::vector<v2> vv2WrongGoingTo;
-
-void character::AutoPlayAIReset(bool bFailedToo)
-{ DBG7(bFailedToo,iWanderTurns,DBGAV2(v2KeepGoingTo),DBGAV2(v2TravelingToAnotherDungeon),DBGAV2(v2LastDropPlayerWasAt),vv2FailTravelToTargets.size(),vv2DebugDrawSqrPrevious.size());
-  v2KeepGoingTo=v2(0,0); //will retry
-  v2TravelingToAnotherDungeon=v2(0,0);
-  iWanderTurns=0; // warning: this other code was messing the logic ---> if(iWanderTurns<iMinWanderTurns)iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
-  bAutoPlayUseRandomNavTargetOnce=false;
-  v2LastDropPlayerWasAt=v2(0,0);
-  vv2DebugDrawSqrPrevious.clear();
-
-  PLAYER->TerminateGoingTo();
-
-  if(bFailedToo){
-    vv2FailTravelToTargets.clear();
-    vv2WrongGoingTo.clear();
-  }
-}
-truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
-{
-  v2KeepGoingTo=v2KGTo;
-
-  bool bOk=true;
-
-  if(bOk){
-    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo);
-    if(!CanTheoreticallyMoveOn(lsqr))
-      bOk=false;
-//    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
-//    if(olt){
-//      if(bOk && !CanMoveOn(olt)){
-//        DBG4(DBGAV2(v2KeepGoingTo),"olterrain? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
-//        bOk=false;
-//      }
-//
-//      /****
-//       * keep these commented for awhile, may be useful later
-//       *
-//      if(bOk && olt->IsWall()){ //TODO this may be unnecessary cuz  of above test
-//        //TODO is this a bug in the CanMoveOn() code? navigation AI is disabled when player is ghost TODO confirm about ethereal state, ammy of phasing
-//        DBG4(DBGAV2(v2KeepGoingTo),"walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
-//        bOk=false;
-//      }
-//
-//      if(bOk && (olt->GetWalkability() & ETHEREAL)){ //TODO this may be too much unnecessary test
-//        bOk=false;
-//      }
-//      */
-//    }
-  }
-
-  if(bOk){
-    SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
-    CreateRoute();
-    if(Route.empty()){
-      TerminateGoingTo(); //redundant?
-      bOk=false;
-    }
-  }
-
-  if(!bOk){
-    DBG1("RouteCreationFailed");
-    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-    bAutoPlayUseRandomNavTargetOnce=true;
-
-    AutoPlayAIReset(false); //v2KeepGoingTo is reset here too
-  }
-
-  return bOk;
-}
-
-void character::AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex, bool bWide, bool bKeepColor)
-{
-  static v2 v2ScrPos=v2(0,0); //static to avoid instancing
-  static int iAddPos;iAddPos=bWide?2:1;
-  static int iSubBorder;iSubBorder=bWide?3:2;
-  if(game::OnScreen(v2SqrPos)){
-    v2ScrPos=game::CalculateScreenCoordinates(v2SqrPos);
-
-    DOUBLE_BUFFER->DrawRectangle(
-        v2ScrPos.X+iAddPos, v2ScrPos.Y+iAddPos,
-        v2ScrPos.X+TILE_SIZE-iSubBorder, v2ScrPos.Y+TILE_SIZE-iSubBorder,
-        color, bWide);
-
-    if(iPrintIndex>-1)
-      FONT->Printf(DOUBLE_BUFFER, v2(v2ScrPos.X+1,v2ScrPos.Y+5), DARK_GRAY, "%d", iPrintIndex);
-
-    if(!bKeepColor)
-      vv2DebugDrawSqrPrevious.push_back(v2SqrPos);
-  }
-}
-
-const int iVisitAgainMax=10;
-int iVisitAgainCount=iVisitAgainMax;
-std::vector<lsquare*> vv2AllDungeonSquares;
-bool character::AutoPlayAICheckAreaLevelChangedAndReset()
-{
-  static area* areaPrevious=NULL;
-  area* Area = game::GetCurrentArea();
-  if(Area != areaPrevious){
-    areaPrevious=Area;
-
-    iVisitAgainCount=iVisitAgainMax;
-
-    vv2DebugDrawSqrPrevious.clear();
-
-    vv2AllDungeonSquares.clear();
-    if(!game::IsInWilderness())
-      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
-        vv2AllDungeonSquares.push_back(game::GetCurrentLevel()->GetLSquare(iX, iY));
-      }}
-
-    return true;
-  }
-
-  return false;
-}
-
-void character::AutoPlayAIDebugDrawOverlay()
-{
-  if(!game::WizardModeIsActive())return;
-
-  AutoPlayAICheckAreaLevelChangedAndReset();
-
-  // redraw previous to clean them
-  area* Area = game::GetCurrentArea(); //got the Area to draw in the wilderness too and TODO navigate there one day
-  std::vector<v2> vv2DebugDrawSqrPreviousCopy(vv2DebugDrawSqrPrevious);
-  for(int i=0;i<vv2DebugDrawSqrPreviousCopy.size();i++){
-//    Area->GetSquare(vv2DebugDrawSqrPrevious[i])->SendNewDrawRequest();
-//    square* sqr = Area->GetSquare(vv2DebugDrawSqrPrevious[i]);
-//    if(sqr)sqr->SendStrongNewDrawRequest(); //TODO sqr NULL?
-    AutoPlayAIDebugDrawSquareRect(vv2DebugDrawSqrPreviousCopy[i],DARK_GRAY);
-  }
-
-  // draw new ones
-  vv2DebugDrawSqrPrevious.clear(); //empty before fillup below
-
-  for(int i=0;i<vv2FailTravelToTargets.size();i++)
-    AutoPlayAIDebugDrawSquareRect(vv2FailTravelToTargets[i],RED,i==(vv2FailTravelToTargets.size()-1),i,true);
-
-  if(!PLAYER->Route.empty())
-    for(int i=0;i<PLAYER->Route.size();i++)
-      AutoPlayAIDebugDrawSquareRect(PLAYER->Route[i],GREEN);
-
-  if(!v2KeepGoingTo.Is0())
-    AutoPlayAIDebugDrawSquareRect(v2KeepGoingTo,BLUE,PLAYER->Route.size(),true);
-  else if(iWanderTurns>0)
-    AutoPlayAIDebugDrawSquareRect(PLAYER->GetPos(),YELLOW,iWanderTurns);
-
-  for(int i=0;i<vv2WrongGoingTo.size();i++)
-    AutoPlayAIDebugDrawSquareRect(vv2WrongGoingTo[i],BLUE,i,false,true);
-}
-
-truth character::AutoPlayAIDropThings()
-{
-//  level* lvl = game::GetCurrentLevel(); DBG1(lvl);
-//  area* Area = game::GetCurrentArea();
-
-  /**
-   *  unburden
-   */
-  bool bDropSomething = false;
-  static item* eqDropChk=NULL;
-  item* eqBroken=NULL;
-  for(int i=0;i<GetEquipments();i++){
-    eqDropChk=GetEquipment(i);
-    if(eqDropChk!=NULL && eqDropChk->IsBroken()){ DBG2("chkDropBroken",eqDropChk);
-      eqBroken=eqDropChk;
-      bDropSomething=true;
-      break;
-    }
-  }
-
-  if(!bDropSomething && GetBurdenState() == STRESSED){
-    if(clock()%100<5){ //5% chance to drop something weighty randomly every turn
-      bDropSomething=true; DBGLN;
-    }
-  }
-
-  if(!bDropSomething && GetBurdenState() == OVER_LOADED){
-    bDropSomething=true;
-  }
-
-  if(bDropSomething){ DBG1("DropSomething");
-    item* dropMe=NULL;
-    if(eqBroken!=NULL)dropMe=eqBroken;
-
-    item* heaviest=NULL;
-    item* cheapest=NULL;
-
-//    bool bFound=false;
-//    for(int k=0;k<2;k++){
-//      if(dropMe!=NULL)break;
-//    static item* eqDropChk=NULL;
-//    for(int i=0;i<GetEquipments();i++){
-//      eqDropChk=GetEquipment(i);
-//      if(eqDropChk!=NULL && eqDropChk->IsBroken()){
-//        dropMe=eqDropChk;
-//        break;
-//      }
-//    }
-
-    if(dropMe==NULL){
-      static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
-      for(int i=0;i<vit.size();i++){ DBG4("CurrentChkToDrop",vit[i]->GetName(DEFINITE).CStr(),vit[i]->GetTruePrice(),vit[i]->GetWeight());
-        if(vit[i]->IsEncryptedScroll())continue;
-//        if(!bPlayerHasLantern && dynamic_cast<lantern*>(vit[i])!=NULL){
-//          bPlayerHasLantern=true; //will keep only the 1st lantern
-//          continue;
-//        }
-
-        if(vit[i]->IsBroken()){ //TODO use repair scroll?
-          dropMe=vit[i];
-          break;
-        }
-
-        if(heaviest==NULL)heaviest=vit[i];
-        if(cheapest==NULL)cheapest=vit[i];
-
-//        switch(k){
-//        case 0: //better not implement this as a user function as that will remove the doubt about items values what is another fun challenge :)
-          if(vit[i]->GetTruePrice() < cheapest->GetTruePrice()) //cheapest
-            cheapest=vit[i];
-//          break;
-//        case 1: //this could be added as user function to avoid browsing the drop list, but may not be that good...
-          if(vit[i]->GetWeight() > heaviest->GetWeight()) //heaviest
-            heaviest=vit[i];
-//          break;
-//        }
-      }
-    }
-
-    if(heaviest!=NULL && cheapest!=NULL){
-      if(dropMe==NULL && heaviest==cheapest)
-        dropMe=heaviest;
-
-      if(dropMe==NULL && cheapest->GetTruePrice()<=iMaxValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
-        dropMe=cheapest;
-      }
-
-      if(dropMe==NULL){
-        // the worst price VS weight will be dropped
-        float fC = cheapest ->GetTruePrice()/(float)cheapest ->GetWeight();
-        float fW = heaviest->GetTruePrice()/(float)heaviest->GetWeight(); DBG3("PriceVsWeightRatio",fC,fW);
-        if(fC < fW){
-          dropMe = cheapest;
-        }else{
-          dropMe = heaviest;
-        }
-      }
-
-      if(dropMe==NULL)
-        dropMe = clock()%2==0 ? heaviest : cheapest;
-    }
-
-    // chose a throw direction
-    if(dropMe!=NULL){
-      static std::vector<int> vv2DirBase;static bool bDummyInit = [](){for(int i=0;i<8;i++)vv2DirBase.push_back(i);return true;}();
-      std::vector<int> vv2Dir(vv2DirBase);
-      int iDirOk=-1;
-      v2 v2DropAt(0,0);
-      lsquare* lsqrDropAt=NULL;
-      for(int i=0;i<8;i++){
-        int k = clock()%vv2Dir.size(); //random chose from remaining TODO could be where there is NPC foe
-        int iDir = vv2Dir[k]; //collect direction value
-        vv2Dir.erase(vv2Dir.begin() + k); //remove using the chosen index to prepare next random choice
-
-        v2 v2Dir = game::GetMoveVector(iDir);
-        v2 v2Chk = GetPos() + v2Dir;
-        if(game::GetCurrentLevel()->IsValidPos(v2Chk)){
-          lsquare* lsqrChk=game::GetCurrentLevel()->GetLSquare(v2Chk);
-          if(lsqrChk->IsFlyable()){
-            iDirOk = iDir;
-            v2DropAt = v2Chk;
-            lsqrDropAt=lsqrChk;
-            break;
-          }
-        }
-      };DBGLN;
-
-      if(iDirOk==-1){iDirOk=clock()%8;DBG2("RandomDir",iDirOk);}DBGLN; //TODO should just drop may be? unless hitting w/e is there could help
-
-      if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
-        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
-        static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
-        DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
-        if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
-          dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
-          Kick(lsqrDropAt,iDirOk,true);DBGLN; // ..to kick it
-        }else{DBGLN;
-          ThrowItem(iDirOk, dropMe); DBG5("DropThrow",iDirOk,dropMe->GetName(DEFINITE).CStr(),dropMe->GetTruePrice(),dropMe->GetWeight());
-        }
-      }else{DBGLN;
-        dropMe->MoveTo(GetLSquareUnder()->GetStack());DBGLN; //just drop
-      }
-
-      v2LastDropPlayerWasAt=GetPos();DBGSV2(v2LastDropPlayerWasAt);
-
-      return true;
-    }
-
-    DBG1("AutoPlayNeedsImprovement:DropItem");
-    ADD_MESSAGE("%s says \"I need more intelligence to drop trash...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
-    //TODO stop autoplay mode? if not, something random may happen some time and wont reach here ex.: spoil, fire, etc..
-  }
-
-  return false;
-}
-
-bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
-{
-  if(!it->CanBeSeenBy(this))return false;
-  if(!it->IsPickable(this))return false;
-  if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
-
-  if(!bPlayerHasLantern && it->IsOnFire(this)){
-    //ok
-  }else{
-    if(it->IsBroken())return false;
-    if(it->GetTruePrice()<=iMaxValueless)return false; //mainly to avoid all rocks from broken walls
-    if(clock()%3!=0 && it->GetSpoilLevel()>0)return false; //some spoiled may be consumed to randomly test diseases flows
-  }
-
-  return true;
-}
-
-truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
-{
-  static humanoid* h;h = dynamic_cast<humanoid*>(this);
-  if(h==NULL)return false;
-
-  if(h->AutoPlayAIequip())
-    return true;
-
-  if(GetBurdenState()!=OVER_LOADED){ DBG4(CommandFlags&DONT_CHANGE_EQUIPMENT,this,GetNameSingular().CStr(),GetSquareUnder());
-    if(v2LastDropPlayerWasAt!=GetPos()){
-      static bool bHoarder=true; //TODO wizard autoplay AI config exclusive felist
-
-      if(CheckForUsefulItemsOnGround(false))
-        if(!bHoarder)
-          return true;
-
-      //just pick up any useful stuff
-      static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
-      for(uint c = 0; c < vit.size(); ++c){
-        if(!IsAutoplayAICanPickup(vit[c],bPlayerHasLantern))continue;
-
-        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
-        if(itc && !itc->IsLocked()){ //get items from unlocked container
-          static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
-          for(uint d = 0; d < vitItc.size(); ++d)
-            vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
-          continue;
-        }
-
-        vit[c]->MoveTo(GetStack()); DBG2("pickup",vit[c]->GetNameSingular().CStr());
-//          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
-//          return true;
-        if(!bHoarder)
-          return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-static const int iMoreThanMaxDist=10000000; //TODO should be max integer but this will do for now in 2018 :)
-truth character::AutoPlayAITestValidPathTo(v2 v2To)
-{
-  return AutoPlayAIFindWalkDist(v2To) < iMoreThanMaxDist;
-}
-
-int character::AutoPlayAIFindWalkDist(v2 v2To)
-{
-  static bool bUseSimpleDirectDist=false; //very bad navigation this is
-  if(bUseSimpleDirectDist)return (v2To - GetPos()).GetLengthSquare();
-
-  static v2 GoingToBkp;GoingToBkp = GoingTo; //IsGoingSomeWhere() ? GoingTo : v2(0,0);
-
-  SetGoingTo(v2To);
-  CreateRoute();
-  static int iDist;iDist=Route.size();
-  TerminateGoingTo();
-
-  if(GoingToBkp!=ERROR_V2){ DBG2("Warning:WrongUsage:ShouldBeGoingNoWhere",DBGAV2(GoingToBkp));
-    SetGoingTo(GoingToBkp);
-    CreateRoute();
-  }
-
-  return iDist>0?iDist:iMoreThanMaxDist;
-}
-
-truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
-{
-  /**
-   * navigate the unknown dungeon
-   */
-  std::vector<v2> v2Exits;
-  if(v2KeepGoingTo.Is0()){ DBG1("TryNewMoveTarget");
-    // target undiscovered squares to explore
-    v2 v2PreferedTarget(0,0);
-
-    int iNearestLanterOnFloorDist = iMoreThanMaxDist;
-    v2 v2PreferedLanternOnFloorTarget(0,0);
-
-    v2 v2NearestUndiscovered(0,0);
-    int iNearestUndiscoveredDist=iMoreThanMaxDist;
-    std::vector<v2> vv2UndiscoveredValidPathSquares;
-
-    lsquare* lsqrNearestSquareWithWallLantern=NULL;
-    lsquare* lsqrNearestDropWallLanternAt=NULL;
-    stack* stkNearestDropWallLanternAt = NULL;
-    int iNearestSquareWithWallLanternDist=iMoreThanMaxDist;
-    item* itNearestWallLantern=NULL;
-
-    /***************************************************************
-     * scan whole dungeon squares
-     */
-    for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
-      lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
-
-      olterrain* olt = lsqr->GetOLTerrain();
-      if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
-        v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
-      }
-
-      stack* stkSqr = lsqr->GetStack();
-      static itemvector vit;vit.clear();stkSqr->FillItemVector(vit);
-      bool bAddValidTargetSquare=true;
-
-      // find nearest wall lantern
-      if(!bPlayerHasLantern && olt && olt->IsWall()){
-        for(int n=0;n<vit.size();n++){
-          if(vit[n]->IsLanternOnWall() && !vit[n]->IsBroken()){
-            static stack* stkDropWallLanternAt;stkDropWallLanternAt = lsqr->GetStackOfAdjacentSquare(vit[n]->GetSquarePosition());
-            static lsquare* lsqrDropWallLanternAt;lsqrDropWallLanternAt =
-              stkDropWallLanternAt?stkDropWallLanternAt->GetLSquareUnder():NULL;
-
-            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanTheoreticallyMoveOn(lsqrDropWallLanternAt)){
-              int iDist = AutoPlayAIFindWalkDist(lsqrDropWallLanternAt->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
-              if(lsqrNearestSquareWithWallLantern==NULL || iDist<iNearestSquareWithWallLanternDist){
-                iNearestSquareWithWallLanternDist=iDist;
-
-                lsqrNearestSquareWithWallLantern=lsqr;
-                itNearestWallLantern=vit[n]; DBG3(iNearestSquareWithWallLanternDist,DBGAV2(lsqr->GetPos()),DBGAV2(GetPos()));
-                lsqrNearestDropWallLanternAt=lsqrDropWallLanternAt;
-                stkNearestDropWallLanternAt=stkDropWallLanternAt;
-              }
-            }
-
-            break;
-          }
-        }
-      }
-
-      if(bAddValidTargetSquare && !CanTheoreticallyMoveOn(lsqr))
-        bAddValidTargetSquare=false;
-
-      bool bIsFailToTravelSquare=false;
-      if(bAddValidTargetSquare){
-        for(int j=0;j<vv2FailTravelToTargets.size();j++)
-          if(vv2FailTravelToTargets[j]==lsqr->GetPos()){
-            bAddValidTargetSquare=false;
-            bIsFailToTravelSquare=true;
-            break;
-          }
-      }
-
-      if(!bIsFailToTravelSquare){
-
-//          if(bAddValidTargetSquare && v2PreferedTarget.Is0() && (lsqr->HasBeenSeen() || !bPlayerHasLantern)){
-        if(bAddValidTargetSquare && (lsqr->HasBeenSeen() || !bPlayerHasLantern)){
-          bool bVisitAgain=false;
-          if(iVisitAgainCount>0 || !bPlayerHasLantern){
-            if(stkSqr!=NULL && stkSqr->GetItems()>0){
-              for(int n=0;n<vit.size();n++){ DBG1(vit[n]);DBG1(vit[n]->GetID());DBG1(vit[n]->GetType());DBG3("VisitAgain:ChkItem",vit[n]->GetNameSingular().CStr(),vit.size());
-                if(vit[n]->IsBroken())continue; DBGLN;
-
-                static bool bIsLanternOnFloor;bIsLanternOnFloor = dynamic_cast<lantern*>(vit[n])!=NULL;// || vit[n]->IsOnFire(this); DBGLN;
-
-                if( // if is useful to the AutoPlay AI endless tests
-                  vit[n]->IsShield  (this) ||
-                  vit[n]->IsWeapon  (this) ||
-                  vit[n]->IsArmor   (this) ||
-                  vit[n]->IsAmulet  (this) ||
-                  vit[n]->IsZappable(this) ||
-                  vit[n]->IsRing    (this) ||
-                  bIsLanternOnFloor
-                )
-                  if(IsAutoplayAICanPickup(vit[n],bPlayerHasLantern))
-                  {
-                    bVisitAgain=true;
-
-                    if(bIsLanternOnFloor && !bPlayerHasLantern){
-                      static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
-                      if(iDist<iNearestLanterOnFloorDist){
-                        iNearestLanterOnFloorDist=iDist;
-                        v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
-                      }
-                    }else{
-                      iVisitAgainCount--;
-                    }
-
-                    DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
-                    break;
-                  }
-              }
-            }
-          }
-
-          if(!bVisitAgain)bAddValidTargetSquare=false;
-        }
-
-      }
-
-      if(bAddValidTargetSquare)
-        if(!CanTheoreticallyMoveOn(lsqr)) //if(olt && !CanMoveOn(olt))
-          bAddValidTargetSquare=false;
-
-      if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
-        static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
-
-        if(iDist<iMoreThanMaxDist) //add only valid paths
-          vv2UndiscoveredValidPathSquares.push_back(lsqr->GetPos());
-
-        if(iDist<iNearestUndiscoveredDist){
-          iNearestUndiscoveredDist=iDist;
-          v2NearestUndiscovered=lsqr->GetPos(); DBG3(iNearestUndiscoveredDist,DBGAV2(lsqr->GetPos()),DBGAV2(GetPos()));
-        }
-      }
-    }} DBG2(DBGAV2(v2PreferedTarget),vv2UndiscoveredValidPathSquares.size());
-
-    /***************************************************************
-     * define prefered navigation target
-     */
-    if(!bPlayerHasLantern && v2PreferedTarget.Is0()){
-      bool bUseWallLantern=false;
-      if(!v2PreferedLanternOnFloorTarget.Is0() && lsqrNearestSquareWithWallLantern!=NULL){
-        if(iNearestLanterOnFloorDist <= iNearestSquareWithWallLanternDist){
-          v2PreferedTarget=v2PreferedLanternOnFloorTarget;
-        }else{
-          bUseWallLantern=true;
-        }
-      }else if(!v2PreferedLanternOnFloorTarget.Is0()){
-        v2PreferedTarget=v2PreferedLanternOnFloorTarget;
-      }else if(lsqrNearestSquareWithWallLantern!=NULL){
-        bUseWallLantern=true;
-      }
-
-      if(bUseWallLantern){
-        /**
-         * target to nearest wall lantern
-         * check for lanterns on walls of adjacent squares if none found on floors
-         */
-        itNearestWallLantern->MoveTo(stkNearestDropWallLanternAt); // the AI is prepared to get things from the floor only so "magically" drop it :)
-        v2PreferedTarget = lsqrNearestDropWallLanternAt->GetPos(); DBG2("PreferWallLanternAt",DBGAV2(lsqrNearestDropWallLanternAt->GetPos()))
-      }
-
-    }
-
-    /***************************************************************
-     * validate and set new navigation target
-     */
-//    DBG9("AllNavigatePossibilities",DBGAV2(v2PreferedTarget),DBGAV2(v2PreferedLanternOnFloorTarget),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2());
-    v2 v2NewKGTo=v2(0,0);
-
-    if(v2NewKGTo.Is0()){
-      //TODO if(!v2PreferedTarget.Is0){ // how can this not be compiled? error: cannot convert ‘v2::Is0’ from type ‘truth (v2::)() const {aka bool (v2::)() const}’ to type ‘bool’
-      if(v2PreferedTarget.GetLengthSquare()>0)
-        if(AutoPlayAITestValidPathTo(v2PreferedTarget))
-          v2NewKGTo=v2PreferedTarget; DBGSV2(v2PreferedTarget);
-    }
-
-    if(v2NewKGTo.Is0()){
-      if(bAutoPlayUseRandomNavTargetOnce){ //these targets were already path validated and are safe to use!
-        v2NewKGTo=vv2UndiscoveredValidPathSquares[clock()%vv2UndiscoveredValidPathSquares.size()]; DBG2("RandomTarget",DBGAV2(v2NewKGTo));
-        bAutoPlayUseRandomNavTargetOnce=false;
-      }else{    //find nearest
-        if(!v2NearestUndiscovered.Is0()){
-          v2NewKGTo=v2NearestUndiscovered; DBGSV2(v2NearestUndiscovered);
-        }
-      }
-    }
-
-    if(v2NewKGTo.Is0()){ //no new destination: fully explored
-      if(v2Exits.size()>0){
-        if(game::GetCurrentDungeonTurnsCount()==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
-          iWanderTurns=100+clock()%300; DBG2("WanderALotOnFullyExploredLevel",iWanderTurns); //just move around a lot, some NPC may spawn
-        }else{
-          // travel between dungeons if current fully explored
-          v2 v2Try = v2Exits[clock()%v2Exits.size()];
-          if(AutoPlayAITestValidPathTo(v2Try))
-            v2NewKGTo = v2TravelingToAnotherDungeon = v2Try; DBGSV2(v2TravelingToAnotherDungeon);
-        }
-      }else{
-        DBG1("AutoPlayNeedsImprovement:Navigation")
-        ADD_MESSAGE("%s says \"I need more intelligence to move around...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
-        //TODO stop autoplay mode?
-      }
-    }
-
-    if(v2NewKGTo.Is0()){ DBG1("Desperately:TryAnyRandomTargetNavWithValidPath");
-      std::vector<lsquare*> vlsqrChk(vv2AllDungeonSquares);
-
-      while(vlsqrChk.size()>0){
-        static int i;i=clock()%vlsqrChk.size();
-        static v2 v2Chk; v2Chk = vlsqrChk[i]->GetPos();
-
-        if(!AutoPlayAITestValidPathTo(v2Chk)){
-          vlsqrChk.erase(vlsqrChk.begin()+i);
-        }else{
-          v2NewKGTo=v2Chk;
-          break;
-        }
-      }
-    }
-
-    if(!v2NewKGTo.Is0()){
-      AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
-    }else{
-      DBG1("TODO:too complex paths are failing... improve CreateRoute()?");
-    }
-  }
-
-  if(!v2KeepGoingTo.Is0()){
-    if(v2KeepGoingTo==GetPos()){ DBG3("ReachedDestination",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
-      //wander a bit before following new target destination
-      iWanderTurns=(clock()%iMaxWanderTurns)+iMinWanderTurns; DBG2("WanderAroundAtReachedDestination",iWanderTurns);
-
-//      v2KeepGoingTo=v2(0,0);
-//      TerminateGoingTo();
-      AutoPlayAIReset(false);
-      return true;
-    }
-
-//    CheckForUsefulItemsOnGround(false); DBGSV2(GoingTo);
-//    CheckForEnemies(false, true, false, false); DBGSV2(GoingTo);
-
-//    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
-//      SetGoingTo(v2KeepGoingTo);
-//    }
-    static int iForceGoingToCountDown=10;
-    static v2 v2GoingToBkp;v2GoingToBkp=GoingTo;
-    if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
-      if(iForceGoingToCountDown==0){
-        DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
-
-        if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
-          static int iSetFailTeleportCountDown=10;
-          iSetFailTeleportCountDown--;
-          vv2WrongGoingTo.push_back(v2GoingToBkp);
-          if(iSetFailTeleportCountDown==0){
-            AutoPlayAITeleport(false);
-            AutoPlayAIReset(true); //refresh to test/try it all again
-            iSetFailTeleportCountDown=10;
-          }
-        }
-        DBGSV2(GoingTo);
-        return true;
-      }else{
-        iForceGoingToCountDown--; DBG1(iForceGoingToCountDown);
-      }
-    }else{
-      iForceGoingToCountDown=10;
-    }
-
-    /**
-     * Determinedly blindly moves towards target, the goal is to Navigate!
-     *
-     * this has several possible status if returning false...
-     * so better do not decide anything based on it?
-     */
-    MoveTowardsTarget(false);
-
-//    if(!MoveTowardsTarget(false)){ DBG3("OrFailedGoingTo,OrReachedDestination...",DBGAV2(GoingTo),DBGAV2(GetPos())); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
-//      TerminateGoingTo();
-//      v2KeepGoingTo=v2(0,0); //reset only this one to try again
-//      GetAICommand(); //wander once for randomicity
-//    }
-
-    return true;
-  }
-
-  return false;
-}
-
-bool character::AutoPlayAIChkInconsistency()
-{
-  if(GetSquareUnder()==NULL){
-    DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
-    DBG6("GetSquareUnderIsNULLhow?",IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
-    return true; //to just ignore this turn expecting on next it will be ok.
-  }
-  return false;
-}
-
-truth character::AutoPlayAIPray()
-{
-  bool bSPO = bSafePrayOnce;
-  bSafePrayOnce=false;
-
-  if(bSPO){}
-  else if(StateIsActivated(PANIC) && clock()%10==0){
-    iWanderTurns=1; DBG1("Wandering:InPanic"); // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
-  }else return false;
-
-  // check for known gods
-  int aiKGods[GODS];
-  int iKGTot=0;
-  int aiKGodsP[GODS];
-  int iKGTotP=0;
-  static int iPleased=50; //see god::PrintRelation()
-  for(int c = 1; c <= GODS; ++c){
-    if(!game::GetGod(c)->IsKnown())continue;
-    // even known, praying to these extreme ones will be messy if Relation<1000
-    if(dynamic_cast<valpurus*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
-    if(dynamic_cast<mortifer*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
-
-    aiKGods[iKGTot++]=c;
-
-    if(game::GetGod(c)->GetRelation() > iPleased){
-//      //TODO could this help?
-//      switch(game::GetGod(c)->GetBasicAlignment()){ //game::GetGod(c)->GetAlignment();
-//        case GOOD:
-//          if(game::GetPlayerAlignment()>=2){}else continue;
-//          break;
-//        case NEUTRAL:
-//          if(game::GetPlayerAlignment()<2 && game::GetPlayerAlignment()>-2){}else continue;
-//          break;
-//        case EVIL:
-//          if(game::GetPlayerAlignment()<=-2){}else continue;
-//          break;
-//      }
-      aiKGodsP[iKGTotP++] = c;
-    }
-  }
-  if(iKGTot==0)return false;
-//  if(bSPO && iKGTotP==0)return false;
-
-  // chose and pray to one god
-  god* g = NULL;
-  if(iKGTotP>0 && (bSPO || clock()%10!=0))
-    g = game::GetGod(aiKGodsP[clock()%iKGTotP]);
-  else
-    g = game::GetGod(aiKGods[clock()%iKGTot]);
-
-  if(bSPO || clock()%10!=0){ //it may not recover some times to let pray unsafely
-    int iRecover=0;
-    if(iKGTotP==0){
-      if(iRecover==0 && g->GetRelation()==-1000)iRecover=1000; //to test all relation range
-      if(iRecover==0 && g->GetRelation() <= iPleased)iRecover=iPleased; //to alternate tests on many with low good relation
-    }
-    if(iRecover>0)
-      g->SetRelation(iRecover);
-
-    g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
-  }
-
-  g->Pray(); DBG2("PrayingTo",g->GetName());
-
-  return true;
-}
-
-truth character::AutoPlayAICommand(int& rKey)
-{
-  DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  DBGSV2(GetPos());
-
-  if(AutoPlayLastChar!=this){
-    AutoPlayAIReset(true);
-    AutoPlayLastChar=this;
-  }
-
-  DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  if(AutoPlayAICheckAreaLevelChangedAndReset())
-    AutoPlayAIReset(true);
-
-  static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayAIDebugDrawOverlay);return true;}();
-
-  truth bPlayerHasLantern=false;
-  static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
-  for(uint i=0;i<vit.size();i++){
-    if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this)){
-      bPlayerHasLantern=true; //will keep only the 1st lantern
-      break;
-    }
-  }
-
-  DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  AutoPlayAIPray();
-
-  //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
-//  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
-//  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
-  static bool bPreviousTurnWasGhost=false;
-  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues mainly related to navigation
-    iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
-    bPreviousTurnWasGhost=true;
-  }else{
-    if(bPreviousTurnWasGhost){
-      AutoPlayAIReset(true); //this may help on navigation
-      bPreviousTurnWasGhost=false;
-      return true;
-    }
-  }
-
-  DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  if(AutoPlayAIDropThings())
-    return true;
-
-  DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
-    return true;
-
-  if(iWanderTurns>0){
-    if(!IsPlayer() || game::GetAutoPlayMode()==0 || !IsPlayerAutoPlay()){ //redundancy: yep
-      DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
-      DBG5(IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
-      ABORT("autoplay is inconsistent %d %d %d %d %d %s %d %s %d %d %d %d %d",
-        IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),
-        GetNameSingular().CStr(),game::GetAutoPlayMode(),GetName(DEFINITE).CStr(),
-        IsTemporary(),IsPet(),IsHeadless(),IsPlayer(),IsPlayerAutoPlay());
-    }
-    GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
-    iWanderTurns--;
-    return true;
-  }
-
-  /***************************************************************************************************
-   * WANDER above here
-   * NAVIGATE below here
-   ***************************************************************************************************/
-
-  /**
-   * travel between dungeons
-   */
-  if(!v2TravelingToAnotherDungeon.Is0() && GetPos() == v2TravelingToAnotherDungeon){
-    bool bTravel=false;
-    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2TravelingToAnotherDungeon);
-//    square* sqr = Area->GetSquare(v2TravelingToAnotherDungeon);
-    olterrain* ot = lsqr->GetOLTerrain();
-//    oterrain* ot = sqr->GetOTerrain();
-    if(ot){
-      if(ot->GetConfig() == STAIRS_UP){
-        rKey='<';
-        bTravel=true;
-      }
-
-      if(ot->GetConfig() == STAIRS_DOWN){
-        rKey='>';
-        bTravel=true;
-      }
-    }
-
-    if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
-      AutoPlayAIReset(true);
-      return false; //so the new/changed key will be used as command, otherwise it would be ignored
-    }
-  }
-
-  static const int iDesperateResetCountDownDefault=10;
-  static const int iDesperateEarthQuakeCountDownDefault=iDesperateResetCountDownDefault*5;
-  static int iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
-  if(AutoPlayAINavigateDungeon(bPlayerHasLantern)){
-    iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
-    return true;
-  }else{
-    if(iDesperateEarthQuakeCountDown==0){
-      iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
-      scrollofearthquake::Spawn()->FinishReading(this);
-      DBG1("UsingTerribleEarthquakeSolution"); // xD
-    }else{
-      iDesperateEarthQuakeCountDown--;
-      DBG1(iDesperateEarthQuakeCountDown);
-    }
-  }
-
-  /****************************************
-   * Twighlight zone
-   */
-
-  ADD_MESSAGE("%s says \"I need more intelligence to do things by myself...\"", CHAR_NAME(DEFINITE)); DBG1("TODO: AI needs improvement");
-
-  static int iDesperateResetCountDown=iDesperateResetCountDownDefault;
-  if(iDesperateResetCountDown==0){
-    iDesperateResetCountDown=iDesperateResetCountDownDefault;
-
-    AutoPlayAIReset(true);
-
-    // AFTER THE RESET!!!
-    iWanderTurns=iMaxWanderTurns; DBG2("DesperateResetToSeeIfAIWorksAgain",iWanderTurns);
-  }else{
-    GetAICommand(); DBG2("WanderingDesperatelyNotKnowingWhatToDo",iDesperateResetCountDown); // :)
-    iDesperateResetCountDown--;
-  }
-
-  return true;
-}
-
 void character::GetPlayerCommand()
 {
   truth HasActed = false;
@@ -3640,7 +2705,8 @@ void character::GetPlayerCommand()
           BeginTemporaryState(PANIC, 500 + RAND_N(500));
         }
 
-        game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
+        if(!cursedDeveloper::IsCursedDeveloper())
+          game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
       }
       else if(ivanconfig::GetWarnAboutDanger())
       {
@@ -3664,29 +2730,7 @@ void character::GetPlayerCommand()
     int c;
 
 #ifdef WIZARD
-    if(IsPlayerAutoPlay()){
-      bool bForceStop = false;
-      if(game::GetAutoPlayMode()>=2)
-        bForceStop = globalwindowhandler::IsKeyPressed(SDL_SCANCODE_ESCAPE);
-
-      if(!bForceStop && Key=='.'){ // pressed or simulated
-        if(game::IsInWilderness()){
-          Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
-        }else{
-          HasActed = AutoPlayAICommand(Key); DBG2("Simulated",Key);
-          if(HasActed)ValidKeyPressed = true; //valid simulated action
-        }
-      }else{
-        /**
-         * if the user hits any key during the autoplay mode that runs by itself, it will be disabled.
-         * at non auto mode, can be moved around but cannot rest or will move by itself
-         */
-        if(game::GetAutoPlayMode()>=2 && (Key!='~' || bForceStop)){
-          game::DisableAutoPlayMode();
-          AutoPlayAIReset(true); // this will help on re-randomizing things, mainly paths
-        }
-      }
-    }
+    wizautoplay::AutoPlayCommandKey(this,Key,HasActed,ValidKeyPressed);
 #endif
 
     if(!HasActed){
@@ -3768,10 +2812,15 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
 
     DeActivateTemporaryState(PARASITE_TAPE_WORM);
   }
-
-  if(!game::IsInWilderness())
+  
+  if(!game::IsInWilderness()){
+    if(GetMyVomitMaterial() < LIQUID_ID || GetMyVomitMaterial() > _LIQUID_ID_END_){
+      DBGSTK;DBG4("_BUG_TRACK_:Fixing invalid vomit material config ID to prevent unnecessary ABORT()",GetMyVomitMaterial(),LIQUID_ID,_LIQUID_ID_END_);
+      SetNewVomitMaterial(VOMIT);
+    }
     GetNearLSquare(Pos)->ReceiveVomit(this,
-                                      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+  }
 }
 
 truth character::Polymorph(character* NewForm, int Counter)
@@ -3877,6 +2926,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, v2 HitPos
 
 truth character::CheckBalance(double KickDamage)
 {
+  ValidateTrapData();
   return !CanMove()
     || IsStuck()
     || !KickDamage
@@ -4178,7 +3228,8 @@ truth character::CheckForUsefulItemsOnGround(truth CheckFood)
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
 
-  for(uint c = 0; c < ItemVector.size(); ++c)
+  ValidateTrapData();
+  for(uint c = 0; c < ItemVector.size(); ++c){
     if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this))
     {
       if(!(CommandFlags & DONT_CHANGE_EQUIPMENT)
@@ -4189,6 +3240,7 @@ truth character::CheckForUsefulItemsOnGround(truth CheckFood)
          && TryToConsume(ItemVector[c]))
         return true;
     }
+  }
 
   return false;
 }
@@ -4321,6 +3373,8 @@ truth character::Displace(character* Who, truth Forced)
   else
     Danger /= 1 << -PriorityDifference;
 
+  ValidateTrapData();
+  Who->ValidateTrapData();
   if(IsSmall() && Who->IsSmall()
      && (Forced || Danger > 1. || !(Who->IsPlayer() || Who->IsBadPath(GetPos())))
      && !IsStuck() && !Who->IsStuck()
@@ -4576,10 +3630,10 @@ truth character::IsAboveUsefulItem()
             )
           ) ||
           (bTooCheap &&
-            (vit[i]->GetTruePrice() > iMaxValueless)
+            (vit[i]->GetTruePrice() > wizautoplay::GetMaxValueless())
           ) ||
           (bEncumbering && //calc in float price vs weight
-            (vit[i]->GetTruePrice()/(vit[i]->GetWeight()/1000.0)) > (iMaxValueless*2)
+            (vit[i]->GetTruePrice()/(vit[i]->GetWeight()/1000.0)) > (wizautoplay::GetMaxValueless()*2)
           )
       ){
         return true;
@@ -4940,10 +3994,11 @@ void character::TeleportRandomly(truth Intentional)
   else if(IsPlayer())
   {
     // This is to prevent uncontrolled teleportation from going unnoticed by players.
-    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    if(!cursedDeveloper::IsCursedDeveloperTeleport())
+      game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
   }
 
-  if(IsPlayer())
+  if(IsPlayer() && !cursedDeveloper::IsCursedDeveloperTeleport())
     ADD_MESSAGE("A rainbow-colored whirlpool twists the existence around you. "
                 "You are sucked through a tunnel piercing a myriad of surreal "
                 "universes. Luckily you return to this dimension in one piece.");
@@ -4959,8 +4014,10 @@ void character::TeleportRandomly(truth Intentional)
   if(GetAction() && GetAction()->IsVoluntary())
     GetAction()->Terminate(false);
 
-  if(IsPlayerAutoPlay())
-    AutoPlayAIReset(true);
+#ifdef WIZARD
+  if(wizautoplay::IsPlayerAutoPlay(this))
+    wizautoplay::AutoPlayAIReset(true);
+#endif
 
   // There's a small chance that some warp gas/fluid is left behind.
   if(FromSquare->IsFlyable() && !RAND_N(1000))
@@ -4972,14 +4029,9 @@ void character::TeleportRandomly(truth Intentional)
   }
 }
 
-truth character::IsPlayerAutoPlay()
-{
-  return IsPlayer() && game::GetAutoPlayMode()>0;
-}
-
 void character::DoDetecting()
 {
-  if(IsPlayerAutoPlay() || !IsPlayer())
+  if(wizautoplay::IsPlayerAutoPlay(this) || !IsPlayer())
     return;
 
   material* TempMaterial;
@@ -5245,7 +4297,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
       else if(IsPlayer() || CanBeSeenByPlayer())
         ADD_MESSAGE("It vanishes.");
 
-      if(IsPlayer())
+      if(IsPlayer() && !cursedDeveloper::IsCursedDeveloper())
         game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
     }
 
@@ -5568,7 +4620,7 @@ void character::Regenerate()
     EditNP(-Max(7500 / MaxHP, 1));
     RegenerationCounter -= 1250000;
     int HP = BodyPart->GetHP();
-    EditExperience(ENDURANCE, Min(1000 * BodyPart->GetMaxHP() / (HP * HP), 300), 1000);
+    EditExperience(ENDURANCE, Min(1000 * BodyPart->GetMaxHP() / Max(HP * HP,1), 300), 1000);
   }
 }
 
@@ -6157,7 +5209,15 @@ void character::DrawPanel(truth AnimationDraw) const
                          v2(RES.X - 19 - (game::GetMaxScreenXSize() << 4), RES.Y));
   igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
                          v2(game::GetMaxScreenXSize() << 4, 9));
-  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
+  int iLeftPos=0;
+#ifdef CURSEDDEVELOPER
+    if(cursedDeveloper::IsCursedDeveloper()){
+      festring fsCD="(Cursed Developer) ";
+      iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
+      FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), YELLOW, fsCD.CStr(), GetPanelName().CStr());
+    }
+#endif
+  FONT->Printf(DOUBLE_BUFFER, v2(16+iLeftPos, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
   int PanelPosY = DrawStats(false);
@@ -6810,6 +5870,32 @@ void character::LycanthropyHandler()
   }
 }
 
+void character::SaveLifeBase()
+{
+  if(IsPlayer() && !wizautoplay::IsPlayerAutoPlay(this))
+    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
+
+  RestoreBodyParts();
+  ResetSpoiling();
+  if(IsBurning())
+  {
+    doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+    doforbodyparts()(this, &bodypart::ResetThermalEnergies);
+    doforbodyparts()(this, &bodypart::ResetBurning);
+  }
+  RestoreHP();
+  RestoreStamina();
+  ResetStates();
+
+  if(GetNP() < SATIATED_LEVEL)
+    SetNP(SATIATED_LEVEL);
+
+  SendNewDrawRequest();
+
+  if(GetAction())
+    GetAction()->Terminate(false);
+}
+
 void character::SaveLife()
 {
   if(TemporaryStateIsActivated(LIFE_SAVED))
@@ -6847,23 +5933,8 @@ void character::SaveLife()
     LifeSaver->RemoveFromSlot();
     LifeSaver->SendToHell();
   }
-
-  if(IsPlayer())
-    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
-
-  RestoreBodyParts();
-  ResetSpoiling();
-  RestoreHP();
-  RestoreStamina();
-  ResetStates();
-
-  if(GetNP() < SATIATED_LEVEL)
-    SetNP(SATIATED_LEVEL);
-
-  SendNewDrawRequest();
-
-  if(GetAction())
-    GetAction()->Terminate(false);
+  
+  SaveLifeBase();
 }
 
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
@@ -6879,7 +5950,7 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 
   if(StateIsActivated(POLYMORPH_CONTROL))
   {DBGLN;
-    if(IsPlayer() && !IsPlayerAutoPlay())
+    if(IsPlayer() && !wizautoplay::IsPlayerAutoPlay(this))
     {DBGLN;
       if(!GetNewFormForPolymorphWithControl(NewForm)){DBG1(NewForm);
         return NULL;
@@ -9274,7 +8345,7 @@ void character::ResetStates()
         &&
         TemporaryStateIsActivated(1 << c)
         &&
-        (IsPlayerAutoPlay() || TemporaryStateCounter[c] != PERMANENT) //autoplay will be messed if not removing some things like leprosy or worms
+        (wizautoplay::IsPlayerAutoPlay(this) || TemporaryStateCounter[c] != PERMANENT) //autoplay will be messed if not removing some things like leprosy or worms
     ){
       TemporaryState &= ~(1 << c);
 
@@ -9989,8 +9060,9 @@ truth character::CheckForFoodInSquare(v2 Pos)
     lsquare* Square = Level->GetLSquare(Pos);
     stack* Stack = Square->GetStack();
 
-    if(Stack->GetItems())
-      for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
+    if(Stack->GetItems()){
+      ValidateTrapData();
+      for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i){
         if(i->IsPickable(this)
            && i->CanBeSeenBy(this)
            && i->CanBeEatenByAI(this)
@@ -10000,6 +9072,8 @@ truth character::CheckForFoodInSquare(v2 Pos)
           SetGoingTo(Pos);
           return MoveTowardsTarget(false);
         }
+      }
+    }
   }
 
   return false;
@@ -12023,23 +11097,16 @@ truth character::IsUsingWeaponOfCategory(int Category) const
 
 truth character::TryToUnStickTraps(v2 Dir)
 {
-  if(!TrapData)
-    return true;
-
-  std::vector<trapdata> TrapVector;
-
-  for(const trapdata* T = TrapData; T; T = T->Next)
-    TrapVector.push_back(*TrapData);
-
-  for(uint c = 0; c < TrapVector.size(); ++c)
+  ValidateTrapData();
+  for(trapdata* T = TrapData; T; T = T->Next)
     if(IsEnabled())
     {
-      entity* Trap = game::SearchTrap(TrapVector[c].TrapID);
-
-      if(Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
+      entity* Trap = game::SearchTrap(T->TrapID);
+      if(Trap && Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
         break;
     }
 
+  ValidateTrapData();
   return !TrapData && IsEnabled();
 }
 
@@ -12050,17 +11117,37 @@ struct trapidcomparer
   ulong ID;
 };
 
+void character::ValidateTrapData()
+{
+  for(trapdata* T = TrapData; T;)
+  {
+    if(!game::SearchTrap(T->TrapID)){
+      trapdata* ToDel = T;
+      if(TrapData==ToDel)
+        TrapData=T->Next;
+      T = T->Next;
+      delete ToDel;
+    }else{
+      T = T->Next;
+    }
+  }
+}
+
 void character::RemoveTrap(ulong ID)
 {
+  ValidateTrapData();
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
-  trapdata* ToDel = T;
-  T = T->Next;
-  delete ToDel;
+  if(T){
+    trapdata* ToDel = T;
+    T = T->Next;
+    delete ToDel;
+  }
   doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 void character::AddTrap(ulong ID, ulong BodyParts)
 {
+  ValidateTrapData();
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
 
   if(T)
@@ -12162,25 +11249,27 @@ festring character::GetTrapDescription() const
     }
   }
 
-  if(Index <= 3)
-  {
-    TrapStack[0].first->AddTrapName(Desc, TrapStack[0].second);
+  if(Index > 0){
+    if(Index <= 3)
+    {
+      TrapStack[0].first->AddTrapName(Desc, TrapStack[0].second);
 
-    if(Index == 2)
-    {
-      Desc << " and ";
-      TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+      if(Index == 2)
+      {
+        Desc << " and ";
+        TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+      }
+      else if(Index == 3)
+      {
+        Desc << ", ";
+        TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
+        Desc << " and ";
+        TrapStack[2].first->AddTrapName(Desc, TrapStack[2].second);
+      }
     }
-    else if(Index == 3)
-    {
-      Desc << ", ";
-      TrapStack[1].first->AddTrapName(Desc, TrapStack[1].second);
-      Desc << " and ";
-      TrapStack[2].first->AddTrapName(Desc, TrapStack[2].second);
-    }
+    else
+      Desc << "lots of traps";
   }
-  else
-    Desc << "lots of traps";
 
   return Desc;
 }
@@ -13007,6 +12096,11 @@ truth character::IsESPBlockedByEquipment() const
   return false;
 }
 
+truth character::HasStateFlag(long Flag)
+{
+  return TemporaryState & Flag;
+}
+
 truth character::TemporaryStateIsActivated (long What) const
 {DBG7(this,GetNameSingular().CStr(),TemporaryState&What,TemporaryState,std::bitset<32>(TemporaryState),What,std::bitset<32>(What));
   if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
@@ -13277,4 +12371,23 @@ festring character::GetHitPointDescription() const
 truth character::WillGetTurnSoon() const
 {
   return GetAP() >= 900;
+}
+
+truth character::OverloadedKickFailCheck()
+{
+  if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED){
+    if(IsPlayer())
+      ADD_MESSAGE("You try to kick, lose balance and fall down.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tries to kick, loses balance and falls down.", CHAR_NAME(DEFINITE));
+
+    ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL); //based on banana peel slip
+    CheckDeath(CONST_S("was overloaded, tried to kick and fell down"), 0);
+    
+    if(!IsPlayer()) // if player, the -AP would accumulate while the game turn would NOT increase messing the gameplay
+      EditAP(-100000 / APBonus(GetAttribute(AGILITY))); //based on kick command anyway
+    
+    return true;
+  }
+  return false;
 }

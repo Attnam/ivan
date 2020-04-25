@@ -25,6 +25,8 @@ class ivanconfig
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static cfestring& GetAutoPickUpMatching() { return AutoPickUpMatching.Value; }
   static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
+  static truth IsDropBeforeOffering() { return DropBeforeOffering.Value; }
+  static truth IsAllowContrastBackground() { return AllowContrastBackground.Value; };
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -38,14 +40,16 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsUseLightEmiterBasedOnVolume(){return UseLightEmiterBasedOnVolume.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
+  static truth IsOverloadedFight() { return OverloadedFight.Value; }
   static truth IsTransparentMapLM() { return TransparentMapLM.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return 2; /*MemorizeEquipmentMode.Value;*/ }
-  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value * 4; }
+  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -66,6 +70,7 @@ class ivanconfig
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
+  static truth IsSetupCustomKeys() { return SetupCustomKeys.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
@@ -73,7 +78,9 @@ class ivanconfig
   static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
+  static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static col16 CheckChangeColor(col16 col);
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -139,8 +146,11 @@ class ivanconfig
   static void MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
+  static void SfxVolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
+  static truth SfxVolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static void SfxVolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
 
@@ -165,8 +175,10 @@ class ivanconfig
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SetupCustomKeysChanger(truthoption*, truth);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
+  static void SfxVolumeHandler(long);
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
@@ -192,12 +204,16 @@ class ivanconfig
   static truthoption AllowImportOldSavegame;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption UseLightEmiterBasedOnVolume;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
+  static truthoption OverloadedFight;
   static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
   static truthoption AllWeightIsRelevant;
+  static truthoption DropBeforeOffering;
+  static truthoption AllowContrastBackground;
   static truthoption ShowVolume;
   static truthoption EnhancedLights;
 
@@ -225,6 +241,7 @@ class ivanconfig
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static truthoption SetupCustomKeys;
   static cycleoption GoOnStopMode;
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
@@ -237,6 +254,7 @@ class ivanconfig
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static scrollbaroption Volume;
+  static scrollbaroption SfxVolume;
   static cycleoption MIDIOutputDevice;
 
 #ifndef __DJGPP__

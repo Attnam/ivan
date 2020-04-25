@@ -366,6 +366,7 @@
 #define POLYMORPHINE (LIQUID_ID + 58)
 #define LAVA (LIQUID_ID + 59)
 #define NAPALM (LIQUID_ID + 60)
+#define _LIQUID_ID_END_ (LIQUID_ID + 61) //this must be the last one always!
 
 #define FLESH_ID (5 << 12)
 
@@ -763,6 +764,7 @@
 #define FORGE 26
 #define FURNACE 27
 #define WORK_BENCH 32
+#define TAILORING_BENCH 39
 
 #define SNOW_BOULDER 4
 

@@ -14,6 +14,7 @@
 
 #include "dbgmsgproj.h"
 #include "whandler.h"
+#include "devcons.h"
 
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
@@ -463,8 +464,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
-  if(GetBurdenState() == OVER_LOADED)
-  {
+  if(!ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED){
     if(IsPlayer())
       ADD_MESSAGE("You cannot fight while carrying so much.");
 
@@ -495,6 +495,11 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       if(Chosen == USE_LEGS && HasTwoUsableLegs())
         Chosen = USE_HEAD;
     }
+  
+  if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED && GetHead()){
+    if(Chosen == USE_LEGS)
+      Chosen = USE_HEAD; //TODO why this is not working for player!?!?!?!?
+  }
 
   switch(Chosen)
   {
@@ -547,6 +552,9 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
    case USE_LEGS:
     if(HasTwoUsableLegs())
     {
+      if(OverloadedKickFailCheck())        
+        return false;
+    
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
       Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);
@@ -1884,51 +1892,64 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(recipedata rpd)
+truth humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Craft = craft::Spawn(this);DBGLN;
-
-  if(rpd.GetTool()!=NULL){DBGLN;
-    if(GetRightArm())
-    {DBGLN;
-      item* Item = GetRightArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
-        GetRightArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetLeftArm())
-    {DBGLN;
-      item* Item = GetLeftArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
-        GetLeftArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetMainWielded() != rpd.GetTool())
-    {DBGLN;
-      Craft->SetMoveCraftTool(true);
-      rpd.GetTool()->RemoveFromSlot();
-
-      if(GetMainArm() && GetMainArm()->IsUsable())
-        GetMainArm()->SetWielded(rpd.GetTool());
-      else
-        GetSecondaryArm()->SetWielded(rpd.GetTool());
-    }
-    else
+  DBG4(rpd.GetTool(),rpd.GetTool2(),GetRightArm()?GetRightArm()->IsUsable():0,GetLeftArm()?GetLeftArm()->IsUsable():0);
+  
+  bool b1OK=false;
+  bool b2OK=false;
+  item* it;
+  if(rpd.GetTool()){
+    if(
+      (GetRightArm() && GetRightArm()->IsUsable() && GetRightWielded() == rpd.GetTool()) ||
+      (GetLeftArm()  && GetLeftArm()->IsUsable()  && GetLeftWielded()  == rpd.GetTool())
+    ){
+      b1OK=true;
       Craft->SetMoveCraftTool(false);
-  }DBGLN;
+    }
+    
+    if(!b1OK && GetRightArm() && GetRightArm()->IsUsable()){
+      if((it = GetRightWielded())){
+        Craft->SetRightBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
 
-  //TODO let the GetTool2() be equipped too
+      rpd.GetTool()->RemoveFromSlot();
+      SetRightWielded(rpd.GetTool());
 
-  Craft->SetCraftWhat(rpd);DBGLN;
-  SetAction(Craft);DBGLN;
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+    if(!b1OK && GetLeftArm() && GetLeftArm()->IsUsable()){
+      if((it = GetLeftWielded())){
+        Craft->SetLeftBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
+
+      rpd.GetTool()->RemoveFromSlot();
+      SetLeftWielded(rpd.GetTool());
+
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+  }else{
+    b1OK=true; //can craft somethings w/o tools
+  }
+  
+  //TODO let the GetTool2() be equipped too?
+
+  if(b1OK){
+    Craft->SetCraftWhat(rpd);DBGLN;
+    SetAction(Craft);DBGLN;
+    return true;
+  }
+  
+  ADD_MESSAGE("You have no usable arm.");
+  rpd.SetAlreadyExplained();
+  return false;
 }
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
@@ -2122,9 +2143,12 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 
           if(Equipment->AllowAlphaEverywhere())
             B1.CustomData |= ALLOW_ALPHA;
-
+          
+          if(ivanconfig::IsAllowContrastBackground())
+            B1.CustomData |= ALLOW_CONTRAST;
           Equipment->Draw(B1);
           B1.CustomData &= ~ALLOW_ALPHA;
+          B1.CustomData &= ~ALLOW_CONTRAST;
 
 //          if(eqMHover==Equipment){
 //            v2 v2M = globalwindowhandler::GetMouseLocation();
@@ -2657,6 +2681,7 @@ truth humanoid::CanWield() const
 
 truth humanoid::CheckBalance(double KickDamage)
 {
+  ValidateTrapData();
   return !CanMove()
     || IsStuck()
     || !KickDamage
@@ -3654,166 +3679,6 @@ long skeleton::GetBodyPartVolume(int I) const
 
   ABORT("Illegal humanoid bodypart volume request!");
   return 0;
-}
-
-truth humanoid::AutoPlayAIequip()
-{
-  item* iL = GetEquipment(LEFT_WIELDED_INDEX);
-  item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
-
-  //every X turns remove all equipments
-  bool bTryWieldNow=false;
-  static int iLastReEquipAllTurn=-1;
-  if(game::GetTurn()>(iLastReEquipAllTurn+150)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
-    iLastReEquipAllTurn=game::GetTurn();
-    for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
-      item* eq = GetEquipment(i);
-      if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
-      if(iL==eq)iL=NULL;
-      if(iR==eq)iR=NULL;
-    }
-//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
-//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
-    bTryWieldNow=true;
-  }
-
-  //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
-  //every X turns try to wield
-  static int iLastTryToWieldTurn=-1;
-  if(bTryWieldNow || game::GetTurn()>(iLastTryToWieldTurn+10)){ DBG2(game::GetTurn(),iLastTryToWieldTurn);
-    iLastTryToWieldTurn=game::GetTurn();
-    bool bDoneLR=false;
-    bool bL2H = iL && iL->IsTwoHanded();
-    bool bR2H = iR && iR->IsTwoHanded();
-
-    //2handed
-    static int iTryWieldWhat=0; iTryWieldWhat++; DBG1(iTryWieldWhat);
-    if(iTryWieldWhat%2==0){ //will try 2handed first, alternating. If player has only 2handeds, the 1handeds will not be wielded and it will use punches, what is good too for tests.
-      if( !bDoneLR &&
-          iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
-          iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
-      ){
-        static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-        for(uint c = 0; c < vitEqW.size(); ++c){
-          if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){  DBG1(vitEqW[c]->GetNameSingular().CStr());
-            vitEqW[c]->RemoveFromSlot();
-            SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
-            bDoneLR=true;
-            break;
-          }
-        }
-      }
-    }
-
-    //dual 1handed (if not 2hd already)
-    if(!bDoneLR){
-      for(int i=0;i<2;i++){
-        int iChk=-1;
-        if(i==0)iChk=LEFT_WIELDED_INDEX;
-        if(i==1)iChk=RIGHT_WIELDED_INDEX;
-
-        if(
-            !bDoneLR &&
-            (
-              (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
-              ||
-              (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
-            )
-        ){
-          static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-          for(uint c = 0; c < vitEqW.size(); ++c){
-            if(
-                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
-                ||
-                vitEqW[c]->IsShield(this)
-            ){ DBG1(vitEqW[c]->GetNameSingular().CStr());
-              vitEqW[c]->RemoveFromSlot();
-              SetEquipment(iChk, vitEqW[c]);
-              bDoneLR=true;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-  }
-
-  //every X turns try to use stuff from inv
-  static int iLastTryToUseInvTurn=-1;
-  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){ DBG2(game::GetTurn(),iLastTryToUseInvTurn);
-    iLastTryToUseInvTurn=game::GetTurn();
-
-    //////////////////////////////// consume food/drink
-    { //TODO let this happen for non-human too?
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);DBGLN;
-      for(uint c = 0; c < vitEqW.size(); ++c){DBGLN;
-        if(clock()%3!=0 && GetHungerState() >= BLOATED)break;DBGLN; //randomly let it vomit and activate all related flows *eew* xD
-
-        //if(TryToConsume(vitEqW[c]))
-        material* ConsumeMaterial = vitEqW[c]->GetConsumeMaterial(this);
-        if(
-          ConsumeMaterial!=NULL &&
-          vitEqW[c]->IsConsumable() &&
-          ConsumeItem(vitEqW[c], vitEqW[c]->GetConsumeMaterial(this)->GetConsumeVerb())
-        ){
-          DBG2("AutoPlayConsumed",vitEqW[c]->GetNameSingular().CStr());
-          return true;
-        }DBGLN;
-      }
-    }
-
-    //////////////////////////////// equip
-    {DBGLN;
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);DBGLN;
-      for(uint c = 0; c < vitEqW.size(); ++c){DBGLN;
-        if(TryToEquip(vitEqW[c],true)){ DBG1(vitEqW[c]->GetNameSingular().CStr());
-          return true;
-        }else{DBGLN;
-          vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
-        }
-      }
-    }
-
-    //////////////////////////////// zap
-    static int iLastZapTurn=-1;
-    if(game::GetTurn()>(iLastZapTurn+100)){ DBG2(game::GetTurn(),iLastZapTurn); //every X turns try to use stuff from inv
-      iLastZapTurn=game::GetTurn();
-
-      int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-      for(uint c = 0; c < vitEqW.size(); ++c){
-        if(!vitEqW[c]->IsZappable(this))continue;
-
-        if(vitEqW[c]->Zap(this, GetPos(), iDir)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
-          return true;
-        }
-
-        if(vitEqW[c]->Apply(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr());
-          return true;
-        }
-      }
-    }
-
-    //////////////////////////////// read book
-    static int iLastReadTurn=-1;
-    if(game::GetTurn()>(iLastReadTurn+50)){ DBG2(game::GetTurn(),iLastReadTurn); //every X turns try to use stuff from inv
-      iLastReadTurn=game::GetTurn();
-
-      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-      for(uint c = 0; c < vitEqW.size(); ++c){
-        if(!vitEqW[c]->IsReadable(this))continue;
-        static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
-        if(hb==NULL)continue;
-
-        if(vitEqW[c]->Read(this)){ DBG1(vitEqW[c]->GetNameSingular().CStr()); //TODO try to aim at NPCs
-          return true;
-        }
-      }
-    }
-  }
-
-  return false;
 }
 
 truth humanoid::CheckIfEquipmentIsNotUsable(int I) const
@@ -5365,8 +5230,41 @@ truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartInde
     return false;
 }
 
+void FixSumoWrestlerHouse(festring fsCmdParams)
+{
+  sumowrestler* SM = NULL;
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(dynamic_cast<sumowrestler*>(C)){
+      SM=(sumowrestler*)C;
+      break;
+    }
+  }
+  
+  if(SM){
+    for(int d = 0; d < SM->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = SM->GetNeighbourLSquare(d);
+
+      if(Square){
+        character* C2 = Square->GetCharacter();
+        if(C2 && dynamic_cast<bananagrower*>(C2)){
+          C2->TeleportRandomly(true);
+        }
+      }
+    }
+  }
+}
+
 void sumowrestler::GetAICommand()
 {
+  static bool bInitDummy = [](){
+    devcons::AddDevCmd("FixSumoWrestlerHouse",FixSumoWrestlerHouse,
+      "BugFix sumo wrestler house in case banana growers over crowd it.");
+    return true;}();
+
+  
   EditNP(-25);
 
   SeekLeader(GetLeader());
@@ -6730,112 +6628,8 @@ void xinrochghost::CreateCorpse(lsquare* Square)
 /*This needs to be a function someday*/
   if(!game::GetCurrentLevel()->IsOnGround())
   {
-    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
+    scrollofearthquake::EarthQuakeMagic("%s is hit by a brick of earth falling from the roof!");
     ADD_MESSAGE("You hear an eerie scream: \"Ahh! Free at last! FREE TO BE REBORN!\"");
-    int c, Tunnels = 2 + RAND() % 3;
-    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
-      Tunnels = 0;
-
-    for(c = 0; c < Tunnels; ++c)
-      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
-
-    int ToEmpty = 10 + RAND() % 11;
-
-    for(c = 0; c < ToEmpty; ++c)
-      for(int i = 0; i < 50; ++i)
-      {
-        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
-        truth Correct = false;
-
-        for(int d = 0; d < 8; ++d)
-        {
-          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
-
-          if(Square && Square->IsFlyable())
-          {
-            Correct = true;
-            break;
-          }
-        }
-
-        if(Correct)
-        {
-          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
-          break;
-        }
-      }
-
-    int ToGround = 20 + RAND() % 21;
-
-    for(c = 0; c < ToGround; ++c)
-      for(int i = 0; i < 50; ++i)
-      {
-        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
-
-        if(Pos == ERROR_V2)
-          continue;
-
-        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
-        character* Char = Square->GetCharacter();
-
-        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
-          continue;
-
-        int Walkables = 0;
-
-        for(int d = 0; d < 8; ++d)
-        {
-          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
-
-          if(NearSquare && NearSquare->IsFlyable())
-            ++Walkables;
-        }
-
-        if(Walkables > 6)
-        {
-          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
-
-          if(Char)
-          {
-            if(Char->CanBeSeenByPlayer())
-              ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
-
-            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
-          }
-
-          Square->KickAnyoneStandingHereAway();
-          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
-          break;
-        }
-      }
-
-    // Generate a few boulders in the level
-
-    int BoulderNumber = 10 + RAND() % 10;
-
-    for(c = 0; c < BoulderNumber; ++c)
-    {
-      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
-      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
-      character* MonsterHere = Square->GetCharacter();
-
-      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
-      {
-        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
-
-        if(MonsterHere)
-          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-
-        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
-      }
-    }
-
-    // Damage to items in the level
-
-    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
-      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
-        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
   }
 }
 

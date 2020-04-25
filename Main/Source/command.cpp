@@ -22,6 +22,7 @@
 #include "game.h"
 #include "gear.h"
 #include "god.h"
+#include "gods.h"
 #include "graphics.h"
 #include "human.h"
 #include "iconf.h"
@@ -37,6 +38,7 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
@@ -52,14 +54,19 @@
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
-: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), Key4(0),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
   game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
-char command::GetKey() const
+int command::GetKey() const
 {
+  if(ivanconfig::IsSetupCustomKeys()){
+    if(Key4>0)
+      return Key4;
+  }
+  
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
@@ -70,7 +77,7 @@ char command::GetKey() const
     return Key3;
    default:
     ABORT("This is not Vim!");
-    return Key1;
+    return Key1; //?
   }
 }
 
@@ -109,6 +116,7 @@ command* commandsystem::Command[] =
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
+  new command(&AskFavour, "pray for a favour", 'P', 'P', 'P', false),
   new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
   new command(&Save, "save and quit", 'S', 'S', 'S', true),
@@ -156,7 +164,7 @@ command* commandsystem::Command[] =
 
 #endif
 
-  0
+  0 //this is important as an end of array indicator
 };
 
 #ifndef WIZARD
@@ -239,16 +247,16 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   return false;
 }
 
-char findCmdKey(truth (*func)(character*))
+int findCmdKey(truth (*func)(character*))
 {
-  char cKey=0;
+  int iKey=0;
   for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
     if(cmd->GetLinkedFunction()==func){
-      cKey = cmd->GetKey();
+      iKey = cmd->GetKey();
       break;
     }
-  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
-  return cKey;
+  if(iKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return iKey;
 }
 
 truth commandsystem::GoUp(character* Char)
@@ -524,12 +532,7 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems()){
-          ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
-          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
-            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
-          }
-        }
+        game::SetDropTag(ToDrop[c]);
       }
       Success = true;
     }
@@ -761,7 +764,7 @@ truth commandsystem::Quit(character* Char)
 
 truth commandsystem::Talk(character* Char)
 {
-  static char cmdKey = findCmdKey(&Talk);
+  static int cmdKey = findCmdKey(&Talk);
 
   if(!Char->CheckTalk())
     return false;
@@ -795,7 +798,7 @@ truth commandsystem::Talk(character* Char)
   else
   {
     static festring fsQ;
-    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<cmdKey<<"']";return true;}();
+    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
     static int iPreviousDirChosen = DIR_ERROR;
     int Dir = game::DirectionQuestion(fsQ, false, true, cmdKey, iPreviousDirChosen);
 
@@ -866,8 +869,8 @@ truth commandsystem::Read(character* Char)
 
 #ifdef WIZARD
   // stops auto question timeout that was preventing reading at all
-  if(Item && game::GetAutoPlayMode())
-    game::DisableAutoPlayMode();
+  if(Item && wizautoplay::GetAutoPlayMode())
+    wizautoplay::DisableAutoPlayMode();
 #endif
 
   return Item && Char->ReadItem(Item);
@@ -991,7 +994,7 @@ truth commandsystem::ShowKeyLayout(character*)
     if(!GetCommand(c)->IsWizardModeFunction())
     {
       Buffer.Empty();
-      Buffer << GetCommand(c)->GetKey();
+      Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
     }
@@ -1006,7 +1009,7 @@ truth commandsystem::ShowKeyLayout(character*)
       if(GetCommand(c)->IsWizardModeFunction())
       {
         Buffer.Empty();
-        Buffer << GetCommand(c)->GetKey();
+        Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
         Buffer.Resize(10);
         List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
@@ -1082,9 +1085,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
             What=c;
             if(What.GetSize()>0){
               if(What[0]==game::MapNoteToken()){ //having map note token means it is already a map note, so let it be read/write at will
-                std::string str=What.CStr();
-                What.Empty();
-                What<<str.substr(1).c_str(); //removes token prefix TODO implement substr() at festring
+                What.Erase(0,1); //removes token prefix
               } else { // this is a case of non-map note "engraving" (like normal vanilla engraving from golemns)
                 if(!lsqrN->HasBeenSeen()){
                   /*****
@@ -1151,6 +1152,94 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   return false;
 }
 
+truth commandsystem::AskFavour(character* Char)
+{
+  felist felFavourList(CONST_S("Ask a favour from Whom?"));
+  felFavourList.SetEntryDrawer(game::GodEntryDrawer);
+  
+  int iTot=0;
+  std::vector<std::pair<god*,int>> vSelectableFavours;
+  for(int c = 1; c <= GODS; ++c){
+    god* pgod = game::GetGod(c);
+    if(!pgod->IsKnown())continue;
+    
+    bool bOk=false;
+    if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0)bOk=true;
+    if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0)bOk=true;
+    if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
+    if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
+    
+    bool bGodSectionEntry=true;
+    std::vector<int> v = pgod->GetKnownSpells();
+    for(auto piFavour = v.begin(); piFavour != v.end(); ++piFavour){
+      festring fsFavour = CONST_S("") + god::GetFavourName(*piFavour);
+      
+      col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
+      if(!bOk && game::WizardModeIsReallyActive())col=RED;
+      
+      if(bGodSectionEntry){
+        festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment()) + " " 
+          + pgod->GetName()+" may grant you a favour.";
+        if(ivanconfig::IsShowGodInfo())fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
+        felFavourList.AddEntry(fsGodEntry, DARK_GRAY, 20, c, false);
+        bGodSectionEntry=false;
+      }
+      felFavourList.AddEntry(fsFavour, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
+
+      if(bOk || game::WizardModeIsReallyActive()){
+//        std::pair<god*,int> GS;
+//        GS.first = pgod;
+//        GS.second = *piSpell;
+        vSelectableFavours.push_back(std::make_pair(pgod,*piFavour));
+      }
+      
+      iTot++;
+    }
+  }
+  
+  festring fsMsg;
+  fsMsg = fsMsg+"You don't know about any "+game::GetVerbalPlayerAlignment()+" favours...";
+  if(iTot>0 && vSelectableFavours.size()==0){
+    felFavourList.AddEntry(cfestring("(")+fsMsg+")", DARK_GRAY, 0, NO_IMAGE, false);
+  }
+      
+  int Select = LIST_WAS_EMPTY;
+  if(iTot>0){
+    game::SetStandardListAttributes(felFavourList);
+    if(vSelectableFavours.size()>0)
+      felFavourList.AddFlags(SELECTABLE);
+    Select = felFavourList.Draw();
+  }
+  
+  if(Select == LIST_WAS_EMPTY || vSelectableFavours.size()==0)
+  {
+//    ADD_MESSAGE("You don't know about any %s favours...", game::GetVerbalPlayerAlignment());
+    ADD_MESSAGE(fsMsg.CStr());
+    return false;
+  }
+
+  if(Select & FELIST_ERROR_BIT)
+    return false;
+  
+  god* G = vSelectableFavours[Select].first;
+  int iFavour = vSelectableFavours[Select].second;
+  int iDebit=FAVOURDEBIT_AUTO;
+  int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
+  if(DivineMaster){
+    if(G == game::GetGod(DivineMaster))
+      iDebit=FAVOURDEBIT_AUTOHALF;
+    else
+      iDebit=FAVOURDEBIT_AUTODOUBLE;
+  }
+
+  if(G->Favour(iFavour,iDebit)){
+    Char->EditAP(-1000);
+    return true;
+  }
+  
+  return false;
+}
+
 truth commandsystem::Pray(character* Char)
 {
   felist Panthenon(CONST_S("To Whom you want to address your prayers?"));
@@ -1165,9 +1254,9 @@ truth commandsystem::Pray(character* Char)
     return false;
   }
 
+  festring desc;
   if(!DivineMaster)
   {
-    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
@@ -1182,7 +1271,9 @@ truth commandsystem::Pray(character* Char)
   else
     if(game::GetGod(DivineMaster)->IsKnown())
     {
-      Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+      desc << game::GetGod(DivineMaster)->GetCompleteDescription();
+      if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(DivineMaster)->GetLastKnownRelation();
+      Panthenon.AddEntry(desc, LIGHT_GRAY, 20, DivineMaster);
       Panthenon.SetLastEntryHelp(festring() << game::GetGod(DivineMaster)->GetName() << ", the " << game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
@@ -1254,7 +1345,7 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
-  static char cmdKey = findCmdKey(&Kick);
+  static int cmdKey = findCmdKey(&Kick);
 
   /** No multi-tile support */
 
@@ -1269,7 +1360,7 @@ truth commandsystem::Kick(character* Char)
   }
 
   static festring fsQ;
-  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";return true;}();
+  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
   static int iPreviousDirChosen = DIR_ERROR;
   int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
@@ -1324,9 +1415,14 @@ truth commandsystem::Offer(character* Char)
         Item->SendToHell();
         Char->DexterityAction(5); /** C **/
         return true;
-      }
-      else
+      } else {
+        if(ivanconfig::IsDropBeforeOffering())
+          if(!game::IsQuestItem(Item)){
+            Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
+            game::SetDropTag(Item);
+          }
         return false;
+      }
     }
     else
       return false;
@@ -1345,7 +1441,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  static char cmdKey = findCmdKey(&Throw);
+  static int cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;
@@ -2029,7 +2125,7 @@ truth commandsystem::WizardMode(character* Char)
 
 truth commandsystem::AutoPlay(character* Char)
 {
-  game::IncAutoPlayMode();
+  wizautoplay::IncAutoPlayMode();
   return false;
 }
 
@@ -2275,8 +2371,8 @@ truth commandsystem::SecretKnowledge(character* Char)
       delete Material[c];
   }
 
-  List.PrintToFile(game::GetUserDataDir() + "secret" + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetUserDataDir().CStr(), Chosen);
+  List.PrintToFile(GetUserDataDir() + "secret" + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", GetUserDataDir().CStr(), Chosen);
   return false;
 }
 

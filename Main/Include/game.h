@@ -169,6 +169,7 @@ class areachangerequest { };
 typedef void (*dbgdrawoverlay)();
 
 #define AUTOSAVE_SUFFIX ".AutoSave"
+#define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
 {
  public:
@@ -181,6 +182,7 @@ class game
   static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
+  static void SetDropTag(item* it);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();
@@ -279,6 +281,7 @@ class game
   static int GetDirectionForVector(v2);
   static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
+  static int GetGodAlignmentVsPlayer(god* G);
   static void CreateGods();
   static int GetScreenXSize();
   static int GetScreenYSize();
@@ -362,7 +365,6 @@ class game
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
-  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetBoneDir();
@@ -401,10 +403,6 @@ class game
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
-  static void IncAutoPlayMode();
-  static int GetAutoPlayMode() { return AutoPlayMode; }
-  static void AutoPlayModeApply();
-  static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -413,7 +411,6 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
-  static int GetAutoPlayMode() { return 0; }
 #endif
 
   static truth WizardModeIsReallyActive() { return WizardMode; }
@@ -505,6 +502,11 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
+  static truth ConfigureCustomKeys();
+  static festring ToCharIfPossible(int i);
+  static truth ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys);
+  static festring GetMoveKeyDesc(int i);
+  static void LoadCustomCommandKeys();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -514,6 +516,7 @@ class game
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
+  static int  MoveCustomCommandKey[];
   static cv2 MoveVector[];
   static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
@@ -579,7 +582,6 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
-  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;

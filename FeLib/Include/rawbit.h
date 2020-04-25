@@ -49,6 +49,7 @@ class rawbitmap
                    cpackalpha* = 0,
                    cuchar* = 0, cuchar* = 0, truth = true) const;
   v2 GetSize() const { return Size; }
+  v2 GetFontSize() { return v2FontSize; }
 
   void AlterGradient(v2, v2, int, int, truth);
   void SwapColors(v2, v2, int, int);
@@ -74,6 +75,7 @@ class rawbitmap
   uchar* Palette;
   paletteindex** PaletteBuffer;
   fontcache FontCache;
+  v2 v2FontSize=v2(8,8); //TODO everywhere using 8 to calculate font size should use this variable, so one day we can have dynamic size font, after that we can set this var to any other proper value
 };
 
 #endif

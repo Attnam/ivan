@@ -404,7 +404,7 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
 
     long Price = GetTruePrice();
 
-    if(Price)
+    if(Midas && Price)
     {
       Price /= 4; /* slightly lower than with 10 Cha */
       ADD_MESSAGE("Gold pieces clatter on the floor.");
@@ -1073,7 +1073,10 @@ void item::Be()
         game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
     }
     else
+    {
       --LifeExpectancy;
+      //TODO fluids emitation on weapons require updating in case it lowers with time, this didnt work: if(Fluid)CalculateEmitation();
+    }
   }
 }
 
@@ -1424,6 +1427,20 @@ void item::SetConfig(int NewConfig, int SpecialFlags)
     UpdatePictures();
 }
 
+truth item::SetConfigIfPossible(int NewConfig, int SpecialFlags)
+{
+  if(databasecreator<item>::InstallDataBaseIfPossible(this, NewConfig, GetConfig())){
+    CalculateAll();
+
+    if(!(SpecialFlags & NO_PIC_UPDATE))
+      UpdatePictures();
+    
+    return true;
+  }
+  
+  return false;
+}
+
 god* item::GetMasterGod() const
 {
   return game::GetGod(GetConfig());
@@ -1496,6 +1513,12 @@ void item::Draw(blitdata& BlitData) const
   }
   cbitmap* P = bmp;
 
+  if(GetMainMaterial() && (BlitData.CustomData & ALLOW_CONTRAST)){
+    col16 col = ivanconfig::CheckChangeColor(GetMainMaterial()->GetColor());
+    if(col!=GetMainMaterial()->GetColor())
+      BlitData.Bitmap->Fill(BlitData.Dest,TILE_V2,col);
+  }
+    
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaLuminanceBlit(BlitData);
   else
@@ -1687,8 +1710,12 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
       if(Slot[c])
       {
         lsquare* Square = GetLSquareUnder(c);
-        Square->SendNewDrawRequest();
-        Square->SendMemorizedUpdateRequest();
+        if(Square){ //TODO is this fix ok? let it crash elsewhere better to track the problem...
+          Square->SendNewDrawRequest();
+          Square->SendMemorizedUpdateRequest();
+        }else{
+          DBG4("Is nowhere to be found, how!?",Square,GetNameSingular().CStr(),SquaresUnder);
+        }
       }
 }
 
@@ -1696,10 +1723,15 @@ void item::CalculateEmitation()
 {
   object::CalculateEmitation();
 
-  if(Fluid)
-    for(int c = 0; c < SquaresUnder; ++c)
-      for(const fluid* F = Fluid[c]; F; F = F->Next)
-        game::CombineLights(Emitation, F->GetEmitation());
+  if(Fluid){
+    for(int c = 0; c < SquaresUnder; ++c){
+      for(const fluid* F = Fluid[c]; F; F = F->Next){
+        DBG2(F->GetEmitation(),F->GetLiquid()->GetVolume());
+        game::CombineLights(Emitation,
+          CalcEmitationBasedOnVolume( F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
+      }
+    }
+  }
 }
 
 void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const

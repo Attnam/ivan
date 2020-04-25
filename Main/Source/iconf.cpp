@@ -13,12 +13,14 @@
 #include "area.h"
 #include "audio.h"
 #include "bitmap.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "game.h"
 #include "graphics.h"
 #include "iconf.h"
 #include "igraph.h"
+#include "message.h"
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
@@ -142,6 +144,10 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           "",
                                           false);
+truthoption ivanconfig::OverloadedFight(  "OverloadedFight",
+                                          "Allow fighting while overloaded",
+                                          "Moving is, of course, still denied.",
+                                          false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
                                           "Auto pick up thrown weapons",
                                           "Automatically annotate any thrown weapon and pick it up without loosing a turn when you step on its square.",
@@ -162,6 +168,14 @@ truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
                                           "",
                                           false);
+truthoption ivanconfig::DropBeforeOffering("DropBeforeOffering",
+                                          "Drop the item on altar in case it is not accepted",
+                                          "Automatically drop offered items on an altar to prevent them from cluttering your inventory should the god not accept your gift. Beware it may be owned floor!",
+                                          false);
+truthoption ivanconfig::AllowContrastBackground("AllowContrastBackground",
+                                          "Better contrast background to dark items and materials",
+                                          "",
+                                          false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
                                           "Show item volume in cm3",
                                           "",
@@ -174,6 +188,10 @@ truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnim
                                           "Hide hit animations that look like miss",
                                           "",
                                           true);
+truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume",
+                                          "Small light sources emit less light",
+                                          "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show full name of current dungeon",
                                           "",
@@ -245,7 +263,7 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           "Breeders' active range",
-                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively.",
+                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively. After you lower this option value to the minimum, you have to wait for all magic clouds (from magic mushrooms) to disappear as they are the main source of lag.",
                                           0, 5,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
@@ -274,9 +292,16 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
+                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
+truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
+                                          "Custom command and movement", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign any command to any key binding of your preference. The default keys here will be from the control scheme option above. Only changed keybindings will be saved at the new config file. This global configuration won't work at main menu, load/start some game.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SetupCustomKeysChanger);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
                                           "Automatically try to open doors when you walk into them, and don't ask for the target of close/apply actions when only one viable target is present.",
@@ -298,13 +323,22 @@ numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
                                           &AltListItemWidthChangeInterface,
                                           &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
-                                          "Volume",
-                                          "Select volume for sound effects and game music.",
+                                          "Music Volume",
+                                          "Select volume for game MIDI music",
                                           127,
                                           &VolumeDisplayer,
                                           &VolumeChangeInterface,
                                           &VolumeChanger,
                                           &VolumeHandler);
+scrollbaroption ivanconfig::SfxVolume(    "SfxVolume",
+                                          "Soud Effects (SFX) Volume",
+                                          "Select volume for sound effects",
+                                          127,
+                                          &SfxVolumeDisplayer,
+                                          &SfxVolumeChangeInterface,
+                                          &SfxVolumeChanger,
+                                          &SfxVolumeHandler);
+
 cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Use MIDI soundtrack",
                                           "Select an output device for the game music, or disable soundtrack.",
@@ -368,16 +402,11 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value == 0)
-    Entry << "everywhere";
-  else if(O->Value == 1)
-    Entry << "close";
-  else if(O->Value == 2)
-    Entry << "near";
-  else if(O->Value == 3)
-    Entry << "medium";
-  else if(O->Value == 4)
-    Entry << "far";
+  if     (O->Value == 0) Entry << "everywhere";
+  else if(O->Value == 1) Entry << "close";
+  else if(O->Value == 2) Entry << "near";
+  else if(O->Value == 3) Entry << "medium";
+  else if(O->Value == 4) Entry << "far";
   else
     Entry << O->Value;
 }
@@ -512,6 +541,10 @@ void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << "/127";
 }
+void ivanconfig::SfxVolumeDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/127";
+}
 
 void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 {
@@ -528,18 +561,18 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
-        switch(O->Value)
-        {
-          case DIR_NORM:
-                Entry << CONST_S("Normal");
-                break;
-          case DIR_ALT:
-                Entry << CONST_S("Alternative");
-                break;
-          case DIR_HACK:
-                Entry << CONST_S("NetHack");
-                break;
-        }
+  switch(O->Value)
+  {
+    case DIR_NORM:
+      Entry << CONST_S("Normal");
+      break;
+    case DIR_ALT:
+      Entry << CONST_S("Alternative");
+      break;
+    case DIR_HACK:
+      Entry << CONST_S("NetHack");
+      break;
+  }
 }
 
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
@@ -751,6 +784,17 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
 
   return false;
 }
+truth ivanconfig::SfxVolumeChangeInterface(numberoption* O)
+{
+  iosystem::ScrollBarQuestion(CONST_S("Set new SFX volume value (0-127, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 127, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+
+  clearToBackgroundAfterChangeInterface();
+
+  return false;
+}
 
 void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
 {
@@ -840,6 +884,25 @@ void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
   }
 }
 
+col16 ivanconfig::CheckChangeColor(col16 col)
+{
+  if(IsAllowContrastBackground()){
+    static col16 colRef = DARK_GRAY;
+    static col16 iR = GetRed16(colRef);
+    static col16 iG = GetGreen16(colRef);
+    static col16 iB = GetBlue16(colRef);
+    if(
+      GetRed16(col)  <iR &&
+      GetGreen16(col)<iG &&
+      GetBlue16(col) <iB
+    ){
+      static col16 iVeryDarkGray = [](){float f=0.66;return MakeRGB16(iR*f,iG*f,iB*f);}();
+      return iVeryDarkGray;
+    }
+  }
+  return col;
+}
+
 void ivanconfig::AutoPickUpMatchingChanger(stringoption* O, cfestring& What)
 {
   if(O!=NULL){
@@ -872,6 +935,12 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   O->Value = What;
 
   audio::SetVolumeLevel(What);
+}
+void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 127) What = 127;
+  O->Value = What;
 }
 
 #ifndef __DJGPP__
@@ -952,6 +1021,15 @@ void ivanconfig::FontGfxChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
+{
+  if(game::IsRunning() || !What){
+    O->Value = What;
+    if(O->Value)
+      game::ConfigureCustomKeys();
+  }
+}
+
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 {
   O->Value = What;
@@ -1002,6 +1080,16 @@ void ivanconfig::ContrastHandler(long Value)
 void ivanconfig::VolumeHandler(long Value)
 {
   VolumeChanger(&Volume, Value);
+
+  if(game::IsRunning())
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
+}
+void ivanconfig::SfxVolumeHandler(long Value)
+{
+  SfxVolumeChanger(&SfxVolume, Value);
 
   if(game::IsRunning())
   {
@@ -1063,6 +1151,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
   configsystem::AddOption(fsCategory,&AutoPickUpMatching);
+  configsystem::AddOption(fsCategory,&DropBeforeOffering);
+  configsystem::AddOption(fsCategory,&OverloadedFight);
 
   fsCategory="Game Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -1095,6 +1185,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&AllowContrastBackground);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
@@ -1110,9 +1201,11 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(fsCategory,&MIDIOutputDevice);
   configsystem::AddOption(fsCategory,&Volume);
+  configsystem::AddOption(fsCategory,&SfxVolume);
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SetupCustomKeys);
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
@@ -1122,14 +1215,15 @@ void ivanconfig::Initialize()
   fsCategory="Advanced Options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
    ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.cfg");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.conf");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.conf");
 #endif
 
   configsystem::Load();
@@ -1143,6 +1237,9 @@ void ivanconfig::Initialize()
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
+  
+  if(ivanconfig::IsSetupCustomKeys())
+    game::LoadCustomCommandKeys();
 
   //TODO re-use changer methods for above configs too to avoid duplicating the algo?
   FrameSkipChanger(NULL,FrameSkip.Value);
