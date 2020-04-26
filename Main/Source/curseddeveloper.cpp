@@ -28,6 +28,11 @@ bool curseddeveloper::bCursedDeveloperTeleport = false;
 #define HEAL_MINOK 2
 #define HEAL_MAX 3
 
+/**
+ *  is some special/named/important character
+ */
+bool IsSpecialCharacter(character* C){return !C->CanBeCloned();} 
+
 void curseddeveloper::RestoreLimbs(festring fsCmdParams)
 {
   int iMode = fsCmdParams.IsEmpty() ? 0 : atoi(fsCmdParams.CStr());
@@ -58,11 +63,34 @@ bool curseddeveloper::CreateBP(int iIndex)
     return false;
   
   bodypart* bp = P->GetBodyPart(iIndex);
-  if(!bp && P->CanCreateBodyPart(iIndex)){
-    bp=P->CreateBodyPart(iIndex);
+  
+  if(!bp){
+    int iMod=1;
+    for(ulong iOBpID : P->GetOriginalBodyPartID(iIndex)){
+      bp = dynamic_cast<bodypart*>(game::SearchItem(iOBpID));
+      if(bp)break;
+    }
+
     if(bp){
-      ADD_MESSAGE("A new cursed %s grows on you.",bp->GetName(INDEFINITE).CStr());
-      bp->SpillFluid(P,liquid::Spawn(LIQUID_DARKNESS, 5));
+      bp->RemoveFromSlot();
+      P->AttachBodyPart(bp);
+      ADD_MESSAGE("Your creepy %s comes back to you.",bp->GetName(INDEFINITE).CStr());
+      iMod=5;
+    }else
+    if(P->CanCreateBodyPart(iIndex)){
+      bp=P->CreateBodyPart(iIndex);
+      if(bp){
+        ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(INDEFINITE).CStr());
+        iMod=10;
+      }
+    }
+    
+    if(bp){
+      bp->SpillFluid(P,liquid::Spawn(LIQUID_DARKNESS,iMod*2));
+      if(iIndex == HEAD_INDEX){
+        int iTm=iMod*10;
+        P->BeginTemporaryState(CONFUSED, iTm + RAND()%iTm);
+      }
     }
   }
   
@@ -180,20 +208,22 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
       game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
     
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
-    if(Killer->GetSquaresUnder()>1){
+    if(Killer->GetSquaresUnder()>1){ //huge foes
       bCursedDeveloperTeleport=true;
       P->TeleportRandomly(true);
       ADD_MESSAGE("You see a flash of dark light and teleport away from the killing blow!");
       bCursedDeveloperTeleport=false;
     }else{
-      bool bRestoreTL=false;
-      if(Killer->HasStateFlag(TELEPORT_LOCK)){
-        Killer->DeActivateTemporaryState(TELEPORT_LOCK);
-        bRestoreTL=true;
+      if(IsSpecialCharacter(Killer)){
+        bool bRestoreTL=false;
+        if(Killer->HasStateFlag(TELEPORT_LOCK)){
+          Killer->DeActivateTemporaryState(TELEPORT_LOCK);
+          bRestoreTL=true;
+        }
+        Killer->TeleportRandomly(true);
+        if(bRestoreTL)
+          Killer->GainIntrinsic(TELEPORT_LOCK);
       }
-      Killer->TeleportRandomly(true);
-      if(bRestoreTL)
-        Killer->GainIntrinsic(TELEPORT_LOCK);
     }
   }
   
@@ -235,7 +265,8 @@ bool AddState(character* Killer,long Flag,cchar* FlagName,long FlagD,cchar* Flag
 }
 
 /**
- * this will make the NPC that kills the player more challenging for every kill
+ * This will make the Special NPC that kills the player more challenging for every kill.
+ * Non special NPCs will be promptly harmed and fully debuffed.
  * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
  * @return if player should stay (true) or teleport (false)
  */
@@ -243,25 +274,28 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
 {
   if(!bCursedDeveloper)return true;
   if(!Killer)return true;
+  if(game::IsInWilderness())return true;
   
   riDebuff=0;
   rbRev=false;
 
   // BUFFs, every death makes it harder to player:
   riBuff=1;
-#define ASRET(e,b)    if(AddState(Killer,e,#e,0,NULL,b))return false;
-#define ASRETD(e,d,b) if(AddState(Killer,e,#e,d,#d,b))return false;
-  ASRET(ESP,riBuff);
-  ASRET(INFRA_VISION,riBuff);
-//  ASRETD(HASTE,SLOW,riBuff);
-  ASRET(HASTE,riBuff);
-  ASRET(SWIMMING,riBuff);
-  ASRET(ETHEREAL_MOVING,riBuff);
-  ASRET(REGENERATION,riBuff);
-  ASRET(LEVITATION,riBuff);
-  ASRET(GAS_IMMUNITY,riBuff);
-  ASRET(TELEPORT_LOCK,riBuff);
-  ASRET(POLYMORPH_LOCK,riBuff);
+#define ASRET(e,b)    if(AddState(Killer,e,#e,0,NULL,b) && IsSpecialCharacter(Killer))return false;
+//#define ASRETD(e,d,b) if(AddState(Killer,e,#e,d,#d,b)   && IsSpecialCharacter(Killer))return false;
+  if(IsSpecialCharacter(Killer)){
+    ASRET(ESP,riBuff);
+    ASRET(INFRA_VISION,riBuff);
+  //  ASRETD(HASTE,SLOW,riBuff);
+    ASRET(HASTE,riBuff);
+    ASRET(SWIMMING,riBuff);
+    ASRET(ETHEREAL_MOVING,riBuff);
+    ASRET(REGENERATION,riBuff);
+    ASRET(LEVITATION,riBuff);
+    ASRET(GAS_IMMUNITY,riBuff);
+    ASRET(TELEPORT_LOCK,riBuff);
+    ASRET(POLYMORPH_LOCK,riBuff);
+  }
   
   /*************************
    *  DEBUFFs, after player has taken too much it is time to make it stop, but slowly:
@@ -276,15 +310,13 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   ASRET(POISONED,riDebuff);
   
   // Revenge, grant it will stop:
-  if(!game::IsInWilderness() && game::GetCurrentLevel())
-    game::GetCurrentLevel()->Explosion(
-      game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
-  
+  game::GetCurrentLevel()->Explosion(
+    game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+
+//    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+  Killer->GetTorso()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
+//    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
   ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
-  if(!game::IsInWilderness()){
-    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
-    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
-  }
     
   rbRev=true;
   
