@@ -8194,8 +8194,7 @@ truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb, truth nibbling)
     return false;
   }
 
-  if(IsPlayer()
-     && HasHadBodyPart(Item)
+  if(IsPlayer() && !curseddeveloper::IsCursedDeveloper() && HasHadBodyPart(Item)
      && !game::TruthQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
     return false;
 
