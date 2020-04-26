@@ -58,8 +58,13 @@ bool curseddeveloper::CreateBP(int iIndex)
     return false;
   
   bodypart* bp = P->GetBodyPart(iIndex);
-  if(!bp && P->CanCreateBodyPart(iIndex))
+  if(!bp && P->CanCreateBodyPart(iIndex)){
     bp=P->CreateBodyPart(iIndex);
+    if(bp){
+      ADD_MESSAGE("A new cursed %s grows on you.",bp->GetName(INDEFINITE).CStr());
+      bp->SpillFluid(P,liquid::Spawn(LIQUID_DARKNESS, 5));
+    }
+  }
   
   if(bp && bp->GetHP() > bp->GetMaxHP()){ //TODO how does this happens???
     DBG4(iIndex,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
