@@ -3537,8 +3537,7 @@ void bodypart::UpdateFlags()
   else
     Flags &= ~BADLY_HURT;
 
-  Master->ValidateTrapData();
-  if(Master->BodyPartIsStuck(GetBodyPartIndex()))
+  if(Master->ValidateTrapData() && Master->BodyPartIsStuck(GetBodyPartIndex()))
     Flags |= STUCK;
   else
     Flags &= ~STUCK;

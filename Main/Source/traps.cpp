@@ -57,8 +57,7 @@ truth web::TryToTearDown(character* Actor,int Modifier)
   {
     //if(GetLSquareUnder()->GetPos()==Actor->GetPos())C->RemoveTrap(GetTrapID());else
     character* C = GetLSquareUnder()->GetCharacter();
-    if(C)C->ValidateTrapData();
-    if(C && C->IsStuckToTrap(GetTrapID()))
+    if(C && C->ValidateTrapData() && C->IsStuckToTrap(GetTrapID()))
       C->RemoveTrap(GetTrapID());
     TrapData.VictimID = 0;
     GetLSquareUnder()->RemoveTrap(this);

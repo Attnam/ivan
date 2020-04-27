@@ -401,8 +401,10 @@ truth wizautoplay::AutoPlayAIDropThings()
 bool wizautoplay::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
 {
   if(!it->CanBeSeenBy(P))return false;
+  
   P->ValidateTrapData();
   if(!it->IsPickable(P))return false;
+  
   if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
 
   if(!bPlayerHasLantern && (it->IsOnFire(P) || it->GetEmitation()>0)){

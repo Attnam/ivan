@@ -1602,8 +1602,7 @@ void beartrap::StepOnEffect(character* Stepper)
 
 truth beartrap::CheckPickUpEffect(character* Picker)
 {
-  Picker->ValidateTrapData();
-  if(Picker->IsStuckToTrap(GetTrapID()))
+  if(Picker->ValidateTrapData() && Picker->IsStuckToTrap(GetTrapID()))
   {
     if(Picker->IsPlayer())
       ADD_MESSAGE("You are tightly stuck in %s.", CHAR_NAME(DEFINITE));

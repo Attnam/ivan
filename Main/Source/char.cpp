@@ -11097,16 +11097,17 @@ truth character::IsUsingWeaponOfCategory(int Category) const
 
 truth character::TryToUnStickTraps(v2 Dir)
 {
-  ValidateTrapData();
-  for(trapdata* T = TrapData; T; T = T->Next)
-    if(IsEnabled())
-    {
-      entity* Trap = game::SearchTrap(T->TrapID);
-      if(Trap && Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
-        break;
+  if(ValidateTrapData()){
+    for(trapdata* T = TrapData; T; T = T->Next){
+      if(IsEnabled())
+      {
+        entity* Trap = game::SearchTrap(T->TrapID);
+        if(Trap && Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
+          break;
+      }
     }
-
-  ValidateTrapData();
+    ValidateTrapData(); //if something changed this fixes it
+  }
   return !TrapData && IsEnabled();
 }
 
@@ -11117,30 +11118,39 @@ struct trapidcomparer
   ulong ID;
 };
 
-void character::ValidateTrapData()
+truth character::ValidateTrapData()
 {
-  for(trapdata* T = TrapData; T;)
-  {
-    if(!game::SearchTrap(T->TrapID)){
-      trapdata* ToDel = T;
-      if(TrapData==ToDel)
-        TrapData=T->Next;
+  if(!TrapData)return false;
+  
+  static trapdata* ToDel=NULL;
+  trapdata* T = TrapData;
+  for(;T;){
+    if(game::SearchTrap(T->TrapID)){
       T = T->Next;
-      delete ToDel;
-    }else{
-      T = T->Next;
+      continue;
     }
+    
+    ToDel = T;
+    T = T->Next;
+    if(TrapData==ToDel){
+      TrapData=T; //update 1st on the LL
+    }
+    delete ToDel;
+    ToDel=NULL;
   }
+  
+  return TrapData!=NULL;
 }
 
 void character::RemoveTrap(ulong ID)
 {
-  ValidateTrapData();
-  trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
-  if(T){
-    trapdata* ToDel = T;
-    T = T->Next;
-    delete ToDel;
+  if(ValidateTrapData()){
+    trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
+    if(T){
+      trapdata* ToDel = T;
+      T = T->Next;
+      delete ToDel;
+    }
   }
   doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
