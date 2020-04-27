@@ -13,9 +13,14 @@
 #ifndef __CURSEDDEVELOPER_H__
 #define __CURSEDDEVELOPER_H__
 
+class bodypart;
+class character;
+class festring;
+
 class curseddeveloper {
 #ifdef CURSEDDEVELOPER
   public:
+    static void Init();
     static bool IsCursedDeveloper(){return bCursedDeveloper;};
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
     static bool LifeSaveJustABit(character* Killer);
@@ -27,6 +32,7 @@ class curseddeveloper {
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;
+    static bool bInit;
 #else
   public:
     static bool IsCursedDeveloper(){return false;}

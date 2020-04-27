@@ -173,15 +173,25 @@ bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
 //  return false;
 //}
 
+//curseddeveloper::curseddeveloper()
+//{
+//  devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
+//    "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
+//}
+void curseddeveloper::Init(){
+  devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
+    "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
+}
+
 bool curseddeveloper::LifeSaveJustABit(character* Killer)
 {
   if(!bCursedDeveloper)
     return false;
   
-  static bool bInitDevCmdDummy = [](){
-    devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
-      "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
-    return true;}();
+//  static bool bInitDevCmdDummy = [](){
+//    devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
+//      "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
+//    return true;}();
   
   character* P = game::GetPlayer();
   game::DrawEverything();
