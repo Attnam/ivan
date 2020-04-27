@@ -257,6 +257,13 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     if(!game::IsInWilderness())
       P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
   
+  if(bRev || IsSpecialCharacter(Killer)){
+    character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
+    static int i1Min=33;
+    if(M)
+      M->SetLifeExpectancy(i1Min*5,i1Min*10);//33 is 1 min or 1 turn right? see: game::GetTime()
+  }
+  
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   
   game::DrawEverything();
@@ -291,7 +298,7 @@ bool AddState(character* Killer,long Flag,cchar* FlagName,long FlagD,cchar* Flag
 
 /**
  * This will make the Special NPC that kills the player more challenging for every kill.
- * Non special NPCs will be promptly harmed and fully debuffed.
+ * Non special NPCs will fall faster.
  * TODO could these NPC permanent upgrades be part of the normal gameplay in some way? May be, the life saving ammulet could let these buffs also be applied?
  * @return if player should stay (true) or teleport (false)
  */
@@ -329,19 +336,23 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   ASRET(HICCUPS,riDebuff);
 //  ASRETD(SLOW,HASTE,riDebuff);
   ASRET(SLOW,riDebuff);
-//  ASRET(PARASITE_TAPE_WORM,riDebuff);
+//no, adds more mobs...  ASRET(PARASITE_TAPE_WORM,riDebuff);
   ASRET(CONFUSED,riDebuff);
-//  ASRET(LEPROSY,riDebuff);
-  ASRET(POISONED,riDebuff);
+//no, may mess the player...  ASRET(LEPROSY,riDebuff);
+  if(RAND()%10==0)
+    ASRET(POISONED,riDebuff);
   
   // Revenge, grant it will stop:
-  game::GetCurrentLevel()->Explosion(
-    game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+  if(RAND()%5==0)
+    game::GetCurrentLevel()->Explosion(
+      game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
 
 //    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
-  Killer->GetTorso()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
+  if(RAND()%10==0){
+    Killer->GetTorso()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
+    ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
+  }
 //    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
-  ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
     
   rbRev=true;
   

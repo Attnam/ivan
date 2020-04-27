@@ -1786,6 +1786,8 @@ struct srpJoinLumps : public recipe{
   }
 
   virtual bool work(recipedata& rpd){ // it is just like to put them all together, no effort, instant.
+    rpd.fDifficulty=0.1;
+    
     askForEqualLumps(rpd);
 
     if(rpd.ingredientsIDs.empty()){
@@ -2157,6 +2159,7 @@ struct srpSplitLump : public recipe{
     item* ToSplit = NULL;
 
     rpd.bGradativeCraftOverride=true; //may be disabled below
+    rpd.fDifficulty=0.1;
 
     if(ToSplit==NULL && choseOneIngredient<lump>(rpd)){ //can  be split with hands only
       ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
