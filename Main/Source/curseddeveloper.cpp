@@ -68,20 +68,35 @@ bool curseddeveloper::CreateBP(int iIndex)
     int iMod=1;
     for(ulong iOBpID : P->GetOriginalBodyPartID(iIndex)){
       bp = dynamic_cast<bodypart*>(game::SearchItem(iOBpID));
-      if(bp)break;
+      if(bp){
+        if(iIndex == HEAD_INDEX){
+          /**
+           * when a kamikaze dwarf explodes and player's head flies away,
+           * bringing it back apparently causes SEGFAULT at: 
+           * game::run() > pool::be() > character::be() at `BodyPart->Be();`
+           * there is no null pointer, the `BodyPart` is valid and can be debugged,
+           * but when BodyPart->Be() is called it SEGFAULTs...
+           */
+          bp->RemoveFromSlot();
+          bp->SendToHell(); //so lets just destroy it to let a new one be created
+          bp=NULL;
+        }
+        break;
+      }
     }
 
     if(bp){
       bp->RemoveFromSlot();
       P->AttachBodyPart(bp);
-      ADD_MESSAGE("Your creepy %s comes back to you.",bp->GetName(INDEFINITE).CStr());
+      ADD_MESSAGE("Your creepy %s comes back to you.",bp->GetName(UNARTICLED).CStr());
       iMod=5;
-    }else
-    if(P->CanCreateBodyPart(iIndex)){
-      bp=P->CreateBodyPart(iIndex);
-      if(bp){
-        ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(INDEFINITE).CStr());
-        iMod=10;
+    }else{
+      if(P->CanCreateBodyPart(iIndex)){
+        bp=P->CreateBodyPart(iIndex);
+        if(bp){
+          ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(INDEFINITE).CStr());
+          iMod=10;
+        }
       }
     }
     

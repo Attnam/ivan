@@ -160,7 +160,6 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <codeAssistance>
-        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -168,15 +167,6 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
-          <ccTool>
-            <incDir>
-              <pElem>/usr/include</pElem>
-            </incDir>
-            <preprocessorList>
-              <Elem>CURSEDDEVELOPER</Elem>
-              <Elem>WIZARD</Elem>
-            </preprocessorList>
-          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
@@ -197,6 +187,7 @@
         <element flagsID="3" commonFlags="-std=c11"/>
       </flagsDictionary>
       <codeAssistance>
+        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -214,6 +205,7 @@
               <pElem>CMakeFiles/CMakeTmp</pElem>
             </incDir>
             <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
               <Elem>DBGMSG</Elem>
               <Elem>FELIST_WAITKEYUP</Elem>
               <Elem>WIZARD</Elem>
