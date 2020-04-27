@@ -94,7 +94,7 @@ bool curseddeveloper::CreateBP(int iIndex)
       if(P->CanCreateBodyPart(iIndex)){
         bp=P->CreateBodyPart(iIndex);
         if(bp){
-          ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(INDEFINITE).CStr());
+          ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(UNARTICLED).CStr());
           iMod=10;
         }
       }

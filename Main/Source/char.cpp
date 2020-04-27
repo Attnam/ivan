@@ -1694,8 +1694,9 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     ADD_MESSAGE("You die.");
     
 #ifdef CURSEDDEVELOPER    
-    if(curseddeveloper::LifeSaveJustABit((character*)Killer))
-      return;
+    if(!game::WizardModeIsReallyActive())
+      if(curseddeveloper::LifeSaveJustABit((character*)Killer))
+        return;
 #endif
     
 #ifdef WIZARD
