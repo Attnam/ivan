@@ -74,12 +74,15 @@ long curseddeveloper::UpdateKillCredit(character* Victim){
 //      lKillCredit = atol(fs.CStr());
 //    bInitKC=false;
 //  }
-  festring fs=P->GetTorso()->GetLabel();
-  if(!fs.IsEmpty())
-    lKillCredit = atol(fs.CStr());
+  festring fsKillCredit=P->GetTorso()->GetLabel();
+  DBG1(fsKillCredit.CStr());
+  if(!fsKillCredit.IsEmpty()){
+    lKillCredit = atol(fsKillCredit.CStr());
+  }else{
+    lKillCredit=0;
+  }
   
   if(Victim){
-//    lKillCredit += IsSpecialCharacter(Victim) ? 100 : 1; //TODO consider danger ?
     int i = Victim->GetRelativeDanger(P)*10;
     if(i<1)i=1;
     lKillCredit+=i;
