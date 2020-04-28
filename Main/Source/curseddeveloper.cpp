@@ -37,7 +37,7 @@ bool IsSpecialCharacter(character* C){return !C->CanBeCloned();}
 
 void curseddeveloper::NightmareWakeUp(character* P)
 {
-  ADD_MESSAGE("You wakeup from a nightmare! But... for some reason, you feel stronger...");
+  ADD_MESSAGE("You had a nightmare! And... for some reason, you feel stronger...");
   P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(SWEAT, 5 * P->GetAttribute(ENDURANCE)));
 
   if(RAND()%3){
@@ -64,14 +64,19 @@ long curseddeveloper::UpdateKillCredit(character* Victim){
   if(P->GetID()!=1)
     ABORT("Player ID 1 can't be found!!!");
   
-  static bool bInitKC=true;
-  if(bInitKC){
-    festring fs=P->GetTorso()->GetLabel();
-    DBG2("StoredKillCredit",fs.CStr());
-    if(!fs.IsEmpty())
-      lKillCredit = atol(fs.CStr());
-    bInitKC=false;
-  }
+//  static bool bInitKC=true;
+//  static character* CharPrevious=NULL;
+//  if(CharPrevious!=P)
+//  if(bInitKC){
+//    festring fs=P->GetTorso()->GetLabel();
+//    DBG2("StoredKillCredit",fs.CStr());
+//    if(!fs.IsEmpty())
+//      lKillCredit = atol(fs.CStr());
+//    bInitKC=false;
+//  }
+  festring fs=P->GetTorso()->GetLabel();
+  if(!fs.IsEmpty())
+    lKillCredit = atol(fs.CStr());
   
   if(Victim){
 //    lKillCredit += IsSpecialCharacter(Victim) ? 100 : 1; //TODO consider danger ?
@@ -332,12 +337,18 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
         
   game::DrawEverything();
   
-  if(lKillCredit<0){
+  int iDung=3,iLvl=0; //tweiraith island
+  bool bIsAtHomeIsland = P->GetDungeon()->GetIndex()==iDung && P->GetLevel()->GetIndex()==iLvl;
+  if(lKillCredit<0 && bIsAtHomeIsland)
+    lKillCredit=0; //to prevent pointless too negative value
+  if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland){
     if(RAND()%10==0){
       for(int i=0;i<10;i++){
-        if(game::TryTravel(3, 0, DOUBLE_BED, false, true)){ // teleport to a bed in tweiraith island TODO should be the small bed at the small house
+        ADD_MESSAGE("You try to wakeup...");
+        if(game::TryTravel(iDung, iLvl, DOUBLE_BED, false, true)){ //TODO should be the small bed at the small house
           bNightmareWakeUp=true;
-          UpdateKillCredit(NULL);
+          ADD_MESSAGE("You finally wakeup.");
+          UpdateKillCredit(NULL); //to call nightmare wakeup
           return true; // after TryTravel() avoid most code...
         }
         P->TeleportRandomly(true); //try to move away from foes to be able to travel
