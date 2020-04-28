@@ -29,10 +29,13 @@ class curseddeveloper {
     static bool HealTorso(bodypart* bp);
     static bool HealBP(int iIndex,int iMode,int iMinHpOK=0);
     static bool CreateBP(int iIndex);
+    static long UpdateKillCredit(character* Victim);
+    static long GetKillCredit(){return lKillCredit;}
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;
     static bool bInit;
+    static long lKillCredit;
 #else
   public:
     static bool IsCursedDeveloper(){return false;}

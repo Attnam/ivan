@@ -1687,8 +1687,15 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   if(!IsEnabled())
     return;
 
+#ifdef CURSEDDEVELOPER    
+  if(Killer && Killer->IsPlayer()){
+    if(!game::WizardModeIsReallyActive())
+      curseddeveloper::UpdateKillCredit(this);
+  }
+#endif
+  
   RemoveTraps();
-
+  
   if(IsPlayer())
   {
     ADD_MESSAGE("You die.");
@@ -5213,9 +5220,10 @@ void character::DrawPanel(truth AnimationDraw) const
   int iLeftPos=0;
 #ifdef CURSEDDEVELOPER
     if(curseddeveloper::IsCursedDeveloper()){
-      festring fsCD="(Cursed Developer) ";
+      festring fsCD;fsCD<<"(Cursed Developer, KC="<<curseddeveloper::GetKillCredit()<<") ";
       iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
-      FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), YELLOW, fsCD.CStr(), GetPanelName().CStr());
+      FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), 
+        curseddeveloper::GetKillCredit()<0?RED:YELLOW, fsCD.CStr(), GetPanelName().CStr());
     }
 #endif
   FONT->Printf(DOUBLE_BUFFER, v2(16+iLeftPos, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());

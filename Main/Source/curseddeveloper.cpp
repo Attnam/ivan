@@ -23,15 +23,51 @@
 #ifdef CURSEDDEVELOPER
 bool curseddeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
 bool curseddeveloper::bCursedDeveloperTeleport = false;
+long curseddeveloper::lKillCredit=0;
 
-#define HEAL_1 1
+#define HEAL_1     1
 #define HEAL_MINOK 2
-#define HEAL_MAX 3
+#define HEAL_MAX   3
 
 /**
  *  is some special/named/important character
  */
 bool IsSpecialCharacter(character* C){return !C->CanBeCloned();} 
+
+long curseddeveloper::UpdateKillCredit(character* Victim){
+  character* P=PLAYER;
+  while(P->GetID()!=1){
+    if(PLAYER->GetPolymorphBackup()){
+      DBG2(P->GetID(),P->GetNameSingular().CStr());
+      P=PLAYER->GetPolymorphBackup();
+      DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
+    }else{
+      break;
+    }
+  }
+  if(P->GetID()!=1)
+    ABORT("Player ID 1 can't be found!!!");
+  
+  static bool bInitKC=true;
+  if(bInitKC){
+    festring fs=P->GetTorso()->GetLabel();
+    if(!fs.IsEmpty())
+      lKillCredit = atol(fs.CStr());
+    bInitKC=false;
+  }
+  
+  if(Victim){
+//    lKillCredit += IsSpecialCharacter(Victim) ? 100 : 1; //TODO consider danger ?
+    int i = Victim->GetRelativeDanger(P)*10;
+    if(i<1)i=1;
+    lKillCredit+=i;
+  }
+  
+  P->GetTorso()->SetLabel(festring()<<lKillCredit); // using label as custom data storage
+  
+  return lKillCredit;
+}
+
 
 void curseddeveloper::RestoreLimbs(festring fsCmdParams)
 {
@@ -89,12 +125,14 @@ bool curseddeveloper::CreateBP(int iIndex)
       bp->RemoveFromSlot();
       P->AttachBodyPart(bp);
       ADD_MESSAGE("Your creepy %s comes back to you.",bp->GetName(UNARTICLED).CStr());
+      lKillCredit--;
       iMod=5;
     }else{
       if(P->CanCreateBodyPart(iIndex)){
         bp=P->CreateBodyPart(iIndex);
         if(bp){
           ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(UNARTICLED).CStr());
+          lKillCredit-=2;
           iMod=10;
         }
       }
@@ -255,16 +293,33 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   // at resurrect spot
   if(iKillerDebuff>0) // if enemy got too powerful, buff the player randomly
     if(!game::IsInWilderness())
-      P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
+      P->GetLSquareUnder()->SpillFluid(NULL, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
   
   if(bRev || IsSpecialCharacter(Killer)){
     character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
-    static int i1Min=33;
-    if(M)
-      M->SetLifeExpectancy(i1Min*5,i1Min*10);//33 is 1 min or 1 turn right? see: game::GetTime()
+    static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime()
+    if(M){
+      M->SetLifeExpectancy(i1Min*5,i1Min*10);
+      lKillCredit--;
+    }
   }
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
+  
+  if(lKillCredit<0 && RAND()%10==0){
+    game::TryTravel(3, 0, DOUBLE_BED, false, true); // teleport to a bed in tweiraith island TODO should be the small bed at the small house
+    
+    ADD_MESSAGE("You wakeup from a nightmare!");
+    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(SWEAT, 5 * P->GetAttribute(ENDURANCE)));
+
+    if(RAND()%3){
+      P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(OMMEL_URINE, 5 * P->GetAttribute(ENDURANCE))); //ugh.. not ommel's tho.. TODO will this buff the player?
+      ADD_MESSAGE("You need a bath now...");
+    }
+
+    lKillCredit=0; // to reset it
+    UpdateKillCredit(NULL);
+  }
   
   game::DrawEverything();
   
@@ -339,18 +394,26 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
 //no, adds more mobs...  ASRET(PARASITE_TAPE_WORM,riDebuff);
   ASRET(CONFUSED,riDebuff);
 //no, may mess the player...  ASRET(LEPROSY,riDebuff);
-  if(RAND()%10==0)
+  if(RAND()%10==0){
     ASRET(POISONED,riDebuff);
+    lKillCredit-=2;
+  }
   
   // Revenge, grant it will stop:
-  if(RAND()%5==0)
-    game::GetCurrentLevel()->Explosion(
-      game::GetPlayer(), CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+  if(RAND()%5==0){
+    for(int i=0; i < ( RAND() % (IsSpecialCharacter(Killer)?5:2) + 1 ) ;i++){
+      if(Killer->IsDead())break;
+      game::GetCurrentLevel()->Explosion(
+        NULL, CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
+      lKillCredit--;
+    }
+  }
 
 //    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
   if(RAND()%10==0){
-    Killer->GetTorso()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
+    Killer->GetTorso()->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
     ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
+    lKillCredit-=3;
   }
 //    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
     
