@@ -24,23 +24,25 @@ class curseddeveloper {
     static bool IsCursedDeveloper(){return bCursedDeveloper;};
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
     static bool LifeSaveJustABit(character* Killer);
+    static long UpdateKillCredit(character* Victim);
+    static long GetKillCredit(){return lKillCredit;}
+  protected:
     static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
     static void RestoreLimbs(festring fsCmdParams);
     static bool HealTorso(bodypart* bp);
     static bool HealBP(int iIndex,int iMode,int iMinHpOK=0);
     static bool CreateBP(int iIndex);
-    static long UpdateKillCredit(character* Victim);
-    static long GetKillCredit(){return lKillCredit;}
+    static void NightmareWakeUp(character* P);
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;
     static bool bInit;
     static long lKillCredit;
+    static bool bNightmareWakeUp;
 #else
   public:
     static bool IsCursedDeveloper(){return false;}
     static bool IsCursedDeveloperTeleport(){return false;}
-    static bool LifeSaveJustABit(character* Killer){return false;}
 #endif
 };
 

@@ -41,6 +41,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "curseddeveloper.h"
 #include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
@@ -3823,6 +3824,10 @@ void game::SetPlayer(character* NP)
 
   if(Player)
     Player->AddFlags(C_PLAYER);
+
+#ifdef CURSEDDEVELOPER    
+  curseddeveloper::UpdateKillCredit(NULL);
+#endif
 }
 
 void game::InitDungeons()

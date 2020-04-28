@@ -24,6 +24,7 @@
 bool curseddeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
 bool curseddeveloper::bCursedDeveloperTeleport = false;
 long curseddeveloper::lKillCredit=0;
+bool curseddeveloper::bNightmareWakeUp=false;
 
 #define HEAL_1     1
 #define HEAL_MINOK 2
@@ -34,8 +35,23 @@ long curseddeveloper::lKillCredit=0;
  */
 bool IsSpecialCharacter(character* C){return !C->CanBeCloned();} 
 
+void curseddeveloper::NightmareWakeUp(character* P)
+{
+  ADD_MESSAGE("You wakeup from a nightmare! But... for some reason, you feel stronger...");
+  P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(SWEAT, 5 * P->GetAttribute(ENDURANCE)));
+
+  if(RAND()%3){
+    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(OMMEL_URINE, 5 * P->GetAttribute(ENDURANCE))); //ugh.. not ommel's tho.. TODO will this buff the player?
+    ADD_MESSAGE("You need a bath now...");
+  }
+
+  lKillCredit=0; // to reset it
+}
+
 long curseddeveloper::UpdateKillCredit(character* Victim){
   character* P=PLAYER;
+  if(!P)return lKillCredit;
+  
   while(P->GetID()!=1){
     if(PLAYER->GetPolymorphBackup()){
       DBG2(P->GetID(),P->GetNameSingular().CStr());
@@ -51,6 +67,7 @@ long curseddeveloper::UpdateKillCredit(character* Victim){
   static bool bInitKC=true;
   if(bInitKC){
     festring fs=P->GetTorso()->GetLabel();
+    DBG2("StoredKillCredit",fs.CStr());
     if(!fs.IsEmpty())
       lKillCredit = atol(fs.CStr());
     bInitKC=false;
@@ -61,6 +78,11 @@ long curseddeveloper::UpdateKillCredit(character* Victim){
     int i = Victim->GetRelativeDanger(P)*10;
     if(i<1)i=1;
     lKillCredit+=i;
+  }
+  
+  if(bNightmareWakeUp){
+    NightmareWakeUp(P);
+    bNightmareWakeUp=false;
   }
   
   P->GetTorso()->SetLabel(festring()<<lKillCredit); // using label as custom data storage
@@ -306,22 +328,25 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   
-  if(lKillCredit<0 && RAND()%10==0){
-    game::TryTravel(3, 0, DOUBLE_BED, false, true); // teleport to a bed in tweiraith island TODO should be the small bed at the small house
-    
-    ADD_MESSAGE("You wakeup from a nightmare!");
-    P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(SWEAT, 5 * P->GetAttribute(ENDURANCE)));
-
-    if(RAND()%3){
-      P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(OMMEL_URINE, 5 * P->GetAttribute(ENDURANCE))); //ugh.. not ommel's tho.. TODO will this buff the player?
-      ADD_MESSAGE("You need a bath now...");
-    }
-
-    lKillCredit=0; // to reset it
-    UpdateKillCredit(NULL);
-  }
-  
+  UpdateKillCredit(NULL);
+        
   game::DrawEverything();
+  
+  if(lKillCredit<0){
+    if(RAND()%10==0){
+      for(int i=0;i<10;i++){
+        if(game::TryTravel(3, 0, DOUBLE_BED, false, true)){ // teleport to a bed in tweiraith island TODO should be the small bed at the small house
+          bNightmareWakeUp=true;
+          UpdateKillCredit(NULL);
+          return true; // after TryTravel() avoid most code...
+        }
+        P->TeleportRandomly(true); //try to move away from foes to be able to travel
+        ADD_MESSAGE("You feel haunted!");
+      }
+    }else{
+      ADD_MESSAGE("You feel unconfortable...");
+    }
+  }
   
   return true;
 }
