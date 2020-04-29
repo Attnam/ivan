@@ -1129,7 +1129,7 @@ class character : public entity, public id
   festring GetTrapDescription() const;
   truth TryToUnStickTraps(v2);
   void RemoveTrap(ulong);
-  truth ValidateTrapData();
+  truth ValidateTrapData(bool bForceNow = false);
   void AddTrap(ulong, ulong);
   truth IsStuckToTrap(ulong) const;
   void RemoveTraps();
@@ -1304,6 +1304,7 @@ class character : public entity, public id
   ulong WarnFlags;
   int ScienceTalks;
   trapdata* TrapData;
+  long lTmpLastValidateTrapDataTurn; //performace wise, no need to store
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
   ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];

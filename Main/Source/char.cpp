@@ -537,7 +537,8 @@ character::character(ccharacter& Char)
   Stamina(Char.Stamina), MaxStamina(Char.MaxStamina),
   BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger),
   CommandFlags(Char.CommandFlags), WarnFlags(0),
-  ScienceTalks(Char.ScienceTalks), TrapData(0), CounterToMindWormHatch(0)
+  ScienceTalks(Char.ScienceTalks), TrapData(0), CounterToMindWormHatch(0),
+  lTmpLastValidateTrapDataTurn(-1)
 {
   Flags &= ~C_PLAYER;
   Flags |= C_INITIALIZING|C_IN_NO_MSG_MODE;
@@ -596,7 +597,8 @@ character::character()
   Money(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0),
   SquareUnder(0), RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0),
   BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER),
-  WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0)
+  WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0),
+  lTmpLastValidateTrapDataTurn(-1)
 {
   Stack = new stack(0, this, HIDDEN);
 
@@ -11105,7 +11107,7 @@ truth character::IsUsingWeaponOfCategory(int Category) const
 
 truth character::TryToUnStickTraps(v2 Dir)
 {
-  if(ValidateTrapData()){
+  if(ValidateTrapData(true)){
     for(trapdata* T = TrapData; T; T = T->Next){
       if(IsEnabled())
       {
@@ -11126,25 +11128,29 @@ struct trapidcomparer
   ulong ID;
 };
 
-truth character::ValidateTrapData()
+truth character::ValidateTrapData(bool bForceNow)
 {
   if(!TrapData)return false;
   
-  static trapdata* ToDel=NULL;
-  trapdata* T = TrapData;
-  for(;T;){
-    if(game::SearchTrap(T->TrapID)){
+  if(bForceNow || game::GetTurn()!=lTmpLastValidateTrapDataTurn){
+    static trapdata* ToDel=NULL;
+    trapdata* T = TrapData;
+    for(;T;){
+      if(game::SearchTrap(T->TrapID)){ //may ne slow, performance bottle neck...
+        T = T->Next;
+        continue;
+      }
+
+      ToDel = T;
       T = T->Next;
-      continue;
+      if(TrapData==ToDel){
+        TrapData=T; //update 1st on the LL
+      }
+      delete ToDel;
+      ToDel=NULL;
     }
-    
-    ToDel = T;
-    T = T->Next;
-    if(TrapData==ToDel){
-      TrapData=T; //update 1st on the LL
-    }
-    delete ToDel;
-    ToDel=NULL;
+
+    lTmpLastValidateTrapDataTurn = game::GetTurn();
   }
   
   return TrapData!=NULL;
