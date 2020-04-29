@@ -312,7 +312,7 @@ class game
   static truth IsGenerating() { return Generating; }
   static void SetIsGenerating(truth What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
+  static int Menu(std::vector<bitmap*> v, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static truth TryTravel(int, int, int, truth = false, truth = true);

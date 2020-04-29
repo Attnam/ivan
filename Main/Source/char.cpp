@@ -2531,7 +2531,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 
   if(!HScore.CheckVersion())
   {
-    if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+    if(game::Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
                   CONST_S("The highscore version doesn't match.\rDo you want to erase "
                           "previous records and start a new file?\rNote, if you answer "
                           "no, the score of your current game will be lost!\r"),

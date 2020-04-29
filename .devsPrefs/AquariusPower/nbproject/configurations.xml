@@ -173,6 +173,7 @@
               <Elem>CURSEDDEVELOPER</Elem>
               <Elem>DBGMSG</Elem>
               <Elem>FELIST_WAITKEYUP</Elem>
+              <Elem>USE_SDL</Elem>
               <Elem>WIZARD</Elem>
             </preprocessorList>
           </ccTool>

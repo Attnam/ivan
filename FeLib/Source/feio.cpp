@@ -156,7 +156,7 @@ truth iosystem::IsOnMenu(){
    If you need to use this function use the comments. Don't try to
    understand it. It is impossible. */
 
-int iosystem::Menu(cbitmap* BackGround, v2 Pos,
+int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
                    cfestring& Topic, cfestring& sMS,
                    col16 Color, cfestring& SmallText1,
                    cfestring& SmallText2)
@@ -173,38 +173,39 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   Buffer.ActivateFastFlag();
   int c = 0;
 
-  if(BackGround){
-    if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
-      blitdata B = DEFAULT_BLITDATA;
-      B.Bitmap = &Buffer;
-
-      B.Src.X = (RES.X - BackGround->GetSize().X)/2;
-      if(B.Src.X>0)B.Src.X=0;
-      if(B.Src.X<0)B.Src.X*=-1;
-      B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
-      if(B.Src.Y>0)B.Src.Y=0;
-      if(B.Src.Y<0)B.Src.Y*=-1;
-
-      B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
-      if(B.Dest.X<0)B.Dest.X=0;
-      B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
-      if(B.Dest.Y<0)B.Dest.Y=0;
-
-      B.Border = BackGround->GetSize() - v2();
-
-      Buffer.ClearToColor(0);
-      BackGround->NormalBlit(B);
-    }else{
-      BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
-    }
-  }else
-    Buffer.ClearToColor(0);
-
   festring sCopyOfMS;
   festring VeryUnGuruPrintf;
 
   while(!bReady)
   {
+    cbitmap* BackGround = vBackGround.size()>iSelected?vBackGround[iSelected]:NULL;
+    if(BackGround){
+      if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+        blitdata B = DEFAULT_BLITDATA;
+        B.Bitmap = &Buffer;
+
+        B.Src.X = (RES.X - BackGround->GetSize().X)/2;
+        if(B.Src.X>0)B.Src.X=0;
+        if(B.Src.X<0)B.Src.X*=-1;
+        B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
+        if(B.Src.Y>0)B.Src.Y=0;
+        if(B.Src.Y<0)B.Src.Y*=-1;
+
+        B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
+        if(B.Dest.X<0)B.Dest.X=0;
+        B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
+        if(B.Dest.Y<0)B.Dest.Y=0;
+
+        B.Border = BackGround->GetSize() - v2();
+
+        Buffer.ClearToColor(0);
+        BackGround->NormalBlit(B);
+      }else{
+        BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
+      }
+    }else
+      Buffer.ClearToColor(0);
+    
     clock_t StartTime = clock();
     sCopyOfMS = Topic;
     int i;
