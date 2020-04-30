@@ -28,8 +28,6 @@
 #include "bitmap.h"
 #include "igraph.h"
 #include "sfx.h"
-
-
 #include "dbgmsgproj.h"
 
 felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
