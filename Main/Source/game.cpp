@@ -965,6 +965,8 @@ void game::DeInit()
   delete GameScript;
   msgsystem::Format();
   DangerMap.clear();
+  
+  Player = 0;
 }
 
 void game::Run()
@@ -3820,13 +3822,19 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 
 void game::SetPlayer(character* NP)
 {
+#ifdef CURSEDDEVELOPER    
+  if(NP && Player && Player->Exists() && Player->GetTorso())
+    NP->GetTorso()->SetLabel( Player->GetTorso()->GetLabel() );
+#endif
+  
   Player = NP;
 
   if(Player)
     Player->AddFlags(C_PLAYER);
 
-#ifdef CURSEDDEVELOPER    
-  curseddeveloper::UpdateKillCredit();
+#ifdef CURSEDDEVELOPER  
+  if(Player)
+    curseddeveloper::UpdateKillCredit();
 #endif
 }
 

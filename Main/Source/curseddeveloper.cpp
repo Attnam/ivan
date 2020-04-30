@@ -50,20 +50,27 @@ void curseddeveloper::NightmareWakeUp(character* P)
 }
 
 long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
-  character* P=PLAYER;
+  character* P=game::GetPlayer();
   if(!P)return lKillCredit;
   
-  while(P->GetID()!=1){
-    if(PLAYER->GetPolymorphBackup()){
-      DBG2(P->GetID(),P->GetNameSingular().CStr());
-      P=PLAYER->GetPolymorphBackup();
-      DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
-    }else{
+//  while(P->GetID()!=1){
+//    if(P->GetPolymorphBackup()){
+//      DBG2(P->GetID(),P->GetNameSingular().CStr());
+//      P=P->GetPolymorphBackup();
+//      DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
+//    }else{
+//      break;
+//    }
+//  }
+  while(P->GetTorso()->GetLabel().IsEmpty()){
+    if(!P->GetPolymorphBackup())
       break;
-    }
+    DBG2(P->GetID(),P->GetNameSingular().CStr());
+    P=P->GetPolymorphBackup();
+    DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
   }
-  if(P->GetID()!=1)
-    ABORT("Player ID 1 can't be found!!!");
+//  if(P->GetID()!=1)
+//    ABORT("Player data store torso can't be found!!!");
   
   festring fsKillCredit=P->GetTorso()->GetLabel();
   DBG1(fsKillCredit.CStr());
@@ -445,13 +452,11 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
     }
   }
 
-//    Killer->GetLSquareUnder()->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
   if(RAND()%10==0){
-    Killer->GetTorso()->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
+    Killer->GetTorso()->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * game::GetPlayer()->GetAttribute(WISDOM)));
     ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
     ModKillCredit(-3);
   }
-//    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
     
   rbRev=true;
   
