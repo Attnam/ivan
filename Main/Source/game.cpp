@@ -3826,7 +3826,7 @@ void game::SetPlayer(character* NP)
     Player->AddFlags(C_PLAYER);
 
 #ifdef CURSEDDEVELOPER    
-  curseddeveloper::UpdateKillCredit(NULL);
+  curseddeveloper::UpdateKillCredit();
 #endif
 }
 

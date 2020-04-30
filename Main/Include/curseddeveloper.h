@@ -24,7 +24,8 @@ class curseddeveloper {
     static bool IsCursedDeveloper(){return bCursedDeveloper;};
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
     static bool LifeSaveJustABit(character* Killer);
-    static long UpdateKillCredit(character* Victim);
+    static long UpdateKillCredit(character* Victim=NULL,int iMod=0);
+    static long ModKillCredit(int i){UpdateKillCredit(NULL,i);return lKillCredit;}
     static long GetKillCredit(){return lKillCredit;}
   protected:
     static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);

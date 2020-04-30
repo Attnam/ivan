@@ -46,9 +46,10 @@ void curseddeveloper::NightmareWakeUp(character* P)
   }
 
   lKillCredit=0; // to reset it
+  UpdateKillCredit();
 }
 
-long curseddeveloper::UpdateKillCredit(character* Victim){
+long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
   character* P=PLAYER;
   if(!P)return lKillCredit;
   
@@ -64,36 +65,30 @@ long curseddeveloper::UpdateKillCredit(character* Victim){
   if(P->GetID()!=1)
     ABORT("Player ID 1 can't be found!!!");
   
-//  static bool bInitKC=true;
-//  static character* CharPrevious=NULL;
-//  if(CharPrevious!=P)
-//  if(bInitKC){
-//    festring fs=P->GetTorso()->GetLabel();
-//    DBG2("StoredKillCredit",fs.CStr());
-//    if(!fs.IsEmpty())
-//      lKillCredit = atol(fs.CStr());
-//    bInitKC=false;
-//  }
   festring fsKillCredit=P->GetTorso()->GetLabel();
   DBG1(fsKillCredit.CStr());
-  if(!fsKillCredit.IsEmpty()){
-    lKillCredit = atol(fsKillCredit.CStr());
-  }else{
-    lKillCredit=0;
-  }
+  long lKCStored=0;
+  if(!fsKillCredit.IsEmpty())
+    lKCStored = atol(fsKillCredit.CStr());
+  DBG1(lKCStored);
   
   if(Victim){
     int i = Victim->GetRelativeDanger(P)*10;
+    DBG1(i);
     if(i<1)i=1;
-    lKillCredit+=i;
+    lKCStored+=i;
   }
+  
+  lKCStored+=iMod;
   
   if(bNightmareWakeUp){
     NightmareWakeUp(P);
     bNightmareWakeUp=false;
   }
   
-  P->GetTorso()->SetLabel(festring()<<lKillCredit); // using label as custom data storage
+  DBG1(lKCStored);
+  P->GetTorso()->SetLabel(festring()<<lKCStored); // using label as custom data storage
+  lKillCredit = lKCStored;
   
   return lKillCredit;
 }
@@ -155,14 +150,14 @@ bool curseddeveloper::CreateBP(int iIndex)
       bp->RemoveFromSlot();
       P->AttachBodyPart(bp);
       ADD_MESSAGE("Your creepy %s comes back to you.",bp->GetName(UNARTICLED).CStr());
-      lKillCredit--;
+      ModKillCredit(-1);
       iMod=5;
     }else{
       if(P->CanCreateBodyPart(iIndex)){
         bp=P->CreateBodyPart(iIndex);
         if(bp){
           ADD_MESSAGE("A new cursed %s vibrates and grows on you.",bp->GetName(UNARTICLED).CStr());
-          lKillCredit-=2;
+          ModKillCredit(-2);
           iMod=10;
         }
       }
@@ -330,20 +325,22 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime()
     if(M){
       M->SetLifeExpectancy(i1Min*5,i1Min*10);
-      lKillCredit--;
+      ModKillCredit(-1);
     }
   }
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   
-  UpdateKillCredit(NULL);
+  UpdateKillCredit();
         
   game::DrawEverything();
   
   int iDung=3,iLvl=0; //tweiraith island
   bool bIsAtHomeIsland = P->GetDungeon()->GetIndex()==iDung && P->GetLevel()->GetIndex()==iLvl;
-  if(lKillCredit<0 && bIsAtHomeIsland)
-    lKillCredit=0; //to prevent pointless too negative value
+  if(lKillCredit<0 && bIsAtHomeIsland){
+    lKillCredit=0; //to prevent pointless too negative value at home town
+    UpdateKillCredit();
+  }
   if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland){
     if(RAND()%10==0){
       for(int i=0;i<10;i++){
@@ -351,7 +348,7 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
         if(game::TryTravel(iDung, iLvl, DOUBLE_BED, false, true)){ //TODO should be the small bed at the small house
           bNightmareWakeUp=true;
           ADD_MESSAGE("You finally wakeup.");
-          UpdateKillCredit(NULL); //to call nightmare wakeup
+          UpdateKillCredit(); //to call nightmare wakeup
           return true; // after TryTravel() avoid most code...
         }
         P->TeleportRandomly(true); //try to move away from foes to be able to travel
@@ -435,7 +432,7 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
 //no, may mess the player...  ASRET(LEPROSY,riDebuff);
   if(RAND()%10==0){
     ASRET(POISONED,riDebuff);
-    lKillCredit-=2;
+    ModKillCredit(-2);
   }
   
   // Revenge, grant it will stop:
@@ -444,7 +441,7 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
       if(Killer->IsDead())break;
       game::GetCurrentLevel()->Explosion(
         NULL, CONST_S("Killed by cursed fire!"), Killer->GetPos(), 9/*1 square size*/, false, true);
-      lKillCredit--;
+      ModKillCredit(-1);
     }
   }
 
@@ -452,11 +449,13 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   if(RAND()%10==0){
     Killer->GetTorso()->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * PLAYER->GetAttribute(WISDOM)));
     ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
-    lKillCredit-=3;
+    ModKillCredit(-3);
   }
 //    Killer->GetLSquareUnder()->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, 100));
     
   rbRev=true;
+  
+  UpdateKillCredit();
   
   return true;
 }
