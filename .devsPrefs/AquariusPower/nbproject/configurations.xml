@@ -160,7 +160,6 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <codeAssistance>
-        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -168,15 +167,6 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
-          <ccTool>
-            <preprocessorList>
-              <Elem>CURSEDDEVELOPER</Elem>
-              <Elem>DBGMSG</Elem>
-              <Elem>FELIST_WAITKEYUP</Elem>
-              <Elem>USE_SDL</Elem>
-              <Elem>WIZARD</Elem>
-            </preprocessorList>
-          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>

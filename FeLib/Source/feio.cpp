@@ -50,6 +50,7 @@
 #include "rawbit.h"
 #include "save.h"
 #include "whandler.h"
+#include "sfx.h"
 
 #include "dbgmsgproj.h"
 
@@ -156,6 +157,7 @@ truth iosystem::IsOnMenu(){
    If you need to use this function use the comments. Don't try to
    understand it. It is impossible. */
 
+int iSelectedPrevious=-1;
 int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
                    cfestring& Topic, cfestring& sMS,
                    col16 Color, cfestring& SmallText1,
@@ -205,6 +207,13 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       }
     }else
       Buffer.ClearToColor(0);
+    
+#ifndef NOSOUND
+    if(iSelectedPrevious != iSelected){
+      soundeffects::playSound(festring()<<"Main Menu Entry "<<(iSelected+1));
+      iSelectedPrevious = iSelected;
+    }
+#endif
     
     clock_t StartTime = clock();
     sCopyOfMS = Topic;

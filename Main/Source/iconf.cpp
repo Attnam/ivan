@@ -25,6 +25,7 @@
 #include "stack.h"
 #include "whandler.h"
 #include "bugworkaround.h"
+#include "sfx.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "Player's default name",
@@ -369,7 +370,10 @@ col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects",
                                           "Use sound effects for combat, explosions and more.",
-                                          true);
+                                          true,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &EnableSFX);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "Show game turn on message log",
                                           "Add a game turn number to each action described in the message log.",
@@ -936,12 +940,14 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
 
   audio::SetVolumeLevel(What);
 }
+
 void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
 {
   if(What < 0) What = 0;
   if(What > 127) What = 127;
   O->Value = What;
 }
+
 
 #ifndef __DJGPP__
 
@@ -1049,6 +1055,11 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
   graphics::SwitchMode();
 }
 
+void ivanconfig::EnableSFX(truthoption* O, truth What)
+{
+  soundeffects::SetEnableSfx(What);
+}
+
 void ivanconfig::ScalingQualityDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -1090,7 +1101,9 @@ void ivanconfig::VolumeHandler(long Value)
 void ivanconfig::SfxVolumeHandler(long Value)
 {
   SfxVolumeChanger(&SfxVolume, Value);
-
+  
+  soundeffects::SetSfxVolume(SfxVolume.Value);
+  
   if(game::IsRunning())
   {
     game::GetCurrentArea()->SendNewDrawRequest();
@@ -1248,4 +1261,10 @@ void ivanconfig::Initialize()
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
+  
+#ifndef NOSOUND
+  soundeffects::SetEnableSfx(PlaySounds.Value);
+  soundeffects::SetSfxVolume(SfxVolume.Value);
+  soundeffects::SetDataDir(game::GetDataDir());
+#endif
 }

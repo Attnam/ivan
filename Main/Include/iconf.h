@@ -162,6 +162,7 @@ class ivanconfig
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
 
+  static void EnableSFX(truthoption* O, truth What);
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void FontGfxDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);

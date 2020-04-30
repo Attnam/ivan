@@ -45,6 +45,7 @@
 #include "message.h"
 #include "proto.h"
 #include "audio.h"
+#include "sfx.h"
 
 #include "dbgmsgproj.h"
 
