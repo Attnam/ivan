@@ -33,7 +33,7 @@ bool curseddeveloper::bNightmareWakeUp=false;
 /**
  *  is some special/named/important character
  */
-bool IsSpecialCharacter(character* C){return !C->CanBeCloned();} 
+bool IsSpecialCharacter(character* C){return C && !C->CanBeCloned();} 
 
 void curseddeveloper::NightmareWakeUp(character* P)
 {
@@ -273,7 +273,7 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   int iKillerBuff=0,iKillerDebuff=0;
   bool bRev;
   bool bStay = BuffAndDebuffPlayerKiller(Killer,iKillerBuff,iKillerDebuff,bRev); //to spice it up
-  if(!bStay){
+  if(Killer){
     festring fsAN = Killer->GetAssignedName();
     festring fsToken=" <[B";
     ulong pos = fsAN.Find(fsToken);
@@ -303,12 +303,11 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(BLOOD, 30 * P->GetAttribute(ENDURANCE)));
   
   if(!bStay && Killer && !game::IsInWilderness() && iKillerDebuff==0){
-    if(!P->GetLSquareUnder()->GetEngraved())
-      game::SetMapNote(P->GetLSquareUnder(),"Your cursed life was saved here@");
-    
     //teleport is required to prevent death loop: killer keeps killing the player forever on every turn
     if(Killer->GetSquaresUnder()>1){ //huge foes
       bCursedDeveloperTeleport=true;
+      if(!P->GetLSquareUnder()->GetEngraved())
+        game::SetMapNote(P->GetLSquareUnder(),festring("@Your cursed life was saved here at ")<<game::GetTurn()); //this helps to find lost items
       P->TeleportRandomly(true);
       ADD_MESSAGE("You see a flash of dark light and teleport away from the killing blow!");
       bCursedDeveloperTeleport=false;
