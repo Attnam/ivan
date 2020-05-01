@@ -330,19 +330,20 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     if(!game::IsInWilderness())
       P->GetLSquareUnder()->SpillFluid(NULL, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
   
-  if(bRev || IsSpecialCharacter(Killer)){
+//  if(bRev || IsSpecialCharacter(Killer)){
     character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
-    static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime() (any relation with 30 frames per second? 30 ticks?)
-    int x=1;
-    if(P->GetBodyPart(RIGHT_ARM_INDEX))x++;
-    if(P->GetBodyPart(LEFT_ARM_INDEX))x++;
-    if(P->GetBodyPart(RIGHT_LEG_INDEX))x++;
-    if(P->GetBodyPart(LEFT_LEG_INDEX))x++;
     if(M){
-      M->SetLifeExpectancy(i1Min*5*x,i1Min*10*x);
+      int x=1;
+      if(GetKillCredit()>x && P->GetBodyPart(RIGHT_ARM_INDEX))x++;
+      if(GetKillCredit()>x && P->GetBodyPart(LEFT_ARM_INDEX ))x++;
+      if(GetKillCredit()>x && P->GetBodyPart(RIGHT_LEG_INDEX))x++;
+      if(GetKillCredit()>x && P->GetBodyPart(LEFT_LEG_INDEX ))x++;
+      
+      static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime() (any relation with 30 frames per second? 30 ticks?)
+      M->SetLifeExpectancy(i1Min*5*x, i1Min*10*x);
       ModKillCredit(-1*x);
     }
-  }
+//  }
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
   

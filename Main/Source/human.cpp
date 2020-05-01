@@ -5260,10 +5260,9 @@ void FixSumoWrestlerHouse(festring fsCmdParams)
 void sumowrestler::GetAICommand()
 {
   static bool bInitDummy = [](){
-    devcons::AddDevCmd("FixSumoWrestlerHouse",FixSumoWrestlerHouse,
+    devcons::AddDevCmd("FixSumoHouse",FixSumoWrestlerHouse,
       "BugFix sumo wrestler house in case banana growers over crowd it.");
     return true;}();
-
   
   EditNP(-25);
 
