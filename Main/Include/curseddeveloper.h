@@ -29,12 +29,12 @@ class curseddeveloper {
     static long GetKillCredit(){return lKillCredit;}
   protected:
     static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
-    static void RestoreLimbs(festring fsCmdParams);
+    static void RestoreLimbs(festring fsCmdParams = CONST_S(""));
     static bool HealTorso(bodypart* bp);
     static bool HealBP(int iIndex,int iMode,int iMinHpOK=0);
     static bool CreateBP(int iIndex);
     static void NightmareWakeUp(character* P);
-    static void ResetKillCredit();
+    static void ResetKillCredit(festring fsCmdParams = CONST_S(""));
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;

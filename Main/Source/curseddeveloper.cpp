@@ -37,6 +37,8 @@ bool IsSpecialCharacter(character* C){return C && !C->CanBeCloned();}
 
 void curseddeveloper::NightmareWakeUp(character* P)
 {
+  bNightmareWakeUp=false;
+  
   ADD_MESSAGE("You had a nightmare! And... for some reason, you feel stronger...");
   P->GetLSquareUnder()->SpillFluid(P, liquid::Spawn(SWEAT, 5 * P->GetAttribute(ENDURANCE)));
 
@@ -45,27 +47,19 @@ void curseddeveloper::NightmareWakeUp(character* P)
     ADD_MESSAGE("You need a bath now...");
   }
 
-  ResetKillCredit();
+  if(lKillCredit!=0)
+    ResetKillCredit();
 }
 
-void curseddeveloper::ResetKillCredit()
+void curseddeveloper::ResetKillCredit(festring fsCmdParams)
 {
-  ModKillCredit(lKillCredit*-1);
+  ModKillCredit(lKillCredit * -1);
 }
 
 long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
   character* P=game::GetPlayer();
   if(!P)return lKillCredit;
   
-//  while(P->GetID()!=1){
-//    if(P->GetPolymorphBackup()){
-//      DBG2(P->GetID(),P->GetNameSingular().CStr());
-//      P=P->GetPolymorphBackup();
-//      DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
-//    }else{
-//      break;
-//    }
-//  }
   while(P->GetTorso()->GetLabel().IsEmpty()){
     if(!P->GetPolymorphBackup())
       break;
@@ -73,8 +67,6 @@ long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
     P=P->GetPolymorphBackup();
     DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
   }
-//  if(P->GetID()!=1)
-//    ABORT("Player data store torso can't be found!!!");
   
   festring fsKillCredit=P->GetTorso()->GetLabel();
   DBG1(fsKillCredit.CStr());
@@ -92,10 +84,8 @@ long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
   
   lKCStored+=iMod;
   
-  if(bNightmareWakeUp){
+  if(bNightmareWakeUp)
     NightmareWakeUp(P);
-    bNightmareWakeUp=false;
-  }
   
   DBG1(lKCStored);
   P->GetTorso()->SetLabel(festring()<<lKCStored); // using label as custom data storage
@@ -103,7 +93,6 @@ long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
   
   return lKillCredit;
 }
-
 
 void curseddeveloper::RestoreLimbs(festring fsCmdParams)
 {
@@ -254,18 +243,15 @@ bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
 //}
 void curseddeveloper::Init(){
   devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
-    "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
+    "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs, better use only if the game becomes unplayable (cursed immortal).");
+  devcons::AddDevCmd("ResetKC",curseddeveloper::ResetKillCredit,
+    "to help make tests related to KillCredit's negative value (cursed immortal).");
 }
 
 bool curseddeveloper::LifeSaveJustABit(character* Killer)
 {
   if(!bCursedDeveloper)
     return false;
-  
-//  static bool bInitDevCmdDummy = [](){
-//    devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
-//      "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
-//    return true;}();
   
   character* P = game::GetPlayer();
   game::DrawEverything();
@@ -356,8 +342,8 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   DBG6(P->GetDungeon()->GetIndex(),iDung,P->GetLevel()->GetIndex(),iLvl,lKillCredit,bIsAtHomeIsland);
   if(lKillCredit<0 && bIsAtHomeIsland){
     ResetKillCredit(); //to prevent pointless too negative value at home town
-  }
-  if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland){
+  }else
+  if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland && Killer){
     if(RAND()%10==0){
       for(int i=0;i<10;i++){
         ADD_MESSAGE("You try to wakeup...");
