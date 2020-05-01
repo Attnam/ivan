@@ -168,6 +168,15 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+          <ccTool>
+            <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
+              <Elem>DBGMSG</Elem>
+              <Elem>FELIST_WAITKEYUP</Elem>
+              <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+              <Elem>WIZARD</Elem>
+            </preprocessorList>
+          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>

@@ -34,6 +34,7 @@ class curseddeveloper {
     static bool HealBP(int iIndex,int iMode,int iMinHpOK=0);
     static bool CreateBP(int iIndex);
     static void NightmareWakeUp(character* P);
+    static void ResetKillCredit();
   private:
     static bool bCursedDeveloper;
     static bool bCursedDeveloperTeleport;

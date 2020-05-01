@@ -45,8 +45,12 @@ void curseddeveloper::NightmareWakeUp(character* P)
     ADD_MESSAGE("You need a bath now...");
   }
 
-  lKillCredit=0; // to reset it
-  UpdateKillCredit();
+  ResetKillCredit();
+}
+
+void curseddeveloper::ResetKillCredit()
+{
+  ModKillCredit(lKillCredit*-1);
 }
 
 long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
@@ -329,10 +333,15 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   
   if(bRev || IsSpecialCharacter(Killer)){
     character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
-    static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime()
+    static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime() (any relation with 30 frames per second? 30 ticks?)
+    int x=1;
+    if(P->GetBodyPart(RIGHT_ARM_INDEX))x++;
+    if(P->GetBodyPart(LEFT_ARM_INDEX))x++;
+    if(P->GetBodyPart(RIGHT_LEG_INDEX))x++;
+    if(P->GetBodyPart(LEFT_LEG_INDEX))x++;
     if(M){
-      M->SetLifeExpectancy(i1Min*5,i1Min*10);
-      ModKillCredit(-1);
+      M->SetLifeExpectancy(i1Min*5*x,i1Min*10*x);
+      ModKillCredit(-1*x);
     }
   }
   
@@ -344,9 +353,9 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   
   int iDung=3,iLvl=0; //tweiraith island
   bool bIsAtHomeIsland = P->GetDungeon()->GetIndex()==iDung && P->GetLevel()->GetIndex()==iLvl;
+  DBG6(P->GetDungeon()->GetIndex(),iDung,P->GetLevel()->GetIndex(),iLvl,lKillCredit,bIsAtHomeIsland);
   if(lKillCredit<0 && bIsAtHomeIsland){
-    lKillCredit=0; //to prevent pointless too negative value at home town
-    UpdateKillCredit();
+    ResetKillCredit(); //to prevent pointless too negative value at home town
   }
   if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland){
     if(RAND()%10==0){

@@ -5222,7 +5222,7 @@ void character::DrawPanel(truth AnimationDraw) const
   int iLeftPos=0;
 #ifdef CURSEDDEVELOPER
     if(curseddeveloper::IsCursedDeveloper()){
-      festring fsCD;fsCD<<"(Cursed Developer, KC="<<curseddeveloper::GetKillCredit()<<") ";
+      festring fsCD;fsCD<<"(Cursed Immortal, KC="<<curseddeveloper::GetKillCredit()<<") ";
       iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
       FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), 
         curseddeveloper::GetKillCredit()<0?RED:YELLOW, fsCD.CStr(), GetPanelName().CStr());
