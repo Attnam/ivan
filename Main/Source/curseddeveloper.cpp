@@ -108,7 +108,7 @@ void curseddeveloper::RestoreLimbs(festring fsCmdParams)
   }
   P->CalculateBodyPartMaxHPs(0); //this also calculates the overall current HP
   DBG2(P->HP,P->MaxHP);
-  if(P->HP>P->MaxHP) // it MUST be ok here!!!
+  if(P->HP > P->MaxHP) // it MUST be ok here!!!
     ABORT("HP>MaxHP %d>%d",P->HP,P->MaxHP);
 }
 
@@ -193,13 +193,20 @@ bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
    */
   bodypart* bp = P->GetBodyPart(iIndex);
   if(bp && bp->GetHP() < bp->GetMaxHP()){
-    int iHpMinUsable = bp->GetMaxHP()/3 + (bp->GetMaxHP()%3>0 ? 1 : 0); //ceil
+    int iDiv=3;
+    int iHpMinUsable = bp->GetMaxHP()/iDiv + (bp->GetMaxHP()%iDiv>0 ? 1 : 0); //ceil
     
     int iHpRestore = 0;
     switch(iMode){
-      case HEAL_1: iHpRestore = 1; break;
-      case HEAL_MINOK: iHpRestore = iHpMinUsable; break;
-      case HEAL_MAX: iHpRestore = bp->GetMaxHP(); break;
+      case HEAL_1: 
+        iHpRestore = 1; 
+        break;
+      case HEAL_MINOK: 
+        iHpRestore = iHpMinUsable;
+        break;
+      case HEAL_MAX: 
+        iHpRestore = bp->GetMaxHP(); 
+        break;
     }
     
     if(iResHPoverride>0)iHpRestore=iResHPoverride;
@@ -208,6 +215,16 @@ bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
       DBG4(iIndex,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
       bp->SetHP(iHpRestore);
       bp->SignalPossibleUsabilityChange();
+      switch(iMode){
+        case HEAL_1: 
+          break;
+        case HEAL_MINOK: 
+          ModKillCredit(-1); 
+          break;
+        case HEAL_MAX: 
+          ModKillCredit(-iDiv); 
+          break;
+      }
     }
     
     DBG5(iIndex,iHpMinUsable,bp->GetHP(),bp->GetMaxHP(),bp->GetBodyPartName().CStr());
