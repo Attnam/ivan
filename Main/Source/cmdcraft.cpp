@@ -126,7 +126,7 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
   float fSkill = 0;
   fSkill += Char->GetCWeaponSkill(CRAFTING)->GetLevel(); // base/learned
   fSkill += fBonus/fDivFinal; // in short, if all stats are 10, craft skill would be 10
-  fSkill -= 10.0; // to make advancing important
+  fSkill -= 10.0; // to make advancing important on the beggining
   if(fSkill<1.0)fSkill=1.0; //safety
   return fSkill;
 }
@@ -1543,7 +1543,7 @@ struct srpCutWeb : public recipe{
 //    }
 
     h->EditAP(-500); //to let time pass
-    craftcore::CraftSkillAdvance(rpd); //TODO this should be related to collect spider silk to craft one day with it
+    craftcore::CraftSkillAdvance(rpd); 
 
     rpd.bSpendCurrentTurn=true;
 
@@ -2030,7 +2030,7 @@ void addMaterialInfo(character* C,item* it){
   }
 }
 
-struct srpInspect : public recipe{ //TODO this is instantaneous, should take time?
+struct srpInspect : public recipe{ 
   virtual void fillInfo(){
     init("inspect","item materials");
     desc << "Carefully inspect what materials an item is made of.";
@@ -2069,7 +2069,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
   }
 };srpInspect rpInspect;
 
-struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
+struct srpResistanceVS : public recipe{
   virtual void fillInfo(){
     init("check","material strength");
     desc << "Check the relative hardness of two items. The item made of softer material will receive a scratch.";
@@ -3279,14 +3279,20 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(rpd.iBaseTurnsToFinish<rpd.iMinTurns)
     rpd.iBaseTurnsToFinish=rpd.iMinTurns;
   rpd.iRemainingTurnsToFinish = rpd.iBaseTurnsToFinish;
-  // warn if will take too long
+  /**
+   * TODO
+   * the problem is that this considers each turn as 1 minute but... it is not like that...
+   * character::EditAP() determines how time will pass... and that may vary during
+   * the craft proccess!! basically it is imprevisible...
+   */
+  // Warn if will take too long
   int iH = rpd.iBaseTurnsToFinish/60;
   int iD = iH/24;
   iH = iH%24;
   int iM = rpd.iBaseTurnsToFinish%60;
   if(iH>=1 || iD>1){
     festring fs;
-    fs<<"It will take ";
+    fs<<"You are not sure but you think it may take ";
     if(iD>1)
       fs<<iD<<" days "; //this may happen in case the stats/skill went too low, so user has a chance to recover from the debuff
     fs<<iH<<" hours and "<<iM<<" minutes to complete";
@@ -3508,6 +3514,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 }
 
 void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
+  //this may mess gradative work:  rpd.iRemainingTurnsToFinish -= rpd.rc.H()->StateIsActivated(HASTE) ? 2 : 1;
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
 
@@ -3661,6 +3668,7 @@ void craftcore::CraftSkillAdvance(recipedata& rpd){
   if(rpd.fDifficulty <= 1.0) iAddCraftSkill /= 10.0; // too easy stuff will learn less
   if(rpd.bSpawnBroken) iAddCraftSkill /= 3.0; // learns something if fumble
   if(iAddCraftSkill<1) iAddCraftSkill=1; // add a minimum
+  DBG1(iAddCraftSkill);
   rpd.rc.H()->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
 }
 
@@ -3686,7 +3694,7 @@ bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumbleP
   }
   //current max chance per round of spawning broken is 5%
   int iTry=RAND()%100;
-  DBG5(iTry,iFumbleBase,iFumblePower,fBaseCraftSkillToNormalFumble,iLuckPerc);
+  DBG5(iTry,iFumblePower,iFumbleBase,fBaseCraftSkillToNormalFumble,iLuckPerc);
   if(iTry<=iFumblePower)
     return true;
 

@@ -276,19 +276,21 @@ void craft::Handle()
   }
 
   crafthandle::CraftWorkTurn(rpd);
+  
+  int iTotCheck = (Actor->GetAttribute(PERCEPTION) + Actor->GetAttribute(INTELLIGENCE))/2; //weight
+  iTotCheck/=10; //final check times based on initial 10 value attribs have
+  if(iTotCheck==0 && RAND()%5==0) //some chance even if has low attribs
+    iTotCheck=1;
+  for(int i=0;i<iTotCheck;i++){
+    if(RAND()%10==0) //this is per turn chance
+      craftcore::CraftSkillAdvance(rpd); //a chance to learn while crafting
+  }
 
   if(rpd.bSuccesfullyCompleted)
   {
     Actor->DexterityAction(rpd.iAddDexterity); //TODO is this necessary/useful? below also affects dex
     
-    /**
-     * the minimum to advance 1st level on success is at GetLevelMap(1)
-     */
-    int iAddCraftSkill = Actor->GetCWeaponSkill(CRAFTING)->GetLevelMap(1) * rpd.fDifficulty;
-    if(rpd.fDifficulty <= 1.0)iAddCraftSkill/=3.0; // too easy stuff will learn less
-    if(rpd.bSpawnBroken) iAddCraftSkill /= 10; // learns something if fumble
-    if(iAddCraftSkill<1) iAddCraftSkill=1; // add a minimum
-    Actor->GetCWeaponSkill(CRAFTING)->AddHit(iAddCraftSkill);
+    craftcore::CraftSkillAdvance(rpd);
     
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
     if(!Actor->IsEnabled())
@@ -312,9 +314,13 @@ void craft::Handle()
   character* ActorLocal = GetActor();
 
   ActorLocal->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
-  ActorLocal->EditAP(-200000 / APBonus(ActorLocal->GetAttribute(DEXTERITY)));
+  long lEdAP = -200000 / APBonus(craftcore::CraftSkill(ActorLocal));
+  if(ActorLocal->StateIsActivated(HASTE))
+    lEdAP/=2;
+  ActorLocal->EditAP(lEdAP);
+  DBG1(lEdAP);
   ActorLocal->EditStamina(-1000 / ActorLocal->GetAttribute(ARM_STRENGTH), false);
-  ActorLocal->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
+  ActorLocal->EditNP(ActorLocal->StateIsActivated(FASTING) ? -250 : -500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
 
   truth AlreadyTerminated = ActorLocal->GetAction() != this;DBGLN;
   truth Stopped = rpdBkp.bSuccesfullyCompleted || AlreadyTerminated;
