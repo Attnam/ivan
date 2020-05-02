@@ -6555,14 +6555,12 @@ void guard::BeTalkedTo()
     {
       itemvector Item;
 
-      if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
-         || Item.empty())
-
-
-      for(size_t c = 0; c < Item.size(); ++c)
-      {
-        Item[c]->RemoveFromSlot();
-        GetStack()->AddItem(Item[c]);
+      if(PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)){
+        for(size_t c = 0; c < Item.size(); ++c)
+        {
+          Item[c]->RemoveFromSlot();
+          GetStack()->AddItem(Item[c]);
+        }
       }
     }
 
