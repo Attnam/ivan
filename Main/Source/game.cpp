@@ -1461,18 +1461,31 @@ bool game::CheckAddAutoMapNote(square* sqr)
     fs<<"Sign: "<<((sign*)olt)->GetText();
 
   if(
+    dynamic_cast<door*>(olt)!=NULL ||
     dynamic_cast<christmastree*>(olt)!=NULL ||
     dynamic_cast<coffin*>(olt)!=NULL ||
     dynamic_cast<fountain*>(olt)!=NULL || //TODO exclude cathedral?
     dynamic_cast<monsterportal*>(olt)!=NULL ||
     dynamic_cast<stairs*>(olt)!=NULL ||
-    olt->GetConfig() == ANVIL ||
-    olt->GetConfig() == DOUBLE_BED ||
-    olt->GetConfig() == CHAIR ||
-    olt->GetConfig() == FORGE ||
-    olt->GetConfig() == WORK_BENCH ||
-    olt->GetConfig() == TAILORING_BENCH ||
-    false
+    (dynamic_cast<decoration*>(olt)!=NULL && (
+      olt->GetConfig() == ANVIL ||
+      olt->GetConfig() == ARM_CHAIR ||
+      olt->GetConfig() == BENCH ||
+      olt->GetConfig() == CHAIR ||
+      olt->GetConfig() == CHEAP_BED ||
+      olt->GetConfig() == COUCH ||
+      olt->GetConfig() == DESK ||
+      olt->GetConfig() == DOUBLE_BED ||
+      olt->GetConfig() == EXPENSIVE_BED ||
+      olt->GetConfig() == FORGE ||
+      olt->GetConfig() == OVEN ||
+      olt->GetConfig() == PEDESTAL ||
+      olt->GetConfig() == PLAIN_BED ||
+      olt->GetConfig() == STRANGE_TREE ||
+      olt->GetConfig() == TAILORING_BENCH ||
+      olt->GetConfig() == WELL ||
+      olt->GetConfig() == WORK_BENCH
+    ))
   ){
     olt->AddName(fs,INDEFINITE);
 //    fs<<olt->GetNameSingular();
