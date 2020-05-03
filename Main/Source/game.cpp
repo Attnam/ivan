@@ -1357,6 +1357,38 @@ void game::SetDropTag(item* it)
   }
 }
 
+void game::AutoStoreItemInContainer(item* itToStore,character* C)
+{
+  if(!C->IsPlayer())
+    return;
+  
+  itemvector vit;
+  C->GetStack()->FillItemVector(vit);
+  cchar* cToken="+";
+  festring fsAutoStoreToMatch;
+  fsAutoStoreToMatch<<cToken<<itToStore->GetNameSingular();
+  DBG1(fsAutoStoreToMatch.CStr());
+  for(int i=0;i<vit.size();i++){
+    itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
+    if(itc){
+      long lRemainingVol = itc->GetStorageVolume() - itc->GetContained()->GetVolume();
+      DBG3(lRemainingVol,itToStore->GetVolume(),itc->GetLabel().CStr());
+      if(lRemainingVol<itToStore->GetVolume())
+        continue;
+      
+//      if(itc->GetLabel().Find(cToken)==festring::NPos)
+//        continue;
+      
+      if(itc->GetLabel().Find(fsAutoStoreToMatch)==festring::NPos)
+        continue;
+      
+      itToStore->RemoveFromSlot();
+      itc->GetContained()->AddItem(itToStore);
+      break;
+    }
+  }
+}
+
 std::vector<festring> afsAutoPickupMatch;
 pcre *reAutoPickup=NULL;
 void game::UpdateAutoPickUpMatching() //simple matching syntax
@@ -1431,6 +1463,7 @@ int game::CheckAutoPickup(square* sqr)
     if(b){
       it->MoveTo(PLAYER->GetStack());
       ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      AutoStoreItemInContainer(it,PLAYER);
       iTot++;
     }
   }

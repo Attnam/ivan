@@ -683,6 +683,8 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
             PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
+          
+          game::AutoStoreItemInContainer(PileVector[0][c],Char);
         }
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
@@ -729,6 +731,8 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
             ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
+          
+          game::AutoStoreItemInContainer(ToPickup[c],Char);
         }
 
         ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
@@ -1140,7 +1144,8 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
           break;
 
         festring What = ToAddLabel[0]->GetLabel();
-        if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+        int iMaxChars=100; // item labels can contain user custom hints to let the algorithm use these to perform automatic actions
+        if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, iMaxChars, true) == NORMAL_EXIT)
           for(int i=0;i<ToAddLabel.size();i++)
             ToAddLabel[i]->SetLabel(What);
       }
