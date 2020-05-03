@@ -445,6 +445,7 @@ ITEM(itemcontainer, lockableitem)
  public:
   itemcontainer();
   itemcontainer(const itemcontainer&);
+  static truth OpenGeneric(character* Opener, stack* Stk, festring fsName, long volume, ulong ID);
   virtual ~itemcontainer();
   virtual truth Open(character*);
   virtual void Load(inputfile&);

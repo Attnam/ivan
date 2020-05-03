@@ -1233,28 +1233,7 @@ truth olterraincontainer::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-  truth Success;
-
-  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or "
-                                   "(p)ut something in this container? [t,p]"),
-                           KEY_ESC, 3, 't', 'p', KEY_ESC))
-  {
-   case 't':
-   case 'T':
-    Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
-    break;
-   case 'p':
-   case 'P':
-    Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), 0);
-    break;
-   default:
-    return false;
-  }
-
-  if(Success)
-    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-
-  return Success;
+  return itemcontainer::OpenGeneric(Opener,GetContained(),GetName(DEFINITE),GetStorageVolume(),0);
 }
 
 void olterraincontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)

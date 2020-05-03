@@ -1386,6 +1386,32 @@ void materialcontainer::GenerateMaterials()
                GetDefaultSecondaryVolume());
 }
 
+truth itemcontainer::OpenGeneric(character* Opener, stack* Stk, festring fsName, long volume, ulong ID)
+{
+  festring Question = CONST_S("Do you want to (t)ake something from or "
+                              "(p)ut something in this container? [t,p]");
+  truth Success;
+
+  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
+  {
+   case 't':
+   case 'T':
+    Success = Stk->TakeSomethingFrom(Opener, fsName);
+    break;
+   case 'p':
+   case 'P':
+    Success = Stk->PutSomethingIn(Opener, fsName, volume, ID);
+    break;
+   default:
+    return false;
+  }
+
+  if(Success)
+    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
+  
+  return Success;
+}
+
 /* Returns true if container opens fine else false */
 
 truth itemcontainer::Open(character* Opener)
@@ -1396,28 +1422,7 @@ truth itemcontainer::Open(character* Opener)
     return false;
   }
 
-  festring Question = CONST_S("Do you want to (t)ake something from or "
-                              "(p)ut something in this container? [t,p]");
-  truth Success;
-
-  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
-  {
-   case 't':
-   case 'T':
-    Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
-    break;
-   case 'p':
-   case 'P':
-    Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), GetID());
-    break;
-   default:
-    return false;
-  }
-
-  if(Success)
-    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-
-  return Success;
+  return OpenGeneric(Opener,GetContained(),GetName(DEFINITE),GetStorageVolume(),ID);
 }
 
 void itemcontainer::Save(outputfile& SaveFile) const
