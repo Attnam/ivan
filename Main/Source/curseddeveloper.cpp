@@ -258,11 +258,26 @@ bool curseddeveloper::HealBP(int iIndex,int iMode,int iResHPoverride)
 //  devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
 //    "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs to the cursed developer, better use only if the game becomes unplayable.");
 //}
+bool bAllowWakeUp=true;
+void SetAllowWakeUp(festring fs)
+{
+  bAllowWakeUp=true;
+  if(fs=="no")
+    bAllowWakeUp=false;
+  
+  if(bAllowWakeUp){
+    ADD_MESSAGE("You may wakeup...");
+  }else{
+    ADD_MESSAGE("You won't wakeup!");
+  }
+}
 void curseddeveloper::Init(){
   devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
     "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs, better use only if the game becomes unplayable (cursed immortal).");
   devcons::AddDevCmd("ResetKC",curseddeveloper::ResetKillCredit,
     "to help make tests related to KillCredit's negative value (cursed immortal).");
+  devcons::AddDevCmd("AllowWakeup",SetAllowWakeUp,
+    "[no] to help on making tests ignoring KC negative value (cursed immortal).");
 }
 
 bool curseddeveloper::LifeSaveJustABit(character* Killer)
@@ -282,7 +297,7 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     ulong pos = fsAN.Find(fsToken);
     if(pos!=festring::NPos)
       fsAN.Erase(pos,fsAN.GetSize()-pos);
-    fsAN<<fsToken<<iKillerBuff<<"D"<<iKillerDebuff<<(bRev?"R":"")<<"]>";
+    fsAN<<fsToken<<iKillerBuff<<"D"<<iKillerDebuff<<(bRev?"{R}":"")<<"]>";
     Killer->SetAssignedName(fsAN);
   }
 
@@ -334,18 +349,20 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
       P->GetLSquareUnder()->SpillFluid(NULL, liquid::Spawn(MAGIC_LIQUID, 30 * P->GetAttribute(WISDOM)));
   
 //  if(bRev || IsSpecialCharacter(Killer)){
-    character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
-    if(M){
-      int x=1;
-      if(GetKillCredit()>x && P->GetBodyPart(RIGHT_ARM_INDEX))x++;
-      if(GetKillCredit()>x && P->GetBodyPart(LEFT_ARM_INDEX ))x++;
-      if(GetKillCredit()>x && P->GetBodyPart(RIGHT_LEG_INDEX))x++;
-      if(GetKillCredit()>x && P->GetBodyPart(LEFT_LEG_INDEX ))x++;
-      
-      static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime() (any relation with 30 frames per second? 30 ticks?)
-      M->SetLifeExpectancy(i1Min*5*x, i1Min*10*x);
-      ModKillCredit(-1*x);
-    }
+  character* M = P->DuplicateToNearestSquare(P, MIRROR_IMAGE|IGNORE_PROHIBITIONS|CHANGE_TEAM);
+  if(M){
+    int x=1;
+    if(GetKillCredit()>x && P->GetBodyPart(RIGHT_ARM_INDEX))x++;
+    if(GetKillCredit()>x && P->GetBodyPart(LEFT_ARM_INDEX ))x++;
+    if(GetKillCredit()>x && P->GetBodyPart(RIGHT_LEG_INDEX))x++;
+    if(GetKillCredit()>x && P->GetBodyPart(LEFT_LEG_INDEX ))x++;
+
+    static int i1Min=33; //33 is 1 min or 1 turn right? see: game::GetTime() (any relation with 30 frames per second? 30 ticks?)
+    int iXtra = GetKillCredit()<0 ? 10 : 1;
+    int iLE = i1Min*5*x*iXtra;
+    M->SetLifeExpectancy(iLE, iLE*2);
+    ModKillCredit(-1*x);
+  }
 //  }
   
   ADD_MESSAGE("Your curse forbids you to rest and be remembered...");
@@ -360,7 +377,7 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   if(lKillCredit<0 && bIsAtHomeIsland){
     ResetKillCredit(); //to prevent pointless too negative value at home town
   }else
-  if(lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland && Killer){
+  if(bAllowWakeUp && lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland && Killer){
     if(RAND()%10==0){
       for(int i=0;i<10;i++){
         ADD_MESSAGE("You try to wakeup...");
@@ -388,19 +405,21 @@ bool AddState(character* Killer,long Flag,cchar* FlagName,long FlagD,cchar* Flag
     Killer->DeActivateTemporaryState(FlagD);
   }
   
-  DBG5("TRYADD",Killer->GetName(DEFINITE).CStr(),Flag,FlagName,iB);
-  if(!Killer->HasStateFlag(Flag)){
-    Killer->GainIntrinsic(Flag);
-    if(Killer->HasStateFlag(Flag)){
-      iB++;
-      DBG2("SUCCEED TO ADD!!!",iB);
-      return true;
+  if(Flag){
+    DBG5("TRYADD",Killer->GetName(DEFINITE).CStr(),Flag,FlagName,iB);
+    if(!Killer->HasStateFlag(Flag)){
+      Killer->GainIntrinsic(Flag);
+      if(Killer->HasStateFlag(Flag)){
+        iB++;
+        DBG2("SUCCEED TO ADD!!!",iB);
+        return true;
+      }else{
+        DBG1("FAILED TO ADD");
+      }
     }else{
-      DBG1("FAILED TO ADD");
+      iB++;
+      DBG1("HAS ALREADY");
     }
-  }else{
-    iB++;
-    DBG1("HAS ALREADY");
   }
   
   return false;
@@ -423,20 +442,35 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
 
   // BUFFs, every death makes it harder to player:
   riBuff=1;
-#define ASRET(e,b)    if(AddState(Killer,e,#e,0,NULL,b) && IsSpecialCharacter(Killer))return false;
-//#define ASRETD(e,d,b) if(AddState(Killer,e,#e,d,#d,b)   && IsSpecialCharacter(Killer))return false;
+#define ASRET(e,b) if(AddState(Killer,e,#e,0,NULL,b) && IsSpecialCharacter(Killer))return false;
+//#define RMS(d,b)   if(AddState(Killer,0,NULL,d,#d,b) && IsSpecialCharacter(Killer))return false;
+#define RMS(d,b)   AddState(Killer,0,NULL,d,#d,b);
+  bool bAlreadyRev = Killer->GetAssignedName().Find("{R}")!=festring::NPos;
   if(IsSpecialCharacter(Killer)){
-    ASRET(ESP,riBuff);
-    ASRET(INFRA_VISION,riBuff);
-  //  ASRETD(HASTE,SLOW,riBuff);
-    ASRET(HASTE,riBuff);
-    ASRET(SWIMMING,riBuff);
-    ASRET(ETHEREAL_MOVING,riBuff);
-    ASRET(REGENERATION,riBuff);
-    ASRET(LEVITATION,riBuff);
-    ASRET(GAS_IMMUNITY,riBuff);
-    ASRET(TELEPORT_LOCK,riBuff);
-    ASRET(POLYMORPH_LOCK,riBuff);
+    if(!bAlreadyRev){
+      ASRET(ESP,riBuff);
+      ASRET(INFRA_VISION,riBuff);
+    //  ASRETD(HASTE,SLOW,riBuff);
+      ASRET(HASTE,riBuff);
+      ASRET(SWIMMING,riBuff);
+      ASRET(ETHEREAL_MOVING,riBuff);
+      ASRET(REGENERATION,riBuff);
+      ASRET(LEVITATION,riBuff);
+      ASRET(GAS_IMMUNITY,riBuff);
+      ASRET(TELEPORT_LOCK,riBuff);
+      ASRET(POLYMORPH_LOCK,riBuff);
+    }else{
+      RMS(ESP,riBuff);
+      RMS(INFRA_VISION,riBuff);
+      RMS(HASTE,riBuff);
+      RMS(SWIMMING,riBuff);
+      RMS(ETHEREAL_MOVING,riBuff);
+      RMS(REGENERATION,riBuff);
+      RMS(LEVITATION,riBuff);
+      RMS(GAS_IMMUNITY,riBuff);
+      RMS(TELEPORT_LOCK,riBuff);
+      RMS(POLYMORPH_LOCK,riBuff);
+    }
   }
   
   /*************************
@@ -448,6 +482,7 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   ASRET(SLOW,riDebuff);
 //no, adds more mobs...  ASRET(PARASITE_TAPE_WORM,riDebuff);
   ASRET(CONFUSED,riDebuff);
+  ASRET(POLYMORPH,riDebuff); //this may be the only way to defeat some special mob
 //no, may mess the player...  ASRET(LEPROSY,riDebuff);
   if(RAND()%10==0){
     ASRET(POISONED,riDebuff);
@@ -455,7 +490,7 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
   }
   
   // Revenge, grant it will stop:
-  if(RAND()%5==0){
+  if(bAlreadyRev || RAND()%5==0){
     for(int i=0; i < ( RAND() % (IsSpecialCharacter(Killer)?5:2) + 1 ) ;i++){
       if(Killer->IsDead())break;
       game::GetCurrentLevel()->Explosion(
@@ -464,8 +499,34 @@ bool curseddeveloper::BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,in
     }
   }
 
-  if(RAND()%10==0){
-    Killer->GetTorso()->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * game::GetPlayer()->GetAttribute(WISDOM)));
+  if(bAlreadyRev || RAND()%10==0){
+    bodypart* bpHit=NULL;
+    if(dynamic_cast<humanoid*>(Killer)){
+      switch(RAND()%(10+5)){
+        case 0:
+          bpHit = Killer->GetBodyPart(HEAD_INDEX);
+          if(bpHit)break;
+        case 1:
+          bpHit = Killer->GetBodyPart(GROIN_INDEX);
+          if(bpHit)break;
+        case 2: case 3:
+          bpHit = Killer->GetBodyPart(LEFT_ARM_INDEX);
+          if(bpHit)break;
+        case 4: case 5:
+          bpHit = Killer->GetBodyPart(RIGHT_ARM_INDEX);
+          if(bpHit)break;
+        case 6: case 7:
+          bpHit = Killer->GetBodyPart(LEFT_LEG_INDEX);
+          if(bpHit)break;
+        case 8: case 9:
+          bpHit = Killer->GetBodyPart(RIGHT_LEG_INDEX);
+          if(bpHit)break;
+        default: break;
+      }
+    }
+    if(!bpHit)
+      bpHit=Killer->GetTorso();
+    bpHit->SpillFluid(NULL, liquid::Spawn(SULPHURIC_ACID, 5 * game::GetPlayer()->GetAttribute(WISDOM)));
     ADD_MESSAGE("Cursed acid hits %s!", Killer->GetName(DEFINITE).CStr());
     ModKillCredit(-3);
   }
