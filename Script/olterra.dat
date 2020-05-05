@@ -623,6 +623,21 @@ decoration
     Walkability = ETHEREAL;
   }
 
+  Config TAILORING_BENCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the tailoring bench.";
+    MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(124, 50, 16);
+    SitMessage = "You carefully sit on the tailoring bench.";
+    RestMessage = "You surprisingly manage to take a nap on the tailoring bench.";
+    NameSingular = "tailoring bench";
+    BitmapPos = 80, 224;
+    HPModifier = 25;
+    Walkability = ETHEREAL;
+  }
+
   Config TABLE;
   {
     CanBeDestroyed = true;
