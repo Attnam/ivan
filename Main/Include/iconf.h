@@ -66,6 +66,7 @@ class ivanconfig
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
+  static truth IsSetupCustomKeys() { return SetupCustomKeys.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
@@ -165,6 +166,7 @@ class ivanconfig
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SetupCustomKeysChanger(truthoption*, truth);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -225,6 +227,7 @@ class ivanconfig
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static truthoption SetupCustomKeys;
   static cycleoption GoOnStopMode;
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
