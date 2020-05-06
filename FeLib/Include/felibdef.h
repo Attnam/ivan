@@ -192,14 +192,16 @@ inline int GetMinColor24(col24 Color)
 #endif
 #define KEY_ESC 0x1B
 #define KEY_ENTER 0x0D
-#define KEY_UP 0x148
-#define KEY_DOWN 0x150
-#define KEY_RIGHT 0x14D
-#define KEY_LEFT 0x14B
-#define KEY_HOME 0x147
-#define KEY_END 0x14F
+#define KEY_HOME      0x147
+#define KEY_UP        0x148
+#define KEY_PAGE_UP   0x149
+#define KEY_LEFT      0x14B
+#define KEY_RIGHT     0x14D
+#define KEY_END       0x14F
+#define KEY_DOWN      0x150
 #define KEY_PAGE_DOWN 0x151
-#define KEY_PAGE_UP 0x149
+#define KEY_DELETE    0x152
+#define KEY_INSERT    0x153
 #define KEY_SPACE ' '
 #define KEY_NUMPAD_5 2
 
