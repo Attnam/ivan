@@ -251,7 +251,15 @@ void specialkeys::AddCtrlOrFuncKeyHandler(SDL_Keycode key, specialkeyhandler Han
  */
 bool specialkeys::ControlKeyHandler(SDL_Keycode key)
 {
-  switch(key){ //TODO use SDLK_ keys?
+  /**
+   * Important: it will require to use some special SDLK_ keys if they are not 
+   * being translated to a felibdef.h key value
+   * 
+   * If you use some "mouse pointer indicator OS feature" by pressing the CONTROL key,
+   * the first time you press a key combination (like ctrl+f) it may not work!
+   * On the tests I performed, it would only mess RightControl+f here.
+   */
+  switch(key){ 
   case 'f':
     Request=Filter;
     return true;
@@ -261,6 +269,7 @@ bool specialkeys::ControlKeyHandler(SDL_Keycode key)
   case 'v':
     Request=PasteFromClipboard;
     return true;
+  case KEY_DELETE:
   case SDLK_DELETE:
     Request=ClearStringInput;
     return true;

@@ -455,7 +455,7 @@ int iosystem::StringQuestion(festring& Input,
 
     while(!(LastKey >= 0x20 && LastKey < 0x7F)
       && LastKey != KEY_BACK_SPACE
-      && LastKey != SDLK_DELETE
+      && LastKey != KEY_DELETE
       && LastKey != KEY_DOWN
       && LastKey != KEY_END
       && LastKey != KEY_ENTER
@@ -491,7 +491,7 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
-    if(LastKey == SDLK_DELETE)
+    if(LastKey == KEY_DELETE)
     {
       if(CursorPos < Input.GetSize())
         Input.Erase(static_cast<festring::sizetype>(CursorPos), 1);

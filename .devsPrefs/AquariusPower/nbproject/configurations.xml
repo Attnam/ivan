@@ -175,6 +175,7 @@
               <Elem>FELIST_WAITKEYUP</Elem>
               <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
               <Elem>UNIX</Elem>
+              <Elem>USE_SDL</Elem>
               <Elem>WIZARD</Elem>
             </preprocessorList>
           </ccTool>
