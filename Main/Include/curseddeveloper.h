@@ -18,10 +18,12 @@ class character;
 class festring;
 
 class curseddeveloper {
+  public:
+    static bool IsCursedDeveloper();
+    
 #ifdef CURSEDDEVELOPER
   public:
     static void Init();
-    static bool IsCursedDeveloper(){return bCursedDeveloper;};
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
     static bool LifeSaveJustABit(character* Killer);
     static long UpdateKillCredit(character* Victim=NULL,int iMod=0);
@@ -43,7 +45,6 @@ class curseddeveloper {
     static bool bNightmareWakeUp;
 #else
   public:
-    static bool IsCursedDeveloper(){return false;}
     static bool IsCursedDeveloperTeleport(){return false;}
 #endif
 };

@@ -20,7 +20,54 @@
  * This is a developer environment variable to test the game without wizard mode.
  */
 
+festring fsKCPrefix="CursedDeveloperKC=";
+character* GetPlayerCharWithTorsoForKC()
+{
+  character* P=game::GetPlayer();
+  
+  while(P->GetTorso()->GetLabel().Find(fsKCPrefix)==festring::NPos){
+    if(!P->GetPolymorphBackup())
+      break;
+    DBG2(P->GetID(),P->GetNameSingular().CStr());
+    P=P->GetPolymorphBackup();
+    DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
+  }
+  
+  return P;
+}
+
+bool curseddeveloper::IsCursedDeveloper()
+{
 #ifdef CURSEDDEVELOPER
+  if(bCursedDeveloper)return true; //this is for the real compiled mode
+#endif
+  
+  static character* Pprevious=NULL;
+  static int iCursedDeveloperDoubleCheck=0;
+  
+  if(game::GetPlayer()!=Pprevious){
+    iCursedDeveloperDoubleCheck=0; // to let it be checked again, mainly when coming back from main menu
+    Pprevious=game::GetPlayer();
+  }
+  
+  if(iCursedDeveloperDoubleCheck!=0)
+    return iCursedDeveloperDoubleCheck==1;
+    
+  /**
+   * deep check/validation against a savegame that could have been used initially
+   * on the cursed developer mode and after on a normal gameplay.
+   */
+  character* P = GetPlayerCharWithTorsoForKC();
+  if(P->GetTorso()->GetLabel().Find(fsKCPrefix)!=festring::NPos)
+    iCursedDeveloperDoubleCheck = 1; //cursed
+  else
+    iCursedDeveloperDoubleCheck = 2; //normal
+  
+  return iCursedDeveloperDoubleCheck==1;
+}
+
+#ifdef CURSEDDEVELOPER
+
 bool curseddeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELOPER");return strcmp(pc?pc:"","true")==0;}();
 bool curseddeveloper::bCursedDeveloperTeleport = false;
 long curseddeveloper::lKillCredit=0;
@@ -56,19 +103,14 @@ void curseddeveloper::ResetKillCredit(festring fsCmdParams)
   ModKillCredit(lKillCredit * -1);
 }
 
-long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
+long curseddeveloper::UpdateKillCredit(character* Victim,int iMod)
+{
   character* P=game::GetPlayer();
   if(!P)return lKillCredit;
   
-  while(P->GetTorso()->GetLabel().IsEmpty()){
-    if(!P->GetPolymorphBackup())
-      break;
-    DBG2(P->GetID(),P->GetNameSingular().CStr());
-    P=P->GetPolymorphBackup();
-    DBGEXEC(if(P){DBG2(P->GetID(),P->GetNameSingular().CStr());});
-  }
-  
-  festring fsKillCredit=P->GetTorso()->GetLabel();
+  P=GetPlayerCharWithTorsoForKC();
+  festring fsKillCredit = P->GetTorso()->GetLabel();
+  fsKillCredit.Erase(0,fsKCPrefix.GetSize());
   DBG1(fsKillCredit.CStr());
   long lKCStored=0;
   if(!fsKillCredit.IsEmpty())
@@ -88,7 +130,7 @@ long curseddeveloper::UpdateKillCredit(character* Victim,int iMod){
     NightmareWakeUp(P);
   
   DBG1(lKCStored);
-  P->GetTorso()->SetLabel(festring()<<lKCStored); // using label as custom data storage
+  P->GetTorso()->SetLabel(festring()<<fsKCPrefix<<lKCStored); // using label as custom data storage
   lKillCredit = lKCStored;
   
   return lKillCredit;

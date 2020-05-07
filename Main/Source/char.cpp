@@ -5220,14 +5220,18 @@ void character::DrawPanel(truth AnimationDraw) const
   igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
                          v2(game::GetMaxScreenXSize() << 4, 9));
   int iLeftPos=0;
+  if(curseddeveloper::IsCursedDeveloper()){ //this will work in case a cursed savegame is moved to a normal gameplay game executable
+    festring fsCD;fsCD<<"(Cursed Immortal, KC=";
+    col24 cBkg=YELLOW;
 #ifdef CURSEDDEVELOPER
-    if(curseddeveloper::IsCursedDeveloper()){
-      festring fsCD;fsCD<<"(Cursed Immortal, KC="<<curseddeveloper::GetKillCredit()<<") ";
-      iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
-      FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), 
-        curseddeveloper::GetKillCredit()<0?RED:YELLOW, fsCD.CStr(), GetPanelName().CStr());
-    }
+    fsCD<<curseddeveloper::GetKillCredit();
+    if(curseddeveloper::GetKillCredit()<0)cBkg=RED;
 #endif
+    fsCD<<") ";
+    iLeftPos+=fsCD.GetSize()*FONT->GetFontSize().X;
+    FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), 
+      cBkg, fsCD.CStr(), GetPanelName().CStr());
+  }
   FONT->Printf(DOUBLE_BUFFER, v2(16+iLeftPos, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
