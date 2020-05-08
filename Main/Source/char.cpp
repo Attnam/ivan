@@ -1703,9 +1703,10 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     ADD_MESSAGE("You die.");
     
 #ifdef CURSEDDEVELOPER    
-    if(!game::WizardModeIsReallyActive())
-      if(curseddeveloper::LifeSaveJustABit((character*)Killer))
-        return;
+    if(!game::WizardModeIsReallyActive() && curseddeveloper::IsCursedDeveloper()){
+      curseddeveloper::RequestResurrect((character*)Killer);
+      return;
+    }
 #endif
     
 #ifdef WIZARD
@@ -2729,6 +2730,13 @@ void character::GetPlayerCommand()
       game::SetDangerFound(0);
     }
 
+#ifdef CURSEDDEVELOPER
+    if(curseddeveloper::LifeSaveJustABitIfRequested()){
+      HasActed = true;
+      continue;
+    }
+#endif
+    
     game::SetIsInGetCommand(true);
     int Key = GET_KEY();
     game::SetIsInGetCommand(false);

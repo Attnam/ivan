@@ -72,6 +72,9 @@ bool curseddeveloper::bCursedDeveloper = [](){char* pc=getenv("IVAN_CURSEDDEVELO
 bool curseddeveloper::bCursedDeveloperTeleport = false;
 long curseddeveloper::lKillCredit=0;
 bool curseddeveloper::bNightmareWakeUp=false;
+bool curseddeveloper::bResurrect=false;
+character* curseddeveloper::Killer=NULL;
+bool bAlwaysTryToWakeup=false;
 
 #define HEAL_1     1
 #define HEAL_MINOK 2
@@ -313,6 +316,18 @@ void SetAllowWakeUp(festring fs)
     ADD_MESSAGE("You won't wakeup!");
   }
 }
+void SetAlwaysTryToWakeup(festring fs)
+{
+  bAlwaysTryToWakeup=false;
+  if(fs=="yes")
+    bAlwaysTryToWakeup=true;
+  
+  if(bAlwaysTryToWakeup){
+    ADD_MESSAGE("You will wakeup...");
+  }else{
+    ADD_MESSAGE("You won't wakeup!");
+  }
+}
 void curseddeveloper::Init(){
   devcons::AddDevCmd("RestoreLimbs",curseddeveloper::RestoreLimbs,
     "[1|2|3] 1=1HP 2=minUsableHP 3=maxHP. Restore missing limbs, better use only if the game becomes unplayable (cursed immortal).");
@@ -320,6 +335,19 @@ void curseddeveloper::Init(){
     "to help make tests related to KillCredit's negative value (cursed immortal).");
   devcons::AddDevCmd("AllowWakeup",SetAllowWakeUp,
     "[no] to help on making tests ignoring KC negative value (cursed immortal).");
+  devcons::AddDevCmd("AlwaysTryToWakeup",SetAlwaysTryToWakeup,
+    "[yes] to help on making tests (cursed immortal).");
+}
+
+bool curseddeveloper::LifeSaveJustABitIfRequested()
+{
+  if(bResurrect){
+    bool b=LifeSaveJustABit(Killer);
+    Killer=NULL;
+    bResurrect=false;
+    return b;
+  }
+  return false;
 }
 
 bool curseddeveloper::LifeSaveJustABit(character* Killer)
@@ -420,7 +448,7 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
     ResetKillCredit(); //to prevent pointless too negative value at home town
   }else
   if(bAllowWakeUp && lKillCredit<0 && !game::IsInWilderness() && !bIsAtHomeIsland && Killer){
-    if(RAND()%10==0){
+    if(RAND()%10==0 || bAlwaysTryToWakeup){
       for(int i=0;i<10;i++){
         ADD_MESSAGE("You try to wakeup...");
         if(game::TryTravel(iDung, iLvl, DOUBLE_BED, false, true)){ //TODO should be the small bed at the small house

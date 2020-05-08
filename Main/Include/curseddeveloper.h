@@ -25,10 +25,12 @@ class curseddeveloper {
   public:
     static void Init();
     static bool IsCursedDeveloperTeleport(){return bCursedDeveloperTeleport;}
+    static bool LifeSaveJustABitIfRequested();
     static bool LifeSaveJustABit(character* Killer);
     static long UpdateKillCredit(character* Victim=NULL,int iMod=0);
     static long ModKillCredit(int i){UpdateKillCredit(NULL,i);return lKillCredit;}
     static long GetKillCredit(){return lKillCredit;}
+    static void RequestResurrect(character* C){if(!Killer)Killer=C;bResurrect=true;}
   protected:
     static bool BuffAndDebuffPlayerKiller(character* Killer,int& riBuff,int& riDebuff,bool& rbRev);
     static void RestoreLimbs(festring fsCmdParams = CONST_S(""));
@@ -43,6 +45,8 @@ class curseddeveloper {
     static bool bInit;
     static long lKillCredit;
     static bool bNightmareWakeUp;
+    static bool bResurrect;
+    static character* Killer;
 #else
   public:
     static bool IsCursedDeveloperTeleport(){return false;}
