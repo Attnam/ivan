@@ -287,6 +287,8 @@ class character : public entity, public id
  public:
   friend class databasecreator<character>;
   friend class corpse;
+  friend class curseddeveloper;
+  friend class wizautoplay;
   typedef characterprototype prototype;
   typedef characterdatabase database;
   character();
@@ -364,6 +366,7 @@ class character : public entity, public id
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
   truth TemporaryStateIsActivated(long What) const;
+  truth HasStateFlag(long Flag);
   truth EquipmentStateIsActivated(long What) const { return EquipmentState & What; }
   truth StateIsActivated(long What) const;
   truth LoseConsciousness(int, truth = false);
@@ -688,6 +691,7 @@ class character : public entity, public id
   void LycanthropyHandler();
   void SearchingHandler();
   void SaveLife();
+  void SaveLifeBase();
   void BeginInvisibility();
   void BeginInfraVision();
   void BeginESP();
@@ -1183,7 +1187,6 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
-  truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
   int GetAdjustedStaminaCost(int, int);
   truth TryToStealFromShop(character*, item*);
@@ -1220,23 +1223,6 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
-
-  truth AutoPlayAICommand(int&);
-  truth AutoPlayAIPray();
-  bool AutoPlayAIChkInconsistency();
-  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
-  static void AutoPlayAIDebugDrawOverlay();
-  static bool AutoPlayAICheckAreaLevelChangedAndReset();
-  truth AutoPlayAIDropThings();
-  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
-  truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
-  int   AutoPlayAIFindWalkDist(v2 v2To);
-  truth AutoPlayAITestValidPathTo(v2 v2To);
-  truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
-  truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
-  void AutoPlayAITeleport(bool bDeathCountBased);
-  void AutoPlayAIReset(bool bFailedToo);
-
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;

@@ -41,6 +41,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "curseddeveloper.h"
 #include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
@@ -67,6 +68,7 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "wsquare.h"
 
 #include "dbgmsgproj.h"
@@ -192,7 +194,6 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
-int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -1513,7 +1514,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
   //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
   int iLineHeightPixels=15; //line height in pixels
-  int iFontWidth=8; //font width
+  int iFontWidth=FONT->GetFontSize().X;
   int iM=3; //margin
 
   const static int iTotCol=5;
@@ -3790,10 +3791,20 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 
 void game::SetPlayer(character* NP)
 {
+#ifdef CURSEDDEVELOPER    
+  if(NP && Player && Player->Exists() && Player->GetTorso())
+    NP->GetTorso()->SetLabel( Player->GetTorso()->GetLabel() );
+#endif
+  
   Player = NP;
 
   if(Player)
     Player->AddFlags(C_PLAYER);
+
+#ifdef CURSEDDEVELOPER  
+  if(Player)
+    curseddeveloper::UpdateKillCredit();
+#endif
 }
 
 void game::InitDungeons()
@@ -4198,7 +4209,7 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  if(game::GetAutoPlayMode()==0)
+  if(wizautoplay::GetAutoPlayMode()==AUTOPLAYMODE_DISABLED)
     for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
@@ -5536,69 +5547,6 @@ truth game::MassacreListsEmpty()
 }
 
 #ifdef WIZARD
-
-void game::AutoPlayModeApply(){
-  int iTimeout=0;
-  bool bPlayInBackground=false;
-
-  const char* msg;
-  switch(game::AutoPlayMode){
-  case 0:
-    // disabled
-    msg="%s says \"I can rest now.\"";
-    break;
-  case 1:
-    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
-    msg="%s says \"I won't rest!\"";
-    break;
-  case 2: // TIMEOUTs key press from here to below
-    msg="%s says \"I can't wait anymore!\"";
-    iTimeout=(1000);
-    bPlayInBackground=true;
-    break;
-  case 3:
-    msg="%s says \"I am in a hurry!\"";
-    iTimeout=(1000/2);
-    bPlayInBackground=true;
-    break;
-  case 4:
-    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
-    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
-    bPlayInBackground=true;
-    break;
-  }
-  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
-
-  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
-
-  if(!ivanconfig::IsXBRZScale()){
-    /**
-     * TODO
-     * This is an horrible gum solution...
-     * I still have no idea why this happens.
-     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
-     * But the debug log shows the correct timeouts :(, clueless for now...
-     */
-    iTimeout/=2;
-  }
-
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
-}
-
-void game::IncAutoPlayMode() {
-//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
-//    if(AutoPlayMode>=2){
-//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
-//      AutoPlayModeApply();
-//    }
-//  }
-
-  ++AutoPlayMode;
-  if(AutoPlayMode>4)AutoPlayMode=0;
-
-  AutoPlayModeApply();
-}
-
 void game::SeeWholeMap()
 {
   if(SeeWholeMapCheatMode < 2)
@@ -5608,7 +5556,6 @@ void game::SeeWholeMap()
 
   GetCurrentArea()->SendNewDrawRequest();
 }
-
 #endif
 
 void game::CreateBone()
@@ -6188,7 +6135,7 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
-  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+  if(wizautoplay::IsPlayerAutoPlay(Wisher))return ABORTED;
 
   for(;;)
   {

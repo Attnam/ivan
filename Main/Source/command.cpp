@@ -37,6 +37,7 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
@@ -866,8 +867,8 @@ truth commandsystem::Read(character* Char)
 
 #ifdef WIZARD
   // stops auto question timeout that was preventing reading at all
-  if(Item && game::GetAutoPlayMode())
-    game::DisableAutoPlayMode();
+  if(Item && wizautoplay::GetAutoPlayMode())
+    wizautoplay::DisableAutoPlayMode();
 #endif
 
   return Item && Char->ReadItem(Item);
@@ -2029,7 +2030,7 @@ truth commandsystem::WizardMode(character* Char)
 
 truth commandsystem::AutoPlay(character* Char)
 {
-  game::IncAutoPlayMode();
+  wizautoplay::IncAutoPlayMode();
   return false;
 }
 
