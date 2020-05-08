@@ -14,6 +14,7 @@
 #define __IGRAPH_H__
 
 #include <map>
+#include <vector>
 
 #include "ivandef.h"
 #include "femath.h"
@@ -111,7 +112,7 @@ class igraph
   static const rawbitmap* GetRawGraphic(int I) { return RawGraphic[I]; }
   static cint* GetBodyBitmapValidityMap(int);
   static bitmap* GetFlagBuffer() { return FlagBuffer; }
-  static cbitmap* GetMenuGraphic() { return Menu; }
+  static std::vector<bitmap*> GetMenuGraphic() { return vMenu; }
   static void LoadMenu();
   static void UnLoadMenu();
   static bitmap* GetSilhouetteCache(int I1, int I2, int I3) { return SilhouetteCache[I1][I2][I3]; }
@@ -136,7 +137,7 @@ class igraph
   static uchar RollBuffer[256];
   static bitmap* FlagBuffer;
   static int** BodyBitmapValidityMap;
-  static bitmap* Menu;
+  static std::vector<bitmap*> vMenu;
   static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
   static rawbitmap* ColorizeBuffer[2];
   static bitmap* Cursor[CURSOR_TYPES];

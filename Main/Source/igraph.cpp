@@ -10,6 +10,8 @@
  *
  */
 
+#include <vector>
+
 #include "igraph.h"
 #include "felist.h"
 #include "bitmap.h"
@@ -46,7 +48,7 @@ cchar* igraph::GraphicFileName[] =
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
-bitmap* igraph::Menu;
+std::vector<bitmap*> igraph::vMenu;
 bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
 rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(TILE_V2), new rawbitmap(TILE_V2) };
 bitmap* igraph::Cursor[CURSOR_TYPES];
@@ -488,12 +490,19 @@ void igraph::CreateBodyBitmapValidityMaps()
 
 void igraph::LoadMenu()
 {
-  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.png");
+  vMenu.push_back(new bitmap(game::GetDataDir() + "Graphics/Menu1.png"));
+  vMenu.push_back(new bitmap(game::GetDataDir() + "Graphics/Menu2.png"));
+  vMenu.push_back(new bitmap(game::GetDataDir() + "Graphics/Menu3.png"));
+  vMenu.push_back(new bitmap(game::GetDataDir() + "Graphics/Menu4.png"));
+  vMenu.push_back(new bitmap(game::GetDataDir() + "Graphics/Menu5.png"));
 }
 
 void igraph::UnLoadMenu()
 {
-  delete Menu;
+  for(auto pbmp = vMenu.begin(); pbmp != vMenu.end(); ++pbmp){
+    delete *pbmp;
+  }
+  vMenu.resize(0);
 }
 
 #ifdef IMPORT_EXPORT_GFX //INCOMPLETE WORK. for (one day) load each gfx from independent files.
