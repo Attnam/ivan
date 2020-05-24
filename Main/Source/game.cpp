@@ -382,11 +382,12 @@ void game::InitScript()
 
 truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
 {
-  return it->IsHeadOfElpuri()
-      || it->IsGoldenEagleShirt()
-      || it->IsPetrussNut()
-      || it->IsTheAvatar()
-      || it->IsEncryptedScroll();
+  return it->IsQuestItem() //TODO this call should suffice instead of this very function
+    || it->IsHeadOfElpuri()
+    || it->IsGoldenEagleShirt()
+    || it->IsPetrussNut()
+    || it->IsTheAvatar()
+    || it->IsEncryptedScroll();
 }
 
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
