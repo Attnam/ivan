@@ -483,11 +483,45 @@ col24 object::CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
   if(vol<100){
     if(Emit != 0){//colBlack24){
       float fPerc = (50.0+(vol/2))/100.0; //there is at least 1 square of light only from 50 on, less than 50 is full darkness
-      col24 cRed = GetRed24(Emit)*fPerc;
-      col24 cGreen = GetGreen24(Emit)*fPerc;
-      col24 cBlue = GetBlue24(Emit)*fPerc;
-      Emit = MakeRGB24(cRed, cGreen, cBlue);
-      DBG7("EmitDbgVol",Emit,vol,fPerc,cRed,cGreen,cBlue);
+      col24 cR = GetRed24(Emit)*fPerc;
+      col24 cG = GetGreen24(Emit)*fPerc;
+      col24 cB = GetBlue24(Emit)*fPerc;
+      
+//      int iMinR=0,iMinG=0,iMinB=0;
+//      DBGEXEC( //can be setup thru console command DbgSetVar
+//        iMinR=DBGGETVD("iEmitMinR",iMinR);
+//        iMinG=DBGGETVD("iEmitMinG",iMinG);
+//        iMinB=DBGGETVD("iEmitMinB",iMinB);
+//      );
+//      DBG3(iMinR,iMinG,iMinB);
+//      if(cR<iMinR)cR=iMinR;
+//      if(cG<iMinG)cG=iMinG;
+//      if(cB<iMinB)cB=iMinB;
+      
+      /**
+       * the minimum value for any component to have at least minimum light is 80
+       * this means other components can even be 0
+       * finds the highest and increases it to the minimum!
+       */
+      static int iMin=80;
+      if(cR<iMin && cG<iMin && cB<iMin){
+        if(cR > cG && cR > cB)cR=iMin;
+        else
+        if(cG > cR && cG > cB)cG=iMin;
+        else
+        if(cB > cR && cB > cG)cB=iMin;
+      }
+      
+//      DBGEXEC( //REMOVE THIS IS JUST A TEST!
+//        if(vol==1){ 
+//          cRed=iMinR;
+//          cGreen=iMinG;
+//          cBlue=iMinB;
+//        }
+//      );
+      
+      Emit = MakeRGB24(cR, cG, cB);
+      DBG7("EmitDbgVol",Emit,vol,fPerc,cR,cG,cB);
     }
   }
   
