@@ -116,6 +116,9 @@
     #define DBGSC(C)
     #define DBGS(SS)
     #define DBGEXEC(cmds)
+    #define DBGSETV(id,val)
+    #define DBGGETV(id,defval)
+    #define DBGGETVD(id,defval)
 
     // proj specifics
     #define DBGAV2(v2)
