@@ -273,7 +273,7 @@ class craftcore {
     static bool IsWooden(material* mat);
     static bool IsBone(material* mat);
 
-    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE, long volume = 0);
+    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE, long NewMaterialVolume = 0);
     static void FinishSpawning(recipedata& rpd,item* itSpawn);
 
     static void AddSuspended(const recipedata& rpd);

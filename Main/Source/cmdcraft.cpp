@@ -2270,7 +2270,9 @@ struct srpSplitLump : public recipe{
       item* cut = craftcore::PrepareRemains(rpd,matM,craftcore::CitType(ToSplit),iCutVol);
       //cut->GetMainMaterial()->SetVolume(iCutVol);
       matM->SetVolume(matM->GetVolume() - iCutVol);
-      ToSplit->CalculateAll();
+      ToSplit->SetMainMaterial(matM); //just to let it calculate too
+      ToSplit->CalculateAll(); //calculate again to help?
+      craftcore::FinishSpawning(rpd,ToSplit); //to help on calculating emitation
       rpd.SetAlreadyExplained(); //no need to say anything
       return true; //TODO should take more turns?
     }
@@ -3419,6 +3421,8 @@ material* craftcore::CreateMaterial(bool bMain,recipedata& rpd)
   return mat;
 }
 
+#define MAIN_MATERIAL true
+#define SECONDARY_MATERIAL false
 item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 {
   rpd.rc.integrityCheck();
@@ -3469,14 +3473,14 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 
 //  material* matM = material::MakeMaterial(rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
 //  matM->SetSpoilCounter(rpd.itSpawnMatMainSpoilLevel);
-  material* matM = craftcore::CreateMaterial(true,rpd);
+  material* matM = craftcore::CreateMaterial(MAIN_MATERIAL,rpd);
   delete itSpawn->SetMainMaterial(matM);
-
+  
   if(rpd.itSpawnMatSecCfg==0)
     craftcore::EmptyContentsIfPossible(rpd,itSpawn);
   else{
     if(matS==NULL)
-      matS = craftcore::CreateMaterial(false,rpd);
+      matS = craftcore::CreateMaterial(SECONDARY_MATERIAL,rpd);
 //      matS = material::MakeMaterial(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
     if(matS!=NULL){
 //      matS->SetSpoilCounter(rpd.itSpawnMatSecSpoilLevel);
@@ -3990,19 +3994,19 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
  * @param volume is the main material volume, it is important to be set before item->CalculateAll()
  * @return
  */
-item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType, long volume) //TODO force type could be a class (type) reference?
+item* craftcore::PrepareRemains(recipedata& rpd, material* matWorkWith, int ForceType, long NewMaterialVolume) //TODO force type could be a class (type) reference?
 {
-  if(mat==NULL)
+  if(matWorkWith==NULL)
     ABORT("NULL remains material");
 
-  DBG2(mat->GetName(DEFINITE).CStr(),mat->GetVolume());
-  bool bLiquid = mat->IsLiquid();
-  if(mat->IsPowder())bLiquid=false; //TODO if explosive could have a chance to xplod use the fumble function TODO generalize it
+  DBG2(matWorkWith->GetName(DEFINITE).CStr(),matWorkWith->GetVolume());
+  bool bLiquid = matWorkWith->IsLiquid();
+  if(matWorkWith->IsPowder())bLiquid=false; //TODO if explosive could have a chance to xplod use the fumble function TODO generalize it
 
-  if(dynamic_cast<gas*>(mat)!=NULL)return NULL; //TODO should have a chance to release the gas effect if not 100% :)
+  if(dynamic_cast<gas*>(matWorkWith)!=NULL)return NULL; //TODO should have a chance to release the gas effect if not 100% :)
 
   if(bLiquid){
-    rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume())); //TODO use a fumble check to determine on floor or on character (worse)
+    rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(matWorkWith->GetConfig(),matWorkWith->GetVolume())); //TODO use a fumble check to determine on floor or on character (worse)
     return NULL;
   }
 
@@ -4019,11 +4023,11 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType, l
      * Chain mail should be this too and require metal cutting tool.
      */
     if(Type==CIT_NONE) //specific lumps
-      if(craftcore::IsMeltable(mat) || mat->IsFlesh() || (mat->GetCategoryFlags() & CAN_BE_TAILORED))
+      if(craftcore::IsMeltable(matWorkWith) || matWorkWith->IsFlesh() || (matWorkWith->GetCategoryFlags() & CAN_BE_TAILORED))
         Type = CIT_LUMP;
 
     if(Type==CIT_NONE)
-      if(IsWooden(mat) || IsBone(mat))
+      if(IsWooden(matWorkWith) || IsBone(matWorkWith))
         Type = CIT_STICK;
 
     /**
@@ -4059,13 +4063,16 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType, l
   }
 
 //    delete itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-  delete itTmp->SetMainMaterial(CreateMaterial(mat));
+  /**
+   * the material must be completely ready/configured before assigning it as 
+   * main or secondary, as there will happen important calculations, including
+   * emitation!
+   */
+  material* matNew=CreateMaterial(matWorkWith);
+  matNew->SetVolume(NewMaterialVolume);
+  craftcore::CopyDegradation(matWorkWith,matNew);
+  delete itTmp->SetMainMaterial(matNew);
   
-  if(volume>0)
-    itTmp->GetMainMaterial()->SetVolume(volume);
-
-  craftcore::CopyDegradation(mat,itTmp->GetMainMaterial());
-
   FinishSpawning(rpd,itTmp);
 
   ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
