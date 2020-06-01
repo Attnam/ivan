@@ -486,6 +486,18 @@ col24 object::CalcEmitationBasedOnVolume(col24 Emit,ulong vol)
       col24 cRed = GetRed24(Emit)*fPerc;
       col24 cGreen = GetGreen24(Emit)*fPerc;
       col24 cBlue = GetBlue24(Emit)*fPerc;
+      
+      int iMinR=0,iMinG=0,iMinB=0;
+      DBGEXEC( //can be setup thru console command DbgSetVar
+        iMinR=DBGGETVD("iEmitMinR",iMinR);
+        iMinG=DBGGETVD("iEmitMinG",iMinG);
+        iMinB=DBGGETVD("iEmitMinB",iMinB);
+        DBG3(iMinR,iMinG,iMinB);
+      );
+      if(cRed  <iMinR)cRed  =iMinR;
+      if(cGreen<iMinG)cGreen=iMinG;
+      if(cBlue <iMinB)cBlue =iMinB;
+      
       Emit = MakeRGB24(cRed, cGreen, cBlue);
       DBG7("EmitDbgVol",Emit,vol,fPerc,cRed,cGreen,cBlue);
     }
