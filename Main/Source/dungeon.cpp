@@ -15,6 +15,7 @@
 #include "database.h"
 #include "dbgmsgproj.h"
 #include "dungeon.h"
+#include "lsquare.h"
 #include "error.h"
 #include "femath.h"
 #include "game.h"
@@ -307,6 +308,21 @@ inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
   return SaveFile;
 }
 
+/**
+ * The wrong luminance saved to a lsquare problem
+ * may happen after craft/split eg.: a blue crystal stone, 
+ * then you save the game and re-load it and the luminance would be still there.
+ * TODO this workaround will not be necessary when the problem is fixed on it's origin
+ */
+void WorkaroundFixLuminance(level* lvl)
+{
+  for(int iY=0;iY<lvl->GetYSize();iY++){for(int iX=0;iX<lvl->GetXSize();iX++){
+    static lsquare* lsqr;lsqr=lvl->GetLSquare(iX,iY);
+    lsqr->SignalEmitationDecrease(lsqr->GetEmitation());
+    lsqr->CalculateLuminance();
+  }}
+}
+
 level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
 {
   SaveFile >> Level[Number];
@@ -314,7 +330,8 @@ level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
   Level[Number]->SetIndex(Number);
   Level[Number]->SetLevelScript(GetLevelScript(Number));
   PrepareMusic(Number);
-
+  WorkaroundFixLuminance(Level[Number]);
+    
   return Level[Number];
 }
 
