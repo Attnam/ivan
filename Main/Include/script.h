@@ -286,6 +286,7 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
   static datamap DataMap;
   virtual cchar* GetClassID() const;
   SCRIPT_TRUTH(IsInside);
+  SCRIPT_TRUTH(IsExpansive);
 };
 
 template <>

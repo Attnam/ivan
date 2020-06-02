@@ -60,11 +60,11 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-	if(ivanconfig::IsStartingOutlinedGfx()){
-		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
-		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
-		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
-	}
+  if(ivanconfig::IsStartingOutlinedGfx()){
+    RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
+    RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
+    RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
+  }
 
   static truth AlreadyInstalled = false;
 
@@ -90,14 +90,14 @@ void igraph::Init()
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
       if(ivanconfig::GetStartingFontGfx()==1){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
+    }
       if(ivanconfig::GetStartingFontGfx()==2){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font2.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font2.png");
+    }
       if(ivanconfig::GetStartingFontGfx()==3){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font3.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font3.png");
+    }
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
     felist::SetDefaultEntryImageSize(TILE_V2);

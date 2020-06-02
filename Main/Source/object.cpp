@@ -28,7 +28,7 @@ v2 LeftLegSparkleValidityArray[45];
 v2 NormalSparkleValidityArray[256];
 v2 PossibleSparkleBuffer[256];
 
-object::object() : entity(0), MainMaterial(0), Burning(0) { }
+object::object() : entity(0), MainMaterial(0), VisualEffects(0), Burning(0) { }
 int object::GetSpecialFlags() const { return ST_NORMAL; }
 col16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
 cbitmap*const* object::GetPicture() const { return GraphicData.Picture; }

@@ -240,41 +240,80 @@ void altar::StepOn(character* Stepper)
 
 truth throne::SitOn(character* Sitter)
 {
+  if(!Sitter->IsPlayer())
+    return false;
+
   Sitter->EditAP(-1000);
 
-  if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
+  if(GetLSquareUnder()->GetDungeonIndex() == ATTNAM && GetLSquareUnder()->GetLevelIndex() == 0)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt be Our Champion first!\"");
-    return true;
-  }
+    if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt be Our Champion first!\"");
+      return true;
+    }
 
-  if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
-  {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt wear Our shining armor first!\"");
-    return true;
-  }
+    if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt wear Our shining armor first!\"");
+      return true;
+    }
 
-  if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
-  {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
-                "\"Thou shalt surpass thy predecessor first!\"");
-    return true;
-  }
+    if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                  "\"Thou shalt surpass thy predecessor first!\"");
+      return true;
+    }
 
-  if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
+    {
+      game::PlayVictoryMusic();
+      game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
+                               "\"MORTAL! THOU HAST SURPASSED PETRUS, AND PLEASED US GREATLY DURING THY ADVENTURES!\n"
+                               "WE HEREBY TITLE THEE AS OUR NEW HIGH PRIEST!\"\n\nYou are victorious!"));
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("became the new high priest of the Great Frog");
+      PLAYER->AddScoreEntry(Msg, 5, false);
+      game::End(Msg);
+      return true;
+    }
+  }
+  else if(GetLSquareUnder()->GetDungeonIndex() == ASLONA_CASTLE)
   {
-    game::PlayVictoryMusic();
-    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
-                             "\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\n"
-                             "We hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
-    game::GetCurrentArea()->SendNewDrawRequest();
-    game::DrawEverything();
-    PLAYER->ShowAdventureInfo();
-    festring Msg = CONST_S("became the new high priest of the Great Frog");
-    PLAYER->AddScoreEntry(Msg, 5, false);
-    game::End(Msg);
+    if(GetLSquareUnder()->GetLevelIndex() == 0)
+    {
+      if(Sitter->HasMuramasa() && Sitter->HasMasamune() && Sitter->GetBloodMaterial() == BLUE_BLOOD)
+      {
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("You feel strangely judged for a moment, but then you raise Asamarum and E-numa sa-am\n"
+                                 "above your head, and the castle submits to your reign. One by one, people trickle to\n"
+                                 "the throne room, until the gathered crowd start chanting and cheering:\n\n"
+                                 "\"Long live the king!\"\n\nYou are victorious!"));
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("usurped the throne of Aslona");
+        PLAYER->AddScoreEntry(Msg, 4, false);
+        game::End(Msg);
+        return true;
+      }
+      else if(Sitter->HasMuramasa() || Sitter->HasMasamune())
+      {
+        ADD_MESSAGE("You have a strange vision of the very castle walls shuddering in disdain and disgust.");
+        game::GetGod(SEGES)->CreateAngel(game::GetTeam(ASLONA_TEAM), 10000);
+        game::GetGod(SEGES)->AdjustRelation(-50);
+      }
+      else
+        ADD_MESSAGE("\"What do you think you're doing?! Get out!\"");
+    }
+    else
+      ADD_MESSAGE("You don't have to go.");
+
     return true;
   }
 
@@ -344,7 +383,33 @@ truth fountain::SitOn(character* Sitter)
 {
   if(GetSecondaryMaterial())
   {
-    ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
+    if(GetSecondaryMaterial()->IsSolid())
+    {
+      ADD_MESSAGE("You sit on the fountain. Nothing happens, %s", game::Insult());
+    }
+    else if(GetSecondaryMaterial()->IsLiquid())
+    {
+      ADD_MESSAGE("You sit on the fountain. %s sprinkles on your head.", GetSecondaryMaterial()->GetName(false, false).CapitalizeCopy().CStr());
+
+      Sitter->SpillFluid(Sitter, static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
+
+      if(!RAND_N(20))
+        DryOut(Sitter);
+    }
+    else if(GetSecondaryMaterial()->IsGaseous())
+    {
+      ADD_MESSAGE("You sit on the fountain. It releases some %s.", GetSecondaryMaterial()->GetName(false, false).CStr());
+      GetLSquareUnder()->AddSmoke(static_cast<gas*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
+
+      if(!RAND_N(20))
+        DryOut(Sitter);
+    }
+    else // Should not happen.
+    {
+      ADD_MESSAGE("You don't dare to sit on this fountain.");
+      return false;
+    }
+
     Sitter->EditAP(-1000);
     return true;
   }
@@ -356,7 +421,12 @@ truth fountain::Drink(character* Drinker)
 {
   if(GetSecondaryMaterial())
   {
-    if(GetSecondaryMaterial()->GetConfig() == WATER)
+    if(GetSecondaryMaterial()->IsSolid())
+    {
+      ADD_MESSAGE("You cannot drink from this fountain.");
+      return false;
+    }
+    else // Gas or liquid
     {
       room* Room = GetRoom();
 
@@ -370,226 +440,257 @@ truth fountain::Drink(character* Drinker)
 
       Drinker->EditAP(-1000);
 
-      switch(RAND() % 12)
+      if(GetSecondaryMaterial()->IsLiquid())
       {
-       case 0:
-        if(RAND_N(3))
+        if(GetSecondaryMaterial()->GetConfig() == WATER)
         {
-          ADD_MESSAGE("The water is contaminated!");
-          Drinker->EditNP(100);
-
-          if(!RAND_4)
-            Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
-          else
-          {
-            Drinker->ChangeRandomAttribute(-1);
-            Drinker->CheckDeath(CONST_S("died of contaminated water"));
-          }
-
-          break;
-        }
-       case 1:
-        ADD_MESSAGE("The water tasted very good.");
-        Drinker->EditNP(2500);
-        Drinker->ChangeRandomAttribute(1);
-        break;
-       case 2:
-        if(!(RAND() % 15))
-        {
-          ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
-          game::Wish(Drinker,
-                     "%s appears from nothing and the spirit flies happily away!",
-                     "Two %s appear from nothing and the spirit flies happily away!", false);
-        }
-        else
-          DryOut();
-
-        break;
-       case 4:
-        if(RAND() & 7)
-        {
-          ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
-          Drinker->ActivateRandomState(SRC_FOUNTAIN, 10000 + RAND() % 20000);
-        }
-        else
-        {
-          ADD_MESSAGE("This water tastes very odd.");
-
-          if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
-            ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
-        }
-
-        break;
-       case 5:
-        {
-          characterspawner Spawner = 0;
-          int Config = 0, AddChance = 0;
-          truth ForceAdjacency = false;
-
-          switch(RAND_N(5))
+          switch(RAND() % 12)
           {
            case 0:
-            Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
-            AddChance = 66;
-            break;
-           case 1:
-            Spawner = reinterpret_cast<characterspawner>(&mommo::Spawn);
-            Config = RAND_2 ? CONICAL : FLAT;
-            AddChance = 50;
-            break;
-           case 2:
-            Spawner = reinterpret_cast<characterspawner>(&spider::Spawn);
+            if(RAND_N(3))
+            {
+              ADD_MESSAGE("The water is contaminated!");
+              Drinker->EditNP(100);
 
-            if(RAND_4)
-            {
-              Config = LARGE;
-              AddChance = 90;
-            }
-            else
-            {
-              Config = GIANT;
-              AddChance = 75;
-            }
-
-            break;
-           case 3:
-            if(!RAND_N(50))
-            {
-              Spawner = reinterpret_cast<characterspawner>(&dolphin::Spawn);
-              AddChance = 75;
-              ForceAdjacency = true;
-            }
-            else if(!RAND_N(50))
-            {
-              Spawner = reinterpret_cast<characterspawner>(&mysticfrog::Spawn);
-              Config = DARK;
-              AddChance = 1;
-            }
-            else
-            {
-              Spawner = reinterpret_cast<characterspawner>(&frog::Spawn);
-
-              if(RAND_N(5))
-              {
-                Config = DARK;
-                AddChance = 10;
-              }
-              else if(RAND_N(5))
-              {
-                Config = GREATER_DARK;
-                AddChance = 5;
-              }
+              if(!RAND_4)
+                Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
               else
               {
-                Config = GIANT_DARK;
-                AddChance = 2;
+                Drinker->ChangeRandomAttribute(-1);
+                Drinker->CheckDeath(CONST_S("died of contaminated water"));
               }
+
+              break;
             }
+           case 1:
+            ADD_MESSAGE("The water tasted very good.");
+            Drinker->EditNP(2500);
+            Drinker->ChangeRandomAttribute(1);
+            break;
+           case 2:
+            if(!(RAND() % 15))
+            {
+              ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
+              game::Wish(Drinker,
+                         "%s appears from nothing and the spirit flies happily away!",
+                         "Two %s appear from nothing and the spirit flies happily away!", false);
+            }
+            else
+              DryOut(Drinker);
 
             break;
            case 4:
-            Spawner = reinterpret_cast<characterspawner>(&largerat::Spawn);
-            AddChance = 90;
-            break;
-          }
-
-          int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
-          team* Team = game::GetTeam(TeamIndex);
-          int Amount = 1 + femath::LoopRoll(AddChance, 7);
-          spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
-
-          msgsystem::EnterBigMessageMode();
-
-          if(SR.Seen == 1)
-          {
-            ADD_MESSAGE("%s appears from the fountain!", SR.Pioneer->CHAR_NAME(INDEFINITE));
-
-            if(TeamIndex == PLAYER_TEAM)
-              ADD_MESSAGE("%s seems to be friendly.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
-
-            if(Amount > SR.Seen)
-              ADD_MESSAGE("Somehow you also sense %s isn't alone.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
-          }
-          else if(SR.Seen)
-          {
-            ADD_MESSAGE("%s appear from the fountain!", SR.Pioneer->GetName(PLURAL, SR.Seen).CStr());
-
-            if(TeamIndex == PLAYER_TEAM)
-              ADD_MESSAGE("They seem to be friendly.");
-
-            if(Amount > SR.Seen)
-              ADD_MESSAGE("Somehow you also sense you haven't yet seen all of them.");
-          }
-          else
-            ADD_MESSAGE("You feel something moving near you.");
-
-          msgsystem::LeaveBigMessageMode();
-          break;
-        }
-       case 6:
-        if(!RAND_N(5))
-        {
-          item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
-          GetLSquareUnder()->AddItem(ToBeCreated);
-
-          if(ToBeCreated->CanBeSeenByPlayer())
-            ADD_MESSAGE("There's something sparkling in the water.");
-
-          break;
-        }
-       case 7:
-        {
-          if(!RAND_N(2))
-          {
-            olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
-            Drinker->RemoveTraps();
-
-            if(Found && RAND_N(3))
+            if(RAND() & 7)
             {
-              ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
-                          "of tunnels and end up coming out from an other fountain.");
-              Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
-              Drinker->Move(Found->GetPos(), true);
+              ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
+              Drinker->ActivateRandomState(SRC_FOUNTAIN, 10000 + RAND() % 20000);
             }
             else
             {
-              int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
-              int From = GetLevel()->GetIndex();
+              ADD_MESSAGE("This water tastes very odd.");
 
-              if(To == From)
-                game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);
-              else
-                game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
-
-              olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
-
-              if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
-                ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
-                            "of tunnels and end up coming out from an other fountain.");
-              else
-                ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
-                            "of tunnels. Suddenly the wall of the tunnel bursts open and "
-                            "you fly out with the water.");
+              if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
+                ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
             }
 
-            Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
+            break;
+           case 5:
+            {
+              characterspawner Spawner = 0;
+              int Config = 0, AddChance = 0;
+              truth ForceAdjacency = false;
+
+              switch(RAND_N(5))
+              {
+               case 0:
+                Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
+                Config = (RAND() % 3) + 1;
+                AddChance = 66;
+                break;
+               case 1:
+                Spawner = reinterpret_cast<characterspawner>(&mommo::Spawn);
+                Config = RAND_2 ? CONICAL : FLAT;
+                AddChance = 50;
+                break;
+               case 2:
+                Spawner = reinterpret_cast<characterspawner>(&spider::Spawn);
+
+                if(RAND_4)
+                {
+                  Config = LARGE;
+                  AddChance = 90;
+                }
+                else
+                {
+                  Config = GIANT;
+                  AddChance = 75;
+                }
+
+                break;
+               case 3:
+                if(!RAND_N(50))
+                {
+                  Spawner = reinterpret_cast<characterspawner>(&dolphin::Spawn);
+                  AddChance = 75;
+                  ForceAdjacency = true;
+                }
+                else if(!RAND_N(50))
+                {
+                  Spawner = reinterpret_cast<characterspawner>(&mysticfrog::Spawn);
+                  Config = DARK;
+                  AddChance = 1;
+                }
+                else
+                {
+                  Spawner = reinterpret_cast<characterspawner>(&frog::Spawn);
+
+                  if(RAND_N(5))
+                  {
+                    Config = DARK;
+                    AddChance = 10;
+                  }
+                  else if(RAND_N(5))
+                  {
+                    Config = GREATER_DARK;
+                    AddChance = 5;
+                  }
+                  else
+                  {
+                    Config = GIANT_DARK;
+                    AddChance = 2;
+                  }
+                }
+
+                break;
+               case 4:
+                Spawner = reinterpret_cast<characterspawner>(&largerat::Spawn);
+                AddChance = 90;
+                break;
+              }
+
+              int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
+              team* Team = game::GetTeam(TeamIndex);
+              int Amount = 1 + femath::LoopRoll(AddChance, 7);
+              spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
+
+              msgsystem::EnterBigMessageMode();
+
+              if(SR.Seen == 1)
+              {
+                ADD_MESSAGE("%s appears from the fountain!", SR.Pioneer->CHAR_NAME(INDEFINITE));
+
+                if(TeamIndex == PLAYER_TEAM)
+                  ADD_MESSAGE("%s seems to be friendly.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
+
+                if(Amount > SR.Seen)
+                  ADD_MESSAGE("Somehow you also sense %s isn't alone.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
+              }
+              else if(SR.Seen)
+              {
+                ADD_MESSAGE("%s appear from the fountain!", SR.Pioneer->GetName(PLURAL, SR.Seen).CStr());
+
+                if(TeamIndex == PLAYER_TEAM)
+                  ADD_MESSAGE("They seem to be friendly.");
+
+                if(Amount > SR.Seen)
+                  ADD_MESSAGE("Somehow you also sense you haven't yet seen all of them.");
+              }
+              else
+                ADD_MESSAGE("You feel something moving near you.");
+
+              msgsystem::LeaveBigMessageMode();
+              break;
+            }
+           case 6:
+            if(!RAND_N(5))
+            {
+              item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
+              GetLSquareUnder()->AddItem(ToBeCreated);
+
+              if(ToBeCreated->CanBeSeenByPlayer())
+                ADD_MESSAGE("There's something sparkling in the water.");
+
+              break;
+            }
+           case 7:
+            {
+              if(!RAND_N(2))
+              {
+                olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
+                Drinker->RemoveTraps();
+
+                if(Found && RAND_N(3))
+                {
+                  ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                              "of tunnels and end up coming out from an other fountain.");
+                  Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
+                  Drinker->Move(Found->GetPos(), true);
+                }
+                else
+                {
+                  int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
+                  int From = GetLevel()->GetIndex();
+
+                  if(To == From)
+                    game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);
+                  else
+                    game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
+
+                  olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
+
+                  if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
+                    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                                "of tunnels and end up coming out from an other fountain.");
+                  else
+                    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                                "of tunnels. Suddenly the wall of the tunnel bursts open and "
+                                "you fly out with the water.");
+                }
+
+                Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
+                break;
+              }
+            }
+           default:
+            ADD_MESSAGE("The water tastes good.");
+            Drinker->EditNP(500);
             break;
           }
+
+          // fountain might have dried out: don't do anything here.
+
+          return true;
         }
-       default:
-        ADD_MESSAGE("The water tastes good.");
-        Drinker->EditNP(500);
-        break;
+        else
+        {
+          if(Drinker->IsPlayer())
+            ADD_MESSAGE("You drink some %s.", GetSecondaryMaterial()->GetName(false, false).CStr());
+          else
+            ADD_MESSAGE("%s drinks some %s.", Drinker->CHAR_NAME(DEFINITE), GetSecondaryMaterial()->GetName(false, false).CStr());
+
+          GetSecondaryMaterial()->EatEffect(Drinker, 500);
+
+          if(!RAND_N(20))
+            DryOut(Drinker);
+
+          return true;
+        }
       }
+      else if(GetSecondaryMaterial()->IsGaseous())
+      {
+        ADD_MESSAGE("%s releases some %s.", CHAR_NAME(DEFINITE), GetSecondaryMaterial()->GetName(false, false).CStr());
+        GetLSquareUnder()->AddSmoke(static_cast<gas*>(GetSecondaryMaterial()->SpawnMore(100 + RAND() % 100)));
 
-      // fountain might have dried out: don't do anything here.
+        if(!RAND_N(20))
+          DryOut(Drinker);
 
-      return true;
-    }
-    else
-    {
-      ADD_MESSAGE("You don't dare to drink from this fountain.");
-      return false;
+        return true;
+      }
+      else // Should not happen.
+      {
+        ADD_MESSAGE("You don't dare to drink from this fountain.");
+        return false;
+      }
     }
   }
   else
@@ -599,7 +700,7 @@ truth fountain::Drink(character* Drinker)
   }
 }
 
-void fountain::DryOut()
+void fountain::DryOut(character* Dude)
 {
   ADD_MESSAGE("%s dries out.", CHAR_NAME(DEFINITE));
   delete SetSecondaryMaterial(0);
@@ -608,6 +709,15 @@ void fountain::DryOut()
   {
     GetLSquareUnder()->SendNewDrawRequest();
     GetLSquareUnder()->SendMemorizedUpdateRequest();
+  }
+
+  // Drying fountain of an owned room makes the master angry.
+  room* Room = GetRoom();
+
+  if(Dude && Room && Room->MasterIsActive())
+  {
+    if(Room->GetMaster() != Dude && Dude->IsPlayer())
+      Dude->Hostility(Room->GetMaster());
   }
 }
 
@@ -764,17 +874,30 @@ void door::Break()
 
 void door::ActivateBoobyTrap()
 {
+  if(BoobyTrap && GetLSquareUnder()->CanBeSeenByPlayer(true))
+    ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
+
   switch(BoobyTrap)
   {
-   case 1:
-    // Explosion
-    if(LSquareUnder->CanBeSeenByPlayer(true))
-      ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
+   case 1: // Explosion
+   {
+     BoobyTrap = 0;
+     GetLevel()->Explosion(0, "killed by an exploding booby-trapped door",
+                           GetPos(), 20 + RAND() % 5 - RAND() % 5);
+     break;
+   }
+   case 2: // Gas
+   {
+     int GasMaterial[] = { MUSTARD_GAS, FART, SKUNK_SMELL, EVIL_WONDER_STAFF_VAPOUR,
+                           SLEEPING_GAS, TELEPORT_GAS, LAUGHING_GAS, ACID_GAS, FIRE_GAS };
+     BoobyTrap = 0;
 
-    BoobyTrap = 0;
-    GetLevel()->Explosion(0, "killed by an exploding booby trapped door",
-                          GetPos(), 20 + RAND() % 5 - RAND() % 5);
-    break;
+     if(!RAND_4)
+       GetLevel()->GasExplosion(gas::Spawn(GasMaterial[RAND() % 9], 250), GetLSquareUnder(), 0);
+     else
+       GetLSquareUnder()->AddSmoke(gas::Spawn(GasMaterial[RAND() % 9], 250));
+     break;
+   }
    case 0:
     break;
   }
@@ -782,12 +905,16 @@ void door::ActivateBoobyTrap()
 
 void door::CreateBoobyTrap()
 {
-  SetBoobyTrap(1);
+  SetBoobyTrap(!RAND_N(4) ? 2 : 1);
 }
 
 truth fountain::DipInto(item* ToBeDipped, character* Who)
 {
   ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(ToBeDipped->GetDefaultSecondaryVolume())), Who);
+
+  if(!RAND_N(20))
+    DryOut(Who);
+
   return true;
 }
 
@@ -876,6 +1003,13 @@ truth door::TryKey(item* Thingy, character* Applier)
         ADD_MESSAGE("%s unlocks the door.", Applier->CHAR_NAME(DEFINITE));
       else
         ADD_MESSAGE("%s locks the door.", Applier->CHAR_NAME(DEFINITE));
+    }
+
+    // Add a tiny chance that any key you use breaks, so that there is some value in having
+    // multiples of a key, and in keys of better materials.
+    if(!RAND_N(Thingy->GetMainMaterial()->GetStrengthValue()))
+    {
+      Thingy->Break(Applier);
     }
 
     SetIsLocked(!IsLocked());
@@ -1261,7 +1395,7 @@ truth door::IsTransparent() const
 
 truth liquidterrain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetMainMaterial()->SpawnMore(100)), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetMainMaterial()->SpawnMore(ToBeDipped->GetDefaultSecondaryVolume())), Who);
   return true;
 }
 
@@ -1370,15 +1504,18 @@ truth coffin::Open(character* Opener)
   truth Success = olterraincontainer::Open(Opener);
   if(Success)
   {
+    ADD_MESSAGE("You feel a horrible curse spreading.");
     game::DoEvilDeed(25);
+    /* TODO: This function awaits repair.
     for(int c = 0; c < RAND_N(10); ++c)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
       {
-        //GenerateGhost(GetLevel()->GetLSquare(Pos)); // This function awaits repair
+        GenerateGhost(GetLevel()->GetLSquare(Pos));
       }
-    }
+    }*/
+    GenerateUndead();
   }
 
   Opened = false;
@@ -1390,21 +1527,23 @@ truth coffin::Open(character* Opener)
 
 void coffin::Break()
 {
+  GenerateUndead();
+  /* TODO: This function awaits repair.
   for(int c = 0; c < 9; ++c)
   {
     lsquare* Neighbour = GetLSquareUnder()->GetNeighbourLSquare(c);
 
     if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
     {
-      //GenerateGhost(Neighbour); // This function awaits repair
+      GenerateGhost(Neighbour);
     }
-  }
+  }*/
   olterraincontainer::Break();
 }
 
 void coffin::GenerateGhost(lsquare* Square)
 {
-/*
+/* TODO: Fix this!
   v2 Pos = Square->GetPos();
   character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -1420,6 +1559,44 @@ void coffin::GenerateGhost(lsquare* Square)
     }
   }
 */
+}
+
+void coffin::GenerateUndead()
+{
+  for(int c = 0; c < game::GetTeams(); ++c)
+    for(character* p : game::GetTeam(c)->GetMember())
+      if(!p->IsEnabled() && p->GetMotherEntity()
+         && p->GetMotherEntity()->Exists())
+      {
+        character* Zombie = p->GetMotherEntity()->TryNecromancy(0);
+
+        if(Zombie && Zombie->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s is raised back to cursed undead life.", Zombie->CHAR_NAME(DEFINITE));
+      }
+}
+
+void coffin::PostConstruct()
+{
+  // Some grave goods to make the players steal from the dead.
+  long ItemNumber = RAND() % 6;
+
+  for(int c = 0; c < ItemNumber; ++c)
+  {
+    item* NewItem = protosystem::BalancedCreateItem();
+    long Volume = NewItem->GetVolume();
+
+    if(NewItem->HandleInPairs())
+      Volume <<= 1;
+
+    if(NewItem->CanBeGeneratedInContainer()
+       && (GetStorageVolume() - GetContained()->GetVolume()) >= Volume)
+    {
+      GetContained()->AddItem(NewItem);
+      NewItem->SpecialGenerationHandler();
+    }
+    else
+      delete NewItem;
+  }
 }
 
 void barwall::Break()

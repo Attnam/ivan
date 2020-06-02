@@ -802,48 +802,55 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
-bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>())
+struct sAlertConfirmMsg{
+  bool bShow=false;
+  const char* cMsg;
+  std::vector<festring> vfsCritMsgs;
+  bool bConfirmMode;
+} sAlertConfirmMsgInst;
+void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
 {
-  bInUse=true;
-
-  //TODO this method could be more global
-  //TODO calc all line withs to determine the full popup width to not look bad if overflow
+  if(!sAlertConfirmMsgInst.bShow)return;
+  
+  //TODO calc all line withs to determine the full popup width to not look bad if overflow, see specialkeys help dialog creation
   int iLineHeight=20;
-  v2 v2Border(700,100+(vfsCritMsgs.size()*iLineHeight));
+  v2 v2Border(700,100+(sAlertConfirmMsgInst.vfsCritMsgs.size()*iLineHeight));
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
 
-  DOUBLE_BUFFER->Fill(v2TL,v2Border,DARK_GRAY);
-  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+  Buffer->Fill(v2TL,v2Border,DARK_GRAY);
+  graphics::DrawRectangleOutlineAround(Buffer, v2TL, v2Border, YELLOW, true);
 
   v2TL+=v2(16,16);
   int y=v2TL.Y;
-  #define ACMPRINT(S,C) {FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
-  ACMPRINT(cMsg,YELLOW);
-  ACMPRINT("(y)es, any other key to ignore this message.",WHITE);
-//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), YELLOW, "%s", cMsg);
-//  y+=iLineHeight;
-//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", "(y)es, any other key to ignore this message.");
-//  y+=iLineHeight;
-  for(int i=0;i<vfsCritMsgs.size();i++){
+  #define ACMPRINT(S,C) {FONT->Printf(Buffer, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
+  ACMPRINT(sAlertConfirmMsgInst.cMsg,YELLOW);
+  if(sAlertConfirmMsgInst.bConfirmMode)ACMPRINT("(y)es, any other key to ignore this message.",WHITE);
+  for(int i=0;i<sAlertConfirmMsgInst.vfsCritMsgs.size();i++){
     if(i==0)
       ACMPRINT("PROBLEMS:",RED);
-//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), RED, "%s", "PROBLEMS:");
-//      y+=iLineHeight;
-//    }
-    ACMPRINT(vfsCritMsgs[i].CStr(),WHITE);
-//    FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", vfsCritMsgs[i].CStr());
-//    y+=iLineHeight;
+    ACMPRINT(sAlertConfirmMsgInst.vfsCritMsgs[i].CStr(),WHITE);
   }
+}
+bool iosystem::AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs,bool bConfirmMode)
+{
+  static bool bDummyInit = [](){graphics::AddDrawAboveAll(&AlertConfirmMsgDraw,100100,"iosystem::AlertConfirmMsgDraw"); return true;}();
+    
+  bInUse=true;
 
+  sAlertConfirmMsgInst.bShow=true;
+  sAlertConfirmMsgInst.cMsg=cMsg;
+  sAlertConfirmMsgInst.vfsCritMsgs=vfsCritMsgs;
+  sAlertConfirmMsgInst.bConfirmMode=bConfirmMode;
+
+  AlertConfirmMsgDraw(DOUBLE_BUFFER);
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y'){
-    bInUse=false;
-    return true;
-  }
+  bool bAnswer=false;
+  if(GET_KEY() == 'y')bAnswer=true;
 
   bInUse=false;
-  return false;
+  sAlertConfirmMsgInst.bShow=false;
+  return bAnswer;
 }
 
 static bool bSaveGameSortModeByDtTm;
@@ -983,7 +990,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 //  static festring fsLastChangeDetector="_Last_Change_Detector_.sav";
 //  addFileInfo(fsLastChangeDetector.CStr());
 
-  int iTmSz=100;
+  cint iTmSz=100;
   struct stat attr;
   for(int i=0;i<vFiles.size();i++)
   {

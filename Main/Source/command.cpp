@@ -78,59 +78,60 @@ command* commandsystem::Command[] =
 {
   0,
 
-  /* Sort according to description */
+  /* Sort according to relaiton and assumed frequency of use */
 
-  new command(&Apply, "apply item", 'a', 'a', 'a', false),
-  new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
-  new command(&Talk, "chat", 'C', 'C', 'C', false),
-  new command(&Close, "close", 'c', 'c', 'c', false),
-  new command(&Craft, "craft", 'f', 'F', 'f', false),
-  new command(&Dip, "dip into liquid", '!', '!', '!', false),
-  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
-  new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
-  new command(&Drop, "drop item", 'd', 'd', 'd', true),
-  new command(&Eat, "eat", 'e', 'e', 'e', true),
-  new command(&WhatToEngrave, "engrave message", 'G', 'G', 'G', false),
-  new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
+  new command(&NOP, "wait a turn", '.', '.', '.', true),
   new command(&Go, "go / fastwalk", 'g', 'g', 'g', false),
   new command(&GoDown, "go down / enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
-  new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
-  new command(&Kick, "kick", 'k', 'K', 'K', false),
+  new command(&PickUp, "pick up item", ',', ',', ',', false),
+  new command(&Drop, "drop item", 'd', 'd', 'd', true),
+  new command(&Throw, "throw item", 't', 't', 't', false),
+  new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
+  new command(&ShowInventory, "inventory menu", 'i', 'i', 'i', true),
+  new command(&Apply, "apply item", 'a', 'a', 'a', false),
+  new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
+  new command(&Zap, "zap a wand", 'z', 'z', 'z', false),
+  new command(&Read, "read", 'r', 'r', 'r', false),
+  new command(&Eat, "eat", 'e', 'e', 'e', true),
+  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
+  new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
+  new command(&Dip, "dip into liquid", '!', '!', '!', false),
+  new command(&Open, "open", 'o', 'O', 'o', false),
+  new command(&Close, "close", 'c', 'c', 'c', false),
+  new command(&Search, "search", 's', 's', 's', false),
   new command(&Look, "look around", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
-  new command(&AssignName , "name team members", 'n', 'n', 'N', false),
+  new command(&WhatToEngrave, "engrave / inscribe", 'G', 'G', 'G', false),
+  new command(&Talk, "chat", 'C', 'C', 'C', false),
+  new command(&Craft, "craft", 'f', 'F', 'f', false),
+  new command(&AssignName, "name team members", 'n', 'n', 'N', false),
+  new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
-  new command(&Open, "open", 'o', 'O', 'o', false),
-  new command(&PickUp, "pick up item", ',', ',', ',', false),
-  new command(&Pray, "pray", 'p', 'p', 'p', false),
-  new command(&Quit, "quit and abandon", 'Q', 'Q', 'Q', true),
-  new command(&Read, "read", 'r', 'r', 'r', false),
+  new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
+  new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
   new command(&Save, "save and quit", 'S', 'S', 'S', true),
+  new command(&Quit, "quit and abandon", 'Q', 'Q', 'Q', true),
+  new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', '+', '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', '-', '-', true),
   new command(&ShowConfigScreen, "show options menu", '\\', '\\', '\\', true),
-  new command(&ShowInventory, "show inventory", 'i', 'i', 'i', true),
   new command(&ShowKeyLayout, "show key layout", '?', '?', '?', true),
-  new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
-  new command(&Search, "search", 's', 's', 's', false),
-  new command(&Sit, "sit down", '_', '_', '_', false),
+  new command(&WieldInRightArm, "wield in right hand", 'w', 'w', 'w', true),
+  new command(&WieldInLeftArm, "wield in left hand", 'W', 'W', 'W', true),
   new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
   new command(&SwapWeaponsCfg, "swapping menu", 'X', 'X', 'X', false),
-  new command(&Throw, "throw item", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
+  new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
-  new command(&NOP, "wait a turn", '.', '.', '.', true),
-  new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
-  new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
+
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation (Ctrl+ to access console commands)", '`', '`', '`', true),
+  new command(&WizardMode, "wizard mode activation (Ctrl+ for console)", '`', '`', '`', true),
 #else
   new command(&DevConsCmd, "access console commands", '`', '`', '`', true), //works w/o Ctrl in this case
 #endif
-  new command(&Zap, "zap wand", 'z', 'z', 'z', false),
 
 #ifdef WIZARD
 
@@ -166,128 +167,75 @@ truth commandsystem::DevConsCmd(character* Char)
 }
 #endif
 
-truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
-  cchar* str = Command[iIndex]->GetDescription();
-  if(strcmp(str,"apply")==0)return true;
-//  if(strcmp(str,"chat")==0)return true;
-//  if(strcmp(str,"close")==0)return true;
-  if(strcmp(str,"dip")==0)return true;
-  if(strcmp(str,"drink")==0)return true;
-  if(strcmp(str,"drop")==0)return true;
-  if(strcmp(str,"eat")==0)return true;
-  if(strcmp(str,"engrave")==0)return true;
-  if(strcmp(str,"equipment menu")==0)return true;
-//  if(strcmp(str,"go")==0)return true;
-//  if(strcmp(str,"go down/enter area")==0)return true;
-//  if(strcmp(str,"go up")==0)return true;
-//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
-//  if(strcmp(str,"kick")==0)return true;
-//  if(strcmp(str,"look")==0)return true;
-//  if(strcmp(str,"name")==0)return true;
-  if(strcmp(str,"offer")==0)return true;
-  if(strcmp(str,"open")==0)return true;
-  if(strcmp(str,"pick up")==0)return true;
-  if(strcmp(str,"pray")==0)return true;
-//  if(strcmp(str,"quit")==0)return true;
-  if(strcmp(str,"read")==0)return true;
-//  if(strcmp(str,"rest/heal")==0)return true;
-//  if(strcmp(str,"save game")==0)return true;
-//  if(strcmp(str,"scroll messages down")==0)return true;
-//  if(strcmp(str,"scroll messages up")==0)return true;
-//  if(strcmp(str,"show config screen")==0)return true;
-//  if(strcmp(str,"show inventory")==0)return true;
-//  if(strcmp(str,"show key layout")==0)return true;
-//  if(strcmp(str,"show message history")==0)return true;
-//  if(strcmp(str,"show weapon skills")==0)return true;
-//  if(strcmp(str,"search")==0)return true;
-//  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"swap weapons")==0)return true;
-//  if(strcmp(str,"swap weapons configuration")==0)return true;
-  if(strcmp(str,"throw")==0)return true;
-//  if(strcmp(str,"toggle running")==0)return true;
-//  if(strcmp(str,"vomit")==0)return true;
-//  if(strcmp(str,"wait")==0)return true;
-  if(strcmp(str,"wield in right arm")==0)return true;
-  if(strcmp(str,"wield in left arm")==0)return true;
-//  if(strcmp(str,"wizard mode activation")==0)return true;
-  if(strcmp(str,"zap")==0)return true;
-//  if(strcmp(str,"raise stats")==0)return true;
-//  if(strcmp(str,"lower stats")==0)return true;
-//  if(strcmp(str,"see whole map")==0)return true;
-//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
-//  if(strcmp(str,"raise your relations to the gods")==0)return true;
-//  if(strcmp(str,"lower your relations to the gods")==0)return true;
-//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
-//  if(strcmp(str,"gain all items")==0)return true;
-//  if(strcmp(str,"reveal secret knowledge")==0)return true;
-//  if(strcmp(str,"detach a limb")==0)return true;
-//  if(strcmp(str,"set fire to a limb")==0)return true;
-//  if(strcmp(str,"summon monster")==0)return true;
-//  if(strcmp(str,"level teleport")==0)return true;
-//  if(strcmp(str,"possess creature")==0)return true;
-  if(strcmp(str,"polymorph")==0)return true;
+truth commandsystem::IsForRegionListItem(int iIndex){
+  truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
+
+  static std::vector<truth (*)(character*)> vLF;
+  static bool bInitDummy = [](){ //for easy maintenance avoiding macros
+    vLF.push_back(&Apply);
+    vLF.push_back(&Dip);
+    vLF.push_back(&Drink);
+    vLF.push_back(&Drop);
+    vLF.push_back(&Eat);
+    vLF.push_back(&WhatToEngrave);
+    vLF.push_back(&EquipmentScreen);
+    vLF.push_back(&Offer);
+    vLF.push_back(&Open);
+    vLF.push_back(&PickUp);
+    vLF.push_back(&Pray);
+    vLF.push_back(&Read);
+    vLF.push_back(&Throw);
+    vLF.push_back(&WieldInLeftArm);
+    vLF.push_back(&WieldInRightArm);
+    vLF.push_back(&Zap);
+#ifdef WIZARD
+    vLF.push_back(&Polymorph);
+#endif
+    return true;
+  }();
+  for(int i=0;i<vLF.size();i++){
+    if(vLF[i]==LinkedFunction){
+      return true;
+    }
+  }
+
   return false;
 }
 truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
-  cchar* str = Command[iIndex]->GetDescription();
-  if(strcmp(str,"apply")==0)return true;
-//  if(strcmp(str,"chat")==0)return true;
-//  if(strcmp(str,"close")==0)return true;
-  if(strcmp(str,"dip")==0)return true;
-  if(strcmp(str,"drink")==0)return true;
-  if(strcmp(str,"drop")==0)return true;
-  if(strcmp(str,"eat")==0)return true;
-  if(strcmp(str,"engrave")==0)return true;
-  if(strcmp(str,"equipment menu")==0)return true;
-//  if(strcmp(str,"go")==0)return true;
-//  if(strcmp(str,"go down/enter area")==0)return true;
-//  if(strcmp(str,"go up")==0)return true;
-//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
-//  if(strcmp(str,"kick")==0)return true;
-//  if(strcmp(str,"look")==0)return true;
-//  if(strcmp(str,"name")==0)return true;
-  if(strcmp(str,"offer")==0)return true;
-  if(strcmp(str,"open")==0)return true;
-  if(strcmp(str,"pick up")==0)return true;
-  if(strcmp(str,"pray")==0)return true;
-//  if(strcmp(str,"quit")==0)return true;
-  if(strcmp(str,"read")==0)return true;
-//  if(strcmp(str,"rest/heal")==0)return true;
-//  if(strcmp(str,"save game")==0)return true;
-//  if(strcmp(str,"scroll messages down")==0)return true;
-//  if(strcmp(str,"scroll messages up")==0)return true;
-//  if(strcmp(str,"show config screen")==0)return true;
-  if(strcmp(str,"show inventory")==0)return true;
-//  if(strcmp(str,"show key layout")==0)return true;
-//  if(strcmp(str,"show message history")==0)return true;
-//  if(strcmp(str,"show weapon skills")==0)return true;
-//  if(strcmp(str,"search")==0)return true;
-//  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"swap weapons")==0)return true;
-  if(strcmp(str,"swap weapons configuration")==0)return true;
-  if(strcmp(str,"throw")==0)return true;
-//  if(strcmp(str,"toggle running")==0)return true;
-//  if(strcmp(str,"vomit")==0)return true;
-//  if(strcmp(str,"wait")==0)return true;
-  if(strcmp(str,"wield in right arm")==0)return true;
-  if(strcmp(str,"wield in left arm")==0)return true;
-//  if(strcmp(str,"wizard mode activation")==0)return true;
-  if(strcmp(str,"zap")==0)return true;
-//  if(strcmp(str,"raise stats")==0)return true;
-//  if(strcmp(str,"lower stats")==0)return true;
-//  if(strcmp(str,"see whole map")==0)return true;
-//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
-//  if(strcmp(str,"raise your relations to the gods")==0)return true;
-//  if(strcmp(str,"lower your relations to the gods")==0)return true;
-//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
-//  if(strcmp(str,"gain all items")==0)return true;
-//  if(strcmp(str,"reveal secret knowledge")==0)return true;
-//  if(strcmp(str,"detach a limb")==0)return true;
-//  if(strcmp(str,"set fire to a limb")==0)return true;
-//  if(strcmp(str,"summon monster")==0)return true;
-//  if(strcmp(str,"level teleport")==0)return true;
-//  if(strcmp(str,"possess creature")==0)return true;
-  if(strcmp(str,"polymorph")==0)return true;
+  truth (*LinkedFunction)(character*) = Command[iIndex]->GetLinkedFunction();
+
+  static std::vector<truth (*)(character*)> vLF;
+  static bool bInitDummy = [](){ //for easy maintenance avoiding macros
+    vLF.push_back(&Apply);
+    vLF.push_back(&Dip);
+    vLF.push_back(&Drink);
+    vLF.push_back(&Drop);
+    vLF.push_back(&Eat);
+    vLF.push_back(&WhatToEngrave);
+    vLF.push_back(&EquipmentScreen);
+    vLF.push_back(&Offer);
+    vLF.push_back(&Open);
+    vLF.push_back(&PickUp);
+    vLF.push_back(&Pray);
+    vLF.push_back(&Read);
+    vLF.push_back(&ShowInventory);
+    vLF.push_back(&SwapWeaponsCfg);
+    vLF.push_back(&Read);
+    vLF.push_back(&Throw);
+    vLF.push_back(&WieldInLeftArm);
+    vLF.push_back(&WieldInRightArm);
+    vLF.push_back(&Zap);
+#ifdef WIZARD
+    vLF.push_back(&Polymorph);
+#endif
+    return true;
+  }();
+  for(int i=0;i<vLF.size();i++){
+    if(vLF[i]==LinkedFunction){
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -409,7 +357,7 @@ truth commandsystem::Open(character* Char)
           Key = 'i';
         else
           Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
-                                             "[press a direction key, space or i]"));
+                                             "[press a direction key, space or 'i']"));
 
         if(Key == 'i')
         {
@@ -443,7 +391,7 @@ truth commandsystem::Open(character* Char)
 
       if(OpenableItems)
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
-                                           "[press a direction key, space or i]"));
+                                           "[press a direction key, space or 'i']"));
       else
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
                                            "[press a direction key or space]"));
@@ -516,7 +464,7 @@ truth commandsystem::Close(character* Char)
         return SquareWithThingToClose->Close(Char);
       else
       {
-        int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+        int Dir = game::DirectionQuestion(CONST_S("What do you wish to close? [press a direction key]"), false);
 
         if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
           return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
@@ -524,7 +472,7 @@ truth commandsystem::Close(character* Char)
     }
     else
     {
-      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close? [press a direction key]"), false);
 
       if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
         return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
@@ -576,8 +524,12 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems())
+        if(ivanconfig::IsAutoPickupThrownItems()){
           ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
+          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
+            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
+          }
+        }
       }
       Success = true;
     }
@@ -719,7 +671,16 @@ truth commandsystem::PickUp(character* Char)
          && PileVector[0][0]->CheckPickUpEffect(Char))
       {
         for(int c = 0; c < Amount; ++c)
+        {
+          if(ivanconfig::GetRotateTimesPerSquare() > 0)
+            PileVector[0][c]->ResetFlyingThrownStep();
+
           PileVector[0][c]->MoveTo(Char->GetStack());
+
+          if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
+            PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
+          }
+        }
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
         Char->DexterityAction(2);
@@ -756,7 +717,16 @@ truth commandsystem::PickUp(character* Char)
          && ToPickup[0]->CheckPickUpEffect(Char))
       {
         for(uint c = 0; c < ToPickup.size(); ++c)
+        {
+          if(ivanconfig::GetRotateTimesPerSquare() > 0)
+            ToPickup[c]->ResetFlyingThrownStep();
+
           ToPickup[c]->MoveTo(Char->GetStack());
+
+          if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
+            ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
+          }
+        }
 
         ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
         Success = true;
@@ -791,6 +761,8 @@ truth commandsystem::Quit(character* Char)
 
 truth commandsystem::Talk(character* Char)
 {
+  static char cmdKey = findCmdKey(&Talk);
+
   if(!Char->CheckTalk())
     return false;
 
@@ -822,11 +794,15 @@ truth commandsystem::Talk(character* Char)
     return ToTalk->ChatMenu();
   else
   {
-    int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk? [press a direction key]"), false, true);
+    static festring fsQ;
+    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<cmdKey<<"']";return true;}();
+    static int iPreviousDirChosen = DIR_ERROR;
+    int Dir = game::DirectionQuestion(fsQ, false, true, cmdKey, iPreviousDirChosen);
 
     if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
       return false;
 
+    iPreviousDirChosen = Dir;
     character* Dude = Char->GetNearSquare(Char->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
 
     if(Dude == Char)
@@ -887,6 +863,13 @@ truth commandsystem::Read(character* Char)
   }
 
   item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to read?"), 0, &item::IsReadable);
+
+#ifdef WIZARD
+  // stops auto question timeout that was preventing reading at all
+  if(Item && game::GetAutoPlayMode())
+    game::DisableAutoPlayMode();
+#endif
+
   return Item && Char->ReadItem(Item);
 }
 
@@ -963,6 +946,47 @@ truth commandsystem::ShowKeyLayout(character*)
   List.AddDescription(CONST_S("Key       Description"));
   festring Buffer;
 
+  // Movement keys
+  // TODO: Better way to handle F1 help text. Needs to be assigned only to the first
+  // line because this is non-selectable list, but unfortunately has to be assigned
+  // immediately after setting the first line through SetLastEntryHelp()
+  switch(ivanconfig::GetDirectionKeyMap())
+  {
+   case DIR_NORM: // Normal
+   {
+     List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
+     List.AddEntry(CONST_S("4 6        or use arrow keys and"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("123        Home, End, PgUp, PgDn"), LIGHT_GRAY);
+     break;
+   }
+   case DIR_ALT: // Alternative
+   {
+     List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
+     List.AddEntry(CONST_S("u o"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("jkl"), LIGHT_GRAY);
+     break;
+   }
+   case DIR_HACK: // Nethack
+   {
+     List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY);
+     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
+                                      << "commands are only accessible in wizard mode. Note that the game "
+                                      << "distinguishes between lowercase and uppercase letters, so if you are "
+                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
+     List.AddEntry(CONST_S("h l"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("bjn"), LIGHT_GRAY);
+     break;
+   }
+  }
+
   for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
     {
@@ -1016,9 +1040,9 @@ truth commandsystem::Look(character* Char)
   }
 
   if(!game::IsInWilderness())
-    Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
+    Msg = CONST_S("Direction keys move cursor; examine (i)tems or a (c)haracter; ESC exits.");
   else
-    Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
+    Msg = CONST_S("Direction keys move cursor; examine a (c)haracter; ESC exits.");
 
   v2 pos = Char->GetPosSafely();
   if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
@@ -1043,8 +1067,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   while(!(Key == KEY_ESC || Key == ' '))
   {
     if(!bEngraveMapNote)
-      Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
-                                         "'.' square, 'i' inventory, ESC exits"));
+      Key = game::AskForKeyPress(CONST_S("Do you want to (.) engrave a square, or inscribe an (i)tem? ['.' or 'i', ESC exits]"));
 
     int iLSqrLimit=80;
     if(bEngraveMapNote)
@@ -1052,18 +1075,35 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       festring What;
 
       lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
-      if(lsqrN!=NULL){ //TODO can this be NULL?
+      if(lsqrN!=NULL){ //TODO can this ever be NULL?
         if(lsqrN->GetEngraved()!=NULL){
           cchar* c = lsqrN->GetEngraved();
-          if(c!=NULL)What=c;
-          if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
-            std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
+          if(c!=NULL){
+            What=c;
+            if(What.GetSize()>0){
+              if(What[0]==game::MapNoteToken()){ //having map note token means it is already a map note, so let it be read/write at will
+                std::string str=What.CStr();
+                What.Empty();
+                What<<str.substr(1).c_str(); //removes token prefix TODO implement substr() at festring
+              } else { // this is a case of non-map note "engraving" (like normal vanilla engraving from golemns)
+                if(!lsqrN->HasBeenSeen()){
+                  /*****
+                   * why empty it?
+                   * to prevent determining (cheating) if that square has a golemn using the ShowMap/lookMode command! (possibly other things too)
+                   * a minor problem is that the user may overwrite that engraving with a mapnote TODO something about it?
+                   */
+                  What.Empty();
+                }
+              }
+            }
           }
         }
       }
 
       if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
-        game::SetMapNote(lsqrN,What);
+        if(What.GetSize()>0) {
+          game::SetMapNote(lsqrN,What);
+        }
       }
 
       break;
@@ -1133,8 +1173,9 @@ truth commandsystem::Pray(character* Char)
       {
         desc.Empty();
         desc << game::GetGod(c)->GetCompleteDescription();
-        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(c)->GetLastKnownRelation();
         Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
+        Panthenon.SetLastEntryHelp(festring() << game::GetGod(c)->GetName() << ", the " << game::GetGod(c)->GetDescription());
         Known[Index++] = c;
       }
   }
@@ -1142,6 +1183,7 @@ truth commandsystem::Pray(character* Char)
     if(game::GetGod(DivineMaster)->IsKnown())
     {
       Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+      Panthenon.SetLastEntryHelp(festring() << game::GetGod(DivineMaster)->GetName() << ", the " << game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
     else
@@ -1226,8 +1268,8 @@ truth commandsystem::Kick(character* Char)
     return true;
   }
 
-  festring fsQ;
-  fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";
+  static festring fsQ;
+  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";return true;}();
   static int iPreviousDirChosen = DIR_ERROR;
   int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
@@ -1336,7 +1378,8 @@ truth commandsystem::Throw(character* Char)
     Char->EditNP(-50);
     Char->DexterityAction(5);
     if(ivanconfig::IsAutoPickupThrownItems())
-      Item->SetTag('t');
+      if(Item->IsWeapon(PLAYER)) //TODO never made much sense auto-picking up other things than weapons, but this could be optional
+        Item->SetTag('t');
     return true;
   }
   else
@@ -1573,7 +1616,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
         if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. (F1 help)"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
+          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. [press F1 for help]"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
             KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
 
         if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
@@ -1612,6 +1655,14 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
               }
               if(start.Is0())
                 start=Char->GetPos();
+
+              if(!game::GetCurrentArea()->IsValidPos(start)){
+                // very rare case when opening the map will crash at game::PositionQuestion(,start,...) ... area::GetSquare(start)
+                DBG4("CrashWorkaround",DBGAV2(start),game::GetCurrentArea()->GetXSize(),game::GetCurrentArea()->GetYSize());
+                DBGBREAKPOINT;
+                game::ToggleDrawMapOverlay(); //TODO hint something to the player like internal error was avoided and should just retry?
+                return false;
+              }
 
               noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
               if(noteAddPos==ERROR_V2){
@@ -1754,6 +1805,7 @@ truth commandsystem::Go(character* Char)
 
 truth commandsystem::ShowConfigScreen(character*)
 {
+  configsystem::Load(); // some fields may be too big to be edited from the game interface ex.: autopickup regex would require multiline editing otherwise would not work. TODO should this be optional?
   ivanconfig::Show();
   return false;
 }
@@ -1821,6 +1873,10 @@ truth commandsystem::ShowWeaponSkills(character* Char)
         List.AddEntry(Buffer, LIGHT_GRAY);
 
       Something = true;
+
+      List.SetLastEntryHelp(festring() << "Your proficiency with individual weapon categories and accustomization "
+                                       << "with the currently wielded weapons. Note that should you neglect training "
+                                       << "your skills for too long, they might start slowly decreasing in level.");
     }
   }
 
@@ -1889,8 +1945,32 @@ truth commandsystem::WizardMode(character* Char)
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
 
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
-        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+
+        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
+        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
+        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
+
+        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
+        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
+        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
+
+        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
+        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
+
+        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
+        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
+
+        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
+        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
+        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
+
+        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
+        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
 
         game::GetWorldMap()->SendNewDrawRequest();
       }
@@ -1902,8 +1982,32 @@ truth commandsystem::WizardMode(character* Char)
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
 
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
-        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+
+        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
+        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
+        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
+
+        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
+        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
+        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
+
+        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
+        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
+        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
+
+        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
+        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
+
+        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
+        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
+        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
+
+        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
+        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
 
         game::SaveWorldMap();
       }
@@ -2028,7 +2132,7 @@ truth commandsystem::SecretKnowledge(character* Char)
     switch(Chosen)
     {
      case 0:
-      List.AddDescription(CONST_S("                                                AS LS DX AG EN PE IN WI CH MA"));
+      List.AddDescription(CONST_S("                                             AS LS DX AG EN PE IN WS WL CH MA"));
 
       for(c = 0; c < Character.size(); ++c)
       {
@@ -2286,4 +2390,9 @@ truth commandsystem::IssueCommand(character* Char)
     return false;
 
   return game::CommandQuestion();
+}
+
+void commandsystem::PlayerDiedWeaponSkills()
+{
+  commandsystem::ShowWeaponSkills(PLAYER);
 }

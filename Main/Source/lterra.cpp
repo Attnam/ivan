@@ -527,6 +527,20 @@ void olterrain::ReceiveAcid(material*, long Modifier)
   }
 }
 
+void olterrain::ReceiveHeat(material*, long Modifier)
+{
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+  {
+    int Damage = Modifier / 10000;
+
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, FIRE);
+    }
+  }
+}
+
 void lterrain::InitMaterials(material* FirstMaterial, truth CallUpdatePictures)
 {
   InitMaterial(MainMaterial, FirstMaterial, 0);

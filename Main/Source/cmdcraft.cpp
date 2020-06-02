@@ -14,6 +14,7 @@
 
 #include <typeinfo>
 
+#include "hiteffect.h"
 #include "traps.h"
 #include "dbgmsgproj.h"
 
@@ -128,29 +129,30 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
 bool craftcore::canBeCrafted(item* it){
   if(dynamic_cast<lump*>(it)!=NULL)
     return true;
+  if(dynamic_cast<stick*>(it)!=NULL) //checked when splitting
+    return true;
+  if(dynamic_cast<itemcontainer*>(it)!=NULL) //to allow crafting chests again
+    return true;
 
   const itemdatabase* itdb = it->GetDataBase();
-
-  if(
-    game::IsQuestItem(it) ||
-    it->GetEnchantment()!=0 ||
-    it->GetCategory()==BOOK ||
-    it->GetCategory()==MISC ||
-    it->GetCategory()==SCROLL ||
-    !itdb->CanBeWished ||
-    itdb->Possibility <= 0 ||
-    !itdb->PostFix.IsEmpty() ||
-    false // just to make it easier to re-organize and add checks above
-  ){
-    return false;
-  }
 
   if(it->GetCategory()==POTION)
   {
     item* Bottle = dynamic_cast<potion*>(it);
-    if(Bottle && !Bottle->GetSecondaryMaterial() && Bottle->GetNameSingular() == "bottle")
-      return true;
+    if(Bottle && (Bottle->GetNameSingular() == "bottle" || Bottle->GetNameSingular() == "vial")) //TODO really necessary the singular name check? excessive?
+    {
+      if(!Bottle->GetSecondaryMaterial())
+        return true;
+      if( // extracting from corpses
+          // TODO may be the "kind of action" (as a parameter for this func) could allow some specific materials only,  so a new action EXTRACT_FROM_CORPSE would allow only the ones below
+         Bottle->GetSecondaryMaterial()->GetConfig()==SULPHURIC_ACID ||
+         Bottle->GetSecondaryMaterial()->GetConfig()==POISON_LIQUID ||
+         Bottle->GetSecondaryMaterial()->GetConfig()==MAGIC_LIQUID
+        )
+        return true;
+    }
 
+    DBG3(Bottle->GetSecondaryMaterial()->GetConfig(),SULPHURIC_ACID,POISON_LIQUID);
     return false;
   }
 
@@ -161,12 +163,30 @@ bool craftcore::canBeCrafted(item* it){
     if(Can && !Can->GetSecondaryMaterial())
       return true;
 
+    DBGLN;
     return false;
   }
 
   //TODO all these things should have some easier kind of property to be checked
-  if(!craftcore::MoreCraftDeniedFilters(it))
+  if(!craftcore::MoreCraftDeniedFilters(it)){
+    DBGLN;
     return false;
+  }
+
+  if( // more complex/generic filter, better keep as last check?
+    game::IsQuestItem(it) ||
+    it->GetEnchantment()!=0 ||
+    it->GetCategory()==BOOK ||
+    it->GetCategory()==MISC ||
+    it->GetCategory()==SCROLL ||
+    !itdb->CanBeWished ||
+    itdb->Possibility <= 0 ||
+    !itdb->PostFix.IsEmpty() ||
+    false // just to make it easier to re-organize and add checks above
+  ){
+    DBGLN;
+    return false;
+  }
 
   return true;
 }
@@ -629,7 +649,7 @@ struct recipe{
   virtual void fillInfo(){ ABORT("missing recipe info implementation"); }
 
   void failPlacementMsg(recipedata& rpd){
-    ADD_MESSAGE("%s can't be placed here!",name.CStr());
+    ADD_MESSAGE("%s can't be placed here.",name.CStr());
     rpd.bAlreadyExplained=true;
   }
   void failIngredientsMsg(recipedata& rpd){
@@ -639,7 +659,8 @@ struct recipe{
     rpd.bAlreadyExplained=true;
   }
   void failToolMsg(recipedata& rpd,festring tool){
-    ADD_MESSAGE("You don't have %s to work on.",tool.CStr());
+    ADD_MESSAGE("You don't have a strong enough %s to work on the requested materials.",tool.CStr());
+    // "strong enough" means that a too weak material wont be able to work on a much stronger material
     rpd.bAlreadyExplained=true;
   }
 
@@ -668,9 +689,14 @@ struct recipe{
     return false;
   }
 
-  bool where(recipedata& rpd,bool acceptSelfLocation=false){
+  bool where(recipedata& rpd,bool acceptSelfLocation=false)
+  {
     if(whereRaw(rpd,"Build it where?",acceptSelfLocation))
-      if(rpd.lsqrPlaceAt!=NULL && rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.lsqrPlaceAt->GetCharacter()==NULL){
+      if(rpd.lsqrPlaceAt != NULL && rpd.lsqrPlaceAt->GetOLTerrain() == NULL &&
+         rpd.lsqrPlaceAt->GetCharacter() == NULL &&
+         !(rpd.lsqrPlaceAt->GetRoom() && rpd.lsqrPlaceAt->GetRoom()->GetMaster() &&
+         rpd.lsqrPlaceAt->GetRoom()->GetMaster() != PLAYER)) // Prevents building in owned rooms.
+      {
         rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
         rpd.bCanBePlaced=true;
         return true;
@@ -729,6 +755,13 @@ struct recipe{
     ABORT("at most 2 tools '%s' '%s' '%s'",rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetName(INDEFINITE).CStr(),itTool->GetName(INDEFINITE).CStr());
   }
 
+  static item* findCarvingToolSpecific(recipedata& rpd, item* itTool,int iMinCarvingStr, int iType, int& riMult, int iIncMult){ //this one is to avoid using #define mess :>, but instead of a simple if() we get several method calls... tho more readable...
+    if(itTool==NULL){
+      itTool = FindTool(rpd, iType, 0, iMinCarvingStr);
+      if(itTool!=NULL)riMult+=iIncMult;
+    }
+    return itTool;
+  }
   static item* findCarvingTool(recipedata& rpd,item* itToWorkOn){
     int iCarvingStr=0;
 
@@ -741,10 +774,17 @@ struct recipe{
 
     int iMinCarvingStr = iCarvingStr/2;
 
+    // any blanded thing bug preferably a dagger
+    int iMult=1;
     item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
-
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,DAGGER,iMult,0);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SICKLE,iMult,1);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SHORT_SWORD,iMult,1);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,AXE,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,MEAT_CLEAVER,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,LONG_SWORD,iMult,2);
+    itTool = findCarvingToolSpecific(rpd,itTool,iMinCarvingStr,SPEAR,iMult,3); // mmm... spear is easy enough to be found already TODO all other more difficult to be used weapons with blades may be added below here :), basically create a balsa dagger using a balsa spear and you are good to go xD
     if(itTool!=NULL){
-      int iMult=1;
       if(iCarvingStr>1){
         int itStr=itTool->GetMainMaterial()->GetStrengthValue();
         if(itStr<iCarvingStr)
@@ -755,12 +795,12 @@ struct recipe{
       calcToolTurns(rpd,iMult);
 
       if(!recipe::findOLT(rpd,WORK_BENCH)){
-        ADD_MESSAGE("There is no workbench here, this will take time..."); //it is good to measure, hold tight, has a good height etc...
+        ADD_MESSAGE("As you lack a workbench, it will take a while."); //it is good to measure, hold tight, has a good height etc...
         rpd.iBaseTurnsToFinish *= 3;
       }
     }else{
-      ADD_MESSAGE("You have no dagger to work on it."); //it is good to measure, hold tight, has a good height etc...
-                                                        // Does it have to be dagger? Wouldn't "tool" be better? --red_kangaroo
+      //ADD_MESSAGE("You have no carving tool good enough to work on the requested material.");
+      // Already covered by failToolMsg()
       rpd.bAlreadyExplained=true;
     }
 
@@ -815,7 +855,7 @@ struct recipe{
     if(it!=NULL)
       calcToolTurns(rpd,iMult);
     else{
-      ADD_MESSAGE("You have no blunt tool to work on it.");
+      ADD_MESSAGE("You have no blunt tool.");
       rpd.bAlreadyExplained=true;
     }
 
@@ -846,7 +886,7 @@ struct recipe{
 
       calcToolTurns(rpd,iMult);
     }else{
-      ADD_MESSAGE("You have no cutting tool to work on it.");
+      ADD_MESSAGE("You have no cutting tool.");
       rpd.bAlreadyExplained=true;
     }
 
@@ -1000,11 +1040,11 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
               ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol);
-            matM->SetVolume(lVolM);
+            matM->SetVolume(lVolM); //TODO there is a big problem here... if the crafting cannot be started because a tool is missing, this ingredient will have less volume than required and may not be reused in case it is a non-meltable!!!
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
 //            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
-            item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_LUMP);
+            item* lumpR = craftcore::PrepareRemains(rpd,matM);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
@@ -1050,8 +1090,15 @@ struct recipe{
         if(CI.iReqCfg==INGOT)
           fsIngTpNm = "ingot";
         else
-          fsIngTpNm = std::string(typeid(T).name()).substr(1).c_str(); //TODO demangling simple like that may give weird text one day if other types are added
-        ADD_MESSAGE("There is not enough %ss to craft it.",fsIngTpNm.CStr());
+        {
+          // TODO:
+          //  demangling simple like that may give weird text one day if other types are added
+          //  This is way too confusing, just use generic "material" and rework later.
+          //fsIngTpNm = std::string(typeid(T).name()).substr(1).c_str();
+          fsIngTpNm = "material";
+        }
+
+        ADD_MESSAGE("You don't have enough %ss.",fsIngTpNm.CStr());
       }
 
     if(reqVol<=0)
@@ -1133,10 +1180,11 @@ struct recipe{
   }
   static bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
     bool bFound=false;
+    //obs.: lsqr->CanBeFeltByPlayer() will NOT work if player CAN MOVE on it!
     if(bReqOnlyVisible){DBGLN; //even if far away
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
         lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
-        if((lsqr->CanBeFeltByPlayer() || lsqr->CanBeSeenBy(rpd.rc.H())) && chkOLT(rpd,lsqr,iCfgOLT)){
+        if( chkOLT(rpd,lsqr,iCfgOLT) && (lsqr->GetPos().IsAdjacent(rpd.rc.H()->GetPos()) || lsqr->CanBeSeenBy(rpd.rc.H())) ){
           SetOLT(rpd,lsqr,iCfgOLT);
           bFound = true;
           break;
@@ -1149,7 +1197,7 @@ struct recipe{
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
           lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
 //          if(lsqr->CanBeFeltBy(rpd.rc.H()) && chkOLT(rpd,lsqr,iCfgOLT)){
-          if(lsqr->CanBeFeltByPlayer() && chkOLT(rpd,lsqr,iCfgOLT)){
+          if(chkOLT(rpd,lsqr,iCfgOLT) && lsqr->GetPos().IsAdjacent(rpd.rc.H()->GetPos())){
             SetOLT(rpd,lsqr,iCfgOLT);
             bFound = true;
             break;
@@ -1199,7 +1247,7 @@ struct recipe{
 struct srpCutWeb : public recipe{
   virtual void fillInfo(){
     init("cut","a web");
-    desc << "Focus on cutting the web down. Much safer if you use a cutting tool!";
+    desc << "Cut a web down. Much safer than tearing it down, especially if you use a cutting tool. You might still get stuck, though.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1452,7 +1500,7 @@ struct srpDoor : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a secret door");
-    desc << "You will need a hammer or other blunt tool, and sticks, bones or ingots.";
+    desc << "Build a door. You will need a hammer or some other blunt tool, plus sticks, bones or ingots.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1472,7 +1520,7 @@ struct srpChair : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a chair");
-    desc << fsDescBASE;
+    desc << "Create a chair to rest your tired legs. You will need a hammer or some other blunt tool.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1490,7 +1538,7 @@ struct srpAnvil : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","an anvil");
-    desc << "You can create an anvil using ingots while near a forge.\n " << fsDescBASE;
+    desc << "Create an anvil for further crafting, using ingots. You must be near a forge.\n " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1511,7 +1559,7 @@ struct srpForge : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a forge");
-    desc << "You can build a forge. " << fsDescBASE;
+    desc << "Build a forge for further crafting. " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1534,7 +1582,7 @@ struct srpWorkBench : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a workbench");
-    desc << "You can build a workbench. " << fsDescBASE;
+    desc << "Build a workbench for further crafting. " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1558,7 +1606,7 @@ struct srpWall2 : public srpOltBASE{
 
   virtual void fillInfo(){
     init("construct","a wall");
-    desc << "You can construct a wall piling stones, sticks or bones.";
+    desc << "Construct a wall by piling stones, sticks or bones.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1576,7 +1624,7 @@ struct srpWall2 : public srpOltBASE{
 struct srpJoinLumps : public recipe{
   virtual void fillInfo(){
     init("merge","lumps");
-    desc << "Merge lumps of the same material.";
+    desc << "Merge lumps of the same material into a single, bigger one.";
   }
 
   void askForEqualLumps(recipedata& rpd){
@@ -1633,7 +1681,7 @@ struct srpJoinLumps : public recipe{
 struct srpMelt : public srpJoinLumps{
   virtual void fillInfo(){
     init("melt","an ingot");
-    desc << "Near a forge, meltable lumps can be used to prepare ingots.";
+    desc << "Melt lumps of metal into ingots, later usable in crafting. You must be near a forge.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1731,7 +1779,7 @@ struct srpMelt : public srpJoinLumps{
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
     init("dismantle","item");
-    desc << "Near a forge, any meltable item can be dismantled to recover it's materials.\n Otherwise you just need a cutting tool.";
+    desc << "Dismantle an item to recover its materials.\nMetal items require a forge to dismantle, all other need just a cutting tool.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1760,6 +1808,13 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
     if(game::IsQuestItem(itToUse)){
       ADD_MESSAGE("You feel that would be a bad idea and carefully store it back in your inventory.");
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+    // This is a quick fix, maybe allow dismantling mirrored items into mirrored lumps?
+    if(itToUse->GetLifeExpectancy())
+    {
+      ADD_MESSAGE("%s is made of temporary magical force rather than physical matter and cannot be dismantled.",itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
     }
@@ -1794,13 +1849,19 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
 
+    /**
+     * Meltable sticks should be lumpable to easify the code.
+     * Kept in case of wanting to re-enabling for some reason...
+     *
     if(dynamic_cast<stick*>(itToUse)!=NULL){
       ADD_MESSAGE("%s is already a stick.", itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
     }
+     */
 
-    // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
+    // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE
+    // TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
     bool bW = itToUse->IsWeapon(rpd.rc.H());
     item* RmnM = craftcore::PrepareRemains(rpd, matM, (bW && itToUse->GetConfig()==QUARTER_STAFF) ? CIT_STICK : CIT_NONE);
     item* RmnS = matS==NULL ? NULL : craftcore::PrepareRemains(rpd, matS, bW ? CIT_STICK : CIT_LUMP); //must always be created to not lose it
@@ -1860,8 +1921,8 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
 
 struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("hardness check","(weaker material results)");
-    desc << "Hit an item with another, the weaker one will receive a scratch.";
+    init("check","material strength");
+    desc << "Check the relative hardness of two items. The item made of softer material will receive a scratch.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1936,7 +1997,8 @@ struct srpSplitLump : public recipe{
 
   virtual void fillInfo(){
     init("split","raw materials");
-    desc << "Split them to be easier to work with.\n To just cut out (subtract) some volume, specify a negative value in cm3. \nIt is good to cut them precisely to not waste materials.";
+    desc << "Split raw materials to make them easier to work with.\n"
+            "To remove some volume, specify a negative value in cm3.\nIt is good to cut precisely not to waste materials.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2097,13 +2159,13 @@ struct srpSplitLump : public recipe{
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("create","an item");
-    desc << "Using a blunt weapon as hammer,\n close to an anvil and with a forge nearby you can create items.\n Or a cutting weapon, if close to a workbench will speed up the work.\n"
-    "Meltables requires to be near a forge and an anvil.\n"
-    "Carving will be faster if near a workbench.\n"
-    "Ingots will be fully used.\n"
-    "Sticks will be almost fully used.\n"
-    "A single stone will be partially used thru carving.\n"
-    "Remaining materials will become lumps.\n";
+    desc << "Try to craft an item.\n"
+    "You will need an appropriate tool. Normally a hammer or a dagger are used, "
+    "but other blunt and cutting weapons can serve as well. To work with metals, "
+    "you need to have ingots prepared and to be standing near a forge and an anvil. "
+    "Working on a workbench will be faster.\n"
+    "Ingots and stick are always fully used up, while stones can be used up partially. "
+    "Any remaining materials will become lumps.";
   }
 
   /**
@@ -2160,12 +2222,10 @@ struct srpForgeItem : public recipe{
   }
 
   virtual bool work(recipedata& rpd){DBGLN;
-    //////////////// let user type the item name
+    // let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
-//    if(rpd.itSpawn!=NULL) // this is important to grant the cleanup
-//      ABORT("item to be crafted should be NULL %d %s %s",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr(),rpd.dbgInfo().CStr());
+    item* itSpawn;
 
-    item* itSpawn = NULL;
     for(;;){
       festring Temp;
       Temp << Default;DBG4(Default.CStr(),Default.GetSize(),Temp.CStr(),Temp.GetSize()); // to let us fix previous instead of having to fully type it again
@@ -2180,7 +2240,7 @@ struct srpForgeItem : public recipe{
 
       itSpawn = protosystem::CreateItemToCraft(Temp);DBGLN;
 
-      if(itSpawn!=NULL){DBGLN;
+      if(itSpawn){DBGLN;
         if(craftcore::canBeCrafted(itSpawn)){DBG4("SendingToHellRejectedCraftItem",itSpawn->GetID(),itSpawn->GetNameSingular().CStr(),itSpawn);
           rpd.itSpawnType = CIT_PROTOTYPE;
           rpd.fsItemSpawnSearchPrototype = Temp;
@@ -2209,10 +2269,12 @@ struct srpForgeItem : public recipe{
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
+    /* This message ends up being rather confusing.
     if(Default == itSpawn->GetName(INDEFINITE)) //TODO compare for EQUAL ignoring case
       ADD_MESSAGE("Now you need the materials to create a %s.",itSpawn->GetName(INDEFINITE).CStr());
     else
       ADD_MESSAGE("Now you need the materials to create a %s as you would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr());
+    */
 
     long lVolM = itSpawn->GetMainMaterial()->GetVolume();
     if(lVolM==0)
@@ -2283,7 +2345,7 @@ struct srpForgeItem : public recipe{
       }
     }
     if(!bM){
-      ADD_MESSAGE("You will craft it later...");
+      ADD_MESSAGE("You don't have the materials to craft a %s.", Default.CStr());
       rpd.bAlreadyExplained=true;
       craftcore::SendToHellSafely(itSpawn);
       return false;
@@ -2375,7 +2437,7 @@ struct srpForgeItem : public recipe{
         return false;
       }
 
-      if(!recipe::findOLT(rpd,ANVIL,true)){
+      if(!recipe::findOLT(rpd,ANVIL)){ //must be near the anvil to use it!!!
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -2467,7 +2529,7 @@ struct srpForgeItem : public recipe{
 
     if(bMissingTools){
       rpd.itTool=rpd.itTool2=NULL; //to make it easy to check/inform, wont start if missing one anyway
-      failToolMsg(rpd,"the required tool(s)");
+      failToolMsg(rpd,"tool");
       craftcore::SendToHellSafely(itSpawn);
       return false;
     }
@@ -2515,7 +2577,7 @@ struct srpFluidsBASE : public recipe{
     ///////////// tool ////////////////
     rpd.itTool = FindTool(rpd, DAGGER);
     if(rpd.itTool==NULL){
-      failToolMsg(rpd,"a dagger");
+      failToolMsg(rpd,"dagger");
       return false;
     }
 
@@ -2615,7 +2677,7 @@ struct srpFluidsBASE : public recipe{
     rpd.itSpawnCfg = itBottle->GetConfig(); //may be a vial
     rpd.itSpawnMatMainCfg = itBottle->GetMainMaterial()->GetConfig();
     rpd.itSpawnMatMainVol = itBottle->GetMainMaterial()->GetVolume();
-    rpd.itSpawnMatSecCfg = iLiqCfg;
+    rpd.itSpawnMatSecCfg = iLiqCfg;DBG1(iLiqCfg);
     rpd.itSpawnMatSecVol = volume;
 //    rpd.itSpawn = potion::Spawn(itBottle->GetConfig()); //may be a vial
 //    delete rpd.itSpawn->SetSecondaryMaterial(liquid::Spawn(iLiqCfg, volume));
@@ -2627,7 +2689,7 @@ struct srpFluidsBASE : public recipe{
 
     rpd.iBaseTurnsToFinish=5;
 
-    rpd. bCanStart=true;
+    rpd.bCanStart=true;
 
     return true;
   }
@@ -2640,9 +2702,8 @@ struct srpPoison : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some poison");
-    desc << "Use a " << fsTool << " to " << action << " " << name << " from "
-      << fsCorpse << " into a " << fsBottle <<  ".";
+    init("extract","poison");
+    desc << "Use a " << fsTool << " to " << action << " " << name << " from a poisonous corpse into a " << fsBottle << ".";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2659,9 +2720,8 @@ struct srpAcid : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some sulphuric acid");
-    desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
-      << fsCorpse << " into a " << fsBottle <<  ".";
+    init("extract","acid");
+    desc << "Use a " << fsTool << " to " << action << " " << name << " from an acidic corpse into a " << fsBottle << ".";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2671,6 +2731,24 @@ struct srpAcid : public srpFluidsBASE{
   }
 };srpAcid rpAcid;
 
+struct srpMagic : public srpFluidsBASE{
+  virtual bool chkCorpse(const materialdatabase* blood, const materialdatabase* flesh){
+    return (blood->Effect == EFFECT_MUSHROOM || flesh->Effect == EFFECT_MUSHROOM ||
+            blood->Effect == EFFECT_MAGIC_MUSHROOM || flesh->Effect == EFFECT_MAGIC_MUSHROOM);
+  }
+
+  virtual void fillInfo(){
+    init("extract","raw magic");
+    desc << "Use a " << fsTool << " to " << action << " raw liquefied magic from a mushroom into a " << fsBottle <<  ".";
+  }
+
+  virtual bool work(recipedata& rpd){
+    iLiqCfg=MAGIC_LIQUID;
+
+    return srpFluidsBASE::work(rpd);
+  }
+};srpMagic rpMagic;
+
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrpAllRecipes;
 
@@ -2678,15 +2756,20 @@ void updateCraftDesc(){
   craftRecipes.EmptyDescription();
 
   float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
-  festring fsSkill="Crafting Skill: ";
+  festring fsSkill="Crafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
   sprintf(cSkill, "%.1f",fSkill);
   fsSkill<<cSkill;
-  craftRecipes.AddDescription(fsSkill,fSkill<10?RED:WHITE);
+
+  festring fsDesc=fsSkill;
+  if(vSuspended.size()>0)
+    fsDesc<<" (Suspended Actions: "<<vSuspended.size()<<")";
+
+  craftRecipes.AddDescription(fsDesc,fSkill<10?RED:WHITE);
 }
 
 void addRecipe(recipe* prp){
-  prp->iListIndex=vrpAllRecipes.size();
+  prp->iListIndex=vrpAllRecipes.size()+1; //+1 is about the 1st entry related to suspended actions
 
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
@@ -2742,6 +2825,14 @@ humanoid* craftcore::CheckHumanoid(character* Char)
   }
   return h;
 }
+
+recipe* CheckSelectedAndInitRecipeIfNeeded(bool bInitRecipes,recipedata& rpd,recipe* prp, recipe& rp){ // to avoid macro hard readability
+  if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
+  DBG3(prp,&rp,rp.desc.CStr()); \
+  if(bInitRecipes)addRecipe((recipe*)&rp);
+  return prp;
+}
+
 truth craftcore::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
   humanoid* h = CheckHumanoid(Char);
@@ -2752,42 +2843,47 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(!CheckArms(h,bLOk,bROk))
     return false;
 
-  if(craftcore::HasSuspended()){
-    int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER, (c)ancel or start a (n)ew one?"),
-      KEY_ESC, 4, 'r', 'c', 'n', KEY_ENTER);
-    if(key==KEY_ESC)return false;
+  uint sel = FELIST_ERROR_BIT;
+  if(vrpAllRecipes.size()>0){
+    game::SetStandardListAttributes(craftRecipes);
+    craftRecipes.AddFlags(SELECTABLE);
+    craftRecipes.ClearFilter();
+    updateCraftDesc();
+    sel = craftRecipes.Draw(); DBG1(sel);
 
-    if(key==KEY_ENTER)
-      key='r';
+    if(sel & FELIST_ERROR_BIT)
+      return false;
 
-    felist LSusp("Suspended crafting actions:",WHITE);
-    game::SetStandardListAttributes(LSusp);
-    LSusp.AddFlags(SELECTABLE);
-    for(int i=0;i<vSuspended.size();i++)
-      LSusp.AddEntry(vSuspended[i].fsCraftInfo,LIGHT_GRAY);
+    if(sel==0 && craftcore::HasSuspended()){
+      int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER or (c)ancel?"),
+        KEY_ESC, 3, 'r', 'c', KEY_ENTER);
+      if(key==KEY_ESC)return false;
 
-    festring fsDo;
-    bool bResume=false;
-    bool bNew=false;
-    col16 col=WHITE;
-    switch(key){
-    case 'r':
-      fsDo="Resume";
-      bResume=true;
-      break;
-    case 'c':
-      fsDo="Cancel (cannot be restored after this)"; //TODO could...
-      col=RED;
-      bResume=false;
-      break;
-    case 'n':
-      bNew=true;
-      break;
-    default:
-      return false; //TODO ever reached?
-    }
+      if(key==KEY_ENTER)key='r';
 
-    if(!bNew){
+      felist LSusp("Suspended crafting actions:",WHITE);
+      game::SetStandardListAttributes(LSusp);
+      LSusp.AddFlags(SELECTABLE);
+      for(int i=0;i<vSuspended.size();i++)
+        LSusp.AddEntry(vSuspended[i].fsCraftInfo,LIGHT_GRAY);
+
+      festring fsDo;
+      bool bResume=false;
+      col16 col=WHITE;
+      switch(key){
+      case 'r':
+        fsDo="Resume";
+        bResume=true;
+        break;
+      case 'c':
+        fsDo="Cancel (cannot be restored after this)"; //TODO could...
+        col=RED;
+        bResume=false;
+        break;
+      default:
+        return false; //TODO ever reached?
+      }
+
       fsDo<<" which crafting action?";
       LSusp.AddDescription(fsDo,col);
       uint Sel = LSusp.Draw();
@@ -2801,18 +2897,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       }
       return false;
     }
-  }
 
-  uint sel = FELIST_ERROR_BIT;
-  if(vrpAllRecipes.size()>0){
-    game::SetStandardListAttributes(craftRecipes);
-    craftRecipes.AddFlags(SELECTABLE);
-    craftRecipes.ClearFilter();
-    updateCraftDesc();
-    sel = craftRecipes.Draw(); DBG1(sel);
-
-    if(sel & FELIST_ERROR_BIT)
-      return false;
   }
   recipedata rpd(h,sel);
 
@@ -2820,22 +2905,28 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
    * 1st call it just initializes the recipes list after all recipes have been configured!
    */
   bool bInitRecipes = vrpAllRecipes.size()==0;
+
+  if(bInitRecipes){
+    craftRecipes.AddEntry(festring()+"Suspended crafting actions", LIGHT_GRAY, 20, 0, true);
+    craftRecipes.SetLastEntryHelp("Resume or remove already started crafting actions.");
+  }
+
+  // these are kind of grouped and not ordered like a-z
   recipe* prp=NULL;
-  #define RP(rp) \
-    if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
-    DBG3(prp,&rp,rp.desc.CStr()); \
-    if(bInitRecipes)addRecipe((recipe*)&rp);
-  // these are kind of grouped and not ordered like a-z TODO add the commented section code as felist (non selectable) section entries?
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Furniture:", DARK_GRAY, 0, NO_IMAGE, false);
+  #define RP(MACRO_PARAM_rp) prp=CheckSelectedAndInitRecipeIfNeeded(bInitRecipes,rpd,prp,MACRO_PARAM_rp); // just a simple macro to easify maintenance
+
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Construction:", DARK_GRAY, 0, NO_IMAGE, false);
+  RP(rpAnvil);
   RP(rpChair);
   RP(rpDoor);
-
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Buildings:", DARK_GRAY, 0, NO_IMAGE, false);
+  RP(rpForge);
   RP(rpWall2);
+  RP(rpWorkBench);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Potions:", DARK_GRAY, 0, NO_IMAGE, false);
-  RP(rpPoison);
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Alchemy:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpAcid);
+  RP(rpPoison);
+  RP(rpMagic);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Material crafting:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpDismantle);
@@ -2844,16 +2935,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpResistanceVS);
   RP(rpInspect);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Blacksmithing:", DARK_GRAY, 0, NO_IMAGE, false);
-  RP(rpMelt);
-  RP(rpAnvil);
-  RP(rpForge);
-
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Item crafting:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpForgeItem);
-
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Wood carving:", DARK_GRAY, 0, NO_IMAGE, false);
-  RP(rpWorkBench);
+  RP(rpMelt);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Tailoring:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpCutWeb);
@@ -2865,6 +2949,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
   }DBGLN;
 
+  //ADD_MESSAGE("Your chosen crafting action is to %s %s.",prp->action.CStr(),prp->name.CStr());
   bool bDummy = prp->work(rpd); //bDummy(fied) as there is more detailed fail status from rpd bools
 
   //TODO these messages are generic, therefore dont look good... improve it
@@ -2881,7 +2966,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       fsTools<<rpd.itTool2->GetName(INDEFINITE);
     }
     if(!fsTools.IsEmpty())
-      ADD_MESSAGE("Let's see.. You will use %s as tool(s).",fsTools.CStr());
+      ADD_MESSAGE("You will use %s as a tool.",fsTools.CStr());
 
     if(rpd.otSpawnType!=CTT_NONE || rpd.itSpawnType!=CIT_NONE) {
       int iCraftTimeMult=1;
@@ -3018,7 +3103,7 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
        * things that can't be broken are special.
        * if it can't be broken, will just create a messy lump.
        */
-      ADD_MESSAGE("Your lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
+      ADD_MESSAGE("Your lack of skill broke %s into pieces!",itSpawn->GetName(DEFINITE).CStr());
       craftcore::PrepareRemains(rpd,itSpawn->GetMainMaterial(),CIT_LUMP);
       if(itSpawn->GetSecondaryMaterial()!=NULL)
         craftcore::PrepareRemains(rpd,itSpawn->GetSecondaryMaterial(),CIT_LUMP);
@@ -3059,7 +3144,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 
   item* itSpawn = NULL;
   material* matS = NULL;
-  bool bAllowBreak=false;
+  bool bAllowBreak=false;DBG3(rpd.itSpawnType,rpd.itSpawnCfg,rpd.itSpawnMatSecCfg);
   switch(rpd.itSpawnType){
     case CIT_POTION:
       /**
@@ -3075,6 +3160,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
       break;
     case CIT_PROTOTYPE:
       itSpawn = protosystem::CreateItemToCraft(rpd.fsItemSpawnSearchPrototype);
+
       bAllowBreak=true;
       break;
     case CIT_STONE:
@@ -3091,14 +3177,10 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   if(itSpawn==NULL)
     ABORT("craft spawned no item.");
 
-  if(!craftcore::canBeCrafted(itSpawn)){
-    ABORT(
-      "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
-      "- Quest items.\n"
-      "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
-      "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
-      "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
-    );
+  itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
+  if(ic!=NULL){
+    if(ic->IsLocked())
+      ic->SetIsLocked(false); //to prevent annoyance of not having the key TODO should instead be always a broken lock considering the complexity of the locking system itself?
   }
 
   if(rpd.itSpawnMatMainCfg==0 || rpd.itSpawnMatMainVol==0)
@@ -3127,9 +3209,23 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
     fsCreated << " ";
   fsCreated << "You crafted ";
 
+  // this check is more detailed and must be when the item is completely ready!
+  if(!craftcore::canBeCrafted(itSpawn)){
+    ABORT(
+      "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
+      "- Quest items.\n"
+      "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
+      "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
+      "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
+      "This attempt: %s",
+      itSpawn->GetName(DEFINITE).CStr()
+    );
+  }
+
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
   if(itSpawn!=NULL){
-    fsCreated << itSpawn->GetName(INDEFINITE);
+    if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
+      fsCreated << itSpawn->GetName(INDEFINITE);
     itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
   }
 
@@ -3139,6 +3235,35 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
+
+  if(clock()%2==0 ? rpd.iRemainingTurnsToFinish%3==0 : rpd.iRemainingTurnsToFinish%5==0){ // to avoid unnecessarily spamming hiteffects
+    // keep this preference order!
+    lsquare* lsqrHF=NULL;
+    if(!lsqrHF)lsqrHF=rpd.lsqrPlaceAt;
+    if(!lsqrHF)lsqrHF=rpd.v2AnvilLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2AnvilLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2WorkbenchLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2WorkbenchLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2PlaceAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt);
+    if(!lsqrHF)lsqrHF=rpd.v2ForgeLocation.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2ForgeLocation);
+    if(!lsqrHF)lsqrHF=rpd.v2XplodAt.Is0() ? NULL : rpd.rc.H()->GetNearLSquare(rpd.v2XplodAt);
+    if(lsqrHF){
+      hiteffectSetup* pHitEff=new hiteffectSetup();
+
+      pHitEff->Type = (rpd.itTool || rpd.itTool2) ? WEAPON_ATTACK : UNARMED_ATTACK;
+      pHitEff->WhoHits=rpd.rc.H();
+      pHitEff->HitAtSquare=lsqrHF;
+
+      item* itHF=NULL; //keep the below order
+      if(!itHF)itHF = rpd.itTool ? rpd.itTool : NULL;
+      if(!itHF)itHF = rpd.itTool2 ? rpd.itTool2 : NULL;
+      if(!itHF)itHF = rpd.rc.H()->GetRightArm() ? rpd.rc.H()->GetRightArm() : NULL;
+      if(!itHF)itHF = rpd.rc.H()->GetLeftArm() ? rpd.rc.H()->GetLeftArm() : NULL;
+      if(itHF){
+        pHitEff->lItemEffectReferenceID = itHF->GetID();
+        lsqrHF->AddHitEffect(*pHitEff);
+      }
+      delete pHitEff;
+    }
+  }
 
   if(rpd.bGradativeCraftOverride){
     GradativeCraftOverride(rpd);
@@ -3175,7 +3300,8 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
  * - one rock into smaller ones
  * - one organic
  */
-void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
+void crafthandle::GradativeCraftOverride(recipedata& rpd)
+{DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
     ABORT("incompatible gradative mode and ingredients count %lu",rpd.ingredientsIDs.size());
 
@@ -3239,9 +3365,11 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
 
   if(spawnedVol==matMRemVol)
     DestroyIngredients(rpd); //cant be left with 0 volume
-  else
-  if(spawnedVol>matMRemVol) //the total calc being precise, and leaving a tiny remaining lump behind, this will never happen, just in case something is changed...
-    ABORT("lump volume would become negative (if not unsigned long) or 0 as %lu > %l",spawnedVol,matMRemVol);
+  else if(spawnedVol>matMRemVol) // Can happen with sol stone, TODO something about it but don't crash.
+  {
+    ADD_MESSAGE("Your work disappears in a puff of logic!");
+    DestroyIngredients(rpd);
+  }
   else
     matM->SetVolume(matMRemVol-spawnedVol); //the remaining volume becomes the action control/limit
 
@@ -3373,8 +3501,9 @@ void crafthandle::CheckFacilities(recipedata& rpd){
       rpd.bFailedTerminateCancel=true;
     }
 
-    rpd.bOnlyXplodIfCriticalFumble=true;
-    rpd.v2XplodAt=rpd.v2WorkbenchLocation;
+    //TODO workbench should be damaged w/o explosions (that is area effect related to fire/forge)
+    rpd.bOnlyXplodIfCriticalFumble=true; //TODO kept as WIP
+    //explode/sparks at workbench doesnt make much sense: rpd.v2XplodAt=rpd.v2WorkbenchLocation;
   }
 }
 

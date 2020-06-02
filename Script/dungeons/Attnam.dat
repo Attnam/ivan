@@ -39,7 +39,7 @@ Dungeon ATTNAM;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
+    EnchantmentPlusChanceDelta = 5;
     BackGroundType = GRAY_FRACTAL;
     FillSquare = GRANITE solidterrain(GROUND), BLACK_GRANITE earth;
     TunnelSquare = GRANITE solidterrain(GROUND), 0;
@@ -491,7 +491,7 @@ Dungeon ATTNAM;
           k = kamikazedwarf(VALPURUS);
           K = veterankamikazedwarf(VALPURUS);
           h = imperialist(HOARD_MASTER);
-          G = golem(GOLD);
+          G = golem(GOLD) { Inventory == GOLD stone(SOL_STONE); }
           o = orc(REPRESENTATIVE);
           a = siren(AMBASSADOR_SIREN);
           A = guard(EMISSARY) { WayPoint = { 2, 26, 35, 34, 35; } }
@@ -573,10 +573,6 @@ Dungeon ATTNAM;
       Square, Pos 5, 1;
       {
         Character = shopkeeper(ATTNAM) { Flags = IS_MASTER; }
-      }
-
-      Square, Pos 5, 1;
-      {
         OTerrain = decoration(CHAIR);
       }
 
@@ -736,7 +732,7 @@ Dungeon ATTNAM;
 
       Square, Pos 3, 2;
       {
-        Character = smith { Flags = IS_MASTER; }
+        Character = smith(ATTNAM) { Flags = IS_MASTER; }
       }
 
       Square, Pos 3, 3;
@@ -810,7 +806,7 @@ Dungeon ATTNAM;
 
       Square, Pos 3, 2;
       {
-        Character = tailor { Flags = IS_MASTER; }
+        Character = tailor(ATTNAM) { Flags = IS_MASTER; }
       }
 
       Square, Pos 3, 3;
@@ -911,7 +907,7 @@ Dungeon ATTNAM;
       DivineMaster = VALPURUS;
       GenerateTunnel = false;
       GenerateLanterns = false;
-      Type = ROOM_CATHEDRAL;
+      Type = ROOM_OWNED_AREA;
       GenerateFountains = false;
       AllowLockedDoors = false;
       AllowBoobyTrappedDoors = false;
@@ -939,12 +935,12 @@ Dungeon ATTNAM;
         *#..#*******#......#....#....##.###...#
         *#..#*******#......##.#####.##........#
         *####*******#...#.................#####
-        ************#######..#.###...####.....#
-        *****************....#.**#...#**#.#...#
-        ***************..*####*.*#...#**#.#...#
-        ************************#######*#.#####
-        ************************#.....#*#.....#
-        #########################.....#*#.#...#
+        ************#######...####...####.....#
+        *****************.....#**#...#**#.#...#
+        #####**********..*#...#.*#...#**#.#...#
+        #...#*************#####*#######*#.#####
+        #...#*******************#.....#*#.....#
+        ##.######################.....#*#.#...#
         #.............................#*#.#...#
         #.............................#*#.#####
         ##.#####.#####.#####.####.....#*#...#**
@@ -989,8 +985,10 @@ Dungeon ATTNAM;
           * = MORAINE earth;
           # = BLACK_GRANITE wall(BRICK_OLD);
           @ = IRON barwall;
+          & = PAPER_BOARD barwall; /* Yes, it's a cardboard prison joke. */
           $ = IRON barwall(BROKEN_BARWALL);
           % = IRON door(BARDOOR);
+          = = PAPER_BOARD door(BARDOOR) { Parameters = LOCKED; }
           ^ = MARBLE wall(BRICK_PROPAGANDA);
           > = stairs(STAIRS_DOWN);
           < = stairs(STAIRS_UP);
@@ -1038,18 +1036,18 @@ Dungeon ATTNAM;
         *####*******X.s.@..@...sX....#...s$...#
         *#..#*******#...@..@....#....#@B@@@...#
         *#..#*******#s..L..@@B@@#@@%@#b...%...#
-        *####*******X...@............S....XX###
-        ************#######..#X##X@L@#XX#.%..s#
-        *****************b...#***#...X**X.@...#
-        ***************>.*####***#.s.#**#.$...X
-        ************************##NPN##*#.#XXX#
-        ************************#.....#*#.%...X
-        #########################.....#*#.@.s.#
+        *##S#*******X...@............S....XX###
+        **#.#*******#######@%$X##X@L@#XX#.%..s#
+        **#.#************b....#**#...X**X.@...#
+        ###S#**********>.*#s..#**#.s.#**#.$...X
+        #..I#*************#XX##*##NPN##*#.#XXX#
+        #...#*******************#.....#*#.%...X
+        #@L@#####################.....#*#.@.s.#
         #.............................#*#.@...#
         #.............................#*#S#####
-        #@L@###@%@###@L@###@%@###.....#*#.WW#**
+        #@L@###&=&###@L@###@%@###.....#*#.WW#**
         #...#*#...#*#...#*#...#*#.....#*#..W#**
-        #..s#*#.s.#*#.s.#*#...#*#.....#*#.WW#**
+        #..s#*#.d.#*#.s.#*#...#*#.....#*#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
         *************************#...#**#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
@@ -1106,11 +1104,11 @@ Dungeon ATTNAM;
         ************#..b#...............b.#####
         ************#######..#####...####.....#
         *****************.r.b#***#...#**#.#...#
-        ***************.p*####***#...#**#.#...#
-        ************************##...##*#.#####
-        ************************#.....#*#.....#
-        ##2#####2#####2#####2###3.....#*#.#...#
-        #.............................#*#.#...#
+        #####**********.p*####***#...#**#.#...#
+        #...#*******************##...##*#.#####
+        #...#*******************#.....#*#.....#
+        ##.#####2#####2#####2###3.....#*#.#...#
+        3.............................#*#.#...#
         #.............................#*#.#####
         ##.#####.#####.#####.####.....#*#...#**
         #...#*#...#*#...#*#...#*3.....#*#...#**
@@ -1347,8 +1345,8 @@ Dungeon ATTNAM;
     LevelMessage = "You hear rhythmic chanting of some profane ritual: \"Ia! Ia! Khaz-zadm fhtagn!\"";
     DifficultyBase = 100;
     DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = 0;
-    EnchantmentMinusChanceDelta = 0;
+    ItemMinPriceBase = 100;
+    ItemMinPriceDelta = 10;
 
     Square, Random NOT_IN_ROOM|ATTACHABLE;
     {
