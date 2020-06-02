@@ -1728,7 +1728,7 @@ void item::CalculateEmitation()
       for(const fluid* F = Fluid[c]; F; F = F->Next){
         DBG2(F->GetEmitation(),F->GetLiquid()->GetVolume());
         game::CombineLights(Emitation,
-          CalcEmitationBasedOnVolume( F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
+          CalcEmitationBasedOnVolume( 0, F->GetEmitation(), F->GetLiquid()->GetVolume() ) );
       }
     }
   }
