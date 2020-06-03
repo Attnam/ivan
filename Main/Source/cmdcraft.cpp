@@ -2152,7 +2152,9 @@ struct srpSplitLump : public recipe{
   virtual void fillInfo(){
     init("split","raw materials");
     desc << "Split raw materials to make them easier to work with.\n"
-            "To remove some volume, specify a negative value in cm3.\nIt is good to cut precisely not to waste materials.";
+            "To remove some volume, specify a negative value in cm3.\n"
+            "It is good to cut precisely not to waste materials.\n"
+            "Obs.: stones will require a hammer and a dagger.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2161,7 +2163,7 @@ struct srpSplitLump : public recipe{
     rpd.bGradativeCraftOverride=true; //may be disabled below
     rpd.fDifficulty=0.1;
 
-    if(ToSplit==NULL && choseOneIngredient<lump>(rpd)){ //can  be split with hands only
+    if(ToSplit==NULL && choseOneIngredient<lump>(rpd)){ //can  be split just with hands
       ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
       rpd.itSpawnType = CIT_LUMP;
     }
@@ -2217,7 +2219,7 @@ struct srpSplitLump : public recipe{
       CI.bAllowMeltables=false;
       if(choseOneIngredient<stone>(rpd,&CI)){
         ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
-        if(!setTools(rpd,FindBluntTool(rpd),findCarvingTool(rpd,ToSplit))){ //the blunt is to hit the cutting one
+        if(!setTools(rpd,FindBluntTool(rpd),findCarvingTool(rpd,ToSplit))){ //the blunt is to hit the hilt of the cutting one
           explain(rpd,ToSplit->GetName(INDEFINITE));
           return false;
         }
@@ -2239,7 +2241,13 @@ struct srpSplitLump : public recipe{
 
     if(ToSplit->GetSecondaryMaterial()!=NULL)
       ABORT("can only split items without secondary material");
-
+    
+    if(ToSplit->GetVolume()<2){
+      ADD_MESSAGE("It must have 2 or more cm3 to be splitable."); //TODO just for now.. negative volumes could be split one day with extra code
+      rpd.SetAlreadyExplained();
+      return false;
+    }
+    
     // some items may not have main material like corpses
     long volTot=ToSplit->GetVolume();
 
