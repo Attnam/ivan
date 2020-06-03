@@ -159,9 +159,13 @@ void worldmap::Generate()
   Alloc2D(OldAltitudeBuffer, XSize, YSize);
   Alloc2D(OldTypeBuffer, XSize, YSize);
   Alloc2D(NoIslandAltitudeBuffer, XSize, YSize);
+  
+  int WorldAttempts = 0;
+  int PlacementAttempts = 0;
 
   for(;;)
   {
+    WorldAttempts++;
     RandomizeAltitude();
     SmoothAltitude();
     GenerateClimate();
@@ -170,7 +174,7 @@ void worldmap::Generate()
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 250 && Continent[c]->GetSize() < 750
+      if(Continent[c]->GetSize() > 250 && Continent[c]->GetSize() < 1000
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -332,8 +336,8 @@ void worldmap::Generate()
       continue;
 
     // Use a Poisson disc sampler to find random nicely-spaced points on the world map
-    // Third argument is radius. Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together)
-    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
+    // Third argument is radius. On a 128x128 tile map, Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together).
+    AllocateGlobalPossibleLocations(XSize, YSize, 3, 10); // default is 6
 
     // Create a vector of location data structures from the available locations
     std::vector <location> AvailableLocations;
@@ -360,9 +364,14 @@ void worldmap::Generate()
 
     // Sort the vector of global available locations according to distance to attnam. Closest places are first.
     std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
+    
+    if(!AvailableLocations.empty())
+      ADD_MESSAGE("There are %d locations available to begin with.", AvailableLocations.size());
 
     // Make up a vector of places from the script that need to be placed
     std::vector<place> ToBePlaced;
+    std::vector<place> ShallBePlaced;
+    std::vector<v2> AtTheseCoordinates;
     // Pick out only the places that can be generated, and get their native ground terrain type
     for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
     {
@@ -409,22 +418,17 @@ void worldmap::Generate()
         for(uint j = 0; j < ToBePlaced.size(); j++)
         {
           // If the terrain type of the available location matches that of the place, then put the place there.
-          if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain))
+          if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain)) // ToDo: Use an override flag if it has been attempted around 25? times. (i.e. in the event that the worldmap is too small!
           {
-            owterrain* NewPlace = protocontainer<owterrain>::GetProto(ToBePlaced[j].Type)->Spawn();
             v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
-
-            if(!NewPlace->HideLocationInitially())
-              GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
-
-            SetEntryPos(NewPlace->GetAttachedDungeon(), NewPos);
+            
+            ShallBePlaced.push_back(ToBePlaced[j]);
+            AtTheseCoordinates.push_back(NewPos);
             ToBePlaced[j].HasBeenPlaced = true;
-
-            if(NewPlace->RevealEnvironmentInitially())
-              RevealEnvironment(NewPos, 1);
 
             break;
           }
+          ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
         }
         // Remove any places that have been placed, so we don't try to pick them out of our vector again.
         ToBePlaced.erase(
@@ -445,13 +449,46 @@ void worldmap::Generate()
       AvailableLocationsOnThisContinent.clear();
 
       // Two early stopping criteria. In the default case we just run out of continents to step through.
-      if(AvailableLocations.empty())
-        break;
+      //if(AvailableLocations.empty())
+      //  break;
 
       if(ToBePlaced.empty())
         break;
     }
+    
+    // If there are still towns to be placed, then re-roll (...?)
+    // In a 32x32 size map, this is very often reached..!
+    if(!ToBePlaced.empty())
+      ADD_MESSAGE("There are still %d places not yet placed!", ToBePlaced.size());
+    
+    if(!ToBePlaced.empty())
+    {
+      ShallBePlaced.clear();
+      AtTheseCoordinates.clear();
+      PlacementAttempts++;
+      continue;
+    }
+    
+    if(ShallBePlaced.size() != AtTheseCoordinates.size())
+    {
+      ADD_MESSAGE("Mismatched location placement!");
+      //ABORT("Mismatched location placement!");
+    }
+    else
+    {
+      // Actually spawn the worldmap locations in their final positions
+      for(uint j = 0; j < ShallBePlaced.size(); j++)
+      {
+        owterrain* NewPlace = protocontainer<owterrain>::GetProto(ShallBePlaced[j].Type)->Spawn();
+        if(!NewPlace->HideLocationInitially())
+          GetWSquare(AtTheseCoordinates[j])->ChangeOWTerrain(NewPlace);
 
+        SetEntryPos(NewPlace->GetAttachedDungeon(), AtTheseCoordinates[j]);
+        if(NewPlace->RevealEnvironmentInitially())
+          RevealEnvironment(AtTheseCoordinates[j], 1);
+      }
+    }
+    
     GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
     SetEntryPos(ATTNAM, AttnamPos);
     RevealEnvironment(AttnamPos, 1);
@@ -471,6 +508,10 @@ void worldmap::Generate()
   delete [] OldAltitudeBuffer;
   delete [] OldTypeBuffer;
   delete [] NoIslandAltitudeBuffer;
+  
+  PlacementAttempts++;
+  ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
+  ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
 }
 
 void worldmap::RandomizeAltitude()
