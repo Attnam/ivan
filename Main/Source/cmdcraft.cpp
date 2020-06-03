@@ -2049,7 +2049,10 @@ struct srpInspect : public recipe{
     material* matM = it0->GetMainMaterial();
     material* matS = it0->GetSecondaryMaterial();
     festring fs;
-    fs<<it0->GetName(DEFINITE)<<" is made of ";
+    fs << it0->GetName(DEFINITE) 
+       << " (" << game::StoreMatchNameKey(it0) << " or " //used by auto-store items on containers, so here is the place to determine it's value
+       <<         game::StoreMatchNameKey(it0,true) << ")"
+       << " is made of ";
     if(matM)fs<<matM->GetName(UNARTICLED);
     if(matS){
       if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...

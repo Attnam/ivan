@@ -1358,17 +1358,40 @@ void game::SetDropTag(item* it)
   }
 }
 
+/**
+ * 
+ * @param it
+ * @param bUnarticled if false is GetNameSingular()
+ * @return 
+ */
+cchar* game::StoreMatchNameKey(item* it,bool bUnarticled)
+{
+  static festring fsRet,fsSpace=" ",fsEmpty="";
+  static cchar* cToken="+";
+  
+  fsRet="";
+  fsRet<<cToken;
+  if(bUnarticled)
+    fsRet<<it->GetName(UNARTICLED|UNLABELED);
+  else
+    fsRet<<it->GetNameSingular()<<cToken;
+  
+  festring::SearchAndReplace(fsRet,fsSpace,fsEmpty,0);
+  
+  return fsRet.CStr();
+}
+
 void game::AutoStoreItemInContainer(item* itToStore,character* C)
 {
   if(!C->IsPlayer())
     return;
   
-  itemvector vit;
+  static itemvector vit;vit.clear();
   C->GetStack()->FillItemVector(vit);
-  cchar* cToken="+";
-  festring fsAutoStoreToMatch;
-  fsAutoStoreToMatch<<cToken<<itToStore->GetNameSingular();
-  DBG1(fsAutoStoreToMatch.CStr());
+  static festring fsMatchGeneric,fsMatchPrecise;
+  fsMatchGeneric=StoreMatchNameKey(itToStore);
+  fsMatchPrecise=StoreMatchNameKey(itToStore,true);
+  DBG2(fsMatchGeneric.CStr(),fsMatchPrecise.CStr());
   for(int i=0;i<vit.size();i++){
     itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
     if(itc){
@@ -1377,15 +1400,15 @@ void game::AutoStoreItemInContainer(item* itToStore,character* C)
       if(lRemainingVol<itToStore->GetVolume())
         continue;
       
-//      if(itc->GetLabel().Find(cToken)==festring::NPos)
-//        continue;
-      
-      if(itc->GetLabel().Find(fsAutoStoreToMatch)==festring::NPos)
-        continue;
-      
-      itToStore->RemoveFromSlot();
-      itc->GetContained()->AddItem(itToStore);
-      break;
+      if(
+        itc->GetLabel().Find(fsMatchGeneric)!=festring::NPos ||
+        itc->GetLabel().Find(fsMatchPrecise)!=festring::NPos
+      ){
+        itToStore->RemoveFromSlot();
+        itc->GetContained()->AddItem(itToStore);
+        ADD_MESSAGE("%s was safely stored in %s",itToStore->GetName(DEFINITE).CStr(),itc->GetName(DEFINITE).CStr());
+        break;
+      }
     }
   }
 }

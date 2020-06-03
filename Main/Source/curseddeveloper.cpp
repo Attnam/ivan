@@ -355,6 +355,9 @@ bool curseddeveloper::LifeSaveJustABit(character* Killer)
   if(!bCursedDeveloper)
     return false;
   
+  if(Killer && Killer->IsPlayer())
+    ABORT("What? player killer is player? name='%s' id='%d'",Killer->GetNameSingular().CStr(),Killer->GetID());
+  
   character* P = game::GetPlayer();
   game::DrawEverything();
 

@@ -713,8 +713,13 @@ festring::sizetype festring::IgnoreCaseFind(cfestring& Where,
   return NPos;
 }
 
-/* Replaces all occurances of What in Where after Begin with With */
-
+/**
+ * Replaces all occurances of What in Where after Begin with With 
+ * @param Where
+ * @param What
+ * @param With
+ * @param Begin
+ */
 void festring::SearchAndReplace(festring& Where, cfestring& What,
                                 cfestring& With, sizetype Begin)
 {

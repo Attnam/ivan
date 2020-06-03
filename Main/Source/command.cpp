@@ -1144,7 +1144,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
           break;
 
         festring What = ToAddLabel[0]->GetLabel();
-        int iMaxChars=100; // item labels can contain user custom hints to let the algorithm use these to perform automatic actions
+        int iMaxChars=150; // item labels can contain user custom hints to let the algorithm use these to perform automatic actions
         if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, iMaxChars, true) == NORMAL_EXIT)
           for(int i=0;i<ToAddLabel.size();i++)
             ToAddLabel[i]->SetLabel(What);

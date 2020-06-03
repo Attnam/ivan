@@ -54,7 +54,12 @@ stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
                                           &SelectedBkgColorChanger);
 stringoption ivanconfig::AutoPickUpMatching("AutoPickUpMatching",
                                           "Auto pick up regex",
-                                          "Automatically pick up items according to a regular expression. To disable something, you can invalidate it with '_' without removing it from the expression (eg. '_dagger'). To disable everything at once, begin this config option with '!'. Containers inscribed with eg. '+key+ring+scroll' will auto store such items. Due to current constraints on length of options, editing is easier to do externally for now.",  //TODO if multiline text editing is implemented, remove the last help statement.
+                                          "Automatically pick up items according to a regular expression.\n"
+                                            " To disable something, you can invalidate it with '_' without removing it from the expression (eg. '_dagger').\n"
+                                            " To disable everything at once, begin this config option with '!'.\n"
+                                            " Containers inscribed with eg. '+key+ring+scroll' will auto store such items,\n"
+                                            "  and you can determine what to inscribe by craft/inspecting the items.\n"
+                                            " Due to current constraints on length of options, editing is easier to do externally for now.",  //TODO if multiline text editing is implemented, remove the last help statement.
                                           "!((book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
                                           &configsystem::NormalStringDisplayer,
                                           &AutoPickUpMatchingChangeInterface,
