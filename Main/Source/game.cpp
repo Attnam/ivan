@@ -3032,8 +3032,16 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     }
   }
 
-  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0)
-    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, DARK_GRAY, false);
+  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0){
+    col16 col = DARK_GRAY;
+    if(PLAYER->StateIsActivated(PANIC)){
+      static float fMaxSec=1.5; //it will flash every half of this time
+      static clock_t tmMax = (clock_t)CLOCKS_PER_SEC*fMaxSec;
+      static clock_t tmHalf = (clock_t)tmMax/2.0;
+      col = ((clock()%tmMax) < tmHalf) ? YELLOW : DARK_GRAY;
+    }
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, col, false);
+  }
 
   iAltSilBlitCount++;
 }
