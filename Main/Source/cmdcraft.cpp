@@ -98,10 +98,25 @@ bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool 
   return bEmptied;
 }
 
+/**
+ * Why this is important?
+ * 
+ * Because if the item remain on slot, and 1 turn has not passed, 
+ * what may happpen on crafting code in case user gives up on crafting action,
+ * it will provide inconsistent inventory contents (something that was sent to hell
+ * but is still on inventory as the turn has not passed to properly send it to hell).
+ * 
+ * If all the above is correctly understood as "it is how thing work",
+ * then crafting should be fixed to always pass one turn even if user giveup?
+ * But that doesnt looks good, giveup = cancel, should not pass a turn at all.
+ * 
+ * This shall be used for anything related to crafting until something better is coded.
+ */
 void craftcore::SendToHellSafely(item* it)
 {
   it->RemoveFromSlot(); //just in case to prevent problems later... like crashing elsewhere!!!
-  it->SendToHell(); DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
+  it->SendToHell(); //DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
+  DBGITEM(it,"SentToHell:Safely");
 //  **rit=NULL;
 }
 
@@ -1269,8 +1284,6 @@ struct recipe{
           lumpAtInv->CalculateAll();
 
           craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
-//          lumpToMix->RemoveFromSlot();
-//          lumpToMix->SendToHell(); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
           bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
           break;
         }
@@ -3134,7 +3147,7 @@ void craftcore::UndoRemainsIfNeeded(recipedata& rpd)
       matM = itLump->GetMainMaterial();
       long vol = matM->GetVolume() - pur->lUndoRemainsVolume;
       if(vol<=0){
-        itLump->SendToHell();
+        craftcore::SendToHellSafely(itLump);
         if(vol<0){
           // should abort? or this would be just a minor issue?
           DBG2("UndoRemain:LumpNegativeVol",rpd.dbgInfo().CStr());
@@ -4016,7 +4029,7 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
         }
 
     if(bSendToHell){DBGLN;
-      it->SendToHell();
+      craftcore::SendToHellSafely(it);
     }else{DBGLN;
       //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
       //TODO what about amulet of phasing or ghost mode?

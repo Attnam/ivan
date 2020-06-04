@@ -1393,6 +1393,7 @@ void game::AutoStoreItemInContainer(item* itToStore,character* C)
   fsMatchPrecise=StoreMatchNameKey(itToStore,true);
   DBG2(fsMatchGeneric.CStr(),fsMatchPrecise.CStr());
   for(int i=0;i<vit.size();i++){
+    DBGITEM(vit[i],"checkingIfIsAContainer");
     itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
     if(itc){
       long lRemainingVol = itc->GetStorageVolume() - itc->GetContained()->GetVolume();

@@ -81,7 +81,7 @@
       #endif
 
       #if defined(__ITEM_H__) && !defined(DBGITEM)
-        #define DBGITEM(it,info) DBG3(info,it,(it==NULL?0:it->GetID()))
+        #define DBGITEM(it,info) DBG4(info,it,it->GetName(UNARTICLED).CStr(),(it==NULL?0:it->GetID()))
       #endif
 
       #if defined(__ERROR_H__) && !defined(DBGABORT)
