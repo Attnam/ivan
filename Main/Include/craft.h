@@ -101,6 +101,11 @@ class recipecore {
 //class recipedata : public recipecore {
 
 /**/
+struct undoremains {
+  ulong ulUndoRemainsIngredientID = 0;
+  ulong ulUndoRemainsLumpID = 0;
+  long lUndoRemainsVolume = 0;
+};
 class recipedata {
   /**
    * tip: for clarity group fields by max of 5 no matter group context (despite in context would be better)
@@ -148,7 +153,9 @@ class recipedata {
     item* itWeakestIngredient;
     lsquare* lsqrActor;
 
-    // no need to save
+    /*****************************************
+     *  no need to save
+     */
     uint SelectedRecipe;
     bool bSpendCurrentTurn;
     bool bAlreadyExplained;
@@ -165,13 +172,16 @@ class recipedata {
     int iMinTurns;
     bool bFailedTerminateCancel;
     bool bFailedSuspend;
+    
+    undoremains urMain;
+    undoremains urSecond;
 
     /*******************************************
      * save REQUIRED fields!!!
      * if re-organized, do also at constructor initializer please!
      * but save and load will make existing saved games with suspended crafting incompatible then,
      * so better avoid doing it.
-     */
+     *******************************************/
     std::vector<ulong> ingredientsIDs;
     int iAddDexterity;
     int iBaseTurnsToFinish;
@@ -274,6 +284,7 @@ class craftcore {
     static bool IsBone(material* mat);
 
     static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE, long NewMaterialVolume = 0);
+    static void UndoRemainsIfNeeded(recipedata& rpd);
     static void FinishSpawning(recipedata& rpd,item* itSpawn);
 
     static void AddSuspended(const recipedata& rpd);
