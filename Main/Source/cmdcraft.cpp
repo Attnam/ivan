@@ -485,6 +485,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   iMinTurns=0;
   bFailedTerminateCancel=false;
   bFailedSuspend=false;
+  
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
@@ -652,6 +653,7 @@ struct ci{ //create item info/helper/data/config/param
   bool bMustBeTailorable=false;
   bool bMixRemainingLump=true;
   bool bAddEquippedItemsToChoiceList=false;
+  bool bIsMainIngredient=true; //false if it is secondary ingredient
 };
 struct recipe{
   festring action;
@@ -1135,15 +1137,19 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
               ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol);
-            matM->SetVolume(lVolM); //TODO there is a big problem here... if the crafting cannot be started because a tool is missing, this ingredient will have less volume than required and may not be reused in case it is a non-meltable!!!
-
-//            bool bForceLump = CI.fUsablePercVol<1.0;
-//            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
+            
+            matM->SetVolume(lVolM);
             item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_NONE,lRemainingVol);
-            //lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
-
+            item* lumpMixed=NULL;
             if(CI.bMixRemainingLump)
-              lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
+              lumpMixed=lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
+            undoremains* pur = CI.bIsMainIngredient ? &rpd.urMain : &rpd.urSecond;
+            if(pur->ulUndoRemainsIngredientID!=0)
+              ABORT("craft remains undo for %s ingredient was already set!",(CI.bIsMainIngredient?"MAIN":"SECOND"));
+            pur->ulUndoRemainsIngredientID = ToUse[i]->GetID();
+            pur->ulUndoRemainsLumpID = lumpMixed!=NULL ? lumpMixed->GetID() : lumpR->GetID();
+            pur->lUndoRemainsVolume = lRemainingVol;
+            DBG6("UndoRemain:Set",CI.bIsMainIngredient,pur->ulUndoRemainsIngredientID,pur->ulUndoRemainsLumpID,pur->lUndoRemainsVolume,rpd.dbgInfo().CStr());
 
             material* matS = ToUse[i]->GetSecondaryMaterial();
             if(matS!=NULL && matS->GetVolume()>0)
@@ -1246,8 +1252,12 @@ struct recipe{
     return vi;
   }
 
-  static void lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
+  /**
+   * @return the lump where it was mixed into (or the input lump)
+   */
+  static item* lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
     // to easily (as possible) create a big lump
+    lump* lumpAtInv=NULL;
     for(int i=0;i<vi.size();i++){
       if(lumpToMix==vi[i])continue;
 
@@ -1266,6 +1276,8 @@ struct recipe{
         }
       }
     }
+    
+    return lumpAtInv!=NULL ? lumpAtInv : lumpToMix;
   }
 
   static void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
@@ -2462,8 +2474,10 @@ struct srpForgeItem : public recipe{
 
     ci CIM;
     CIM.bMainMaterRemainsBecomeLump=true;
+    
     ci CIS;
     CIS.bMainMaterRemainsBecomeLump=true;
+    CIS.bIsMainIngredient=false;
 
     // some material constraints/limitations
     if(dynamic_cast<potion*>(itSpawn)!=NULL){
@@ -3090,6 +3104,49 @@ recipe* CheckSelectedAndInitRecipeIfNeeded(bool bInitRecipes,recipedata& rpd,rec
   return prp;
 }
 
+void craftcore::UndoRemainsIfNeeded(recipedata& rpd)
+{DBGLN;
+  static undoremains* pur;
+  static item *itIngredient, *itLump;
+  static material* matM;
+  for(int i=0;i<2;i++){
+    switch(i){
+      case 0: pur=&rpd.urMain;break;
+      case 1: pur=&rpd.urSecond;break;
+    }
+    DBG6("UndoRemain:Work",i,pur->ulUndoRemainsIngredientID,pur->ulUndoRemainsLumpID,pur->lUndoRemainsVolume,rpd.dbgInfo().CStr());
+    
+    if(pur->lUndoRemainsVolume==0)
+      continue;
+    
+    itIngredient = game::SearchItem(pur->ulUndoRemainsIngredientID);
+    if(itIngredient){ 
+      matM = itIngredient->GetMainMaterial();
+      matM->SetVolume(matM->GetVolume()+pur->lUndoRemainsVolume);
+      itIngredient->CalculateAll();
+    }else{
+      // should abort? or this would be just a minor issue?
+      DBG2("UndoRemain:IngredientVanished",rpd.dbgInfo().CStr());
+    }
+    
+    itLump = game::SearchItem(pur->ulUndoRemainsLumpID);
+    if(itLump){
+      matM = itLump->GetMainMaterial();
+      long vol = matM->GetVolume() - pur->lUndoRemainsVolume;
+      if(vol<=0){
+        itLump->SendToHell();
+        if(vol<0){
+          // should abort? or this would be just a minor issue?
+          DBG2("UndoRemain:LumpNegativeVol",rpd.dbgInfo().CStr());
+        }
+      }else{
+        matM->SetVolume(vol);
+        itLump->CalculateAll();
+      }
+    }
+  }
+}
+
 truth craftcore::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
   humanoid* h = CheckHumanoid(Char);
@@ -3174,8 +3231,11 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   // these are kind of grouped and not ordered like a-z
   recipe* prp=NULL;
-  #define RP(MACRO_PARAM_rp) prp=CheckSelectedAndInitRecipeIfNeeded(bInitRecipes,rpd,prp,MACRO_PARAM_rp); // just a simple macro to easify maintenance
-
+  // just a simple macro to easify maintenance
+  #define RP(MACRO_PARAM_rp) prp=CheckSelectedAndInitRecipeIfNeeded(bInitRecipes,rpd,prp,MACRO_PARAM_rp);
+  
+  // RECIPES!
+  
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Construction:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpAnvil);
   RP(rpChair);
@@ -3206,17 +3266,18 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
-
+  
   if(prp==NULL){
+    // no crafting action was selected
     return false;
   }
 
+  // craft!
   //ADD_MESSAGE("Your chosen crafting action is to %s %s.",prp->action.CStr(),prp->name.CStr());
   bool bDummy = prp->work(rpd); //bDummy(fied) as there is more detailed fail status from rpd bools
 
-  //TODO these messages are generic, therefore dont look good... improve it
-  
   if(!rpd.bCanStart){
+    UndoRemainsIfNeeded(rpd);
     if(!rpd.bAlreadyExplained)
       ABORT("explain why crafting won't work.");
     return true;
@@ -3310,8 +3371,10 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       fs<<iD<<" days "; //this may happen in case the stats/skill went too low, so user has a chance to recover from the debuff
     fs<<iH<<" hours and "<<iM<<" minutes to complete";
     fs<<", Continue? [y/N]";
-    if(!game::TruthQuestion(fs))
+    if(!game::TruthQuestion(fs)){
+      UndoRemainsIfNeeded(rpd);
       return true; // see at the end why
+    }
   }
 
   if(rpd.otSpawnType!=CTT_NONE && rpd.v2PlaceAt.Is0())
