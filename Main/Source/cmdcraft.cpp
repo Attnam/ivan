@@ -3299,6 +3299,11 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(rpd.ingredientsIDs.size()==0){
     ABORT("no ingredients chosen?");
     return true; // dummy
+  }else{
+    for(int i=0;i<rpd.ingredientsIDs.size();i++){
+      item* it = game::SearchItem(rpd.ingredientsIDs[i]);
+      it->SetTag('c'); //being used to craft
+    }
   }
 
   if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE){
