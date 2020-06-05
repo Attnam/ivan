@@ -1371,10 +1371,12 @@ cchar* game::StoreMatchNameKey(item* it,bool bUnarticled)
   
   fsRet="";
   fsRet<<cToken;
-  if(bUnarticled)
-    fsRet<<it->GetName(UNARTICLED|UNLABELED);
-  else
+  if(bUnarticled){
+//    fsRet<<it->GetName(UNARTICLED|UNLABELED|STRIPPED|NOPOSTFIX);
+    fsRet<<it->GetNameToMatch();
+  }else{
     fsRet<<it->GetNameSingular()<<cToken;
+  }
   
   festring::SearchAndReplace(fsRet,fsSpace,fsEmpty,0);
   
@@ -1388,10 +1390,6 @@ void game::AutoStoreItemInContainer(item* itToStore,character* C)
   
   static itemvector vit;vit.clear();
   C->GetStack()->FillItemVector(vit);
-  static festring fsMatchGeneric,fsMatchPrecise;
-  fsMatchGeneric=StoreMatchNameKey(itToStore);
-  fsMatchPrecise=StoreMatchNameKey(itToStore,true);
-  DBG2(fsMatchGeneric.CStr(),fsMatchPrecise.CStr());
   for(int i=0;i<vit.size();i++){
     DBGITEM(vit[i],"checkingIfIsAContainer");
     itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
@@ -1401,10 +1399,7 @@ void game::AutoStoreItemInContainer(item* itToStore,character* C)
       if(lRemainingVol<itToStore->GetVolume())
         continue;
       
-      if(
-        itc->GetLabel().Find(fsMatchGeneric)!=festring::NPos ||
-        itc->GetLabel().Find(fsMatchPrecise)!=festring::NPos
-      ){
+      if(itc->IsAutoStoreMatch(itToStore->GetName(DEFINITE))){
         itToStore->RemoveFromSlot();
         itc->GetContained()->AddItem(itToStore);
         ADD_MESSAGE("%s was safely stored in %s",itToStore->GetName(DEFINITE).CStr(),itc->GetName(DEFINITE).CStr());
@@ -1414,40 +1409,21 @@ void game::AutoStoreItemInContainer(item* itToStore,character* C)
   }
 }
 
-std::vector<festring> afsAutoPickupMatch;
 pcre *reAutoPickup=NULL;
-void game::UpdateAutoPickUpMatching() //simple matching syntax
+void game::UpdateAutoPickUpRegex()
 {
-  afsAutoPickupMatch.clear();
-
-  bool bSimple=false;
-  if(bSimple){ //TODO just drop the simple code? or start the string with something to let it be used instead of regex? tho is cool to let ppl learn regex :)
-    if(ivanconfig::GetAutoPickUpMatching().GetSize()==0 || ivanconfig::GetAutoPickUpMatching()[0]=='!')return;
-
-    std::stringstream ss(ivanconfig::GetAutoPickUpMatching().CStr());
-    std::string match;
-    while(std::getline(ss,match,'|'))
-      afsAutoPickupMatch.push_back(festring(match.c_str()));
-  }else{
-    //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
-  //  static bool bDummyInit = [](){reAutoPickup=NULL;return true;}();
-    const char *errMsg;
-    int iErrOffset;
-    if(reAutoPickup)pcre_free(reAutoPickup);
-    reAutoPickup = pcre_compile(
-      ivanconfig::GetAutoPickUpMatching().CStr(), //pattern
-      0, //no options
-      &errMsg,    &iErrOffset,
-      0); // default char tables
-    if (!reAutoPickup){
-      std::vector<festring> afsFullProblems;
-      afsFullProblems.push_back(festring(errMsg));
-      afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
-      bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
-    }
+  //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
+  festring fsErr;
+  reAutoPickup = festring::CompilePCRE(reAutoPickup,ivanconfig::GetAutoPickUpMatching(),&fsErr);
+  if(!fsErr.IsEmpty()){
+    std::vector<festring> afsFullProblems;
+    afsFullProblems.push_back(fsErr);
+    bool bDummy = iosystem::AlertConfirmMsg("Failed updating auto-pickup regex.",afsFullProblems,false);
   }
 }
 bool game::IsAutoPickupMatch(cfestring fsName) {
+  if(!reAutoPickup)
+    return false;
   return pcre_exec(reAutoPickup, 0, fsName.CStr(), fsName.GetSize(), 0, 0, NULL, 0) >= 0;
 }
 int game::CheckAutoPickup(square* sqr)
@@ -1460,30 +1436,26 @@ int game::CheckAutoPickup(square* sqr)
 
   lsquare* lsqr = (lsquare*)sqr;
 
-  static bool bDummyInit = [](){UpdateAutoPickUpMatching();return true;}();
+  static bool bDummyInit = [](){UpdateAutoPickUpRegex();return true;}();
   itemvector iv;
   lsqr->GetStack()->FillItemVector(iv);
   int iTot=0;
   for(int i=0;i<iv.size();i++){
     item* it = iv[i];
     if(it->GetRoom() && it->GetRoom()->GetMaster())continue; //not from owned rooms
-    if(it->GetSpoilLevel()>0)continue;
+    if(it->GetSpoilLevel()>0)continue; //just a guess no one auto-wants it
+    
     bool b=false;
     if(!b && ivanconfig::IsAutoPickupThrownItems() && it->HasTag('t') )b=true; //was thrown
-    if(!b && !it->HasTag('d')){
-      if(reAutoPickup!=NULL){
-        if(IsAutoPickupMatch(it->GetName(DEFINITE))){
-          b=true;
-        }
-      }
-    }
-    if(!b){ //TODO use player's perception, in case of a stack of items, to allow random pickup based on item volume (size) where smaller = harder like tiny rings, to compensate for the easiness of not losing a round having to pick up the item interactively
-      for(int i=0;i<afsAutoPickupMatch.size();i++){ //each simple match
-        if(it->GetNameSingular().Find(afsAutoPickupMatch[i].CStr(),0) != festring::NPos){
-          b=true;
-          break; //each simple match loop
-        }
-      }
+    if(!b && !it->HasTag('d')){ //was NOT intentionally dropped (dropping adds such tag)
+      /**
+       * TODO ?
+       * Use player's perception, in case of a stack of items, 
+       * to allow random pickup based on item volume (size) where smaller = harder like tiny rings, 
+       * to compensate for the easiness of not losing a round having to pick up the item interactively.
+       * But it may just be annnoying...
+       */
+      b = IsAutoPickupMatch(it->GetName(DEFINITE));
     }
     if(b){
       it->MoveTo(PLAYER->GetStack());

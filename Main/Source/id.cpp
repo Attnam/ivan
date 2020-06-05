@@ -63,7 +63,18 @@ void id::AddName(festring& Name, int Case) const
   else
     AddNameSingular(Name, Articled);
 
-  AddPostFix(Name, Case);
+  if(!(Case & NOPOSTFIX))
+    AddPostFix(Name, Case);
+}
+
+festring id::GetNameToMatch() const
+{
+  static festring Name;
+  Name.Empty();
+  AddAdjective(Name, false);
+  AddNameSingular(Name, false);
+  AddMaterialDescription(Name, false);
+  return Name;
 }
 
 festring id::GetName(int Case) const

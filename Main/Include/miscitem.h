@@ -473,10 +473,14 @@ ITEM(itemcontainer, lockableitem)
   virtual void SetParameters(int);
   virtual void Disappear();
   virtual stack* GetContained() const { return Contained; }
+  virtual void SetLabel(cfestring& What);
+  truth IsAutoStoreMatch(cfestring fs);
  protected:
   virtual col16 GetMaterialColorB(int) const;
   virtual void PostConstruct();
   stack* Contained;
+  pcre* pcreAutoStoreRegex;
+  bool bLazyInitPcre;
 };
 
 ITEM(beartrap, itemtrap<item>)

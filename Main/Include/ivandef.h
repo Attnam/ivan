@@ -233,14 +233,15 @@ const name##prototype name::ProtoType
 #define ACM 9
 #define ACMM 10
 
-#define UNARTICLED 0
-#define PLURAL 1
-#define ARTICLE_BIT 2
-#define DEFINITE 2
-#define INDEFINE_BIT 4
-#define INDEFINITE 6
-#define STRIPPED 8
-#define UNLABELED 16
+#define UNARTICLED   0b00000000
+#define PLURAL       0b00000001
+#define ARTICLE_BIT  0b00000010
+#define DEFINITE     0b00000010
+#define INDEFINE_BIT 0b00000100
+#define INDEFINITE   0b00000110
+#define STRIPPED     0b00001000
+#define UNLABELED    0b00010000
+#define NOPOSTFIX    0b00100000
 
 #define TRANSPARENT_COLOR 0xF81F // pink
 

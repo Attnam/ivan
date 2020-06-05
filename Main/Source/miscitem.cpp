@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 material* materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags)
 { return SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void materialcontainer::InitMaterials(material* M1, material* M2, truth CUP)
@@ -1342,6 +1344,8 @@ void magicalwhistle::BlowEffect(character* Whistler)
 itemcontainer::itemcontainer()
 {
   Contained = new stack(0, this, HIDDEN);
+  pcreAutoStoreRegex = festring::CompilePCRE(NULL,GetLabel());
+  bLazyInitPcre=true;
 }
 
 void itemcontainer::PostConstruct()
@@ -1785,7 +1789,31 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : mybase(MC)
 itemcontainer::itemcontainer(const itemcontainer& Container) : mybase(Container)
 {
   Contained = new stack(0, this, HIDDEN);
+  pcreAutoStoreRegex = festring::CompilePCRE(NULL,Container.GetLabel());
+  bLazyInitPcre=true;
+  
   CalculateAll();
+}
+
+void itemcontainer::SetLabel(cfestring& What)
+{
+  item::SetLabel(What);
+  pcreAutoStoreRegex = festring::CompilePCRE(pcreAutoStoreRegex,GetLabel());
+}
+
+truth itemcontainer::IsAutoStoreMatch(cfestring fs) {
+  if(bLazyInitPcre){
+    if(!pcreAutoStoreRegex && !GetLabel().IsEmpty()){
+      pcreAutoStoreRegex = festring::CompilePCRE(pcreAutoStoreRegex,GetLabel());
+      DBGEXEC( if(!pcreAutoStoreRegex){ DBG2("InvalidRegex",GetLabel().CStr()); } );
+    }
+    bLazyInitPcre=false;
+  }
+    
+  if(!pcreAutoStoreRegex)
+    return false;
+  
+  return pcre_exec(pcreAutoStoreRegex, 0, fs.CStr(), fs.GetSize(), 0, 0, NULL, 0) >= 0;
 }
 
 oillamp::oillamp(const oillamp& Lamp) : mybase(Lamp), InhabitedByGenie(false)
