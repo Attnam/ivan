@@ -1323,6 +1323,62 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
+/**
+ * 
+ * @param it
+ * @param bUnarticled if false is GetNameSingular()
+ * @return 
+ */
+cchar* game::StoreMatchNameKey(item* it,bool bUnarticled)
+{
+  static festring fsRet,fsSpace=" ",fsEmpty="";
+  static cchar* cToken="+";
+  
+  fsRet="";
+  fsRet<<cToken;
+  if(bUnarticled)
+    fsRet<<it->GetName(UNARTICLED|UNLABELED);
+  else
+    fsRet<<it->GetNameSingular()<<cToken;
+  
+  festring::SearchAndReplace(fsRet,fsSpace,fsEmpty,0);
+  
+  return fsRet.CStr();
+}
+
+void game::AutoStoreItemInContainer(item* itToStore,character* C)
+{
+  if(!C->IsPlayer())
+    return;
+  
+  static itemvector vit;vit.clear();
+  C->GetStack()->FillItemVector(vit);
+  static festring fsMatchGeneric,fsMatchPrecise;
+  fsMatchGeneric=StoreMatchNameKey(itToStore);
+  fsMatchPrecise=StoreMatchNameKey(itToStore,true);
+  DBG2(fsMatchGeneric.CStr(),fsMatchPrecise.CStr());
+  for(int i=0;i<vit.size();i++){
+    DBGITEM(vit[i],"checkingIfIsAContainer");
+    itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
+    if(itc){
+      long lRemainingVol = itc->GetStorageVolume() - itc->GetContained()->GetVolume();
+      DBG3(lRemainingVol,itToStore->GetVolume(),itc->GetLabel().CStr());
+      if(lRemainingVol<itToStore->GetVolume())
+        continue;
+      
+      if(
+        itc->GetLabel().Find(fsMatchGeneric)!=festring::NPos ||
+        itc->GetLabel().Find(fsMatchPrecise)!=festring::NPos
+      ){
+        itToStore->RemoveFromSlot();
+        itc->GetContained()->AddItem(itToStore);
+        ADD_MESSAGE("%s was safely stored in %s",itToStore->GetName(DEFINITE).CStr(),itc->GetName(DEFINITE).CStr());
+        break;
+      }
+    }
+  }
+}
+
 std::vector<festring> afsAutoPickupMatch;
 pcre *reAutoPickup=NULL;
 void game::UpdateAutoPickUpMatching() //simple matching syntax
@@ -1397,6 +1453,7 @@ int game::CheckAutoPickup(square* sqr)
     if(b){
       it->MoveTo(PLAYER->GetStack());
       ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      AutoStoreItemInContainer(it,PLAYER);
       iTot++;
     }
   }

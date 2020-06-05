@@ -181,6 +181,8 @@ class game
   static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
+  static cchar* StoreMatchNameKey(item* it,bool bUnarticled=false);
+  static void AutoStoreItemInContainer(item* itToStore,character* C);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();

@@ -98,10 +98,25 @@ bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool 
   return bEmptied;
 }
 
+/**
+ * Why this is important?
+ * 
+ * Because if the item remain on slot, and 1 turn has not passed, 
+ * what may happpen on crafting code in case user gives up on crafting action,
+ * it will provide inconsistent inventory contents (something that was sent to hell
+ * but is still on inventory as the turn has not passed to properly send it to hell).
+ * 
+ * If all the above is correctly understood as "it is how thing work",
+ * then crafting should be fixed to always pass one turn even if user giveup?
+ * But that doesnt looks good, giveup = cancel, should not pass a turn at all.
+ * 
+ * This shall be used for anything related to crafting until something better is coded.
+ */
 void craftcore::SendToHellSafely(item* it)
 {
   it->RemoveFromSlot(); //just in case to prevent problems later... like crashing elsewhere!!!
-  it->SendToHell(); DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
+  it->SendToHell(); //DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
+  DBGITEM(it,"SentToHell:Safely");
 //  **rit=NULL;
 }
 
@@ -1902,7 +1917,10 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
     material* matM = it0->GetMainMaterial();
     material* matS = it0->GetSecondaryMaterial();
     festring fs;
-    fs<<it0->GetName(DEFINITE)<<" is made of ";
+    fs << it0->GetName(DEFINITE) 
+       << " (" << game::StoreMatchNameKey(it0) << " or " //used by auto-store items on containers, so here is the place to determine it's value
+       <<         game::StoreMatchNameKey(it0,true) << ")"
+       << " is made of ";
     if(matM)fs<<matM->GetName(UNARTICLED);
     if(matS){
       if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...
