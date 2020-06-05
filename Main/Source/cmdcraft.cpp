@@ -139,7 +139,20 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of suc
   //TODO MANA //if one day anything magical is allowed to be crafted
 
   float fSkill = 0;
-  fSkill += Char->GetCWeaponSkill(CRAFTING)->GetLevel(); // base/learned
+  float fCharSkill = Char->GetCWeaponSkill(CRAFTING)->GetLevel(); // base/learned
+  // if polymorphed, goes as override (tho we cant poly into uniques right? we would need generic tailors and smiths...)
+  if(dynamic_cast<guard*>(Char))
+    fCharSkill=25;
+  else
+  if(dynamic_cast<kamikazedwarf*>(Char))
+    fCharSkill=50;
+  else
+  if(dynamic_cast<tailor*>(Char))
+    fCharSkill=75;
+  else
+  if(dynamic_cast<smith*>(Char))
+    fCharSkill=100;
+  fSkill += fCharSkill;
   fSkill += fBonus/fDivFinal; // in short, if all stats are 10, craft skill would be 10
   fSkill -= 10.0; // to make advancing important on the beggining
   if(fSkill<1.0)fSkill=1.0; //safety
@@ -322,7 +335,9 @@ void recipedata::Save(outputfile& SaveFile) const
     << bGradativeCraftOverride
     << bTailoringMode
     << v2TailoringWorkbenchLocation
-
+    
+    << lDamageFinalItem
+    
     ;
 }
 
@@ -377,6 +392,10 @@ void recipedata::Load(inputfile& SaveFile)
     >> v2WorkbenchLocation
     >> iRemainingTurnsToFinish
     >> bGradativeCraftOverride
+    >> bTailoringMode
+    >> v2TailoringWorkbenchLocation
+    
+    >> lDamageFinalItem
 
     ;
   
@@ -542,10 +561,12 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bMeltable=false;
 
   v2WorkbenchLocation=v2(0,0);
-  v2TailoringWorkbenchLocation=v2(0,0);
   iRemainingTurnsToFinish=iBaseTurnsToFinish;
   bGradativeCraftOverride=false;
   bTailoringMode=false;
+  v2TailoringWorkbenchLocation=v2(0,0);
+  
+  lDamageFinalItem=0;
 }
 
 int craftcore::CurrentDungeonLevelID(){
@@ -1116,8 +1137,9 @@ struct recipe{
 
 //      rpd.rc.H()->GetStack()->DrawContents(ToUse, rpd.rc.H(),
 //        fsFullQ, flags, &item::IsValidRecipeIngredient);
+      col16 col = specialDesc.Find("MAIN")!=festring::NPos ? YELLOW : LIGHT_GRAY; //hightlight MAIN material as the question may happen more than once for each material to avoid confusion
       rpd.rc.H()->GetStack()->DrawContents(ToUse, 0, rpd.rc.H(), fsFullQ, CONST_S(""),
-        CONST_S(""), specialDesc, WHITE, flags, &item::IsValidRecipeIngredient);
+        CONST_S(""), specialDesc, col, flags, &item::IsValidRecipeIngredient);
 
       if(ToUse.empty())
         break;
@@ -3296,6 +3318,11 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(rpd.ingredientsIDs.size()==0){
     ABORT("no ingredients chosen?");
     return true; // dummy
+  }else{
+    for(int i=0;i<rpd.ingredientsIDs.size();i++){
+      item* it = game::SearchItem(rpd.ingredientsIDs[i]);
+      it->SetTag('c'); //being used to craft
+    }
   }
 
   if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE){
@@ -3592,10 +3619,27 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   }
   
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
+  
   if(itSpawn!=NULL){
     if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
       fsCreated << itSpawn->GetName(INDEFINITE);
-    craftcore::FinishSpawning(rpd,itSpawn);
+    
+    if(rpd.bCanBeBroken && !itSpawn->IsBroken()){
+      // this may break it too!
+      if(rpd.lDamageFinalItem>0){
+        long lDmg=RAND()%rpd.lDamageFinalItem;
+        itSpawn->ReceiveDamage(rpd.rc.H(), lDmg, PHYSICAL_DAMAGE);
+        DBG5(itSpawn->GetName(DEFINITE).CStr(), lDmg, rpd.lDamageFinalItem, itSpawn->GetStrengthValue(), itSpawn->GetStrengthModifier());
+        if(!itSpawn->Exists()){ //it may break (creating a cloned broken item) and the original will vanish!
+          craftcore::SendToHellSafely(itSpawn);
+          itSpawn=NULL;
+        }
+      }
+    }
+    
+    if(itSpawn)
+      craftcore::FinishSpawning(rpd,itSpawn);
+    
     return itSpawn;
   }
   return NULL;
@@ -3604,6 +3648,8 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
   //this may mess gradative work:  rpd.iRemainingTurnsToFinish -= rpd.rc.H()->StateIsActivated(HASTE) ? 2 : 1;
   rpd.iRemainingTurnsToFinish--;
+  if(rpd.iRemainingTurnsToFinish<0)
+    rpd.iRemainingTurnsToFinish=0;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
 
   if(RAND()%2==0 ? rpd.iRemainingTurnsToFinish%3==0 : rpd.iRemainingTurnsToFinish%5==0){ // to avoid unnecessarily spamming hiteffects
@@ -3766,24 +3812,24 @@ bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumbleP
    * To fumble, base reference is 15% chance at a craft skill of 20.
    * ex.: Craft skill of 10 will have 30% fumble chance.
    */
-  int iLuckPerc=RAND()%100;
+  int iLuckPerc=RAND()%100; //0 to 99
   float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
   static const int iBaseFumbleChancePerc=15;
   int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
   if(iFumbleBase>98)iFumbleBase=98; //%1 granted luck as it is 0-99
   int iDiv=0;
-  iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
-  iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
-  iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
-  iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
-  if(iLuckPerc<=1){
+  iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=(iFumbleBase/iDiv))iFumblePower++; //ex.: <=30%
+  iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=(iFumbleBase/iDiv))iFumblePower++; //ex.: <=15%
+  iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=(iFumbleBase/iDiv))iFumblePower++; //ex.: <= 7%
+  iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=(iFumbleBase/iDiv))iFumblePower++; //ex.: <= 3%
+  if(iLuckPerc==0){
     iFumblePower++; //always have 1% granted fumble chance
     bCriticalFumble=true;
   }
   //current max chance per round of spawning broken is 5%
-  int iTry=RAND()%100;
-  DBG5(iTry,iFumblePower,iFumbleBase,fBaseCraftSkillToNormalFumble,iLuckPerc);
-  if(iTry<=iFumblePower)
+  int iTry=RAND()%100; //0 to 99
+  DBG8(iTry,iFumblePower,iFumbleBase,fBaseCraftSkillToNormalFumble,iLuckPerc,rpd.bSpawnBroken,rpd.iRemainingTurnsToFinish,rpd.lDamageFinalItem);
+  if(bCriticalFumble || iTry<=iFumblePower)
     return true;
 
   return false;
@@ -3800,22 +3846,34 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
 
     bool bCriticalFumble=false;
     int iFumblePower=5;
-    if(craftcore::CheckFumble(rpd,bCriticalFumble,iFumblePower)){
-      if(!rpd.bSpawnBroken && bChangeTurns){
-        rpd.iBaseTurnsToFinish/=2; //just complete the broken item (as AV gets halved) TODO repair system
+    bool bFumbled = craftcore::CheckFumble(rpd,bCriticalFumble,iFumblePower);
+    if(bFumbled){
+      if(rpd.bCanBeBroken){
+        if(bCriticalFumble){
+          rpd.bSpawnBroken=true;
+          if(bChangeTurns)
+            rpd.iRemainingTurnsToFinish/=3; // takes much less time to craft it will be broken
+        }else{
+          if(bChangeTurns)
+            rpd.iRemainingTurnsToFinish-=3; // takes less time to craft it can break at the end
+          rpd.lDamageFinalItem += iFumblePower;
+        }
+      }else{
         /**
-         * this will insta provide the obvious messy lump as the item can't be broken
-         * and won't even be half-usable, so dont wast player's time to craft nothing useful.
+         * Things that cant be broken (half-usable) later will be harder to craft.
+         * They will "break" (spawn as lump) with just a normal fumble.
+         * So dont wast player's time to craft nothing useful.
          */
-        if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1)
-          rpd.iBaseTurnsToFinish=1;
+        if(bChangeTurns)
+          rpd.iRemainingTurnsToFinish=1;
+        rpd.bSpawnBroken=true; //dont need a critical here
       }
-      rpd.bSpawnBroken=true;
     }
 
-    bool bXplod=true;
+    bool bXplod = bFumbled;
     if(rpd.bOnlyXplodIfCriticalFumble && !bCriticalFumble)
       bXplod=false;
+    
     rpd.xplodStr=0;
     if(bXplod){
       rpd.xplodStr = iFumblePower;

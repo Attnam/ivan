@@ -227,6 +227,8 @@ class recipedata {
     bool bGradativeCraftOverride;
     bool bTailoringMode;
     v2 v2TailoringWorkbenchLocation;
+    
+    long lDamageFinalItem;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
