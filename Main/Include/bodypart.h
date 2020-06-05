@@ -130,6 +130,7 @@ ITEM(bodypart, item)
   item* GetExternalHelmet() const;
   item* GetExternalBelt() const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void ReceiveHeat(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
   virtual truth TestActivationEnergy(int);
@@ -516,7 +517,7 @@ ITEM(corpse, item)
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual truth IsDestroyable(ccharacter*) const;
+  virtual truth IsDestroyable(ccharacter*) const { return true; }
   virtual long GetTruePrice() const;
   virtual int GetMaterials() const { return 2; }
   virtual truth RaiseTheDead(character*);
@@ -722,6 +723,14 @@ ITEM(magicmushroomtorso, normaltorso)
  protected:
   virtual int GetClassAnimationFrames() const { return 64; }
   virtual v2 GetBitmapPos(int) const;
+};
+
+ITEM(fusangatorso, largetorso)
+{
+  // TODO: Animated largetorso.
+ /*protected:
+  virtual int GetClassAnimationFrames() const { return 64; }
+  virtual v2 GetBitmapPos(int) const;*/
 };
 
 ITEM(dogtorso, normaltorso)

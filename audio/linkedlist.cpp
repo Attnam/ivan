@@ -28,29 +28,29 @@
 
 void LL_DeleteList(LINKED_LIST_t* linkedList)
 {
-	LIST_NODE_t* node;
-	node = linkedList->first;
+  LIST_NODE_t* node;
+  node = linkedList->first;
 
-	while(node)
-	{
-		LL_Remove(linkedList, node);
-		node = linkedList->first;
-	}
+  while(node)
+  {
+    LL_Remove(linkedList, node);
+    node = linkedList->first;
+  }
 }
 
 
 
 void LL_DeleteListAndData(LINKED_LIST_t* linkedList)
 {
-	LIST_NODE_t* node;
-	node = linkedList->first;
+  LIST_NODE_t* node;
+  node = linkedList->first;
 
-	while(node)
-	{
-		LL_Free(node->data);
-		LL_Remove(linkedList, node);
-		node = linkedList->first;
-	}
+  while(node)
+  {
+    LL_Free(node->data);
+    LL_Remove(linkedList, node);
+    node = linkedList->first;
+  }
 }
 
 
@@ -167,7 +167,7 @@ void LL_Remove(LINKED_LIST_t* linkedList, LIST_NODE_t* node)
       linkedList->first = (LIST_NODE_t*)node->next;
       if( node->next )
       {
-    	  node->prev = NULL;
+        node->prev = NULL;
       }
    }
    else
@@ -183,7 +183,7 @@ void LL_Remove(LINKED_LIST_t* linkedList, LIST_NODE_t* node)
       linkedList->last = (LIST_NODE_t*)node->prev;
       if( node->prev )
       {
-    	  node->next = NULL;
+        node->next = NULL;
       }
    }
    else
@@ -194,7 +194,7 @@ void LL_Remove(LINKED_LIST_t* linkedList, LIST_NODE_t* node)
    }
    if( node != NULL)
    {
-	   LL_Free(node);
+     LL_Free(node);
    }
    node = NULL;
 }
@@ -202,54 +202,54 @@ void LL_Remove(LINKED_LIST_t* linkedList, LIST_NODE_t* node)
 
 uint16_t LL_Count(LINKED_LIST_t* linkedList)
 {
-	LIST_NODE_t* tmp;
-	uint16_t count = 0;
+  LIST_NODE_t* tmp;
+  uint16_t count = 0;
 
-	tmp = linkedList->first;
-	while(tmp != NULL)
-	{
-		count++;
-		tmp = tmp->next;
-	}
+  tmp = linkedList->first;
+  while(tmp != NULL)
+  {
+    count++;
+    tmp = tmp->next;
+  }
 
-	return count;
+  return count;
 }
 
 
 LIST_NODE_t* LL_ReturnNodeFromIndex(LINKED_LIST_t* linkedList, uint16_t item)
 {
-	LIST_NODE_t* tmp;
-	uint16_t count = LL_Count(linkedList);
+  LIST_NODE_t* tmp;
+  uint16_t count = LL_Count(linkedList);
 
-	if(item >= count)
-	{
-		return NULL;
-	}
+  if(item >= count)
+  {
+    return NULL;
+  }
 
 
-	tmp = linkedList->first;
-	while( (tmp != NULL) && (item) )
-	{
-		item--;
-		tmp = tmp->next;
-	}
+  tmp = linkedList->first;
+  while( (tmp != NULL) && (item) )
+  {
+    item--;
+    tmp = tmp->next;
+  }
 
-	return tmp;
+  return tmp;
 }
 
 
 
 void* LL_ReturnNodeDataFromIndex(LINKED_LIST_t* linkedList, uint16_t item)
 {
-	LIST_NODE_t* tmp;
+  LIST_NODE_t* tmp;
 
-	tmp = LL_ReturnNodeFromIndex(linkedList, item);
+  tmp = LL_ReturnNodeFromIndex(linkedList, item);
 
-	if( tmp != NULL )
-	{
-		return tmp->data;
-	}
-	return NULL;
+  if( tmp != NULL )
+  {
+    return tmp->data;
+  }
+  return NULL;
 }
 
 

@@ -161,11 +161,23 @@ void consume::Terminate(truth Finished)
 
   if(Finished)
   {
-    if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
+    if(Consuming && Consuming->Exists())
     {
-      Consuming->RemoveFromSlot();
-      Actor->GetStackUnder()->AddItem(Consuming);
-      Actor->DexterityAction(2);
+      truth PlayerWantsToDiscard = ivanconfig::GetAutoDropLeftOvers();
+      if(Consuming->GetSecondaryMaterial())
+      {
+        PlayerWantsToDiscard = (
+          ivanconfig::GetAutoDropLeftOvers() &&
+          (Consuming->GetSecondaryMaterial()->GetVolume() == 0) // don't drop after tasting
+        );
+      }
+
+      if(!game::IsInWilderness() && (!Actor->IsPlayer() || PlayerWantsToDiscard))
+      {
+        Consuming->RemoveFromSlot();
+        Actor->GetStackUnder()->AddItem(Consuming);
+        Actor->DexterityAction(2);
+      }
     }
   }
   else if(Consuming && Consuming->Exists())
@@ -331,10 +343,10 @@ void craft::Handle()
   }
 
   /**
-   * explosions may trigger something that apparently terminates the action and so also deletes it's recipedata
-   * TODO what is being triggered?
+   * TODO: CONFIRM IF STILL HAPPENING: explosions may trigger something that apparently terminates the action and so also deletes it's recipedata, what is being triggered?
    */
   if(!rpdBkp.v2XplodAt.Is0() && rpdBkp.xplodStr>0){
+    if(rpdBkp.xplodStr>9)rpdBkp.xplodStr=9; // to limit the "fire sparks" size to one square
     game::GetCurrentLevel()->Explosion(
       ActorLocal, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
     ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,

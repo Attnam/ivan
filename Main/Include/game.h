@@ -345,12 +345,20 @@ class game
   static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
+  static int GetGloomyCaveStoryState() { return GloomyCaveStoryState; }
+  static void SetGloomyCaveStoryState(int What) { GloomyCaveStoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
   static int GetFreedomStoryState() { return FreedomStoryState; }
   static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
+  static int GetAslonaStoryState() { return AslonaStoryState; }
+  static void SetAslonaStoryState(int What) { AslonaStoryState = What; }
+  static int GetRebelStoryState() { return RebelStoryState; }
+  static void SetRebelStoryState(int What) { RebelStoryState = What; }
   static truth PlayerIsGodChampion() { return PlayerIsChampion; }
   static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
+  static truth PlayerHasBoat() { return HasBoat; }
+  static void GivePlayerBoat() { HasBoat = true; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
@@ -385,8 +393,10 @@ class game
   static bool ToggleShowMapNotes();
   static bool CheckAddAutoMapNote(square* =NULL);
   static int CheckAutoPickup(square* sqr = NULL);
+  static void UpdateAutoPickUpMatching();
   static int RotateMapNotes();
   static char MapNoteToken();
+  static bool IsAutoPickupMatch(cfestring fsName);
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -546,8 +556,11 @@ class game
   static int Teams;
   static int Dungeons;
   static int StoryState;
+  static int GloomyCaveStoryState;
   static int XinrochTombStoryState;
   static int FreedomStoryState;
+  static int AslonaStoryState;
+  static int RebelStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;
@@ -584,6 +597,7 @@ class game
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
   static truth PlayerIsChampion; // This marks the player as a champion of some god.
+  static truth HasBoat; // Whether the player can sail the oceans of world map.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

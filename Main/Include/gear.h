@@ -26,8 +26,7 @@ ITEM(meleeweapon, item)
   virtual long GetPrice() const;
   virtual truth IsDippable(ccharacter*) const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
-  virtual void SetSecondaryMaterial(material*, int = 0);
-  virtual void ChangeSecondaryMaterial(material*, int = 0);
+  virtual material* SetSecondaryMaterial(material*, int = 0);
   void InitMaterials(material*, material*, truth = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -254,7 +253,6 @@ ITEM(boot, armor)
   virtual long GetPrice() const;
   virtual truth IsBoot(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
-  virtual truth IsKicking() const;
 };
 
 ITEM(gauntlet, armor)
@@ -381,6 +379,11 @@ ITEM(chastitybelt, lockablebelt)
 {
  public:
   virtual int GetFormModifier() const { return item::GetFormModifier(); }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
+  virtual truth CanBeEquipped(int) const;
+  virtual truth CanBeUnEquipped(int) const;
+ protected:
+  virtual void PostConstruct();
 };
 
 ITEM(darkaxe, meleeweapon)
@@ -432,10 +435,10 @@ ITEM(taiaha, meleeweapon)
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsAppliable(ccharacter*) const { return false; }
   virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsZapWorthy(ccharacter*) const { return Charges > TimesUsed; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual truth Zap(character*, v2, int);
-  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const; //this?
-  virtual truth IsExplosive() const { return true; }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
  protected:
   virtual int GetClassAnimationFrames() const;
   virtual col16 GetOutlineColor(int) const;
@@ -476,11 +479,54 @@ ITEM(unpick, pickaxe)
   virtual truth IsZappable(const character*) const { return true; }
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
  protected:
   ulong LastUsed;
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
+};
+
+ITEM(magestaff, meleeweapon)
+{
+ public:
+  magestaff() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
+ protected:
+  ulong LastUsed;
+};
+
+ITEM(muramasa, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual truth IsMuramasa() const { return true; }
+};
+
+ITEM(masamune, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual truth IsMasamune() const { return true; }
+};
+
+ITEM(pica, meleeweapon)
+{
+ public:
+  pica() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual void FinalProcessForBone();
+  virtual int GetCooldown(int, character*);
+ protected:
+  ulong LastUsed;
 };
 
 #endif

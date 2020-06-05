@@ -101,9 +101,9 @@ class lterrain : public object
   virtual void SignalBurnLevelChange();
   virtual void TryToRust(long);
   virtual void ReceiveAcid(material*, long) { }
+  virtual void ReceiveHeat(material*, long) { }
   void InitMaterials(material*, truth = true);
-  void SetMainMaterial(material*, int = 0);
-  void ChangeMainMaterial(material*, int = 0);
+  material* SetMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual const fearray<long>& GetMainMaterialConfig() const = 0;
@@ -325,6 +325,7 @@ class olterrain : public lterrain, public oterrain
   virtual int GetTheoreticalWalkability() const { return DataBase->Walkability; }
   virtual void BeDestroyed() { Break(); }
   virtual void ReceiveAcid(material*, long);
+  virtual void ReceiveHeat(material*, long);
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();
   virtual truth IsFountainWithWater() const { return false; }

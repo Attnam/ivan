@@ -119,6 +119,7 @@ struct itemdatabase : public databasebase
   truth CanBeEnchanted;
   truth IsQuestItem;
   truth IsGoodWithPlants;
+  truth IsGoodWithUndead;
   truth CreateLockConfigurations;
   truth CanBePickedUp;
   truth HasSecondaryMaterial;
@@ -196,6 +197,7 @@ struct itemdatabase : public databasebase
   festring BreakMsg;
   truth IsSadistWeapon;
   fearray<int> AllowedDungeons;
+  festring DescriptiveInfo;
 };
 
 class itemprototype
@@ -252,9 +254,12 @@ class item : public object
   virtual void Fly(character*, int, int, truth=false);
   int HitCharacter(character*, character*, int, double, int);
   virtual truth DogWillCatchAndConsume(ccharacter*) const { return false; }
+  virtual truth CatWillCatchAndConsume(ccharacter*) const { return false; }
+  virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
+  virtual truth Polymorph(character*, character*);
   virtual truth Alchemize(character*, stack*);
   virtual truth SoftenMaterial();
   virtual truth CheckPickUpEffect(character*) { return true; }
@@ -296,6 +301,7 @@ class item : public object
   virtual truth IsDipDestination(ccharacter*) const { return false; }
   virtual truth IsAppliable(ccharacter*) const { return false; }
   virtual truth IsZappable(ccharacter*) const { return false; }
+  virtual truth IsZapWorthy(ccharacter*) const { return false; }
   virtual truth IsChargeable(ccharacter*) const { return false; }
   virtual truth IsHelmet(ccharacter*) const { return false; }
   virtual truth IsAmulet(ccharacter*) const { return false; }
@@ -405,6 +411,7 @@ class item : public object
   virtual DATA_BASE_VALUE_WITH_PARAMETER(v2, WieldedBitmapPos, int);
   DATA_BASE_TRUTH(IsQuestItem);
   DATA_BASE_TRUTH(IsGoodWithPlants);
+  DATA_BASE_TRUTH(IsGoodWithUndead);
   DATA_BASE_TRUTH(CanBePickedUp);
   DATA_BASE_VALUE(int, CoverPercentile);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, TorsoArmorBitmapPos, int);
@@ -427,6 +434,7 @@ class item : public object
   DATA_BASE_VALUE(cfestring&, BreakMsg);
   DATA_BASE_TRUTH(IsSadistWeapon);
   DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
+  DATA_BASE_VALUE(cfestring&, DescriptiveInfo);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
@@ -481,6 +489,7 @@ class item : public object
   virtual double GetDamageBonus() const { return 0.; }
   virtual void DrawContents(ccharacter*) { }
   virtual truth IsBroken() const;
+  virtual truth IsFood() const;
   virtual int GetEnchantment() const { return 0; }
   long GetEnchantedPrice(int) const;
   virtual item* Fix();
@@ -502,16 +511,21 @@ class item : public object
   virtual truth IsBanana() const { return false; }
   virtual truth IsMangoSeedling() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
+  virtual truth IsNuke() const { return false; }
+  virtual truth IsWeepObsidian() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
   virtual truth IsRuneSword() const { return false; }
-  virtual truth IsKicking() const { return false; }
+  virtual truth IsMuramasa() const { return false; }
+  virtual truth IsMasamune() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;
   virtual truth IsInCorrectSlot(int) const;
   truth IsInCorrectSlot() const;
   int GetEquipmentIndex() const;
+  virtual truth CanBeEquipped(int) const { return true; }
+  virtual truth CanBeUnEquipped(int) const { return true; }
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   virtual truth HasBetterVersion() const { return false; }
   virtual void SortAllItems(const sortdata&) const;
@@ -538,7 +552,6 @@ class item : public object
   virtual void Draw(blitdata&) const;
   v2 GetLargeBitmapPos(v2, int) const;
   void LargeDraw(blitdata&) const;
-  virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();
@@ -564,6 +577,7 @@ class item : public object
   void CheckFluidGearPictures(v2, int, truth);
   void DrawFluids(blitdata&) const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void ReceiveHeat(material*, cfestring&, long);
   virtual void FightFire(material*, cfestring&, long);
   virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
@@ -581,8 +595,7 @@ class item : public object
   virtual material* RemoveMaterial(material*);
   virtual void Cannibalize();
   void InitMaterials(material*, truth = true);
-  void SetMainMaterial(material*, int = 0);
-  void ChangeMainMaterial(material*, int = 0);
+  material* SetMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }
@@ -616,12 +629,14 @@ class item : public object
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
   virtual bool SpecialOfferEffect(int) { return false; }
+  virtual void BreakEffect(character*, cfestring&) { return; }
   void Haste();
   void Slow();
   void SendMemorizedUpdateRequest() const;
   virtual void Ignite();
   virtual void Extinguish(truth);
   void SetValidRecipeIngredient(truth b){ValidRecipeIngredient=b;}
+  void ResetFlyingThrownStep() { iRotateFlyingThrownStep = 0; }
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

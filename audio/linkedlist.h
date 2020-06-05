@@ -32,8 +32,8 @@ extern "C" {
 
 typedef struct LIST_NODE_t
 {
-	struct LIST_NODE_t* next;
-	struct LIST_NODE_t* prev;
+  struct LIST_NODE_t* next;
+  struct LIST_NODE_t* prev;
    void* data;
 } LIST_NODE_t;
 
@@ -60,11 +60,11 @@ void* LL_ReturnNodeDataFromIndex(LINKED_LIST_t* linkedList, uint16_t item);
 
 
 //For FreeRTOS
-//#define LL_Malloc(size)		pvPortMalloc(size)
-//#define LL_Free(handle)		vPortFree(handle)
+//#define LL_Malloc(size)    pvPortMalloc(size)
+//#define LL_Free(handle)    vPortFree(handle)
 
-#define LL_Malloc(size)		malloc(size)
-#define LL_Free(handle)		free(handle)
+#define LL_Malloc(size)    malloc(size)
+#define LL_Free(handle)    free(handle)
 
 #endif
 

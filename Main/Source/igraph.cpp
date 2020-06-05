@@ -60,12 +60,12 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-	if(ivanconfig::IsStartingOutlinedGfx()){
-		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
-		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
-		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
-	}
-  
+  if(ivanconfig::IsStartingOutlinedGfx()){
+    RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
+    RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
+    RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
+  }
+
   static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
@@ -73,7 +73,11 @@ void igraph::Init()
     AlreadyInstalled = true;
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
+#ifndef MAC_APP
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
+#else
+                      NULL,
+#endif
                       v2(ivanconfig::GetStartingWindowWidth(), ivanconfig::GetStartingWindowHeight()),
 #ifndef __DJGPP__
                       ivanconfig::GetGraphicsScale(),
@@ -86,14 +90,14 @@ void igraph::Init()
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
       if(ivanconfig::GetStartingFontGfx()==1){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
+    }
       if(ivanconfig::GetStartingFontGfx()==2){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font2.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font2.png");
+    }
       if(ivanconfig::GetStartingFontGfx()==3){
-		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font3.png");
-	  }
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font3.png");
+    }
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
     felist::SetDefaultEntryImageSize(TILE_V2);

@@ -235,7 +235,7 @@ private:
         //if (pix1 == pix2) -> 8% perf degradation!
         //    return 0;
         //if (pix1 > pix2)
-        //	  std::swap(pix1, pix2); -> 30% perf degradation!!!
+        //    std::swap(pix1, pix2); -> 30% perf degradation!!!
 
         const int r_diff = static_cast<int>(getRed  (pix1)) - getRed  (pix2);
         const int g_diff = static_cast<int>(getGreen(pix1)) - getGreen(pix2);
@@ -356,7 +356,7 @@ DEF_GETTER(g, c) DEF_GETTER(h, b) DEF_GETTER(i, a)
 #define DEF_GETTER(x, y) template <> inline uint32_t get_##x<ROT_270>(const Kernel_3x3& ker) { return ker.y; }
 DEF_GETTER(a, c) DEF_GETTER(b, f) DEF_GETTER(c, i)
 DEF_GETTER(d, b) DEF_GETTER(e, e) DEF_GETTER(f, h)
-DEF_GETTER(g, a) DEF_GETTER(h, d) DEF_GETTER(i,	g)
+DEF_GETTER(g, a) DEF_GETTER(h, d) DEF_GETTER(i,  g)
 #undef DEF_GETTER
 
 
@@ -1040,9 +1040,9 @@ struct ColorDistanceARGB
         /*
         Requirements for a color distance handling alpha channel: with a1, a2 in [0, 1]
 
-        	1. if a1 = a2, distance should be: a1 * distYCbCr()
-        	2. if a1 = 0,  distance should be: a2 * distYCbCr(black, white) = a2 * 255
-        	3. if a1 = 1,  ??? maybe: 255 * (1 - a2) + a2 * distYCbCr()
+          1. if a1 = a2, distance should be: a1 * distYCbCr()
+          2. if a1 = 0,  distance should be: a2 * distYCbCr(black, white) = a2 * 255
+          3. if a1 = 1,  ??? maybe: 255 * (1 - a2) + a2 * distYCbCr()
         */
 
         //return std::min(a1, a2) * DistYCbCrBuffer::dist(pix1, pix2) + 255 * abs(a1 - a2);

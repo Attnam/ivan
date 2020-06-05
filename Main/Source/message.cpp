@@ -362,6 +362,9 @@ void soundsystem::initSound()
     if(!fNew) SoundState = -1;
 
     truth bDbg=false; //TODO global command line for debug messages
+#ifdef DBGMSG
+    bDbg=true;
+#endif
     if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
     if(fNew)
     {
@@ -469,10 +472,14 @@ void soundsystem::deInitSound()
 
 SoundFile *soundsystem::findMatchingSound(festring Buffer)
 {
-  for(int i = patterns.size() - 1; i >= 0; i--)
-  if(*patterns[i].re)
-  if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
-    return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  if(Buffer.IsEmpty() || Buffer.CStr()[0]=='"') //skips all chat messages lowering config file regex complexity
+    return NULL;
+  
+  for(int i = patterns.size() - 1; i >= 0; i--){
+    if(*patterns[i].re)
+      if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+        return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  }
   return NULL;
 }
 
@@ -493,17 +500,17 @@ void soundsystem::playSound(festring Buffer)
 
     if(*sf->chunk)
     {
-			for(int i=0; i<16; i++)
-			{
-				if(!Mix_Playing(i))
-				{
-					Mix_PlayChannel(i, *sf->chunk, 0);
-//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
-		//    Mix_SetPosition(i, angle, dist);
-					return;
-				}
-			}
-		}
+      for(int i=0; i<16; i++)
+      {
+        if(!Mix_Playing(i))
+        {
+          Mix_PlayChannel(i, *sf->chunk, 0);
+//          fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
+    //    Mix_SetPosition(i, angle, dist);
+          return;
+        }
+      }
+    }
   }
 }
 
