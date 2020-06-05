@@ -39,6 +39,8 @@ class worldmap : public area
   void SmoothAltitude();
   void SmoothClimate();
   void RandomizeAltitude();
+  //void SimplexNoiseAltitude();
+  void SimplexNoiseAltitudeFastNoise();
   continent* GetContinentUnder(v2) const;
   continent* GetContinent(int) const;
   void RemoveEmptyContinents();

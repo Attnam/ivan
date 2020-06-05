@@ -12,6 +12,8 @@
 
 /* Compiled through wmapset.cpp */
 
+#include "FastNoise.h"
+
 #define MAX_TEMPERATURE   27            // increase for a warmer world
 #define LATITUDE_EFFECT   40            // increase for more effect
 #define ALTITUDE_EFFECT   0.02
@@ -23,6 +25,8 @@
 
 int DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+FastNoise myNoise; // Create a FastNoise object
 
 continent* worldmap::GetContinentUnder(v2 Pos) const
 { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
@@ -162,11 +166,15 @@ void worldmap::Generate()
   
   int WorldAttempts = 0;
   int PlacementAttempts = 0;
+  
+  myNoise.SetNoiseType(FastNoise::Simplex);
+  myNoise.SetFrequency(0.032);
 
   for(;;)
   {
     WorldAttempts++;
-    RandomizeAltitude();
+    //RandomizeAltitude();
+    SimplexNoiseAltitudeFastNoise();
     SmoothAltitude();
     GenerateClimate();
     SmoothClimate();
@@ -521,6 +529,52 @@ void worldmap::RandomizeAltitude()
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
       AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
+}
+/*
+void worldmap::SimplexNoiseAltitude()
+{
+  game::BusyAnimation();
+
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+    {
+      float s = x/XSize;
+      float t = y/YSize;
+      
+      // Tippetts: I commonly use x1=-1,y1=-1, x2=1,y2=1 or x1=0,y1=0,x2=1,y2=1 in my work.
+      int x1 = 0;
+      int y1 = 0;
+      int x2 = 1;
+      int y2 = 1;
+      
+      int dx = x2 - x1;
+      int dy = y2 - y1;
+      
+      float nx = x1 + cos(s * 2*pi) * dx / (2*pi);
+      float ny = y1 + cos(t * 2*pi) * dy / (2*pi);
+      float nz = x1 + sin(s * 2*pi) * dx / (2*pi);
+      float nw = y1 + sin(t * 2*pi) * dy / (2*pi);
+      
+      //AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
+      
+      AltitudeBuffer[x][y] = short(1000 * snoise4(float x, float y, float z, float w));
+    }
+}
+*/
+
+void worldmap::SimplexNoiseAltitudeFastNoise()
+{
+  game::BusyAnimation();
+  
+  myNoise.SetSeed(RAND() % 8000);
+
+  for (int x = 0; x < XSize; x++)
+  {
+    for (int y = 0; y < YSize; y++)
+    {
+      AltitudeBuffer[x][y] = (short)(1000 * myNoise.GetNoise(x, y));
+    }
+  }
 }
 
 void worldmap::SmoothAltitude()
