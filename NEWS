@@ -10,6 +10,26 @@
 Next version
 ------------
 
+Version 0.59
+------------
+
+Changes:
+* New craft skill, now the old value (based on stats) is just a bonus.
+* Light emitation is now based on item's main material volume.
+* Custom keybindings lets you tweak any command to your heart content!
+* Auto store items in containers based on inscribed pcre regex.
+* Main menu can now have one sfx and one background for each menu item.
+* Every in-game question now has a history accessible by pressing up/down arrows.
+* Developer tools improved: wizard code, new cursed imortal code, 
+  many new commands to developer console.
+* New sfx for digging and imp's grim.
+
+Fixes:
+* Crafting takes less time if fumbles happens, and much less for critical ones.
+* Developer console is accessible again.
+* Fixed rare dungeon generation crash (by retrying to generate it).
+* Fixable overcrowded sumo house thru a new developer console command.
+
 Version 0.58, released 15th March 2020
 --------------------------------------
 
