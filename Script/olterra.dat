@@ -754,31 +754,33 @@ stairs /* olterrain-> */
   DigMessage = "The stairs are too hard to dig.";
   MainMaterialConfig == GRANITE;
   MaterialColorB = rgb16(160, 64, 0);
+  MaterialColorC = rgb16(220, 220, 0);
+  MaterialColorD = rgb16(175, 130, 0);
   NameSingular = "stairway";
 
   Config STAIRS_UP;
   {
     PostFix = "upwards";
-    BitmapPos = 64, 112;
+    BitmapPos = 0, 192;
     IsUpLink = true;
   }
 
   Config STAIRS_DOWN;
   {
     PostFix = "downwards";
-    BitmapPos = 64, 96;
+    BitmapPos = 0, 208;
   }
 
   Config SUMO_ARENA_ENTRY;
   {
     PostFix = "downwards";
-    BitmapPos = 64, 96;
+    BitmapPos = 0, 208;
   }
 
   Config SUMO_ARENA_EXIT;
   {
     PostFix = "upwards";
-    BitmapPos = 64, 112;
+    BitmapPos = 0, 192;
     IsUpLink = true;
   }
 }
