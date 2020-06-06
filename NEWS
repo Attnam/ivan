@@ -24,6 +24,7 @@ Changes:
   many new commands to developer console.
 * New sfx for digging and imp's grim.
 * Auto map notes for a lot more simple places (like doors) easifying navigation.
+* New gfx for up/down stairs.
 
 Fixes:
 * Crafting takes less time if fumbles happens, and much less for critical ones.
