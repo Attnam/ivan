@@ -759,26 +759,26 @@ stairs /* olterrain-> */
   Config STAIRS_UP;
   {
     PostFix = "upwards";
-    BitmapPos = 0, 192;
+    BitmapPos = 64, 112;
     IsUpLink = true;
   }
 
   Config STAIRS_DOWN;
   {
     PostFix = "downwards";
-    BitmapPos = 0, 208;
+    BitmapPos = 64, 96;
   }
 
   Config SUMO_ARENA_ENTRY;
   {
     PostFix = "downwards";
-    BitmapPos = 0, 208;
+    BitmapPos = 64, 96;
   }
 
   Config SUMO_ARENA_EXIT;
   {
     PostFix = "upwards";
-    BitmapPos = 0, 192;
+    BitmapPos = 64, 112;
     IsUpLink = true;
   }
 }

@@ -705,7 +705,59 @@ struct recipe{
   }
 
   virtual void fillInfo(){ ABORT("missing recipe info implementation"); }
+  
+  static itemvector vitInv(recipedata& rpd,bool bAllowWielded=true,bool bAllowAllEquipped=false){
+    itemvector vi;
 
+    //prefer already equipped
+    if(bAllowWielded){ //TODO not showing on list...
+      if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
+      if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
+    }
+
+    if(bAllowAllEquipped){ //TODO not showing on list...
+      for(int c = 0; c < rpd.rc.H()->GetEquipments(); ++c){
+        if( 
+          c!=RIGHT_WIELDED_INDEX && 
+          c!=LEFT_WIELDED_INDEX &&
+          rpd.rc.H()->GetEquipment(c)
+        ){
+          vi.push_back(rpd.rc.H()->GetEquipment(c));
+        }
+      }
+    }
+
+    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
+
+    return vi;
+  }
+
+  /**
+   * @return the lump where it was mixed into (or the input lump)
+   */
+  static item* lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
+    // to easily (as possible) create a big lump
+    lump* lumpAtInv=NULL;
+    for(int i=0;i<vi.size();i++){
+      if(lumpToMix==vi[i])continue;
+
+      if(dynamic_cast<lump*>(vi[i])!=NULL){
+        lump* lumpAtInv = (lump*)vi[i];
+        if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
+          lumpAtInv->GetMainMaterial()->SetVolume(
+            lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
+          lumpAtInv->CalculateAll();
+
+          craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
+          bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+          break;
+        }
+      }
+    }
+
+    return lumpAtInv!=NULL ? lumpAtInv : lumpToMix;
+  }
+  
   void failPlacementMsg(recipedata& rpd){
     ADD_MESSAGE("%s can't be placed here.",name.CStr());
     rpd.SetAlreadyExplained();
@@ -1263,58 +1315,6 @@ struct recipe{
       CIok);
   }
 
-  static itemvector vitInv(recipedata& rpd,bool bAllowWielded=true,bool bAllowAllEquipped=false){
-    itemvector vi;
-
-    //prefer already equipped
-    if(bAllowWielded){ //TODO not showing on list...
-      if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
-      if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
-    }
-    
-    if(bAllowAllEquipped){ //TODO not showing on list...
-      for(int c = 0; c < rpd.rc.H()->GetEquipments(); ++c){
-        if( 
-          c!=RIGHT_WIELDED_INDEX && 
-          c!=LEFT_WIELDED_INDEX &&
-          rpd.rc.H()->GetEquipment(c)
-        ){
-          vi.push_back(rpd.rc.H()->GetEquipment(c));
-        }
-      }
-    }
-    
-    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
-
-    return vi;
-  }
-
-  /**
-   * @return the lump where it was mixed into (or the input lump)
-   */
-  static item* lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
-    // to easily (as possible) create a big lump
-    lump* lumpAtInv=NULL;
-    for(int i=0;i<vi.size();i++){
-      if(lumpToMix==vi[i])continue;
-
-      if(dynamic_cast<lump*>(vi[i])!=NULL){
-        lump* lumpAtInv = (lump*)vi[i];
-        if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
-          lumpAtInv->GetMainMaterial()->SetVolume(
-            lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
-          lumpAtInv->CalculateAll();
-
-          craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
-          bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
-          break;
-        }
-      }
-    }
-    
-    return lumpAtInv!=NULL ? lumpAtInv : lumpToMix;
-  }
-
   static void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
     switch(iCfgOLT){
     case FORGE:
@@ -1495,7 +1495,10 @@ struct srpCutWeb : public recipe{
     if(bSuccess){
       rpd.SetAlreadyExplained();
       material* matSSilk=material::MakeMaterial(SPIDER_SILK);
-      craftcore::FinishSpawning(rpd, craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,RAND()%6+3));
+      item* itSS = craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,RAND()%6+3);
+      craftcore::FinishSpawning(rpd, itSS);
+      bool b=false;
+      lumpMix(vitInv(rpd),itSS,b);
     }else{
       bool bGetStuckOnTheWeb=false;
       bool bLoseWeapon=false;
