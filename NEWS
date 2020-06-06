@@ -29,6 +29,7 @@ Fixes:
 * Developer console is accessible again.
 * Fixed rare dungeon generation crash (by retrying to generate it).
 * Fixable overcrowded sumo house thru a new developer console command.
+* Lists will always accept up/down arrow to navigate now.
 
 Version 0.58, released 15th March 2020
 --------------------------------------
