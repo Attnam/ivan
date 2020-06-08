@@ -77,6 +77,7 @@ class ivanconfig
   static v2 GetWorldSizeConfig();
   static int GetLandTypeConfig() { return LandTypeConfig.Value; }
   static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
+  static int GetWorldSeedConfig() { return WorldSeedConfig.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -149,6 +150,9 @@ class ivanconfig
   static void WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry);
   static void LandTypeConfigDisplayer(const cycleoption* O, festring& Entry);
   static void WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldSeedConfigDisplayer(const numberoption* O, festring& Entry);
+  static truth WorldSeedConfigChangeInterface(numberoption* O);
+  static void WorldSeedConfigChanger(numberoption* O, long What);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -248,6 +252,7 @@ class ivanconfig
   static cycleoption WorldSizeConfig;
   static cycleoption LandTypeConfig;
   static cycleoption WorldShapeConfig;
+  static numberoption WorldSeedConfig;
 
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;

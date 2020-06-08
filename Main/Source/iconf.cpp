@@ -325,6 +325,13 @@ cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
                                           "This affects the player's movement around the world. Pancake worlds are flat, and the player cannot cross the edges of the world map. Brandy snap worlds are like a cylinder, the world map wraps around the horizontal axis. Doughnut worlds are shaped like a torus, the player can wrap around the horizontal and vertical axes.",
                                           0, 3,
                                           &WorldShapeConfigDisplayer);
+numberoption ivanconfig::WorldSeedConfig("WorldSeedConfig",
+                                          "Select a world seed",
+                                          "",
+                                          0,
+                                          &WorldSeedConfigDisplayer,
+                                          &WorldSeedConfigChangeInterface,
+                                          &WorldSeedConfigChanger);
 
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
@@ -956,6 +963,27 @@ v2 ivanconfig::GetWorldSizeConfig()
   return WorldSize;
 }
 
+void ivanconfig::WorldSeedConfigDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/2147483647";
+}
+
+truth ivanconfig::WorldSeedConfigChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("0 gives random safe world seed (out of around ten), else select new one at your own risk!"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+void ivanconfig::WorldSeedConfigChanger(numberoption* O, long What)
+{
+  if(What < 0)
+    What = 0;
+
+  O->Value = What;
+}
+
 #ifndef __DJGPP__
 
 void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
@@ -1209,6 +1237,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory, &WorldSizeConfig);
   configsystem::AddOption(fsCategory, &LandTypeConfig);
   configsystem::AddOption(fsCategory, &WorldShapeConfig);
+  configsystem::AddOption(fsCategory, &WorldSeedConfig);
 
   //World shape: Flat, [Horizontal Wrap (cylinder)]
   //  Alt names for world shape: pancake (flat), doughnut (torus), brandy snap (cylinder).
