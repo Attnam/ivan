@@ -946,8 +946,7 @@ pcre* festring::CompilePCRE(pcre *pcreExistingRegexWorker, cfestring &fsPattern,
          <<"offset:"<<iErrOffset<<".";
     
     DBG1(fsErr.CStr());
-    
-    std::cerr<<fsErr.CStr()<<std::endl;
+    //TODO let this work with travis-ci compilation...: std::cerr<<fsErr.CStr()<<std::endl;
     
     if(pfsErrorMsg)
       (*pfsErrorMsg)=fsErr;
