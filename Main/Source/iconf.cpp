@@ -850,7 +850,7 @@ void ivanconfig::AutoPickUpMatchingChanger(stringoption* O, cfestring& What)
   if(O!=NULL){
     O->Value.Empty();
     O->Value<<What;
-    game::UpdateAutoPickUpMatching();
+    game::UpdateAutoPickUpRegex();
   }
 }
 

@@ -13,6 +13,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+
 #include "festring.h"
 #include "allocate.h"
 #include "error.h"
@@ -713,8 +714,13 @@ festring::sizetype festring::IgnoreCaseFind(cfestring& Where,
   return NPos;
 }
 
-/* Replaces all occurances of What in Where after Begin with With */
-
+/**
+ * Replaces all occurances of What in Where after Begin with With 
+ * @param Where
+ * @param What
+ * @param With
+ * @param Begin
+ */
 void festring::SearchAndReplace(festring& Where, cfestring& What,
                                 cfestring& With, sizetype Begin)
 {
@@ -906,4 +912,45 @@ void festring::EnsureOwnsData(bool Unique)
     --REFS(Data);
     CreateOwnData(Data, Size);
   }
+}
+
+/**
+ * 
+ * @param pcreExistingRegexWorker it has to be freed if was already set
+ * @param fsPattern
+ * @param bWarnOnError
+ * @return 
+ */
+pcre* festring::CompilePCRE(pcre *pcreExistingRegexWorker, cfestring &fsPattern, festring *pfsErrorMsg)
+{
+  if(pcreExistingRegexWorker)
+    pcre_free(pcreExistingRegexWorker);
+  
+  if(fsPattern.IsEmpty())
+    return NULL;
+  
+  const char *errMsg;
+  int iErrOffset;
+  pcreExistingRegexWorker = pcre_compile(
+    fsPattern.CStr(),
+    0, // no options
+    &errMsg, &iErrOffset,
+    0  // default char tables
+  );
+  
+  if (!pcreExistingRegexWorker){
+    festring fsErr;
+    fsErr<<"Regex validation failed, if ignored will just not work at all.\n"
+         <<errMsg<<",\n"
+         <<"offset:"<<iErrOffset<<".";
+    
+    DBG1(fsErr.CStr());
+    
+    std::cerr<<fsErr.CStr()<<std::endl;
+    
+    if(pfsErrorMsg)
+      (*pfsErrorMsg)=fsErr;
+  }
+  
+  return pcreExistingRegexWorker;
 }
