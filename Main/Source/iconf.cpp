@@ -310,6 +310,22 @@ cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Select an output device for the game music, or disable soundtrack.",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
+cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
+                                          "What land shapes to generate",
+                                          "Choose whether to generate continents or pangea, etc. If Pangea is selected, the generator will try to make all locations reachable from the same landmass.",
+                                          0, 5,
+                                          &LandTypeConfigDisplayer);
+cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
+                                          "Size of the world map",
+                                          "Select a world size.",
+                                          1, 6,
+                                          &WorldSizeConfigDisplayer);
+cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
+                                          "Shape of the world",
+                                          "This affects the player's movement around the world. Pancake worlds are flat, and the player cannot cross the edges of the world map. Brandy snap worlds are like a cylinder, the world map wraps around the horizontal axis. Doughnut worlds are shaped like a torus, the player can wrap around the horizontal and vertical axes.",
+                                          0, 3,
+                                          &WorldShapeConfigDisplayer);
+
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           "Select window scaling factor",
@@ -874,6 +890,72 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   audio::SetVolumeLevel(What);
 }
 
+void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Large (128x128)";
+  else if(O->Value == 1)
+    Entry << "Medium (64x64)";
+  else if(O->Value == 2)
+    Entry << "Small (48x48)";
+  else if(O->Value == 3)
+    Entry << "Tiny (32x32)";
+  else if(O->Value == 4)
+    Entry << "One screen (42x26)";
+  else if(O->Value == 5)
+    Entry << "Four screens (84x52)";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::LandTypeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pangea";
+  else if(O->Value == 1)
+    Entry << "Continents";
+  else if(O->Value == 2)
+    Entry << "Archipelago";
+  else if(O->Value == 3)
+    Entry << "Classic";
+  else if(O->Value == 4)
+    Entry << "Random";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pancake (flat)";
+  else if(O->Value == 1)
+    Entry << "Brandy snap (cylinder)";
+  else if(O->Value == 2)
+    Entry << "Doughnut (torus)";
+  else
+    Entry << O->Value;
+}
+
+v2 ivanconfig::GetWorldSizeConfig()
+{
+  v2 WorldSize = v2(64, 64);
+  
+  if(WorldSizeConfig.Value == 0)
+    WorldSize = v2(128, 128);
+  else if(WorldSizeConfig.Value == 2)
+    WorldSize = v2(48, 48);
+  else if(WorldSizeConfig.Value == 3)
+    WorldSize = v2(32, 32);
+  else if(WorldSizeConfig.Value == 4)
+    WorldSize = v2(42, 26);
+  else if(WorldSizeConfig.Value == 5)
+    WorldSize = v2(84, 52);
+  else
+    WorldSize = v2(64, 64);
+  
+  return WorldSize;
+}
+
 #ifndef __DJGPP__
 
 void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
@@ -1122,6 +1204,14 @@ void ivanconfig::Initialize()
   fsCategory="Advanced Options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+
+  fsCategory="World Generation";
+  configsystem::AddOption(fsCategory, &WorldSizeConfig);
+  configsystem::AddOption(fsCategory, &LandTypeConfig);
+  configsystem::AddOption(fsCategory, &WorldShapeConfig);
+
+  //World shape: Flat, [Horizontal Wrap (cylinder)]
+  //  Alt names for world shape: pancake (flat), doughnut (torus), brandy snap (cylinder).
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

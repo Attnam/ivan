@@ -74,6 +74,9 @@ class ivanconfig
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static v2 GetWorldSizeConfig();
+  static int GetLandTypeConfig() { return LandTypeConfig.Value; }
+  static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -143,6 +146,9 @@ class ivanconfig
   static void VolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
+  static void WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void LandTypeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -238,6 +244,10 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
+  
+  static cycleoption WorldSizeConfig;
+  static cycleoption LandTypeConfig;
+  static cycleoption WorldShapeConfig;
 
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;

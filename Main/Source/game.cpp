@@ -846,7 +846,8 @@ truth game::Init(cfestring& loadBaseName)
       InitDangerMap();
       Petrus = 0;
       InitDungeons();
-      SetCurrentArea(WorldMap = new worldmap(128, 128));
+      v2 NewWorldSize = ivanconfig::GetWorldSizeConfig();
+      SetCurrentArea(WorldMap = new worldmap(NewWorldSize.X, NewWorldSize.Y));
       CurrentWSquareMap = WorldMap->GetMap();
       WorldMap->Generate();
       UpdateCamera();
