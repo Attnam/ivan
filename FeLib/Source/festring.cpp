@@ -13,6 +13,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 #include "festring.h"
 #include "allocate.h"
