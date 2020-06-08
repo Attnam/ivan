@@ -5246,11 +5246,17 @@ void FixSumoWrestlerHouse(festring fsCmdParams)
     for(int d = 0; d < SM->GetNeighbourSquares(); ++d)
     {
       lsquare* Square = SM->GetNeighbourLSquare(d);
-
       if(Square){
-        character* C2 = Square->GetCharacter();
-        if(C2 && dynamic_cast<bananagrower*>(C2)){
-          C2->TeleportRandomly(true);
+        for(int d2 = 0; d2 < 8; ++d2)
+        {
+          lsquare* Square2 = Square->GetNeighbourLSquare(d2);
+
+          if(Square2){
+            character* C2 = Square2->GetCharacter();
+            if(C2 && dynamic_cast<bananagrower*>(C2)){
+              C2->TeleportRandomly(true);
+            }
+          }
         }
       }
     }
