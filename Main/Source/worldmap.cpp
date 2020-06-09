@@ -118,7 +118,7 @@ void worldmap::Save(outputfile& SaveFile) const
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile << Continent << PlayerGroup;
+  SaveFile << Continent << PlayerGroup << WorldSeed;
 }
 
 void worldmap::Load(inputfile& SaveFile)
@@ -155,7 +155,7 @@ void worldmap::Load(inputfile& SaveFile)
     }
 
   CalculateNeighbourBitmapPoses();
-  SaveFile >> Continent >> PlayerGroup;
+  SaveFile >> Continent >> PlayerGroup >> WorldSeed;
 }
 
 void worldmap::Generate()
@@ -163,26 +163,34 @@ void worldmap::Generate()
   Alloc2D(OldAltitudeBuffer, XSize, YSize);
   Alloc2D(OldTypeBuffer, XSize, YSize);
   Alloc2D(NoIslandAltitudeBuffer, XSize, YSize);
-  
+
+  int GeometricMeanSize = sqrt(XSize*YSize);
+  truth UsingPangea = !ivanconfig::GetLandTypeConfig() ? true : false;
+
   int WorldAttempts = 0;
   int PlacementAttempts = 0;
-  
-  myNoise.SetNoiseType(FastNoise::Simplex);
-  myNoise.SetFrequency(0.032);
+
+  //myNoise.SetNoiseType(FastNoise::Simplex);
+  myNoise.SetNoiseType(FastNoise::SimplexFractal);
+  myNoise.SetFrequency(1.0);
+
+  myNoise.SetFractalType(FastNoise::Billow);
+  myNoise.SetFractalOctaves(4);
 
   for(;;)
   {
     WorldAttempts++;
     //RandomizeAltitude();
-    SimplexNoiseAltitudeFastNoise();
-    SmoothAltitude();
+    //SimplexNoiseAltitudeFastNoise();
+    PeriodicSimplexNoiseAltitude();
+    //SmoothAltitude();
     GenerateClimate();
     SmoothClimate();
     CalculateContinents();
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 250 && Continent[c]->GetSize() < 1000
+      if(Continent[c]->GetSize() > GeometricMeanSize && Continent[c]->GetSize() < (!UsingPangea ? 1024 : 16385)
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -405,6 +413,9 @@ void worldmap::Generate()
     // Do this for as many times as there are number of continents.
     for(uint c = 1; c < Continent.size(); ++c)
     {
+      if(UsingPangea && (c != PetrusLikes->GetIndex()))
+        continue;
+      
       // Get the next nearest continent index by looking at the top of the available locations.
       int ThisContinent = AvailableLocations[0].ContinentIndex;
       
@@ -525,48 +536,60 @@ void worldmap::Generate()
 void worldmap::RandomizeAltitude()
 {
   game::BusyAnimation();
+  
+  WorldSeed = 0;
 
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
       AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
 }
-/*
-void worldmap::SimplexNoiseAltitude()
+
+void worldmap::PeriodicSimplexNoiseAltitude()
 {
   game::BusyAnimation();
+  
+  WorldSeed = RAND() % 2147483647;
+  myNoise.SetSeed(WorldSeed);
+  
+  int lola = 0;
+  float floatPI = 3.1415926535;
+  
+  // Will likely need some scaling factors for non-square worldmaps, for now let these be 1.0
+  float AspectRatio = (1.0*XSize)/(1.0*YSize);
+  float NoiseScaleX = 1.0;
+  float NoiseScaleY = 1.0;//*AspectRatio;
+  
+  // Notes:
+  // NoiseScale = 4.0 gives lots of small, skinny landmasses
+  // NoiseScale = 2.0 gives continent-like formations
 
   for(int x = 0; x < XSize; ++x)
+  {
     for(int y = 0; y < YSize; ++y)
     {
-      float s = x/XSize;
-      float t = y/YSize;
+      float s = x / (float)XSize; // 0 // x=2: s=0.01563 // x=126: s=0.9844
+      float t = y / (float)YSize; // 0 // y=3: t=0.02344 // y=127: t=0.9922
       
-      // Tippetts: I commonly use x1=-1,y1=-1, x2=1,y2=1 or x1=0,y1=0,x2=1,y2=1 in my work.
-      int x1 = 0;
-      int y1 = 0;
-      int x2 = 1;
-      int y2 = 1;
+      //float multiplier = 1.0 / ( 2.0 * FPI ); // 0.1592
+      //float multiplier = 1.0 / ( XSize/2.0 ); // gives a big hour-glass shaped continent...
+      float multiplier = 0.1592;
       
-      int dx = x2 - x1;
-      int dy = y2 - y1;
+      float nx = (float)cos(s * 2.0 * FPI) * multiplier * NoiseScaleX; // 0 + 1 * 1 / 6 = 1 / 2pi // 0.1584 // cos(6.185) * 0.1592 = 0.9847
+      float ny = (float)cos(t * 2.0 * FPI) * multiplier * NoiseScaleY; // 1 / 2pi // 0.1575 // cos(6.234) * 0.1592 = 0.9925
+      float nz = (float)sin(s * 2.0 * FPI) * multiplier * NoiseScaleX; // 0 // 0.01561 // sin(6.185) * 0.1592 = -0.01561
+      float nw = (float)sin(t * 2.0 * FPI) * multiplier * NoiseScaleY; // 0 // 0.02336 // sin(6.234) * 0.1592 = -0.00782
       
-      float nx = x1 + cos(s * 2*pi) * dx / (2*pi);
-      float ny = y1 + cos(t * 2*pi) * dy / (2*pi);
-      float nz = x1 + sin(s * 2*pi) * dx / (2*pi);
-      float nw = y1 + sin(t * 2*pi) * dy / (2*pi);
-      
-      //AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
-      
-      AltitudeBuffer[x][y] = short(1000 * snoise4(float x, float y, float z, float w));
+      AltitudeBuffer[x][y] = (short)(1000 * myNoise.GetNoise(nx, ny, nz, nw)) + 600;
     }
+  }
 }
-*/
 
 void worldmap::SimplexNoiseAltitudeFastNoise()
 {
   game::BusyAnimation();
   
-  myNoise.SetSeed(RAND() % 8000);
+  WorldSeed = RAND() % 2147483647;
+  myNoise.SetSeed(WorldSeed);
 
   for (int x = 0; x < XSize; x++)
   {
