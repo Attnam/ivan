@@ -40,7 +40,7 @@ class worldmap : public area
   void SmoothClimate();
   void RandomizeAltitude();
   void PeriodicSimplexNoiseAltitude();
-  void SimplexNoiseAltitudeFastNoise();
+  void SimplexNoiseAltitude();
   continent* GetContinentUnder(v2) const;
   continent* GetContinent(int) const;
   void RemoveEmptyContinents();
