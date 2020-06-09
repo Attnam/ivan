@@ -312,13 +312,13 @@ cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           &MIDIOutputDeviceDisplayer);
 cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
                                           "What land shapes to generate",
-                                          "Choose whether to generate continents or pangea, etc. If Pangea is selected, the generator will try to make all locations reachable from the same landmass.",
-                                          0, 5,
+                                          "Choose whether to generate continents or pangea. If Pangea is selected, the generator will try to make all locations reachable from the same landmass.",
+                                          0, 2,
                                           &LandTypeConfigDisplayer);
 cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
                                           "Size of the world map",
                                           "Select a world size.",
-                                          1, 6,
+                                          2, 7,
                                           &WorldSizeConfigDisplayer);
 cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
                                           "Shape of the world",
@@ -900,16 +900,18 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
 void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
 {
   if(O->Value == 0)
-    Entry << "Large (128x128)";
+    Entry << "Huge (128x128)";
   else if(O->Value == 1)
-    Entry << "Medium (64x64)";
+    Entry << "Large (96x96)";
   else if(O->Value == 2)
-    Entry << "Small (48x48)";
+    Entry << "Medium (64x64)";
   else if(O->Value == 3)
-    Entry << "Tiny (32x32)";
+    Entry << "Small (48x48)";
   else if(O->Value == 4)
-    Entry << "One screen (42x26)";
+    Entry << "Tiny (32x32)";
   else if(O->Value == 5)
+    Entry << "One screen (42x26)";
+  else if(O->Value == 6)
     Entry << "Four screens (84x52)";
   else
     Entry << O->Value;
@@ -921,12 +923,6 @@ void ivanconfig::LandTypeConfigDisplayer(const cycleoption* O, festring& Entry)
     Entry << "Pangea";
   else if(O->Value == 1)
     Entry << "Continents";
-  else if(O->Value == 2)
-    Entry << "Archipelago";
-  else if(O->Value == 3)
-    Entry << "Classic";
-  else if(O->Value == 4)
-    Entry << "Random";
   else
     Entry << O->Value;
 }
@@ -949,13 +945,15 @@ v2 ivanconfig::GetWorldSizeConfig()
   
   if(WorldSizeConfig.Value == 0)
     WorldSize = v2(128, 128);
-  else if(WorldSizeConfig.Value == 2)
-    WorldSize = v2(48, 48);
+  else if(WorldSizeConfig.Value == 1)
+    WorldSize = v2(96, 96);
   else if(WorldSizeConfig.Value == 3)
-    WorldSize = v2(32, 32);
+    WorldSize = v2(48, 48);
   else if(WorldSizeConfig.Value == 4)
-    WorldSize = v2(42, 26);
+    WorldSize = v2(32, 32);
   else if(WorldSizeConfig.Value == 5)
+    WorldSize = v2(42, 26);
+  else if(WorldSizeConfig.Value == 6)
     WorldSize = v2(84, 52);
   else
     WorldSize = v2(64, 64);
