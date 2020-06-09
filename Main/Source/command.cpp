@@ -126,6 +126,7 @@ command* commandsystem::Command[] =
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
+  new command(&ShowWorldSeed, "display the world seed", '^', '^', '^', true),
 
 #ifdef WIZARD
   new command(&WizardMode, "wizard mode activation (Ctrl+ for console)", '`', '`', '`', true),
@@ -1925,6 +1926,17 @@ truth commandsystem::Search(character* Char)
 {
   Char->Search(Char->GetAttribute(PERCEPTION) << 2);
   return true;
+}
+
+truth commandsystem::ShowWorldSeed(character*)
+{
+  int Seed = game::GetWorldMap()->GetWorldSeed();
+  if(!Seed)
+    ADD_MESSAGE("World seed is 0");
+  else
+    ADD_MESSAGE("World seed is %d", Seed);
+
+  return false;
 }
 
 #ifdef WIZARD
