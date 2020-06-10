@@ -976,7 +976,7 @@ truth ivanconfig::WorldSeedConfigChangeInterface(numberoption* O)
 
 void ivanconfig::WorldSeedConfigChanger(numberoption* O, long What)
 {
-  if(What < 0)
+  if(What < -1)
     What = 0;
 
   O->Value = What;
