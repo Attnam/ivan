@@ -1935,7 +1935,7 @@ void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   if(IsPlayer())
     ADD_MESSAGE("You start digging.");
-    
+
   dig* Dig = dig::Spawn(this);
 
   if(GetRightArm())
@@ -3849,7 +3849,7 @@ truth petrusswife::SpecialEnemySightedReaction(character* Char)
 {
   item* Weapon = Char->GetMainWielded();
 
-  if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
+  if(!(GetConfig() == 5) && Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
     ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"",
                 CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW,
                 Weapon->GetArticle(), Weapon->GetNameSingular().CStr());
@@ -6622,7 +6622,10 @@ void petrusswife::BeTalkedTo()
 
   itemvector Item;
 
-  if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsLuxuryItem)
+  // NOTE: Remember that Petrus' wife number 5 is mute.
+  if(!PLAYER->SelectFromPossessions(Item,
+      (GetConfig() == 5) ? CONST_S("Do you want to offer her a gift?") : CONST_S("\"Do you have something to give me?\""),
+      0, &item::IsLuxuryItem)
      || Item.empty())
     humanoid::BeTalkedTo();
 
@@ -6643,6 +6646,12 @@ void petrusswife::BeTalkedTo()
       break;
     }
 
+  if((GetConfig() == 5) && (Accepted || RefusedSomething))
+  {
+    ADD_MESSAGE("%s smiles at you.", CHAR_NAME(DEFINITE));
+    return;
+  }
+
   if(Accepted)
     ADD_MESSAGE("\"I thank you for your little gift%s.\"", Accepted == 1 ? "" : "s");
 
@@ -6658,7 +6667,7 @@ void guard::BeTalkedTo()
     {
       itemvector Item;
 
-      if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
+      if(!PLAYER->SelectFromPossessions(Item, CONST_S("\"Do you have something to give me?\""), 0, &item::IsBeverage)
          || Item.empty())
 
 
