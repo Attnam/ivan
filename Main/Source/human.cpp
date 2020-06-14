@@ -6966,6 +6966,7 @@ void crimsonimp::CreateCorpse(lsquare* Square)
 {
   game::GetCurrentLevel()->Explosion(this, "consumed by the hellfire of "  + GetName(INDEFINITE),
                                      Square->GetPos(), 20 + RAND() % 5 - RAND() % 5);
+  SendToHell();
 }
 
 truth mirrorimp::DrinkMagic(const beamdata& Beam)
@@ -7000,6 +7001,7 @@ void mirrorimp::CreateCorpse(lsquare* Square)
   decoration* Shard = decoration::Spawn(SHARD);
   Shard->InitMaterials(MAKE_MATERIAL(GLASS));
   Square->ChangeOLTerrainAndUpdateLights(Shard);
+  SendToHell();
 }
 
 void elder::BeTalkedTo()
