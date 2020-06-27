@@ -229,6 +229,7 @@ class recipedata {
     v2 v2TailoringWorkbenchLocation;
     
     long lDamageFinalItem;
+    long lInitialTurn;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);

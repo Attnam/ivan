@@ -337,6 +337,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << v2TailoringWorkbenchLocation
     
     << lDamageFinalItem
+    << lInitialTurn
     
     ;
 }
@@ -396,16 +397,10 @@ void recipedata::Load(inputfile& SaveFile)
     >> v2TailoringWorkbenchLocation
     
     >> lDamageFinalItem
+    >> lInitialTurn
 
     ;
   
-  if(game::GetCurrentSavefileVersion() >= 135){
-    SaveFile >> bTailoringMode;
-    SaveFile >> v2TailoringWorkbenchLocation;
-  }
-
-//  if(otSpawnType!=CTT_NONE)
-//    SaveFile >> otSpawn;
   rc.integrityCheck();
 }
 cfestring recipedata::id() const
@@ -420,6 +415,7 @@ cfestring recipedata::id() const
   festring fs;
 
   #define RPDINFO(o) fs<<(#o)<<"="<<(o)<<"; ";
+  RPDINFO(lInitialTurn);
   RPDINFO(rc.IsCanBeSuspended());
 
   RPDINFO(itToolID);
@@ -3432,7 +3428,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     prp->action+" "+prp->name+
     (rpd.itSpawnCfg!=0 ? festring(" ("+rpd.fsItemSpawnSearchPrototype+")") : festring())+
     ", started at "+game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true);
-
+  
+  rpd.lInitialTurn=game::GetTurn();
+  
   rpd.ClearRefs(); //pointers must be revalidated on the action handler
   DBG1(rpd.dbgInfo().CStr());
   if(Char->SwitchToCraft(rpd)) // everything must be set before this!!!
