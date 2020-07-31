@@ -238,6 +238,8 @@ int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
+int game::WorldShape = 0;
+
 /**
  * IMPORTANT!!!
  * this is intended to be called only from Load() and NEVER on Save()!
@@ -3460,6 +3462,7 @@ truth game::Save(cfestring& SaveName)
   /* or in more readable format: time() - LastLoad + TimeAtLastLoad */
 
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
+  SaveFile << WorldShape;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
@@ -3555,6 +3558,7 @@ int game::Load(cfestring& saveName)
   SaveFile >> DefaultWish >> DefaultChangeMaterial >> DefaultDetectMaterial;
   SaveFile >> TimePlayedBeforeLastLoad;
   SaveFile >> PlayerHasReceivedAllGodsKnownBonus;
+  SaveFile >> WorldShape;
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 

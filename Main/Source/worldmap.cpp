@@ -85,6 +85,8 @@ worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
   continent::PossibleLocationBuffer = PossibleLocationBuffer;
+  
+  InitializeShapeDescription();
 }
 
 worldmap::~worldmap()
@@ -156,6 +158,14 @@ void worldmap::Load(inputfile& SaveFile)
 
   CalculateNeighbourBitmapPoses();
   SaveFile >> Continent >> PlayerGroup >> WorldSeed;
+}
+
+void worldmap::InitializeShapeDescription()
+{
+  int Shape = ivanconfig::GetWorldShapeConfig();
+  game::SetWorldShape(Shape);
+
+  return;
 }
 
 void worldmap::Generate()
@@ -363,11 +373,11 @@ void worldmap::Generate()
       for(int y1 = 0; y1 < YSize; ++y1)
         if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
         {
-          AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()));
+          AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (TunnelExit - v2(x1, y1)).GetManhattanLength())); // was AttnamPos
         }
 
     // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
-    std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit, AttnamPos, ElpuriCavePos};
+    std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit/*, AttnamPos, ElpuriCavePos*/};
     for(uint i = 0; i < ForbiddenPositions.size(); i++)
     {
       AvailableLocations.erase(
@@ -508,12 +518,12 @@ void worldmap::Generate()
       }
     }
     
-    GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
-    SetEntryPos(ATTNAM, AttnamPos);
-    RevealEnvironment(AttnamPos, 1);
+    //GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
+    //SetEntryPos(ATTNAM, AttnamPos);
+    //RevealEnvironment(AttnamPos, 1);
     GetWSquare(NewAttnamPos)->ChangeOWTerrain(newattnam::Spawn());
     SetEntryPos(NEW_ATTNAM, NewAttnamPos);
-    SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
+    //SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
     GetWSquare(TunnelEntry)->ChangeOWTerrain(underwatertunnel::Spawn());
     SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
     GetWSquare(TunnelExit)->ChangeOWTerrain(underwatertunnelexit::Spawn());

@@ -61,6 +61,7 @@ class worldmap : public area
   virtual int GetTypeOfNativeGTerrainType(int) const;
   truth PoissonDiscSamplerCheckDistance(int, int, double, int, int, long, std::vector<v2>);
   int GetWorldSeed() const { return WorldSeed; }
+  void InitializeShapeDescription();
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

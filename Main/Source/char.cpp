@@ -5407,6 +5407,20 @@ void character::AddName(festring& String, int Case) const
   }
 }
 
+festring character::GetWorldShapeDescription() const
+{
+  int Shape = game::GetWorldShape();
+
+  if(Shape == 0)
+    return CONST_S("square pancake"); // Flat
+  else if(Shape == 1)
+    return CONST_S("square brandy snap"); // Cylinder
+  else if(Shape == 2)
+    return CONST_S("square doughnut"); // Toroidal
+  else
+    return CONST_S("square pancake"); // Default
+}
+
 int character::GetHungerState() const
 {
   if(!UsesNutrition())
@@ -8620,6 +8634,7 @@ festring& character::ProcessMessage(festring& Msg) const
   SEARCH_N_REPLACE(Msg, "@Sp", GetPossessivePronoun().CapitalizeCopy());
   SEARCH_N_REPLACE(Msg, "@Op", GetObjectPronoun().CapitalizeCopy());
   SEARCH_N_REPLACE(Msg, "@Gd", GetMasterGod()->GetName());
+  SEARCH_N_REPLACE(Msg, "@ws", GetWorldShapeDescription());
   return Msg;
 }
 

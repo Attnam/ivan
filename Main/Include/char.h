@@ -418,6 +418,7 @@ class character : public entity, public id
   festring GetPersonalPronoun(truth = true) const;
   festring GetPossessivePronoun(truth = true) const;
   festring GetObjectPronoun(truth = true) const;
+  festring GetWorldShapeDescription() const;
   virtual truth BodyPartCanBeSevered(int) const;
   virtual void AddName(festring&, int) const;
   void ReceiveHeal(long);

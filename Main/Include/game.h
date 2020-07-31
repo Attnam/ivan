@@ -505,6 +505,8 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
+  static int GetWorldShape() { return WorldShape; }
+  static void SetWorldShape(int What) { WorldShape = What; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -626,6 +628,7 @@ class game
   const static int iListWidth = 652;
   static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
   static int iCurrentDungeonTurn;
+  static int WorldShape;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)
