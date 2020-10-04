@@ -808,3 +808,24 @@ void MakePath(cfestring& Path)
 #endif
   }
 }
+
+festring GetUserDataDir()
+{
+#ifdef UNIX
+  festring Dir;
+  Dir << getenv("HOME");
+#ifdef MAC_APP
+  Dir << "/Library/Application Support/IVAN/";
+#else
+  Dir << "/.ivan/";
+#endif
+#ifdef DBGMSG
+  dbgmsg::SetDebugLogPath(Dir.CStr());
+#endif
+  return Dir;
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "./";
+#endif
+}
