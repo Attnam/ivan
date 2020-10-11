@@ -37,7 +37,7 @@ class iosystem
   static long ScrollBarQuestion(cfestring&, v2, long, long, long,
                                 long, long, col16, col16, col16, int,
                                 int, truth, void (*)(long) = 0);
-  static int Menu(cbitmap*, v2, cfestring&,
+  static int Menu(std::vector<bitmap*> vBackGround, v2, cfestring&,
                   cfestring&, col16,
                   cfestring& = CONST_S(""),
                   cfestring& = CONST_S(""));

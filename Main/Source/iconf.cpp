@@ -23,6 +23,7 @@
 #include "stack.h"
 #include "whandler.h"
 #include "bugworkaround.h"
+#include "sfx.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "Player's default name",
@@ -302,13 +303,22 @@ numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
                                           &AltListItemWidthChangeInterface,
                                           &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
-                                          "Volume",
-                                          "Select volume for sound effects and game music.",
+                                          "Music Volume",
+                                          "Select volume for game MIDI music",
                                           127,
                                           &VolumeDisplayer,
                                           &VolumeChangeInterface,
                                           &VolumeChanger,
                                           &VolumeHandler);
+scrollbaroption ivanconfig::SfxVolume(    "SfxVolume",
+                                          "Soud Effects (SFX) Volume",
+                                          "Select volume for sound effects",
+                                          127,
+                                          &SfxVolumeDisplayer,
+                                          &SfxVolumeChangeInterface,
+                                          &SfxVolumeChanger,
+                                          &SfxVolumeHandler);
+
 cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Use MIDI soundtrack",
                                           "Select an output device for the game music, or disable soundtrack.",
@@ -513,6 +523,10 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
 }
 
 void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/127";
+}
+void ivanconfig::SfxVolumeDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << "/127";
 }
@@ -755,6 +769,17 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
 
   return false;
 }
+truth ivanconfig::SfxVolumeChangeInterface(numberoption* O)
+{
+  iosystem::ScrollBarQuestion(CONST_S("Set new SFX volume value (0-127, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 127, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+
+  clearToBackgroundAfterChangeInterface();
+
+  return false;
+}
 
 void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
 {
@@ -877,6 +902,14 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
 
   audio::SetVolumeLevel(What);
 }
+
+void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 127) What = 127;
+  O->Value = What;
+}
+
 
 #ifndef __DJGPP__
 
@@ -1013,6 +1046,18 @@ void ivanconfig::VolumeHandler(long Value)
     game::DrawEverythingNoBlit();
   }
 }
+void ivanconfig::SfxVolumeHandler(long Value)
+{
+  SfxVolumeChanger(&SfxVolume, Value);
+  
+  soundeffects::SetSfxVolume(SfxVolume.Value);
+  
+  if(game::IsRunning())
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
+}
 
 #ifndef __DJGPP__
 
@@ -1114,6 +1159,7 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(fsCategory,&MIDIOutputDevice);
   configsystem::AddOption(fsCategory,&Volume);
+  configsystem::AddOption(fsCategory,&SfxVolume);
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
@@ -1132,9 +1178,9 @@ void ivanconfig::Initialize()
    * LOAD AND APPLY some SETTINGS *
    ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.cfg");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.conf");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.conf");
 #endif
 
   configsystem::Load();
@@ -1156,4 +1202,10 @@ void ivanconfig::Initialize()
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
+  
+#ifndef NOSOUND
+  soundeffects::SetEnableSfx(PlaySounds.Value);
+  soundeffects::SetSfxVolume(SfxVolume.Value);
+  soundeffects::SetDataDir(game::GetDataDir());
+#endif
 }
