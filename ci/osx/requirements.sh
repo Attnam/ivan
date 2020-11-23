@@ -35,9 +35,9 @@ install_sdl2() {
     local url
     for url in "${urls[@]}"; do
       curl -L --fail --retry 5 -o sdl.dmg "${url}"
-      hdiutil mount -readonly -mountpoint sdl sdl.dmg
+      hdiutil attach -readonly -mount required -mountpoint sdl sdl.dmg
       cp -R sdl/* "${CACHE_DIR}"
-      hdiutil unmount sdl
+      hdiutil detach sdl
       rm sdl.dmg
     done
 
