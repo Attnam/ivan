@@ -118,7 +118,7 @@ void MPB_BuildChannelStats(MIDI_HEADER_CHUNK_t* MIDIHdr, MIDI_EVENT_t* event)
 
 void MPB_DetermineMIDIFileStats(MIDI_HEADER_CHUNK_t* MIDIHdr)
 {
-   uint8_t i;
+   uint16_t i;
    uint32_t* maxLength;
 
    //Determine the MIDI channel constitution.
@@ -233,7 +233,7 @@ void MPB_TogglePlayback(MIDI_HEADER_CHUNK_t* MIDIHdr)
 
 void MPB_ResetMIDITracks(MIDI_HEADER_CHUNK_t* MIDIHdr)
 {
-   uint8_t i;
+   uint16_t i;
    uint8_t* position = 0;
    uint8_t* buf;
    uint8_t* ptr;
