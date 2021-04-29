@@ -12,12 +12,14 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW32
+          release: false
           update: true
           install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-pkg-config mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
       - name: CI-Build
         run: |
-          cd ${{ github.workspace }}
+          cd D:/a/ivan/ivan
+          mkdir install
           mkdir build
           cd build
-          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=D:/a/ivan/ivan/install
           make VERBOSE=1 -j4 install
