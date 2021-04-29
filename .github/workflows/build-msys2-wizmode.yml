@@ -22,3 +22,13 @@ jobs:
           mingw-w64-i686-pkg-config
           mingw-w64-i686-SDL2
           mingw-w64-i686-SDL2_mixer
+    
+      - name: build
+        msystem: MINGW32
+        shell: msys2 {0}
+        run: |
+          cd ${{ github.workspace }}
+          mkdir build
+          cd build
+          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+          make VERBOSE=1 -j4 install
