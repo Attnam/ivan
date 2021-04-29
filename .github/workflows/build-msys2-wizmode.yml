@@ -25,7 +25,7 @@ jobs:
           make VERBOSE=1 -j4 install
 
       - name: Package
-        run: Compress-Archive -Path "C:\Program Files (x86)\ivan\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
+        run: Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
         shell: pwsh
 
       - name: Release
