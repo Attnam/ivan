@@ -23,3 +23,15 @@ jobs:
           cd build
           cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=D:/a/ivan/ivan/installation
           make VERBOSE=1 -j4 install
+
+      - name: Package
+        run: Compress-Archive -Path "C:\Program Files (x86)\ivan\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
+        shell: pwsh
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: IvanWin.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
