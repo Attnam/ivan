@@ -18,8 +18,8 @@ jobs:
       - name: CI-Build
         run: |
           cd D:/a/ivan/ivan
-          mkdir install
+          mkdir installation
           mkdir build
           cd build
-          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=D:/a/ivan/ivan/install
+          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=D:/a/ivan/ivan/installation
           make VERBOSE=1 -j4 install
