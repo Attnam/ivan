@@ -13,7 +13,7 @@ jobs:
         with:
           msystem: MINGW32
           release: false
-          update: true
+          update: false
           install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-pkg-config mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
       - name: CI-Build
         run: |
