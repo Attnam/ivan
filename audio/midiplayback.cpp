@@ -387,7 +387,7 @@ uint8_t MPB_RePositionTime(MIDI_HEADER_CHUNK_t* MIDIHdr, uint16_t timePosSec, MI
 
 uint8_t MPB_ContinuePlay(MIDI_HEADER_CHUNK_t* MIDIHdr, MIDI_PB_MODE mode)
 {
-   uint8_t i;
+   uint16_t i;
    uint8_t ret = 0;
 
    for (i = 0; i < MIDIHdr->trackCount; i++)
@@ -747,7 +747,7 @@ void MPB_PlayEvent(MIDI_EVENT_t* event, MIDI_PB_MODE mode)
 
    switch (event->event.eventType)
    {
-   uint8_t i;
+   uint32_t i;
 case MIDI_SYSEX_START:
    MIDI_Tx(MIDI_SYSEX_START);
    //MIXI_TxDump(event->event.sysExEvent.data, event->event.sysExEvent.length);
