@@ -4942,7 +4942,7 @@ liquid
     Emitation = rgb24(139, 0, 139);
     NameStem = "raw liquefied magic";
     Alpha = 150;
-    EffectStrength = 250;
+    EffectStrength = 2500;
     PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
@@ -6367,7 +6367,7 @@ flesh
     AttachedGod = MORTIFER;
     Effect = EFFECT_CONFUSE; /* elven flesh is sweet and addictive */
     ConsumeWisdomLimit = 15;
-    EffectStrength = 20;
+    EffectStrength = 10;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 }

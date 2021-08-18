@@ -383,11 +383,7 @@ void game::InitScript()
 
 truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
 {
-  return it->IsHeadOfElpuri()
-      || it->IsGoldenEagleShirt()
-      || it->IsPetrussNut()
-      || it->IsTheAvatar()
-      || it->IsEncryptedScroll();
+  return it->IsQuestItem();
 }
 
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
@@ -3479,7 +3475,7 @@ int game::Load(cfestring& saveName)
 
   if(ivanconfig::IsAllowImportOldSavegame()){
     if(CurrentSavefileVersion > SAVE_FILE_VERSION){
-      iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+      iosystem::Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
         CONST_S("Sorry, this save can't be imported by this game version.\r"),
         CONST_S("Hit a key to go back...\r"), LIGHT_GRAY);
       return BACK;
@@ -3487,7 +3483,7 @@ int game::Load(cfestring& saveName)
   }else{
     if(CurrentSavefileVersion != SAVE_FILE_VERSION)
     {
-      if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+      if(!iosystem::Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
                          CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
                          CONST_S("Yes\rNo\r"), LIGHT_GRAY))
         return NEW_GAME;
@@ -3977,7 +3973,7 @@ truth game::HandleQuitMessage()
   {
     if(IsInGetCommand())
     {
-      switch(Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+      switch(Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
                   CONST_S("Do you want to save your game before quitting?\r"),
                   CONST_S("Yes\rNo\rCancel\r"), LIGHT_GRAY))
       {
@@ -3997,7 +3993,7 @@ truth game::HandleQuitMessage()
       }
     }
     else
-      if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+      if(!Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
                CONST_S("You can't save at this point. Are you sure you still want to do this?\r"),
                CONST_S("Yes\rNo\r"), LIGHT_GRAY)){
         RemoveSaves(); //will remove the real saves too
@@ -4630,11 +4626,11 @@ int game::CalculateRoughDirection(v2 Vector)
     return EAST;
 }
 
-int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS,
+int game::Menu(std::vector<bitmap*> vBackGround, v2 Pos, cfestring& Topic, cfestring& sMS,
                col16 Color, cfestring& SmallText1, cfestring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
-  int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
+  int Return = iosystem::Menu(vBackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
   globalwindowhandler::EnableControlLoops();
   return Return;
 }
@@ -5262,27 +5258,6 @@ festring game::GetDataDir()
 
 #if defined(WIN32) || defined(__DJGPP__)
   return GetUserDataDir();
-#endif
-}
-
-festring game::GetUserDataDir()
-{
-#ifdef UNIX
-  festring Dir;
-  Dir << getenv("HOME");
-#ifdef MAC_APP
-  Dir << "/Library/Application Support/IVAN/";
-#else
-  Dir << "/.ivan/";
-#endif
-#ifdef DBGMSG
-  dbgmsg::SetDebugLogPath(Dir.CStr());
-#endif
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "./";
 #endif
 }
 
