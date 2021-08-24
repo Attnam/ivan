@@ -1586,6 +1586,37 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
   {
     /** No multitile support */
 
+    int Shape = game::GetWorldShape();
+    area* Area = game::GetCurrentArea();
+
+    if(Shape == 0)
+    {
+      MoveTo = MoveTo; // Flat
+    }
+    else if(Shape == 1)
+    {
+      // Cylinder
+      if(MoveTo.X > Area->GetXSize() - 1)
+        MoveTo.X = 0;
+      if(MoveTo.X < 0)
+        MoveTo.X = Area->GetXSize() - 1;
+    }
+    else if(Shape == 2)
+    {
+      // Toroidal
+    if(MoveTo.X > Area->GetXSize() - 1)
+      MoveTo.X = 0;
+    if(MoveTo.X < 0)
+      MoveTo.X = Area->GetXSize() - 1;
+    if(MoveTo.Y > Area->GetYSize() - 1)
+      MoveTo.Y = 0;
+    if(MoveTo.Y < 0)
+      MoveTo.Y = Area->GetYSize() - 1;
+    }
+    else
+      MoveTo = MoveTo; // Flat (default)
+    
+    
     if(CanMove()
        && GetArea()->IsValidPos(MoveTo)
        && (CanMoveOn(GetNearWSquare(MoveTo))
