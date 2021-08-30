@@ -132,6 +132,7 @@ struct owterraindatabase : public wterraindatabase
   truth RevealEnvironmentInitially;
   truth HideLocationInitially;
   truth CanBeOnAnyTerrain;
+  truth IsCoreLocation;
 };
 
 class owterrainprototype
@@ -154,6 +155,7 @@ class owterrainprototype
   virtual truth RevealEnvironmentInitially() const { return false; }
   virtual truth HideLocationInitially() const { return false; }
   virtual truth CanBeOnAnyTerrain() const { return false; }
+  virtual truth IsCoreLocation() const { return false; }
  private:
   int Index;
   const owterrainprototype* Base;
@@ -188,6 +190,7 @@ class owterrain : public wterrain, public oterrain
   DATA_BASE_TRUTH(RevealEnvironmentInitially);
   DATA_BASE_TRUTH(HideLocationInitially);
   DATA_BASE_TRUTH(CanBeOnAnyTerrain);
+  DATA_BASE_TRUTH(IsCoreLocation);
  protected:
   virtual v2 GetBitmapPos(int) const;
   virtual cfestring& GetNameStem() const;

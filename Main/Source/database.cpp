@@ -710,6 +710,7 @@ template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(RevealEnvironmentInitially);
   ADD_MEMBER(HideLocationInitially);
   ADD_MEMBER(CanBeOnAnyTerrain);
+  ADD_MEMBER(IsCoreLocation);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

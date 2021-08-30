@@ -35,6 +35,7 @@ owterrain
   RevealEnvironmentInitially = false; /* Overridden by the world map generator for core locations */
   HideLocationInitially = false; /* Overridden by the world map generator for core locations */
   CanBeOnAnyTerrain = false; /* Overridden by the world map generator for core locations */
+  IsCoreLocation = false;
 }
 
 attnam
@@ -43,8 +44,12 @@ attnam
   NameStem = "mighty cathedral reaching the clouds";
   UsesLongArticle = false;
   AttachedDungeon = ATTNAM;
-  CanBeGenerated = false; /* Overridden by the world map generator */
+  CanBeGenerated = true; /* Overridden by the world map generator */
   NativeGTerrainType = EVERGREEN_FOREST;
+  RevealEnvironmentInitially = true;
+  HideLocationInitially = false;
+  CanBeOnAnyTerrain = false;
+  IsCoreLocation = true;
 }
 
 elpuricave
@@ -53,8 +58,12 @@ elpuricave
   NameStem = "hideous cave entrance radiating pure evil";
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
-  CanBeGenerated = false; /* Overridden by the world map generator */
+  CanBeGenerated = true; /* Overridden by the world map generator */
   NativeGTerrainType = TUNDRA;
+  RevealEnvironmentInitially = true;
+  HideLocationInitially = false;
+  CanBeOnAnyTerrain = false;
+  IsCoreLocation = true;
 }
 
 newattnam
@@ -65,6 +74,7 @@ newattnam
   AttachedDungeon = NEW_ATTNAM;
   CanBeGenerated = false; /* Overridden by the world map generator */
   NativeGTerrainType = JUNGLE;
+  /*IsCoreLocation = true;*/
 }
 
 underwatertunnel
@@ -75,6 +85,7 @@ underwatertunnel
   AttachedDungeon = UNDER_WATER_TUNNEL;
   CanBeGenerated = false; /* Overridden by the world map generator */
   NativeGTerrainType = JUNGLE;
+  /*IsCoreLocation = true;*/
 }
 
 underwatertunnelexit
@@ -86,6 +97,7 @@ underwatertunnelexit
   AttachedArea = 2; /*underwater tunnel level 3*/
   CanBeGenerated = false; /* Overridden by the world map generator */
   NativeGTerrainType = JUNGLE;
+  /*IsCoreLocation = true;*/
 }
 
 aslonacastle

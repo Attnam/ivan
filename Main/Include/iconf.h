@@ -79,6 +79,7 @@ class ivanconfig
   static int GetLandTypeConfig() { return LandTypeConfig.Value; }
   static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
   static int GetWorldSeedConfig() { return WorldSeedConfig.Value; }
+  static int GetWorldSizeNumber() { return WorldSizeConfig.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }

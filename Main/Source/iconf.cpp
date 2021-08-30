@@ -929,7 +929,6 @@ void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
   O->Value = What;
 }
 
-
 void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
 {
   if(O->Value == 0)
@@ -976,20 +975,20 @@ v2 ivanconfig::GetWorldSizeConfig()
 {
   v2 WorldSize = v2(64, 64);
   
-  if(WorldSizeConfig.Value == 0)
+  if(WorldSizeConfig.Value == HUGE_WORLD)
     WorldSize = v2(128, 128);
-  else if(WorldSizeConfig.Value == 1)
+  else if(WorldSizeConfig.Value == LARGE_WORLD)
     WorldSize = v2(96, 96);
-  else if(WorldSizeConfig.Value == 3)
+  else if(WorldSizeConfig.Value == SMALL_WORLD)
     WorldSize = v2(48, 48);
-  else if(WorldSizeConfig.Value == 4)
+  else if(WorldSizeConfig.Value == TINY_WORLD)
     WorldSize = v2(32, 32);
-  else if(WorldSizeConfig.Value == 5)
+  else if(WorldSizeConfig.Value == ONE_SCREEN_WORLD)
     WorldSize = v2(42, 26);
-  else if(WorldSizeConfig.Value == 6)
+  else if(WorldSizeConfig.Value == FOUR_SCREEN_WORLD)
     WorldSize = v2(84, 52);
   else
-    WorldSize = v2(64, 64);
+    WorldSize = v2(64, 64); //MEDIUM_WORLD
   
   return WorldSize;
 }

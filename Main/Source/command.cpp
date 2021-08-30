@@ -1952,6 +1952,8 @@ truth commandsystem::WizardMode(character* Char)
 
       if(game::IsInWilderness())
       {
+        // These reveal sequences need to be made smart, only reveal if they can/have been generated in the worldmap
+        
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
