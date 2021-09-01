@@ -74,6 +74,8 @@ class worldmap : public area
   short** NoIslandAltitudeBuffer;
   charactervector PlayerGroup;
   int WorldSeed;
+  std::vector<v2> Grid;
+  std::vector<v2> Queue;
 };
 
 outputfile& operator<<(outputfile&, const worldmap*);

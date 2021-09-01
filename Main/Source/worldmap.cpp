@@ -440,14 +440,7 @@ void worldmap::Generate()
 
       // Use a Poisson disc sampler to find random nicely-spaced points on the world map
       // Third argument is radius. On a 128x128 tile map, Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together).
-      try
-      {
-        AllocateGlobalPossibleLocations(XSize, YSize, PoissonRadius, 10); // default is 6
-      }
-      catch (const std::bad_alloc&)
-      {
-          ABORT("Instance of 'std::bad_alloc'");
-      }
+      AllocateGlobalPossibleLocations(XSize, YSize, PoissonRadius, 10); // default is 6
 
       // Pick out all the locations above ground as valid candidate locations
       for(int x1 = 0; x1 < XSize; ++x1)
@@ -1187,9 +1180,10 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
 
   // Allocate a grid and a queue
   memset(PossibleLocationBuffer[0], 0, XSizeTimesYSize * sizeof(uchar));
-  std::vector<v2> Grid(GridCellWidth*GridCellHeight, v2(0, 0));
+  Grid.clear();
 
-  std::vector<v2> Queue;
+  for(int k = 0; k < GridCellWidth*GridCellHeight; k++)
+    Grid.emplace_back(v2(0, 0));
 
   int QueueSize = 0;
   int SampleSize = 0;
@@ -1201,7 +1195,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
 
   // Do the SetPoint function
   v2 Sample = v2(XPos, YPos);
-  Queue.push_back(Sample);
+  Queue.clear();
+  Queue.emplace_back(Sample);
   // Find where (x,y) sits in the grid
   int XIndex = int(XPos / CellSize);
   int YIndex = int(YPos / CellSize);
@@ -1211,6 +1206,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   QueueSize += 1;
   SampleSize += 1;
 
+  v2 NewSample = v2(0, 0);
+
   while(QueueSize)
   {
     int XIdx = int((RAND() % 100 / 100.0) * QueueSize);
@@ -1219,8 +1216,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
     {
       double Angle = 2 * FPI * (RAND() % 100) / 100.0;
       double Hypotenuse = sqrt( A * (RAND() % 100) / 100.0 + RadiusSquared);
-      int XPos = int(Sample.X + Hypotenuse*cos(Angle));
-      int YPos = int(Sample.Y + Hypotenuse*sin(Angle));
+      XPos = int(Sample.X + Hypotenuse*cos(Angle));
+      YPos = int(Sample.Y + Hypotenuse*sin(Angle));
       if((XPos >= 0) && (XPos < XSize))
       {
         if((YPos >= 0) && (YPos < YSize))
@@ -1228,8 +1225,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
           if(PoissonDiscSamplerCheckDistance(XPos, YPos, CellSize, GridCellWidth, GridCellHeight, RadiusSquared, Grid))
           {
             // Do the SetPoint function
-            v2 NewSample = v2(XPos, YPos);
-            Queue.push_back(NewSample);
+            NewSample = v2(XPos, YPos);
+            Queue.emplace_back(NewSample);
             // Find where (x,y) sits in the grid
             XIndex = int(XPos / CellSize);
             YIndex = int(YPos / CellSize);
