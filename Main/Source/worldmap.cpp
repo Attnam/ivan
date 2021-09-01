@@ -180,38 +180,39 @@ void worldmap::Generate()
 
   int WorldAttempts = 0;
   int PlacementAttempts = 0;
+  int ForcedWorldReGens = 0;
 
   int InitialSeed = ivanconfig::GetWorldSeedConfig();
   truth SeedFailFlag = false;
 
   int WorldSize = ivanconfig::GetWorldSizeNumber();
-  float NoiseFrequency = 2.0;
-  
+  double NoiseFrequency = 2.0;
+
   switch(WorldSize)
   {
     case HUGE_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
       break;
     case LARGE_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
-      break;
-    case MEDIUM_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
-      break;
-    case SMALL_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
-      break;
-    case TINY_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
-      break;
-    case ONE_SCREEN_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
       break;
     case FOUR_SCREEN_WORLD:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 1.6 : 1.0);
+      break;
+    case MEDIUM_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.4 : 1.0);
+      break;
+    case SMALL_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.3 : 1.0);
+      break;
+    case TINY_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.2 : 1.0);
+      break;
+    case ONE_SCREEN_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.2 : 1.0);
       break;
     default:
-      NoiseFrequency = (!UsingPangea ? 2.0 : 1.0);
+      NoiseFrequency = 1.0;
   }
 
   //WorldNoise.SetNoiseType(FastNoise::Simplex);
@@ -222,8 +223,9 @@ void worldmap::Generate()
   WorldNoise.SetFractalOctaves(4);
 
   int MAX_DISC_SAMPLING_ATTEMPTS = 6;
-  truth ForcePlaceOnAnyTerrain = false;
+  truth ForcePlacementOnAnyTerrain = false;
   truth ForceWorldReGen = false;
+  truth CoreLocationFailure = false;
   
   for(;;)
   {
@@ -231,6 +233,7 @@ void worldmap::Generate()
       InitialSeed = 0;
     
     ForceWorldReGen = false;
+    CoreLocationFailure = false;
     
     WorldAttempts++;
     //RandomizeAltitude();
@@ -416,7 +419,7 @@ void worldmap::Generate()
     std::vector<place> ShallBePlaced;
     std::vector<v2> AtTheseCoordinates;
 
-    for(int k1 = 0; k1 < MAX_DISC_SAMPLING_ATTEMPTS + 1; k1++)
+    for(int k1 = 0; k1 < MAX_DISC_SAMPLING_ATTEMPTS; k1++)
     {
       AvailableLocations.clear();
       ShallBePlaced.clear();
@@ -426,14 +429,14 @@ void worldmap::Generate()
       // Is this appropriate here, or does it introduce a bug?? Note that reaching this point means k1 has been incremented...
       if(ForceWorldReGen)
         break;
-      
+
       PlacementAttempts++;
 
       int PoissonRadius = 3;
       
-      if((k1 <= 1) /*&& (WorldAttempts <= 2)*/) // Add a check on world gen attempts here, no point using a coarse radius if worldgens > 2
+      if((k1 <= 1) && (ForcedWorldReGens <= 2)) // Add a check on world gen attempts here, no point using a coarse radius if worldgens > 2
         PoissonRadius = 5; // COARSE_RADIUS
-      else if(k1 > 1 && k1 <= 3 /*&& (WorldAttempts <= 4)*/)
+      else if(k1 > 1 && k1 <= 3 && (ForcedWorldReGens <= 4))
         PoissonRadius = 4; // FINER_RADIUS
       else
         PoissonRadius = 3; // FINEST_RADIUS
@@ -539,7 +542,7 @@ void worldmap::Generate()
           for(uint j = 0; j < ToBePlaced.size(); j++)
           {
             // If the terrain type of the available location matches that of the place, then put the place there.
-            if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain) || ForcePlaceOnAnyTerrain) // ToDo: Use an override flag if it has been attempted around 25? times. (i.e. in the event that the worldmap is too small!
+            if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain) || ForcePlacementOnAnyTerrain) // ToDo: Use an override flag if it has been attempted around 25? times. (i.e. in the event that the worldmap is too small!
             {
               v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
               
@@ -548,7 +551,7 @@ void worldmap::Generate()
               ToBePlaced[j].HasBeenPlaced = true;
               
               // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
-              if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()) && !ForcePlaceOnAnyTerrain)
+              if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
               {
                 ADD_MESSAGE("Failed to place core location on continent with UT exit!");
                 ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
@@ -558,25 +561,32 @@ void worldmap::Generate()
                 // If specific seed requested, and placed anywhere, and still reaches here, re-generate world with another seed, turn off specific seed-requested flag
                 
                 /*
-                if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && CustomSeedRequested && !ForcePlaceOnAnyTerrain)
-                  ForcePlaceOnAnyTerrain = true;
+                if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && CustomSeedRequested && !ForcePlacementOnAnyTerrain)
+                  ForcePlacementOnAnyTerrain = true;
                 else if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && !CustomSeedRequested)
                   ForceWorldReGen = true;
                 else
                   ForceReSample = true;
                 
-                if((WorldAttempts >= 5) && !ForcePlaceOnAnyTerrain)
+                if((WorldAttempts >= 5) && !ForcePlacementOnAnyTerrain)
                 {
-                  ForcePlaceOnAnyTerrain = true;
+                  ForcePlacementOnAnyTerrain = true;
                   ForceWorldReGen = true;
                 }
                 */
+
+                // Just a simple flag with a break will do
+                CoreLocationFailure = true;
+                break;
               }
 
               break;
             }
             ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
           }
+          if(CoreLocationFailure)
+            break;
+
           // Remove any places that have been placed, so we don't try to pick them out of our vector again.
           ToBePlaced.erase(
             std::remove_if(
@@ -585,6 +595,9 @@ void worldmap::Generate()
               [](place vec) -> truth {return vec.HasBeenPlaced;}),
             ToBePlaced.end());
         }
+        if(CoreLocationFailure)
+          break;
+
         // Remove the locations on the continent we have just examined. Whether or not they populate with places, they will not be re-visited because their terrains don't match
         AvailableLocations.erase(
           std::remove_if(
@@ -612,16 +625,22 @@ void worldmap::Generate()
       if(!ToBePlaced.empty())
         ADD_MESSAGE("There are still %d places not yet placed!", ToBePlaced.size());
       
-      if(!ToBePlaced.empty())
+      if(!ToBePlaced.empty() || CoreLocationFailure)
       {
         AvailableLocations.clear();
         ShallBePlaced.clear();
         AtTheseCoordinates.clear();
         ToBePlaced.clear();
-        
-        if(k1 >= MAX_DISC_SAMPLING_ATTEMPTS)
+
+        if (k1 >= MAX_DISC_SAMPLING_ATTEMPTS)
           ForceWorldReGen = true;
-        
+
+        //if(ForcedWorldReGens >= 2)
+        //{
+        //  ADD_MESSAGE("Forcing placement on any terrain...");
+        //  ForcePlacementOnAnyTerrain = true;
+        //}
+
         continue; // this continue statement is the only one that forces the world to re-gen, in the old code. Now it breaks out only to the disc re-sample loop.
       }
       
@@ -636,7 +655,10 @@ void worldmap::Generate()
       
     }  //for loop for poisson disc sampling attempts
     if(ForceWorldReGen)
+    {
+      ForcedWorldReGens++;
       continue;
+    }
 
     if(ShallBePlaced.size() != AtTheseCoordinates.size())
     {
@@ -677,9 +699,13 @@ void worldmap::Generate()
   delete [] OldTypeBuffer;
   delete [] NoIslandAltitudeBuffer;
   
-  //PlacementAttempts++; // remove
   ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
+  ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
   ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
+
+  // Add a message to indicate that dungeons may show up on weird terrains
+  if(ForcePlacementOnAnyTerrain == true)
+    ADD_MESSAGE("It's the world Kenny, but not as we know it..."/*, ivanconfig::GetDefaultPetName().CStr()*/);
 }
 
 void worldmap::RandomizeAltitude()
