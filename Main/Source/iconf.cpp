@@ -938,7 +938,7 @@ void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
   else if(O->Value == 2)
     Entry << "Medium (64x64)";
   else if(O->Value == 3)
-    Entry << "Small (48x48)";
+    Entry << "Small (49x49)";
   else if(O->Value == 4)
     Entry << "Tiny (32x32)";
   else if(O->Value == 5)
@@ -980,7 +980,7 @@ v2 ivanconfig::GetWorldSizeConfig()
   else if(WorldSizeConfig.Value == LARGE_WORLD)
     WorldSize = v2(96, 96);
   else if(WorldSizeConfig.Value == SMALL_WORLD)
-    WorldSize = v2(48, 48);
+    WorldSize = v2(49, 49);
   else if(WorldSizeConfig.Value == TINY_WORLD)
     WorldSize = v2(32, 32);
   else if(WorldSizeConfig.Value == ONE_SCREEN_WORLD)

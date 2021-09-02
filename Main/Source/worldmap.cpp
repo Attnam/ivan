@@ -546,10 +546,6 @@ void worldmap::Generate()
             {
               v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
               
-              ShallBePlaced.push_back(ToBePlaced[j]);
-              AtTheseCoordinates.push_back(NewPos);
-              ToBePlaced[j].HasBeenPlaced = true;
-              
               // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
               if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
               {
@@ -579,6 +575,10 @@ void worldmap::Generate()
                 CoreLocationFailure = true;
                 break;
               }
+
+              ShallBePlaced.push_back(ToBePlaced[j]);
+              AtTheseCoordinates.push_back(NewPos);
+              ToBePlaced[j].HasBeenPlaced = true;
 
               break;
             }
@@ -632,14 +632,14 @@ void worldmap::Generate()
         AtTheseCoordinates.clear();
         ToBePlaced.clear();
 
-        if (k1 >= MAX_DISC_SAMPLING_ATTEMPTS)
+        if(k1 >= MAX_DISC_SAMPLING_ATTEMPTS - 1)
           ForceWorldReGen = true;
 
-        //if(ForcedWorldReGens >= 2)
-        //{
-        //  ADD_MESSAGE("Forcing placement on any terrain...");
-        //  ForcePlacementOnAnyTerrain = true;
-        //}
+        if(ForcedWorldReGens >= 20)
+        {
+          ADD_MESSAGE("Forcing placement on any terrain...");
+          ForcePlacementOnAnyTerrain = true;
+        }
 
         continue; // this continue statement is the only one that forces the world to re-gen, in the old code. Now it breaks out only to the disc re-sample loop.
       }
@@ -705,7 +705,7 @@ void worldmap::Generate()
 
   // Add a message to indicate that dungeons may show up on weird terrains
   if(ForcePlacementOnAnyTerrain == true)
-    ADD_MESSAGE("It's the world Kenny, but not as we know it..."/*, ivanconfig::GetDefaultPetName().CStr()*/);
+    ADD_MESSAGE("\"It's the world Kenny, but not as we know it...\""/*, ivanconfig::GetDefaultPetName().CStr()*/);
 }
 
 void worldmap::RandomizeAltitude()
