@@ -183,7 +183,8 @@ void worldmap::Generate()
   int ForcedWorldReGens = 0;
 
   int InitialSeed = ivanconfig::GetWorldSeedConfig();
-  truth SeedFailFlag = false;
+  truth CustomSeedRequested = (!InitialSeed ? false : true);
+  truth SeedFailed = false;
 
   int WorldSize = ivanconfig::GetWorldSizeNumber();
   double NoiseFrequency = 2.0;
@@ -222,15 +223,27 @@ void worldmap::Generate()
   WorldNoise.SetFractalType(FastNoise::Billow);
   WorldNoise.SetFractalOctaves(4);
 
-  int MAX_DISC_SAMPLING_ATTEMPTS = 6;
+  uint MAX_DISC_SAMPLING_ATTEMPTS = 6;
+  uint MAX_SEEDED_WORLD_ATTEMPTS = 50;
+  uint MAX_FORCED_WORLD_REGENERATIONS = 20;
   truth ForcePlacementOnAnyTerrain = false;
   truth ForceWorldReGen = false;
   truth CoreLocationFailure = false;
   
   for(;;)
   {
-    if(SeedFailFlag == true)
+/*
+    if(CustomSeedRequested && (WorldAttempts >= MAX_SEEDED_WORLD_ATTEMPTS) && !SeedFailed)
+    {
+      SeedFailed = true;
+    }
+*/
+    if(SeedFailed == true)
+    {
       InitialSeed = 0;
+      ForcedWorldReGens = 0;
+      PlacementAttempts = 0;
+    }
     
     ForceWorldReGen = false;
     CoreLocationFailure = false;
@@ -555,7 +568,6 @@ void worldmap::Generate()
                 // Should request re-sample, unless max re-samples have been reached
                 // In which case if specific seed requested, place anywhere, else re-generate world
                 // If specific seed requested, and placed anywhere, and still reaches here, re-generate world with another seed, turn off specific seed-requested flag
-                
                 /*
                 if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && CustomSeedRequested && !ForcePlacementOnAnyTerrain)
                   ForcePlacementOnAnyTerrain = true;
@@ -635,7 +647,7 @@ void worldmap::Generate()
         if(k1 >= MAX_DISC_SAMPLING_ATTEMPTS - 1)
           ForceWorldReGen = true;
 
-        if(ForcedWorldReGens >= 20)
+        if(ForcedWorldReGens >= MAX_FORCED_WORLD_REGENERATIONS)
         {
           ADD_MESSAGE("Forcing placement on any terrain...");
           ForcePlacementOnAnyTerrain = true;
@@ -703,9 +715,12 @@ void worldmap::Generate()
   ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
   ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
 
+  if(SeedFailed == true)
+    ADD_MESSAGE("0xBAAD5EED");
+
   // Add a message to indicate that dungeons may show up on weird terrains
   if(ForcePlacementOnAnyTerrain == true)
-    ADD_MESSAGE("\"It's the world Kenny, but not as we know it...\""/*, ivanconfig::GetDefaultPetName().CStr()*/);
+    ADD_MESSAGE("\"It's the world %s, but not as we know it...\"", ivanconfig::GetDefaultPetName().CStr());
 }
 
 void worldmap::RandomizeAltitude()
