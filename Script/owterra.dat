@@ -164,7 +164,21 @@ blackmarket
   NativeGTerrainType = LEAFY_FOREST;
 }
 
-locationAA
+xinrochtomb
+{
+  BitmapPos = 0, 64;
+  NameStem = "sombre and forbidding mausoleum";
+  UsesLongArticle = false;
+  AttachedDungeon = XINROCH_TOMB;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = GLACIER;
+  RevealEnvironmentInitially = false;
+  HideLocationInitially = true;
+  CanBeOnAnyTerrain = true;
+}
+
+locationA
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -172,10 +186,10 @@ locationAA
   AttachedDungeon = MONDEDR;
   AttachedArea = 0;
   CanBeGenerated = false;
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainType = TUNDRA;
 }
 
-locationAB
+locationB
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -186,7 +200,7 @@ locationAB
   NativeGTerrainType = JUNGLE;
 }
 
-locationAC
+locationC
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -194,10 +208,10 @@ locationAC
   AttachedDungeon = DARK_FOREST;
   AttachedArea = 0;
   CanBeGenerated = false;
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
-locationAD
+locationD
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -205,10 +219,32 @@ locationAD
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
   CanBeGenerated = false;
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
-locationAE
+locationE
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = false;
+  NativeGTerrainType = STEPPE;
+}
+
+locationF
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = false;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationG
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -219,7 +255,7 @@ locationAE
   NativeGTerrainType = GLACIER;
 }
 
-locationAF
+locationH
 {
   BitmapPos = 0, 64;
   NameStem = "empty area";
@@ -230,290 +266,12 @@ locationAF
   NativeGTerrainType = GLACIER;
 }
 
-locationAG
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = GLACIER;
-}
-
-locationAH
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = GLACIER;
-}
-
-locationAI
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
-}
-
-locationAJ
-{
-  BitmapPos = 0, 64;
-  NameStem = "a house";
-  AttachedDungeon = 0;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
-}
-
-locationAK
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
-}
-
-locationAL
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
-}
-
-locationAM
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
-}
-
-locationAN
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = EVERGREEN_FOREST;
-}
-
-locationAO
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = EVERGREEN_FOREST;
-}
-
-locationAP
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = DESERT;
-}
-
-locationAQ
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = DESERT;
-}
-
-locationAR
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
-}
-
-locationAS
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
-}
-
-locationAT
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
-}
-
-locationAU
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
-}
-
-locationAV
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
-}
-
-xinrochtomb
-{
-  BitmapPos = 0, 64;
-  NameStem = "sombre and forbidding mausoleum";
-  UsesLongArticle = false;
-  AttachedDungeon = XINROCH_TOMB;
-  AttachedArea = 0;
-  CanBeGenerated = true;
-  NativeGTerrainType = TUNDRA;
-  RevealEnvironmentInitially = false;
-  HideLocationInitially = true;
-  CanBeOnAnyTerrain = true;
-}
-
-locationAX
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationAY
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationAZ
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBA
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBB
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBC
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBD
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBE
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
-
-locationBF
-{
-  BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
-  AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
-}
+/* Previously, there were 31 additional locations, with the following WTerrain distributions:
+JUNGLE x4
+GLACIER x4
+LEAFY_FOREST x5
+EVERGREEN_FOREST x2
+DESERT x2
+STEPPE x4
+TUNDRA x10
+*/

@@ -575,7 +575,7 @@ void worldmap::Generate()
                   ForceWorldReGen = true;
                 else
                   ForceReSample = true;
-                
+
                 if((WorldAttempts >= 5) && !ForcePlacementOnAnyTerrain)
                 {
                   ForcePlacementOnAnyTerrain = true;
