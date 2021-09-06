@@ -36,6 +36,7 @@ continent* worldmap::GetContinent(int I) const { return Continent[I]; }
 int worldmap::GetAltitude(v2 Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 charactervector& worldmap::GetPlayerGroup() { return PlayerGroup; }
 character* worldmap::GetPlayerGroupMember(int c) { return PlayerGroup[c]; }
+std::vector<v2> worldmap::GetWasPlaced() { return WasPlaced;}
 
 struct location
 {
@@ -86,7 +87,7 @@ worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
   continent::PossibleLocationBuffer = PossibleLocationBuffer;
-  
+
   InitializeShapeDescription();
 }
 
@@ -121,7 +122,7 @@ void worldmap::Save(outputfile& SaveFile) const
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile << Continent << PlayerGroup << WorldSeed;
+  SaveFile << Continent << PlayerGroup << WorldSeed << WasPlaced;
 }
 
 void worldmap::Load(inputfile& SaveFile)
@@ -158,7 +159,7 @@ void worldmap::Load(inputfile& SaveFile)
     }
 
   CalculateNeighbourBitmapPoses();
-  SaveFile >> Continent >> PlayerGroup >> WorldSeed;
+  SaveFile >> Continent >> PlayerGroup >> WorldSeed >> WasPlaced;
 }
 
 void worldmap::InitializeShapeDescription()
@@ -688,6 +689,8 @@ void worldmap::Generate()
         SetEntryPos(NewPlace->GetAttachedDungeon(), AtTheseCoordinates[j]);
         if(NewPlace->RevealEnvironmentInitially())
           RevealEnvironment(AtTheseCoordinates[j], 1);
+
+        WasPlaced.emplace_back(v2(ShallBePlaced[j].Type, NewPlace->GetAttachedDungeon()));
       }
     }
     

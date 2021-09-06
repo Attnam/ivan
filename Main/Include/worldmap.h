@@ -62,6 +62,7 @@ class worldmap : public area
   truth PoissonDiscSamplerCheckDistance(int, int, double, int, int, long, std::vector<v2>);
   int GetWorldSeed() const { return WorldSeed; }
   void InitializeShapeDescription();
+  std::vector<v2> GetWasPlaced();
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;
@@ -76,6 +77,7 @@ class worldmap : public area
   int WorldSeed;
   std::vector<v2> Grid;
   std::vector<v2> Queue;
+  std::vector<v2> WasPlaced;
 };
 
 outputfile& operator<<(outputfile&, const worldmap*);
