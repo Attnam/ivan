@@ -185,36 +185,52 @@ void worldmap::Generate()
 
   int InitialSeed = ivanconfig::GetWorldSeedConfig();
   truth CustomSeedRequested = (!InitialSeed ? false : true);
-  truth SeedFailed = false;
+  truth InitialSeedFailed = false;
 
   int WorldSize = ivanconfig::GetWorldSizeNumber();
-  double NoiseFrequency = 2.0;
+  double NoiseFrequency = 1.1;
+
+  uint MAX_SEEDED_WORLD_ATTEMPTS = 4;
+  uint MAX_FORCED_WORLD_REGENERATIONS = 20;
 
   switch(WorldSize)
   {
     case HUGE_WORLD:
       NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
+      MAX_SEEDED_WORLD_ATTEMPTS = 4;
+      MAX_FORCED_WORLD_REGENERATIONS = 10;
       break;
     case LARGE_WORLD:
       NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
+      MAX_SEEDED_WORLD_ATTEMPTS = 4;
+      MAX_FORCED_WORLD_REGENERATIONS = 10;
       break;
     case FOUR_SCREEN_WORLD:
-      NoiseFrequency = (!UsingPangea ? 1.6 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 1.4 : 1.2);
+      MAX_SEEDED_WORLD_ATTEMPTS = 4;
       break;
     case MEDIUM_WORLD:
-      NoiseFrequency = (!UsingPangea ? 1.4 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 1.4 : 1.3);
+      MAX_SEEDED_WORLD_ATTEMPTS = 8;
       break;
     case SMALL_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.3 : 1.0);
+      MAX_SEEDED_WORLD_ATTEMPTS = 8;
       break;
     case TINY_WORLD:
-      NoiseFrequency = (!UsingPangea ? 1.2 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 1.3 : 1.2);
+      MAX_SEEDED_WORLD_ATTEMPTS = 16;
+      MAX_FORCED_WORLD_REGENERATIONS = 40;
       break;
     case ONE_SCREEN_WORLD:
-      NoiseFrequency = (!UsingPangea ? 1.2 : 1.0);
+      NoiseFrequency = (!UsingPangea ? 1.2 : 1.1);
+      MAX_SEEDED_WORLD_ATTEMPTS = 16;
+      MAX_FORCED_WORLD_REGENERATIONS = 30;
       break;
     default:
-      NoiseFrequency = 1.0;
+      NoiseFrequency = 1.1;
+      MAX_SEEDED_WORLD_ATTEMPTS = 4;
+      MAX_FORCED_WORLD_REGENERATIONS = 20;
   }
 
   //WorldNoise.SetNoiseType(FastNoise::Simplex);
@@ -225,22 +241,21 @@ void worldmap::Generate()
   WorldNoise.SetFractalOctaves(4);
 
   uint MAX_DISC_SAMPLING_ATTEMPTS = 6;
-  uint MAX_SEEDED_WORLD_ATTEMPTS = 50;
-  uint MAX_FORCED_WORLD_REGENERATIONS = 20;
   truth ForcePlacementOnAnyTerrain = false;
   truth ForceWorldReGen = false;
   truth CoreLocationFailure = false;
   
   for(;;)
   {
-/*
-    if(CustomSeedRequested && (WorldAttempts >= MAX_SEEDED_WORLD_ATTEMPTS) && !SeedFailed)
+
+    if(CustomSeedRequested && (WorldAttempts >= MAX_SEEDED_WORLD_ATTEMPTS) && !InitialSeedFailed)
     {
-      SeedFailed = true;
+      InitialSeedFailed = true;
     }
-*/
-    if(SeedFailed == true)
+
+    if(InitialSeedFailed == true)
     {
+      ADD_MESSAGE("World generator encountered bad seed: %d", InitialSeed);
       InitialSeed = 0;
       ForcedWorldReGens = 0;
       PlacementAttempts = 0;
@@ -268,7 +283,7 @@ void worldmap::Generate()
     if(!PerfectForAttnam.size())
       continue;
 
-    v2 AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
+    v2 NewAttnamPos, TunnelEntry, TunnelExit;
     truth Correct = false;
     continent* PetrusLikes;
     truth Completed = true;
@@ -447,10 +462,10 @@ void worldmap::Generate()
       PlacementAttempts++;
 
       int PoissonRadius = 3;
-      
-      if((k1 <= 1) && (ForcedWorldReGens <= 2)) // Add a check on world gen attempts here, no point using a coarse radius if worldgens > 2
+      // Add a check on world gen attempts here, no point using a coarse radius if ForcedWorldReGens > 3, or for tiny worlds
+      if((k1 <= 1) && (ForcedWorldReGens <= 2) && (WorldSize == HUGE_WORLD || WorldSize == LARGE_WORLD))
         PoissonRadius = 5; // COARSE_RADIUS
-      else if(k1 > 1 && k1 <= 3 && (ForcedWorldReGens <= 4))
+      else if(k1 > 1 && k1 <= 3 && (ForcedWorldReGens <= 4) && (WorldSize != ONE_SCREEN_WORLD || WorldSize != TINY_WORLD))
         PoissonRadius = 4; // FINER_RADIUS
       else
         PoissonRadius = 3; // FINEST_RADIUS
@@ -717,9 +732,6 @@ void worldmap::Generate()
   ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
   ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
   ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
-
-  if(SeedFailed == true)
-    ADD_MESSAGE("0xBAAD5EED");
 
   // Add a message to indicate that dungeons may show up on weird terrains
   if(ForcePlacementOnAnyTerrain == true)

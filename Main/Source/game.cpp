@@ -850,6 +850,8 @@ truth game::Init(cfestring& loadBaseName)
       WorldMap->Generate();
       UpdateCamera();
       SendLOSUpdateRequest();
+      GetCurrentArea()->SendNewDrawRequest();
+      DrawEverything();
       Tick = 0;
       Turn = 0;
       InitPlayerAttributeAverage();
