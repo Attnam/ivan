@@ -150,7 +150,7 @@ pyramid
   AttachedDungeon = PYRAMID;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainTypes = { 1, DESERT; }
+  NativeGTerrainTypes = { 2, DESERT, JUNGLE; }
 }
 
 blackmarket
