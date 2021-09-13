@@ -322,7 +322,7 @@ cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           &MIDIOutputDeviceDisplayer);
 cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
                                           "What land shapes to generate",
-                                          "Choose whether to generate continents or pangea. If Pangea is selected, the generator will try to make all locations reachable from the same landmass.",
+                                          "Choose whether to generate continents or pangea. If Pangea is selected, the generator will make all locations reachable from the same landmass.",
                                           0, 2,
                                           &LandTypeConfigDisplayer);
 cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
@@ -337,7 +337,7 @@ cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
                                           &WorldShapeConfigDisplayer);
 numberoption ivanconfig::WorldSeedConfig("WorldSeedConfig",
                                           "Select a world seed",
-                                          "",
+                                          "0 gives a random world seed, else select a new one at your own risk. If a world cannot be generated with the given seed after a finite number of attempts, you will get a message saying the world generator encountered a bad seed, what that seed was, and a new world will be generated from a random seed instead of the one specified here.",
                                           0,
                                           &WorldSeedConfigDisplayer,
                                           &WorldSeedConfigChangeInterface,
@@ -1000,8 +1000,7 @@ void ivanconfig::WorldSeedConfigDisplayer(const numberoption* O, festring& Entry
 
 truth ivanconfig::WorldSeedConfigChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("0 gives random safe world seed (out of around ten), else select new one at your own risk!"),
-                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("0 gives random world seed, else select new one at your own risk."), GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
 }

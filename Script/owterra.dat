@@ -44,7 +44,7 @@ attnam
   NameStem = "mighty cathedral reaching the clouds";
   UsesLongArticle = false;
   AttachedDungeon = ATTNAM;
-  CanBeGenerated = true; /* Overridden by the world map generator */
+  CanBeGenerated = true;
   NativeGTerrainTypes = { 1, EVERGREEN_FOREST; }
   RevealEnvironmentInitially = true;
   HideLocationInitially = false;
@@ -58,7 +58,7 @@ elpuricave
   NameStem = "hideous cave entrance radiating pure evil";
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
-  CanBeGenerated = true; /* Overridden by the world map generator */
+  CanBeGenerated = true;
   NativeGTerrainTypes = { 1, TUNDRA; }
   RevealEnvironmentInitially = true;
   HideLocationInitially = false;
@@ -150,7 +150,7 @@ pyramid
   AttachedDungeon = PYRAMID;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainTypes = { 2, DESERT, STEPPE; }
+  NativeGTerrainTypes = { 1, DESERT; }
 }
 
 blackmarket
@@ -182,9 +182,9 @@ locationA
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA; /*MONDEDR*/
+  AttachedDungeon = MONDEDR;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
@@ -193,9 +193,9 @@ locationB
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA; /*IRINOX*/
+  AttachedDungeon = IRINOX;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, JUNGLE; }
 }
 
@@ -204,10 +204,10 @@ locationC
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA; /*DARK_FOREST*/
+  AttachedDungeon = DARK_FOREST;
   AttachedArea = 0;
-  CanBeGenerated = true;
-  NativeGTerrainTypes = { 1, LEAFY_FOREST; }
+  CanBeGenerated = false;
+  NativeGTerrainTypes = { 2, LEAFY_FOREST, EVERGREEN_FOREST; }
 }
 
 locationD
@@ -217,7 +217,7 @@ locationD
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, LEAFY_FOREST; }
 }
 
@@ -228,18 +228,18 @@ locationE
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, STEPPE; }
 }
 
 locationF
 {
   BitmapPos = 0, 64;
-  NameStem = "empty area";
+  NameStem = "Erno's House";
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
@@ -250,7 +250,7 @@ locationG
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
@@ -261,7 +261,7 @@ locationH
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainTypes = { 1, GLACIER; }
 }
 

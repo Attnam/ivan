@@ -179,81 +179,87 @@ void worldmap::Generate()
   int GeometricMeanSize = sqrt(XSize*YSize);
   truth UsingPangea = !ivanconfig::GetLandTypeConfig() ? true : false;
 
+  // Counters
   int WorldAttempts = 0;
   int PlacementAttempts = 0;
   int ForcedWorldReGens = 0;
 
+  // Limits
+  uint maxSeededWorldAttempts = 4;
+  uint maxForcedWorldRegenerations = 20;
+  uint maxDiscSamplingAttempts = 6;
+
+  // Flags
+  truth ForcePlacementOnAnyTerrain = false;
+  truth ForceWorldReGen = false;
+  truth CoreLocationFailure = false;
+
+  // World seed flags
   int InitialSeed = ivanconfig::GetWorldSeedConfig();
   truth CustomSeedRequested = (!InitialSeed ? false : true);
   truth InitialSeedFailed = false;
 
+  // Determining noise distribution according to world size and shape
   int WorldSize = ivanconfig::GetWorldSizeNumber();
+  // A general rule-of-thumb for NoiseFrequency for the noise type and fractal type and octaves we are using here:
+  // NoiseFrequency = 1.0 => larger landmasses
+  // NoiseFrequency = 2.0 => smaller landmasses
   double NoiseFrequency = 1.1;
-
-  uint MAX_SEEDED_WORLD_ATTEMPTS = 4;
-  uint MAX_FORCED_WORLD_REGENERATIONS = 20;
 
   switch(WorldSize)
   {
     case HUGE_WORLD:
       NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
-      MAX_SEEDED_WORLD_ATTEMPTS = 4;
-      MAX_FORCED_WORLD_REGENERATIONS = 10;
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 10;
       break;
     case LARGE_WORLD:
       NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
-      MAX_SEEDED_WORLD_ATTEMPTS = 4;
-      MAX_FORCED_WORLD_REGENERATIONS = 10;
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 10;
       break;
     case FOUR_SCREEN_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.4 : 1.2);
-      MAX_SEEDED_WORLD_ATTEMPTS = 4;
+      maxSeededWorldAttempts = 4;
       break;
     case MEDIUM_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.4 : 1.3);
-      MAX_SEEDED_WORLD_ATTEMPTS = 8;
+      maxSeededWorldAttempts = 8;
       break;
     case SMALL_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.3 : 1.0);
-      MAX_SEEDED_WORLD_ATTEMPTS = 8;
+      maxSeededWorldAttempts = 8;
       break;
     case TINY_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.3 : 1.2);
-      MAX_SEEDED_WORLD_ATTEMPTS = 16;
-      MAX_FORCED_WORLD_REGENERATIONS = 40;
+      maxSeededWorldAttempts = 16;
+      maxForcedWorldRegenerations = 40;
       break;
     case ONE_SCREEN_WORLD:
       NoiseFrequency = (!UsingPangea ? 1.2 : 1.1);
-      MAX_SEEDED_WORLD_ATTEMPTS = 16;
-      MAX_FORCED_WORLD_REGENERATIONS = 30;
+      maxSeededWorldAttempts = 16;
+      maxForcedWorldRegenerations = 30;
       break;
     default:
       NoiseFrequency = 1.1;
-      MAX_SEEDED_WORLD_ATTEMPTS = 4;
-      MAX_FORCED_WORLD_REGENERATIONS = 20;
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 20;
   }
 
-  //WorldNoise.SetNoiseType(FastNoise::Simplex);
   WorldNoise.SetNoiseType(FastNoise::SimplexFractal);
   WorldNoise.SetFrequency(NoiseFrequency);
-
   WorldNoise.SetFractalType(FastNoise::Billow);
   WorldNoise.SetFractalOctaves(4);
 
-  uint MAX_DISC_SAMPLING_ATTEMPTS = 6;
-  truth ForcePlacementOnAnyTerrain = false;
-  truth ForceWorldReGen = false;
-  truth CoreLocationFailure = false;
-  
   for(;;)
   {
 
-    if(CustomSeedRequested && (WorldAttempts >= MAX_SEEDED_WORLD_ATTEMPTS) && !InitialSeedFailed)
+    if(CustomSeedRequested && (WorldAttempts >= maxSeededWorldAttempts) && !InitialSeedFailed)
     {
       InitialSeedFailed = true;
     }
 
-    if(InitialSeedFailed == true)
+    if(InitialSeedFailed == true && InitialSeed != 0)
     {
       ADD_MESSAGE("World generator encountered bad seed: %d", InitialSeed);
       InitialSeed = 0;
@@ -265,10 +271,9 @@ void worldmap::Generate()
     CoreLocationFailure = false;
     
     WorldAttempts++;
-    //RandomizeAltitude();
-    //SimplexNoiseAltitude();
+    //RandomizeAltitude(); // Old method
     PeriodicSimplexNoiseAltitude(InitialSeed);
-    //SmoothAltitude();
+    //SmoothAltitude(); // Used to have a smoothing step here, probably not needed anymore
     GenerateClimate();
     SmoothClimate();
     CalculateContinents();
@@ -300,12 +305,7 @@ void worldmap::Generate()
       
       int EGForestAmount = PetrusLikes->GetGTerrainAmount(EGForestType);
       int SnowAmount = PetrusLikes->GetGTerrainAmount(SnowType);
-      
-      ADD_MESSAGE("PetrusLikes has %d EGForest and %d Snow tiles.", EGForestAmount, SnowAmount);
-      
-      // These positions do not need to be determined here, can be later, and should depend on nearest to TunnelExit
-      //AttnamPos = PetrusLikes->GetRandomMember(EGForestType);
-      //ElpuriCavePos = PetrusLikes->GetRandomMember(SnowType);
+      //ADD_MESSAGE("PetrusLikes has %d EGForest and %d Snow tiles.", EGForestAmount, SnowAmount);
 
       for(int c2 = 1; c2 < 50; ++c2)
       {
@@ -448,7 +448,7 @@ void worldmap::Generate()
     std::vector<place> ShallBePlaced;
     std::vector<v2> AtTheseCoordinates;
 
-    for(int k1 = 0; k1 < MAX_DISC_SAMPLING_ATTEMPTS; k1++)
+    for(int k1 = 0; k1 < maxDiscSamplingAttempts; k1++)
     {
       AvailableLocations.clear();
       ShallBePlaced.clear();
@@ -482,8 +482,9 @@ void worldmap::Generate()
             AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (TunnelExit - v2(x1, y1)).GetManhattanLength())); // was AttnamPos
           }
 
-      // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
-      std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit/*, AttnamPos, ElpuriCavePos*/};
+      // Remove those positions that have already been taken up by core places, plus the origin.
+      // To get a nice boundary around the TunnelExit, we could add the neighbouring positions to the forbidden positions. Later perhaps.
+      std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit};
       for(uint i = 0; i < ForbiddenPositions.size(); i++)
       {
         AvailableLocations.erase(
@@ -494,12 +495,9 @@ void worldmap::Generate()
           AvailableLocations.end());
       }
 
-      // Sort the vector of global available locations according to distance to attnam. Closest places are first.
+      // Sort the vector of global available locations according to distance to Attnam. Closest places are first.
       std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
       
-      if(!AvailableLocations.empty())
-        ADD_MESSAGE("There are %d locations available to begin with.", AvailableLocations.size());
-
       // Pick out only the places that can be generated that are not core locations, and get their native ground terrain type
       for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
       {
@@ -555,7 +553,7 @@ void worldmap::Generate()
         }
       }
       
-      // Pre-pend Attnam and Gloomy Caves to vector ToBePlaced by reversing ToBePlaced. Now Attnam and GC will be more likely to be placed first for their respective terrain type and hence appear on the same continent as UT_Exit. We will require a test further down to see that this has been accomplished.
+      // Pre-pend Attnam and Gloomy Caves to vector ToBePlaced by reversing ToBePlaced. Now Attnam and GC will be more likely to be placed first for their respective terrain type and hence appear on the same continent as the underwater tunnel exit.
       std::reverse(ToBePlaced.begin(), ToBePlaced.end());
 
       // Do this for as many times as there are number of continents.
@@ -584,6 +582,7 @@ void worldmap::Generate()
           // Go through all remaining places. These are always in a random order :)
           for(uint j = 0; j < ToBePlaced.size(); j++)
           {
+            // Go through the possible terrain types for each place (NativeGTerrainTypes from owterra.dat)
             for(uint j2 = 0; j2 < ToBePlaced[j].NativeGroundTerrainTypes.size(); j2++)
             {
               // If the terrain type of the available location matches that of the place, then put the place there.
@@ -594,8 +593,8 @@ void worldmap::Generate()
                 // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
                 if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
                 {
-                  ADD_MESSAGE("Failed to place core location on continent with UT exit!");
-                  ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
+                  //ADD_MESSAGE("Failed to place core location on continent with UT exit!");
+                  //ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
                   // Just a simple flag with a break will do
                   CoreLocationFailure = true;
                   break;
@@ -607,7 +606,7 @@ void worldmap::Generate()
 
                 break;
               }
-              ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
+              //ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
             }
             if(CoreLocationFailure)
               break;
@@ -639,10 +638,6 @@ void worldmap::Generate()
 
         AvailableLocationsOnThisContinent.clear();
 
-        // Two early stopping criteria. In the default case we just run out of continents to step through.
-        //if(AvailableLocations.empty())
-        //  break;
-
         if(ToBePlaced.empty())
         {
           Completed = true;
@@ -650,12 +645,7 @@ void worldmap::Generate()
         }
       }
       
-      // If there are still towns to be placed, then re-roll (...?)
-      // In a 32x32 size map, this is very often reached..!
-      // It is also possible to run out of continents...
-      if(!ToBePlaced.empty())
-        ADD_MESSAGE("There are still %d places not yet placed!", ToBePlaced.size());
-      
+      // If there are still towns to be placed, or Attnam or GC not appearing on start continent, then re-roll
       if(!ToBePlaced.empty() || CoreLocationFailure)
       {
         AvailableLocations.clear();
@@ -663,27 +653,23 @@ void worldmap::Generate()
         AtTheseCoordinates.clear();
         ToBePlaced.clear();
 
-        if(k1 >= MAX_DISC_SAMPLING_ATTEMPTS - 1)
+        if(k1 >= maxDiscSamplingAttempts - 1)
           ForceWorldReGen = true;
 
-        if(ForcedWorldReGens >= MAX_FORCED_WORLD_REGENERATIONS)
+        if(ForcedWorldReGens >= maxForcedWorldRegenerations)
         {
-          ADD_MESSAGE("Forcing placement on any terrain...");
+          //ADD_MESSAGE("Forcing placement on any terrain...");
           ForcePlacementOnAnyTerrain = true;
         }
 
-        continue; // this continue statement is the only one that forces the world to re-gen, in the old code. Now it breaks out only to the disc re-sample loop.
+        continue; // this continue statement breaks out only to the disc re-sample loop.
       }
       
       if(Completed)
       {
         ForceWorldReGen = false;
-        break; // prevents disc sampling
+        break; // prevents further disc sampling
       }
-      
-      //if(ForceWorldReGen)
-        //break;
-      
     }  //for loop for poisson disc sampling attempts
     if(ForceWorldReGen)
     {
@@ -712,12 +698,8 @@ void worldmap::Generate()
       }
     }
     
-    //GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
-    //SetEntryPos(ATTNAM, AttnamPos);
-    //RevealEnvironment(AttnamPos, 1);
     GetWSquare(NewAttnamPos)->ChangeOWTerrain(newattnam::Spawn());
     SetEntryPos(NEW_ATTNAM, NewAttnamPos);
-    //SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
     GetWSquare(TunnelEntry)->ChangeOWTerrain(underwatertunnel::Spawn());
     SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
     GetWSquare(TunnelExit)->ChangeOWTerrain(underwatertunnelexit::Spawn());
@@ -732,9 +714,9 @@ void worldmap::Generate()
   delete [] OldTypeBuffer;
   delete [] NoIslandAltitudeBuffer;
   
-  ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
-  ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
-  ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
+  //ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
+  //ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
+  //ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
 
   // Add a message to indicate that dungeons may show up on weird terrains
   if(ForcePlacementOnAnyTerrain == true)
