@@ -128,7 +128,7 @@ struct owterraindatabase : public wterraindatabase
   int AttachedDungeon;
   int AttachedArea;
   truth CanBeGenerated;
-  int NativeGTerrainType;
+  fearray<int> NativeGTerrainTypes;
   truth RevealEnvironmentInitially;
   truth HideLocationInitially;
   truth CanBeOnAnyTerrain;
@@ -186,7 +186,7 @@ class owterrain : public wterrain, public oterrain
   DATA_BASE_VALUE(int, AttachedDungeon);
   DATA_BASE_VALUE(int, AttachedArea);
   DATA_BASE_TRUTH(CanBeGenerated);
-  DATA_BASE_VALUE(int, NativeGTerrainType);
+  DATA_BASE_VALUE(const fearray<int>&, NativeGTerrainTypes);
   DATA_BASE_TRUTH(RevealEnvironmentInitially);
   DATA_BASE_TRUTH(HideLocationInitially);
   DATA_BASE_TRUTH(CanBeOnAnyTerrain);

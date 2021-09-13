@@ -31,7 +31,7 @@ owterrain
   UsesLongArticle = false;
   AttachedArea = 0;
   CanBeGenerated = false;
-  NativeGTerrainType = 0;
+  NativeGTerrainTypes = { 1, 0; }
   RevealEnvironmentInitially = false; /* Overridden by the world map generator for core locations */
   HideLocationInitially = false; /* Overridden by the world map generator for core locations */
   CanBeOnAnyTerrain = false; /* Overridden by the world map generator for core locations */
@@ -45,7 +45,7 @@ attnam
   UsesLongArticle = false;
   AttachedDungeon = ATTNAM;
   CanBeGenerated = true; /* Overridden by the world map generator */
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainTypes = { 1, EVERGREEN_FOREST; }
   RevealEnvironmentInitially = true;
   HideLocationInitially = false;
   CanBeOnAnyTerrain = false;
@@ -59,7 +59,7 @@ elpuricave
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
   CanBeGenerated = true; /* Overridden by the world map generator */
-  NativeGTerrainType = TUNDRA;
+  NativeGTerrainTypes = { 1, TUNDRA; }
   RevealEnvironmentInitially = true;
   HideLocationInitially = false;
   CanBeOnAnyTerrain = false;
@@ -73,7 +73,7 @@ newattnam
   UsesLongArticle = false;
   AttachedDungeon = NEW_ATTNAM;
   CanBeGenerated = false; /* Overridden by the world map generator */
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainTypes = { 1, JUNGLE; }
   /*IsCoreLocation = true;*/
 }
 
@@ -84,7 +84,7 @@ underwatertunnel
   UsesLongArticle = true;
   AttachedDungeon = UNDER_WATER_TUNNEL;
   CanBeGenerated = false; /* Overridden by the world map generator */
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainTypes = { 1, JUNGLE; }
   /*IsCoreLocation = true;*/
 }
 
@@ -96,7 +96,7 @@ underwatertunnelexit
   AttachedDungeon = UNDER_WATER_TUNNEL;
   AttachedArea = 2; /*underwater tunnel level 3*/
   CanBeGenerated = false; /* Overridden by the world map generator */
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainTypes = { 1, JUNGLE; }
   /*IsCoreLocation = true;*/
 }
 
@@ -108,7 +108,7 @@ aslonacastle
   AttachedDungeon = ASLONA_CASTLE;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = LEAFY_FOREST;
+  NativeGTerrainTypes = { 1, LEAFY_FOREST; }
 }
 
 rebelcamp
@@ -119,7 +119,7 @@ rebelcamp
   AttachedDungeon = REBEL_CAMP;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = STEPPE;
+  NativeGTerrainTypes = { 1, STEPPE; }
 }
 
 goblinfort
@@ -130,7 +130,7 @@ goblinfort
   AttachedDungeon = GOBLIN_FORT;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainTypes = { 1, EVERGREEN_FOREST; }
 }
 
 fungalcave
@@ -140,7 +140,7 @@ fungalcave
   AttachedDungeon = FUNGAL_CAVE;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = JUNGLE;
+  NativeGTerrainTypes = { 1, JUNGLE; }
 }
 
 pyramid
@@ -150,7 +150,7 @@ pyramid
   AttachedDungeon = PYRAMID;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = DESERT;
+  NativeGTerrainTypes = { 2, DESERT, STEPPE; }
 }
 
 blackmarket
@@ -161,7 +161,7 @@ blackmarket
   AttachedDungeon = BLACK_MARKET;
   CanBeGenerated = true;
   HideLocationInitially = true;
-  NativeGTerrainType = LEAFY_FOREST;
+  NativeGTerrainTypes = { 1, LEAFY_FOREST; }
 }
 
 xinrochtomb
@@ -172,10 +172,9 @@ xinrochtomb
   AttachedDungeon = XINROCH_TOMB;
   AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = GLACIER;
+  NativeGTerrainTypes = { 2, GLACIER, TUNDRA; }
   RevealEnvironmentInitially = false;
   HideLocationInitially = true;
-  CanBeOnAnyTerrain = true;
 }
 
 locationA
@@ -183,10 +182,10 @@ locationA
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = MONDEDR;
+  AttachedDungeon = EMPTY_AREA; /*MONDEDR*/
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
 locationB
@@ -194,10 +193,10 @@ locationB
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = IRINOX;
+  AttachedDungeon = EMPTY_AREA; /*IRINOX*/
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = JUNGLE;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, JUNGLE; }
 }
 
 locationC
@@ -205,10 +204,10 @@ locationC
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = DARK_FOREST;
+  AttachedDungeon = EMPTY_AREA; /*DARK_FOREST*/
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, LEAFY_FOREST; }
 }
 
 locationD
@@ -218,8 +217,8 @@ locationD
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = LEAFY_FOREST;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, LEAFY_FOREST; }
 }
 
 locationE
@@ -229,8 +228,8 @@ locationE
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = STEPPE;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, STEPPE; }
 }
 
 locationF
@@ -240,8 +239,8 @@ locationF
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = TUNDRA;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
 locationG
@@ -251,8 +250,8 @@ locationG
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = GLACIER;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, TUNDRA; }
 }
 
 locationH
@@ -262,8 +261,8 @@ locationH
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = false;
-  NativeGTerrainType = GLACIER;
+  CanBeGenerated = true;
+  NativeGTerrainTypes = { 1, GLACIER; }
 }
 
 /* Previously, there were 31 additional locations, with the following WTerrain distributions:

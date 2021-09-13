@@ -60,12 +60,12 @@ struct place
 {
   int Type;
   int Config;
-  int NativeGTerrainType;
+  std::vector<int> NativeGroundTerrainTypes;
   truth HasBeenPlaced;
   truth CanBeOnAnyTerrain;
   truth IsCoreLocation;
 
-  place(int t, int c, int n, truth p, truth a, truth i) : Type(t), Config(c), NativeGTerrainType(n), HasBeenPlaced(p), CanBeOnAnyTerrain(a), IsCoreLocation(i) {}
+  place(int t, int c, std::vector<int> s, truth p, truth a, truth i) : Type(t), Config(c), NativeGroundTerrainTypes(s), HasBeenPlaced(p), CanBeOnAnyTerrain(a), IsCoreLocation(i) {}
 };
 
 worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
@@ -513,7 +513,14 @@ void worldmap::Generate()
 
           if(!DataBase->IsAbstract && DataBase->CanBeGenerated && !DataBase->IsCoreLocation)
           {
-            place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
+            const fearray<int> &TerrainTypes = DataBase->NativeGTerrainTypes;
+            std::vector<int> NativeGroundTerrainTypes;
+            for (uint f = 0; f < TerrainTypes.Size; ++f)
+            {
+              NativeGroundTerrainTypes.push_back(TerrainTypes[f]);
+            }
+
+            place ConfigID(Type, DataBase->Config, NativeGroundTerrainTypes, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
             ToBePlaced.push_back(ConfigID);
           }
         }
@@ -535,7 +542,14 @@ void worldmap::Generate()
 
           if(!DataBase->IsAbstract && DataBase->CanBeGenerated && DataBase->IsCoreLocation)
           {
-            place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
+            const fearray<int> &TerrainTypes = DataBase->NativeGTerrainTypes;
+            std::vector<int> NativeGroundTerrainTypes;
+            for (uint f = 0; f < TerrainTypes.Size; ++f)
+            {
+              NativeGroundTerrainTypes.push_back(TerrainTypes[f]);
+            }
+
+            place ConfigID(Type, DataBase->Config, NativeGroundTerrainTypes, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
             ToBePlaced.push_back(ConfigID); // Append core locations Attnam and Gloomy Caves
           }
         }
@@ -570,47 +584,36 @@ void worldmap::Generate()
           // Go through all remaining places. These are always in a random order :)
           for(uint j = 0; j < ToBePlaced.size(); j++)
           {
-            // If the terrain type of the available location matches that of the place, then put the place there.
-            if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain) || ForcePlacementOnAnyTerrain) // ToDo: Use an override flag if it has been attempted around 25? times. (i.e. in the event that the worldmap is too small!
+            for(uint j2 = 0; j2 < ToBePlaced[j].NativeGroundTerrainTypes.size(); j2++)
             {
-              v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
-              
-              // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
-              if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
+              // If the terrain type of the available location matches that of the place, then put the place there.
+              if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGroundTerrainTypes[j2])) || (ToBePlaced[j].CanBeOnAnyTerrain) || ForcePlacementOnAnyTerrain)
               {
-                ADD_MESSAGE("Failed to place core location on continent with UT exit!");
-                ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
-                
-                // Should request re-sample, unless max re-samples have been reached
-                // In which case if specific seed requested, place anywhere, else re-generate world
-                // If specific seed requested, and placed anywhere, and still reaches here, re-generate world with another seed, turn off specific seed-requested flag
-                /*
-                if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && CustomSeedRequested && !ForcePlacementOnAnyTerrain)
-                  ForcePlacementOnAnyTerrain = true;
-                else if((k1 >= MAX_DISC_SAMPLING_ATTEMPTS) && !CustomSeedRequested)
-                  ForceWorldReGen = true;
-                else
-                  ForceReSample = true;
+                v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
 
-                if((WorldAttempts >= 5) && !ForcePlacementOnAnyTerrain)
+                // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
+                if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
                 {
-                  ForcePlacementOnAnyTerrain = true;
-                  ForceWorldReGen = true;
+                  ADD_MESSAGE("Failed to place core location on continent with UT exit!");
+                  ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
+                  // Just a simple flag with a break will do
+                  CoreLocationFailure = true;
+                  break;
                 }
-                */
 
-                // Just a simple flag with a break will do
-                CoreLocationFailure = true;
+                ShallBePlaced.push_back(ToBePlaced[j]);
+                AtTheseCoordinates.push_back(NewPos);
+                ToBePlaced[j].HasBeenPlaced = true;
+
                 break;
               }
-
-              ShallBePlaced.push_back(ToBePlaced[j]);
-              AtTheseCoordinates.push_back(NewPos);
-              ToBePlaced[j].HasBeenPlaced = true;
-
-              break;
+              ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
             }
-            ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
+            if(CoreLocationFailure)
+              break;
+
+            if(ToBePlaced[j].HasBeenPlaced == true)
+              break;
           }
           if(CoreLocationFailure)
             break;
