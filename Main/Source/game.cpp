@@ -848,10 +848,9 @@ truth game::Init(cfestring& loadBaseName)
       SetCurrentArea(WorldMap = new worldmap(NewWorldSize.X, NewWorldSize.Y));
       CurrentWSquareMap = WorldMap->GetMap();
       WorldMap->Generate();
+      GetCurrentArea()->SendNewDrawRequest();
       UpdateCamera();
       SendLOSUpdateRequest();
-      GetCurrentArea()->SendNewDrawRequest();
-      DrawEverything();
       Tick = 0;
       Turn = 0;
       InitPlayerAttributeAverage();
