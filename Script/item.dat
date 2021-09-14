@@ -2757,7 +2757,7 @@ wand
     AttachedGod = LORICATUS;
     BreakMsg = "releases its powers, thousands of spectral doors manifesting all around";
     DescriptiveInfo = "Transmuting the surrounding matter and focusing it through a Platonic ideal of a gateway, this wand can manifest door out of the proverbial thin air.";
-    Alias == "wand of door";
+    Alias = { 2, "door", "wand of door"; }
   }
 
   Config WAND_OF_INVISIBILITY;
@@ -7545,8 +7545,7 @@ fish
     BitmapPos = 80, 336;
     Adjective = "dead";
     NameSingular = "fish";
-    /* one more "fish" to avoid conflicts with "fish bone" */
-    Alias = { 2, "fish", "sardine"; }
+    Alias == "sardine";
     MainMaterialConfig == SARDINE;
     AttachedGod = SEGES;
     AllowedDungeons = { 7,
