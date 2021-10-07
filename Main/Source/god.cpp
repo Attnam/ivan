@@ -110,7 +110,7 @@ void god::Pray()
       }
     }
   }
-  
+
   fsLastKnownRelation = PrintRelation();
 }
 
@@ -305,7 +305,7 @@ cfestring god::PrintRelation() const
     VerbalRelation = "you more than any other mortal.";
   }
 
-  ADD_MESSAGE("%s %s %s", GetName(), fsIs, VerbalRelation);
+  ADD_MESSAGE("%s %s %s", GetPersonalPronoun(), fsIs, VerbalRelation);
 
   festring fsLKR;
   fsLKR<<GetName()<<" "<<fsWas<<" "<<VerbalRelation;
@@ -359,7 +359,7 @@ truth god::ReceiveOffer(item* Sacrifice)
       ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
     fsLastKnownRelation = PrintRelation();
-    
+
     int RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
     if(OfferValue > 0 && Relation > 250 && !(RAND() % RandModifier))
@@ -589,25 +589,25 @@ bool god::Favour(int iWhat, int iDebit)
     fsLastKnownRelation = PrintRelation();
     return false;
   }
-  
+
   if(Relation < iDebit){ // warns, punishes and provides a last favour before becoming negative relation
     ADD_MESSAGE("You hear a booming voice: \"Don't push your luck... puny mortal!\"");
     PrayBadEffect();
     return true;
   }
-  
+
   return true;
 }
 
 festring god::GetFavourName(int iID)
 {
   if(vFavID.size()==0) FavourInit();
-  
+
   for(auto FI = vFavID.begin(); FI != vFavID.end(); ++FI){
     if(FI->first==iID)
       return FI->second;
   }
-  
+
   ABORT("invalid favour ID %d",iID);
   return ""; //dummy
 }

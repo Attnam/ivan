@@ -133,7 +133,7 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
  * changing the order of these enums will mess importing old savegames (but wont break them)
  * prefer sorting on the initialization of the strings FavourInit()
  */
-enum eFavours { 
+enum eFavours {
   FAVOUR_CALLRAIN = 1,
   FAVOUR_CONFUSE,
   FAVOUR_CURELEPROSY,
@@ -173,76 +173,71 @@ enum eFavours {
 
 void god::FavourInit() //this one is better on this file
 {
-  AddFavourID(FAVOUR_BURNENEMIES,"Burn your Enemies");
-  AddFavourID(FAVOUR_CALLRAIN,"Make it Rain");
-  AddFavourID(FAVOUR_CAUSEFEAR,"Your enemies will Fear you");
-  AddFavourID(FAVOUR_CONFUSE,"Cause Confusion amongst your enemies");
+  AddFavourID(FAVOUR_BURNENEMIES,"Immolation");
+  AddFavourID(FAVOUR_CALLRAIN,"Call Rain");
+  AddFavourID(FAVOUR_CAUSEFEAR,"Inspire Fear");
+  AddFavourID(FAVOUR_CONFUSE,"Spread Confusion");
   AddFavourID(FAVOUR_CURELEPROSY,"Cure Leprosy");
   AddFavourID(FAVOUR_CURELYCANTHROPY,"Cure Lycanthropy");
-  AddFavourID(FAVOUR_CUREMINDWORM,"Cure Mindworm");
+  AddFavourID(FAVOUR_CUREMINDWORM,"Remove Brain Parasite");
   AddFavourID(FAVOUR_CUREPOISON,"Cure Poison");
   AddFavourID(FAVOUR_CURESLOWNESS,"Cure Slowness");
-  AddFavourID(FAVOUR_CURETAPEWORM,"Cure Tapeworm");
+  AddFavourID(FAVOUR_CURETAPEWORM,"Remove Stomach Parasite");
   AddFavourID(FAVOUR_CUREVAMP,"Cure Vampirism");
-  AddFavourID(FAVOUR_CUREWOUNDS,"Cure Wounds");
-  AddFavourID(FAVOUR_DISEASEIMMUNITY,"Gain temporary Immunity to Diseases");
-  AddFavourID(FAVOUR_EARTHQUAKE,"Invoke the rage of an Earth Quake");
+  AddFavourID(FAVOUR_CUREWOUNDS,"Heal");
+  AddFavourID(FAVOUR_DISEASEIMMUNITY,"Ward Off Disease");
+  AddFavourID(FAVOUR_EARTHQUAKE,"Quake the Earth");
   AddFavourID(FAVOUR_ENCHANT,"Enchant Equipment");
-  AddFavourID(FAVOUR_ENRAGE,"Fill you with Rage");
-  AddFavourID(FAVOUR_ETHEREALMOV,"Become Ethereal");
-  AddFavourID(FAVOUR_EXTINGUISHFIRE,"Put out these Flames"); //TODO consider price vs FAVOUR_HEALBURNS);
-  AddFavourID(FAVOUR_FEED,"Calms your Hunger");
-  AddFavourID(FAVOUR_FEELENEMIES,"Feel your Enemies");
-  AddFavourID(FAVOUR_FIRESTORM,"Fiery Firestorm");
-  AddFavourID(FAVOUR_FIXEQUIPMENT,"Fix one broken equipped item");
-  AddFavourID(FAVOUR_HEALBURNS,"Heals your burns");
-  AddFavourID(FAVOUR_HOLYGREN,"Paladin's Holy Grenade");
-  AddFavourID(FAVOUR_INFRAVISION,"See in the Darkness");
+  AddFavourID(FAVOUR_ENRAGE,"Second Wind");
+  AddFavourID(FAVOUR_ETHEREALMOV,"Join the Shadows");
+  AddFavourID(FAVOUR_EXTINGUISHFIRE,"Quench Flames"); //TODO: consider price vs FAVOUR_HEALBURNS
+  AddFavourID(FAVOUR_FEED,"Calm Hunger");
+  AddFavourID(FAVOUR_FEELENEMIES,"Sense Thy Foes");
+  AddFavourID(FAVOUR_FIRESTORM,"Holy Flames");
+  AddFavourID(FAVOUR_FIXEQUIPMENT,"Repair Item");
+  AddFavourID(FAVOUR_HEALBURNS,"Remove Burns");
+  AddFavourID(FAVOUR_HOLYGREN,"Paladin's Gift");
+  AddFavourID(FAVOUR_INFRAVISION,"See Thy Foes");
   AddFavourID(FAVOUR_INVIGORATE,"Invigorate");
   AddFavourID(FAVOUR_INVISIBILITY,"Become Invisible");
-  AddFavourID(FAVOUR_POLYCONTROL,"Control what you are");
-  AddFavourID(FAVOUR_SHOPPING,"Black Friday");
-  AddFavourID(FAVOUR_SPEEDUP,"Make you Fast");
-  AddFavourID(FAVOUR_STOPFIRE,"Unburn one Equipment");
-  AddFavourID(FAVOUR_SUMMONWOLF,"Summon Wolf friend(s)");
-  AddFavourID(FAVOUR_TAME,"Tame this Monster");
-  AddFavourID(FAVOUR_TELEPCONTROL,"Decide where you are sent");
+  AddFavourID(FAVOUR_POLYCONTROL,"Control Shape");
+  AddFavourID(FAVOUR_SHOPPING,"Bounty"); //"Black Friday"
+  AddFavourID(FAVOUR_SPEEDUP,"Haste");
+  AddFavourID(FAVOUR_STOPFIRE,"Repair Burns");
+  AddFavourID(FAVOUR_SUMMONWOLF,"Summon Nature's Ally");
+  AddFavourID(FAVOUR_TAME,"Song of Taming");
+  AddFavourID(FAVOUR_TELEPCONTROL,"Control Warp");
   AddFavourID(FAVOUR_TELEPORT,"Teleport");
 }
 
 int god::CalcDebit(int iDebit,int iDefault){
   if(iDebit!=0){
     switch(iDebit){
-      case FAVOURDEBIT_AUTO:       iDebit=iDefault  ;break;
-      case FAVOURDEBIT_AUTOHALF:   iDebit=iDefault/2;break;
-      case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2;break;
+      case FAVOURDEBIT_AUTO:       iDebit=iDefault;   break;
+      case FAVOURDEBIT_AUTOHALF:   iDebit=iDefault/2; break;
+      case FAVOURDEBIT_AUTODOUBLE: iDebit=iDefault*2; break;
     }
-    
+
     // can ask more favours if very well aligned
-    if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(this)){
+    if(game::GetPlayerAlignment() == game::GetGodAlignmentVsPlayer(this))
       iDebit/=2;
-    }
-    
+
     /**
      * if enough time has passed, a normal pray could provide the favour freely
      * and even with relation benefits, so make it cheaper too, but not costless.
      */
-    if(Timer==0){
+    if(Timer==0)
       iDebit/=2; // /=3 too cheap?
-    }
-    
+
     // skilled in manipulative praying :)
-    iDebit -= (
-      (game::GetPlayer()->GetAttribute(MANA)*2.0)
-      +
-       game::GetPlayer()->GetAttribute(WISDOM)
-    ) / 3.0;
-    
+    iDebit -= game::GetPlayer()->GetAttribute(WISDOM);
+
     /**
-     * max of 20 vafours (50*20=1000) (too much?) 
+     * max of 20 vafours (50*20=1000) (too much?)
      * in the best case (master prayer) only
      */
-    if(iDebit<50)iDebit=50;
+    if(iDebit<50)
+      iDebit=50;
   }
   return iDebit;
 }
@@ -269,44 +264,46 @@ bool FavourTeleport(god* G)
 
 bool god::CallFavour(CallFavourType call, int iCallFavour, int iWhat, int iDebit, int iDbtDefault)
 {
-  if(iCallFavour!=iWhat)return false;
-  
+  if(iCallFavour!=iWhat)
+    return false;
+
   if(iDebit==0) //came thru normal praying
     AddKnownSpell(knownSpellsID,iCallFavour);
-  
-  iDebit=CalcDebit(iDebit,iDbtDefault);
-  
+
+  iDebit = CalcDebit(iDebit,iDbtDefault);
+
   if(iDebit>0)
     if(!god::Favour(iWhat,iDebit))
       return false;
-  
+
   bool bWorked = false;
   if((*call)(this)){
     if(iDebit>0){ //was a favour
       int iTm = 10000 - Relation*10; //by reaching here, Relation is always > 0
       if(iTm<1000)iTm=1000;
       AdjustTimer(iTm); // this is a kind of debit too (counts against next safe pray time)
-      
+
       LastPray=0; // to make it count as a pray too
-      
+
       Relation-=iDebit;
     }
     bWorked = true;
   }
-  
+
   fsLastKnownRelation = PrintRelation();
   return bWorked;
 }
 
 /**
- * 
+ *
  * @param fsWhat
  * @param iDebit if -1 will be automatic
- * @return 
+ * @return
  */
 bool sophos::Favour(int iWhat, int iDebit)
 {
-  if(CallFavour(&FavourTeleport,FAVOUR_TELEPORT,iWhat,iDebit,100))return true;
+  if(CallFavour(&FavourTeleport,FAVOUR_TELEPORT,iWhat,iDebit,100))
+    return true;
   return false;
 }
 
@@ -345,6 +342,8 @@ void sophos::PrayGoodEffect()
     ADD_MESSAGE("%s whispers %s secret to you.", GetName(), SecretType);
     DidHelp = true;
   }
+
+  //TODO: If still didn't help, reveal a bit of the level? Or detect material?
 
   if(!DidHelp)
     ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
@@ -442,7 +441,7 @@ bool FavourExtinguishFire(god* G)
 bool FavourTame(god* G)
 {
   bool HasHelped = false;
-  
+
   for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
   {
     square* Square = PLAYER->GetNeighbourSquare(d);
@@ -483,7 +482,7 @@ bool FavourTame(god* G)
       }
     }
   }
-  
+
   return HasHelped;
 }
 
@@ -497,7 +496,7 @@ bool dulcis::Favour(int iWhat, int iDebit)
 void dulcis::PrayGoodEffect()
 {
   truth HasHelped = false;
-  
+
   for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
   {
     square* Square = PLAYER->GetNeighbourSquare(d);
@@ -535,7 +534,7 @@ void dulcis::PrayGoodEffect()
   HasHelped = Favour(FAVOUR_TAME);
   if(HasHelped)
     return;
-  
+
   if (GetRelation() >= 50)
   {
      ADD_MESSAGE("You feel the music resonate within you.", GetName());
@@ -617,7 +616,7 @@ bool FavourFeed(god* G)
 
       PLAYER->SetNP(SATIATED_LEVEL);
     }
-    
+
     return true;
 }
 bool FavourCureVampirism(god* G)
@@ -721,7 +720,7 @@ bool FavourEnchantEquipment(god* G)
   item* PairEnchantable;
   int LowEnchant = 99;
   truth Pair = false;
-  
+
   for(int c = 0; c < PLAYER->GetEquipments(); ++c)
   {
     item* Equipment = PLAYER->GetEquipment(c);
@@ -760,7 +759,7 @@ bool FavourEnchantEquipment(god* G)
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -826,7 +825,7 @@ bool FavourCallRain(god* G)
     Square->LiquidRain(Beam, WATER);
 
     ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
- 
+
     return true;
 }
 
@@ -864,7 +863,7 @@ bool FavourSummonWolf(god* G)
 
     if(Created > 1)
       ADD_MESSAGE("Suddenly some tame wolves materialize around you.");
-    
+
     return true;
 }
 
@@ -874,7 +873,7 @@ bool silva::Favour(int iWhat, int iDebit)
   if(CallFavour(&FavourCallRain,FAVOUR_CALLRAIN,iWhat,iDebit,75))return true;
   if(CallFavour(&FavourEarthQuake,FAVOUR_EARTHQUAKE,iWhat,iDebit,500))return true;
   if(CallFavour(&FavourSummonWolf,FAVOUR_SUMMONWOLF,iWhat,iDebit,250))return true;
-  
+
   return false;
 }
 
@@ -928,7 +927,7 @@ bool FavourFixEquipment(god* G)
         break;
       }
     }
-    
+
   return true;
 }
 
@@ -948,7 +947,7 @@ bool FavourStopFire(god* G)
         break;
       }
     }
-    
+
     return true;
 }
 
@@ -956,7 +955,7 @@ bool loricatus::Favour(int iWhat, int iDebit)
 {
   if(CallFavour(&FavourFixEquipment,FAVOUR_FIXEQUIPMENT,iWhat,iDebit,250))return true;
   if(CallFavour(&FavourStopFire,FAVOUR_STOPFIRE,iWhat,iDebit,50))return true;
-  
+
   return false;
 }
 
@@ -1084,10 +1083,10 @@ int CalcDuration(god* G)
 {
   if(dynamic_cast<cleptia*>(G))
     return 200 * PLAYER->GetAttribute(WISDOM) + Max(G->GetRelation(), 0);
-  
+
   if(dynamic_cast<scabies*>(G) || dynamic_cast<infuscor*>(G))
     return 300 * PLAYER->GetAttribute(WISDOM) + G->GetRelation() * 5;
-  
+
   ABORT("duration calc for god %s is not available here!",G->GetName());
 }
 bool FavourCureSlowness(god* G)
@@ -1180,7 +1179,7 @@ bool FavourEtherealMov(god* G)
     else
       PLAYER->EditTemporaryStateCounter(ETHEREAL_MOVING,
         PLAYER->GetTemporaryStateCounter(ETHEREAL_MOVING) + (PLAYER->GetAttribute(WISDOM) * 100));
-    
+
     return true;
 }
 
@@ -1246,7 +1245,7 @@ bool FavourShopping(god* G)
     ToBeDeleted->SendToHell();
     OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
   }
-  
+
   return Success;
 }
 bool mellis::Favour(int iWhat, int iDebit)
@@ -1664,7 +1663,7 @@ bool FavourBurnYourEnemies(god* G)
       }
     }
   }
-  
+
   return Success;
 }
 
@@ -1712,7 +1711,7 @@ void infuscor::PrayGoodEffect()
   if(!Success)
   {
     InfuscorFavourDuration = CalcDuration(this);
-    
+
     if(!PLAYER->StateIsActivated(ESP) ||
         PLAYER->GetTemporaryStateCounter(ESP) < InfuscorFavourDuration)
     {
@@ -1790,7 +1789,7 @@ bool FavourCauseFear(god* G)
 
     return true;
   }
-  
+
   return false;
 }
 bool cruentus::Favour(int iWhat, int iDebit)
@@ -1830,7 +1829,7 @@ void cruentus::PrayGoodEffect()
 
   if(Favour(FAVOUR_CAUSEFEAR))
     return;
-    
+
   if(!RAND_2)
   {
     item* Weapon = PLAYER->GetMainWielded();

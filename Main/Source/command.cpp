@@ -66,7 +66,7 @@ int command::GetKey() const
     if(Key4>0)
       return Key4;
   }
-  
+
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
@@ -683,7 +683,7 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
             PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
-          
+
           game::AutoStoreItemInContainer(PileVector[0][c],Char);
         }
 
@@ -731,7 +731,7 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
             ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
-          
+
           game::AutoStoreItemInContainer(ToPickup[c],Char);
         }
 
@@ -1161,35 +1161,38 @@ truth commandsystem::AskFavour(character* Char)
 {
   felist felFavourList(CONST_S("Ask a favour from Whom?"));
   felFavourList.SetEntryDrawer(game::GodEntryDrawer);
-  
+
   int iTot=0;
   std::vector<std::pair<god*,int>> vSelectableFavours;
   for(int c = 1; c <= GODS; ++c){
     god* pgod = game::GetGod(c);
-    if(!pgod->IsKnown())continue;
-    
+    if(!pgod->IsKnown()) continue;
+
     bool bOk=false;
-    if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0)bOk=true;
-    if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0)bOk=true;
-    if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0)bOk=true;
-    if(c == Char->GetLSquareUnder()->GetDivineMaster())bOk=true;
-    
+    if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0) bOk=true;
+    if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0) bOk=true;
+    if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0) bOk=true;
+    if(c == Char->GetLSquareUnder()->GetDivineMaster()) bOk=true;
+
     bool bGodSectionEntry=true;
     std::vector<int> v = pgod->GetKnownSpells();
     for(auto piFavour = v.begin(); piFavour != v.end(); ++piFavour){
       festring fsFavour = CONST_S("") + god::GetFavourName(*piFavour);
-      
+
       col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
-      if(!bOk && game::WizardModeIsReallyActive())col=RED;
-      
+      // if(!bOk && game::WizardModeIsReallyActive()) col=RED;
+
       if(bGodSectionEntry){
-        festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment()) + " " 
-          + pgod->GetName()+" may grant you a favour.";
-        if(ivanconfig::IsShowGodInfo())fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
+        festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment());
+        fsGodEntry.Resize(4); // Longest alignment name is L++ or C--, so have min of one space.
+        fsGodEntry << pgod->GetName() + " might grant you a favour."; //TODO: won't for known gods with no favours, or only name?
+        if(ivanconfig::IsShowGodInfo())
+          fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
         felFavourList.AddEntry(fsGodEntry, DARK_GRAY, 20, c, false);
         bGodSectionEntry=false;
       }
       felFavourList.AddEntry(fsFavour, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
+      // TODO: favour F1 Description
 
       if(bOk || game::WizardModeIsReallyActive()){
 //        std::pair<god*,int> GS;
@@ -1197,17 +1200,19 @@ truth commandsystem::AskFavour(character* Char)
 //        GS.second = *piSpell;
         vSelectableFavours.push_back(std::make_pair(pgod,*piFavour));
       }
-      
+
       iTot++;
     }
   }
-  
+
   festring fsMsg;
-  fsMsg = fsMsg+"You don't know about any "+game::GetVerbalPlayerAlignment()+" favours...";
+  //fsMsg = fsMsg+"You don't know about any "+game::GetVerbalPlayerAlignment()+" favours..."; //TODO: How exactly to phrase this?
+  fsMsg = fsMsg+"You can call upon no favours.";
+  
   if(iTot>0 && vSelectableFavours.size()==0){
     felFavourList.AddEntry(cfestring("(")+fsMsg+")", DARK_GRAY, 0, NO_IMAGE, false);
   }
-      
+
   int Select = LIST_WAS_EMPTY;
   if(iTot>0){
     game::SetStandardListAttributes(felFavourList);
@@ -1215,7 +1220,7 @@ truth commandsystem::AskFavour(character* Char)
       felFavourList.AddFlags(SELECTABLE);
     Select = felFavourList.Draw();
   }
-  
+
   if(Select == LIST_WAS_EMPTY || vSelectableFavours.size()==0)
   {
 //    ADD_MESSAGE("You don't know about any %s favours...", game::GetVerbalPlayerAlignment());
@@ -1225,7 +1230,7 @@ truth commandsystem::AskFavour(character* Char)
 
   if(Select & FELIST_ERROR_BIT)
     return false;
-  
+
   god* G = vSelectableFavours[Select].first;
   int iFavour = vSelectableFavours[Select].second;
   int iDebit=FAVOURDEBIT_AUTO;
@@ -1241,7 +1246,7 @@ truth commandsystem::AskFavour(character* Char)
     Char->EditAP(-1000);
     return true;
   }
-  
+
   return false;
 }
 
