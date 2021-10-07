@@ -4629,7 +4629,8 @@ int game::Menu(std::vector<bitmap*> vBackGround, v2 Pos, cfestring& Topic, cfest
                col16 Color, cfestring& SmallText1, cfestring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
-  int Return = iosystem::Menu(vBackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
+  int Return = iosystem::Menu(vBackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2,
+                              ivanconfig::GetExtraMenuGraphics());
   globalwindowhandler::EnableControlLoops();
   return Return;
 }

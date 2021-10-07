@@ -136,7 +136,8 @@ int main(int argc, char** argv)
                                 CONST_S("Released under the GNU\r"
                                         "General Public License\r"
                                         "More info: see COPYING\r"),
-                                CONST_S("IVAN v" IVAN_VERSION "\r"));
+                                CONST_S("IVAN v" IVAN_VERSION "\r"),
+                                ivanconfig::GetExtraMenuGraphics());
 
     switch(Select)
     {
