@@ -8,7 +8,7 @@ if [ -z "${IVAN_BUILD_DIR}" ]; then
   exit 1
 fi
 
-if [ -n "${IVAN_PLATFORM}" ]; then
+if [ -z "${IVAN_PLATFORM}" ]; then
   IVAN_PLATFORM=win
 fi
 

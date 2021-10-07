@@ -474,4 +474,6 @@ inline inputfile& LoadArray(inputfile& SaveFile,
   return SaveFile;
 }
 
+festring GetUserDataDir();
+        
 #endif
