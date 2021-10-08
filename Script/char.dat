@@ -5104,7 +5104,7 @@ imp
   CanBeGenerated = true;
   Sex = UNDEFINED;
   AttackStyle = USE_ARMS|USE_HEAD;
-  ConsumeFlags = CT_METAL|CT_MINERAL|CT_LIQUID|CT_PLASTIC;
+  ConsumeFlags = CT_METAL|CT_MINERAL|CT_LIQUID|CT_PLASTIC|CT_MAGIC;
   KnownCWeaponSkills = { 2, UNARMED, BITE; }
   CWeaponSkillHits = { 2, 50, 50; }
   PanicLevel = 0;
@@ -5567,6 +5567,7 @@ werewolfwolf
   CanUseEquipment = false;
   CanBeWished = false;
   ClassStates = INFRA_VISION|LYCANTHROPY;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE|CT_MISC_ANIMAL;
   PanicLevel = 0;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
