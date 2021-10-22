@@ -382,12 +382,7 @@ void game::InitScript()
 
 truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
 {
-  return it->IsQuestItem() //TODO this call should suffice instead of this very function
-    || it->IsHeadOfElpuri()
-    || it->IsGoldenEagleShirt()
-    || it->IsPetrussNut()
-    || it->IsTheAvatar()
-    || it->IsEncryptedScroll();
+  return it->IsQuestItem();
 }
 
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
@@ -1716,7 +1711,6 @@ void game::DrawMapOverlay(bitmap* buffer)
 
       v2KnownDungeonSize = (v2Max+v2(1,1)) -v2Min;
     }} DBG3(DBGAV2(v2Min),DBGAV2(v2Max),DBGAV2(v2KnownDungeonSize));
-
 
 //      v2 v2FullDungeonSize=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
     while(iMapTileSizeMax*v2KnownDungeonSize.X > RES.X*0.9)iMapTileSizeMax--;
