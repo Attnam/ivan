@@ -169,6 +169,7 @@ class areachangerequest { };
 typedef void (*dbgdrawoverlay)();
 
 #define AUTOSAVE_SUFFIX ".AutoSave"
+#define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
 {
  public:
@@ -504,6 +505,11 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
+  static truth ConfigureCustomKeys();
+  static festring ToCharIfPossible(int i);
+  static truth ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys);
+  static festring GetMoveKeyDesc(int i);
+  static void LoadCustomCommandKeys();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -513,6 +519,7 @@ class game
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
+  static int  MoveCustomCommandKey[];
   static cv2 MoveVector[];
   static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
