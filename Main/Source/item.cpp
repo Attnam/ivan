@@ -1427,6 +1427,20 @@ void item::SetConfig(int NewConfig, int SpecialFlags)
     UpdatePictures();
 }
 
+truth item::SetConfigIfPossible(int NewConfig, int SpecialFlags)
+{
+  if(databasecreator<item>::InstallDataBaseIfPossible(this, NewConfig, GetConfig())){
+    CalculateAll();
+
+    if(!(SpecialFlags & NO_PIC_UPDATE))
+      UpdatePictures();
+    
+    return true;
+  }
+  
+  return false;
+}
+
 god* item::GetMasterGod() const
 {
   return game::GetGod(GetConfig());
