@@ -19,6 +19,8 @@
 #include "game.h"
 #include "bitmap.h"
 #include "save.h"
+#include "iconf.h"
+#include "dbgmsgproj.h"
 
 v2 RightArmSparkleValidityArray[128];
 v2 LeftArmSparkleValidityArray[128];
@@ -468,13 +470,112 @@ truth object::AddBurningAdjective(festring& String, truth Articled) const
   }
 }
 
+col24 object::CalcEmitationBasedOnVolume(col24 BaseEmit,col24 Emit,ulong vol)
+{
+  if(
+    !ivanconfig::IsUseLightEmiterBasedOnVolume() || 
+    BaseEmit!=0 || //scripted lights use BaseEmitation
+    Emit==0 //black = no light
+  ){
+    return Emit;
+  }
+  
+  /**
+   * Base concept reference: red/green/blue crystal stones dug from shards.
+   * So, dug shards drop crystals up to 200cm3 TODO collect this value from database.
+   * This applies to everything, not just crystals.
+   * Smaller things will emit less light.
+   */
+  static float fMaxVol=200.0; //100% is max light
+  
+  /**
+   * The minimum value for any component to have at least minimum light is 80.
+   * This value was determined based on practical tests (including spider cave that is darker).
+   * Minimum volume shall have minimum light.
+   * This also means that other components can be 0 w/o problems.
+   */
+  static int iColorCompMin=80;
+  
+  /**
+   * it is expected that (therefore not checked, should?):
+   * - no volume will be 0
+   * - at least one default light component will always be >= 80
+   */
+  
+  if(vol<fMaxVol){
+    float fPerc = vol/fMaxVol; //should be >0.0 and <1.0
+    
+    /**
+     * the collected default component from Emit 
+     * are the maximum values for this calc
+     */
+    col24 cDefR = GetRed24  (Emit);
+    col24 cDefG = GetGreen24(Emit);
+    col24 cDefB = GetBlue24 (Emit);
+    
+    col24 cR = cDefR;
+    col24 cG = cDefG;
+    col24 cB = cDefB;
+
+    static bool bUseMinToAll=true; //calc mode
+    if(bUseMinToAll){ //mode MinToAll (this may lead to dark grey...)
+      cR = iColorCompMin + (cDefR-iColorCompMin)*fPerc;
+      cG = iColorCompMin + (cDefG-iColorCompMin)*fPerc;
+      cB = iColorCompMin + (cDefB-iColorCompMin)*fPerc;
+    }else{ //mode MinToHighest (this may mess even more with colors...)
+      // finds the highest value before apply perc
+      char highest='W';
+      if(cDefR == cDefG && cDefR == cDefB)highest='W'; // white/grey
+      else
+      if(cDefR == cDefG)highest='Y'; // yellow
+      else
+      if(cDefR == cDefB)highest='P'; // purple
+      else
+      if(cDefG == cDefB)highest='C'; // cyan
+      else
+      if(cDefR > cDefG && cDefR > cDefB)highest='R';
+      else
+      if(cDefG > cDefR && cDefG > cDefB)highest='G';
+      else
+      if(cDefB > cDefR && cDefB > cDefG)highest='B';
+
+      cR *= fPerc;
+      cG *= fPerc;
+      cB *= fPerc;
+      if(cR<iColorCompMin && cG<iColorCompMin && cB<iColorCompMin){
+        /**
+         * grants the highest has the minimum,
+         * this may make the color change a bit TODO can this be improved?
+         */
+        switch(highest){
+          case 'R': cR=iColorCompMin; break;
+          case 'G': cG=iColorCompMin; break;
+          case 'B': cB=iColorCompMin; break;
+          case 'Y': cR=cG=iColorCompMin; break;
+          case 'P': cR=cB=iColorCompMin; break;
+          case 'C': cG=cB=iColorCompMin; break;
+          case 'W': cR=cG=cB=iColorCompMin; break;
+        }
+      }
+    }
+    Emit = MakeRGB24(cR, cG, cB);
+    DBG9(Emit,vol,fPerc,cDefR,cDefG,cDefB,cR,cG,cB);
+  }
+  
+  return Emit;
+}
+
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
+  DBG5("EmitDbgBase",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
 
   if(MainMaterial)
   {
-    game::CombineLights(Emitation, MainMaterial->GetEmitation());
+    DBG4(MainMaterial->GetEmitation(),GetRed24(MainMaterial->GetEmitation()),GetGreen24(MainMaterial->GetEmitation()),GetBlue24(MainMaterial->GetEmitation()));
+    game::CombineLights(Emitation,
+      CalcEmitationBasedOnVolume( GetBaseEmitation(), MainMaterial->GetEmitation(), MainMaterial->GetVolume() ) );
+    DBG5("EmitDbgFinal",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
@@ -482,6 +583,7 @@ void object::CalculateEmitation()
       game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel,
                                                120 - 8 * CurrentBurnLevel,
                                                90 - 6 * CurrentBurnLevel));
+      DBG5("EmitDbgFinalBurning",Emitation,GetRed24(Emitation),GetGreen24(Emitation),GetBlue24(Emitation));
     }
   }
 }

@@ -545,6 +545,7 @@ class item : public object
   virtual void FinalProcessForBone() { }
   virtual truth SuckSoul(character*, character* = 0) { return false; }
   void SetConfig(int, int = 0);
+  truth SetConfigIfPossible(int, int = 0);
   god* GetMasterGod() const;
   idholder* GetCloneMotherID() const { return CloneMotherID; }
   virtual void SignalStackAdd(stackslot*, void (stack::*)(item*, truth));
