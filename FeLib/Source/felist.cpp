@@ -652,7 +652,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       break;
     }
 
-    if((Flags & SELECTABLE) && Pressed == UpKey)
+    if((Flags & SELECTABLE) && (Pressed == UpKey || Pressed == KEY_UP))
     {DBGLN;
       if(Selected)
       {
@@ -677,7 +677,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       continue;
     }
 
-    if((Flags & SELECTABLE) && Pressed == DownKey)
+    if((Flags & SELECTABLE) && (Pressed == DownKey || Pressed == KEY_DOWN))
     {DBGLN;
       if(!LastEntryVisible || Selected != Selectables - 1)
       {

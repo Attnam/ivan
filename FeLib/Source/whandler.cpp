@@ -614,7 +614,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     return;
   }
 
-  if(Event->key.keysym.mod & KMOD_CTRL){
+  if(Event->key.keysym.mod & KMOD_CTRL){ //TODO right control key is being ignored on lists for ctrl+f filter on the first try
     if(ControlKeyHandler!=NULL) //this one was completely externalized
       ControlKeyHandler(Event->key.keysym.sym);
     return;
