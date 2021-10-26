@@ -175,6 +175,10 @@ truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnim
                                           "Hide hit animations that look like miss",
                                           "",
                                           true);
+truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume",
+                                          "Small light sources emit less light",
+                                          "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show full name of current dungeon",
                                           "",
@@ -1168,6 +1172,7 @@ void ivanconfig::Initialize()
   fsCategory="Advanced Options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

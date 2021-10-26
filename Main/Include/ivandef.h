@@ -346,7 +346,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define FRIEND 4
 
 #define MARTIAL_SKILL_CATEGORIES 3
-#define WEAPON_SKILL_CATEGORIES 11
+#define WEAPON_SKILL_CATEGORIES 12
 
 #define UNARMED 0
 #define KICK 1
@@ -359,6 +359,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define POLE_ARMS 8
 #define WHIPS 9
 #define SHIELDS 10
+#define CRAFTING 11
 
 #define LOCKED 1
 
