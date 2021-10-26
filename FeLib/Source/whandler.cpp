@@ -614,7 +614,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     return;
   }
 
-  if(Event->key.keysym.mod & KMOD_CTRL){
+  if(Event->key.keysym.mod & KMOD_CTRL){ //TODO right control key is being ignored on lists for ctrl+f filter on the first try
     if(ControlKeyHandler!=NULL) //this one was completely externalized
       ControlKeyHandler(Event->key.keysym.sym);
     return;
@@ -627,6 +627,9 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
       graphics::SwitchMode();
       break;
     }
+    return;
+  }else
+  if(Event->key.keysym.mod & KMOD_SHIFT){
     return;
   }
 
@@ -657,7 +660,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
   {
     case SDLK_RETURN:
     case SDLK_KP_ENTER:
-      // both SDL keys are mixed into KEY_ENTER
+      // ex.: both SDL keys are mixed into KEY_ENTER
       KeyPressed = KEY_ENTER; //TODO SDL1? old comment tip or deadCode: Event->key.keysym.unicode;
       break;
 
@@ -700,18 +703,28 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
       KeyPressed = KEY_PAGE_DOWN + 0xE000;
       break;
 
-    case SDLK_KP_5:
-      KeyPressed = iRestWaitKey;
+    case SDLK_DELETE:
+      KeyPressed = KEY_DELETE + 0xE000;
       break;
 
-#if SDL_MAJOR_VERSION == 2 //TODO there is no ESC on SDL1??? but does SDL1 still compiles? anyone uses it yet??? the same question about DJGPP...
-   case SDLK_ESCAPE:
-   case SDLK_BACKSPACE:
-     KeyPressed = Event->key.keysym.sym;
-     break;
+    case SDLK_INSERT:
+      KeyPressed = KEY_INSERT + 0xE000;
+      break;
+
+    case SDLK_KP_5:
+    case SDLK_KP_PERIOD:
+      KeyPressed = iRestWaitKey;
+      break;
+    
+#if SDL_MAJOR_VERSION == 2 
+    default:
+      KeyPressed = Event->key.keysym.sym;
+      if(!KeyPressed)
+        return;
 #endif
 
-#if SDL_MAJOR_VERSION == 1
+//TODO SDL1 still compiles? anyone uses it yet??? the same question about DJGPP...
+#if SDL_MAJOR_VERSION == 1 
    default:
     KeyPressed = Event->key.keysym.unicode;
 
