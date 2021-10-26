@@ -71,7 +71,7 @@
 
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 134 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 135 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 119 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -1424,17 +1424,31 @@ bool game::CheckAddAutoMapNote(square* sqr)
     fs<<"Sign: "<<((sign*)olt)->GetText();
 
   if(
+    dynamic_cast<door*>(olt)!=NULL ||
     dynamic_cast<christmastree*>(olt)!=NULL ||
     dynamic_cast<coffin*>(olt)!=NULL ||
     dynamic_cast<fountain*>(olt)!=NULL || //TODO exclude cathedral?
     dynamic_cast<monsterportal*>(olt)!=NULL ||
     dynamic_cast<stairs*>(olt)!=NULL ||
-    olt->GetConfig() == ANVIL ||
-    olt->GetConfig() == DOUBLE_BED ||
-    olt->GetConfig() == CHAIR ||
-    olt->GetConfig() == FORGE ||
-    olt->GetConfig() == WORK_BENCH ||
-    false
+    (dynamic_cast<decoration*>(olt)!=NULL && (
+      olt->GetConfig() == ANVIL ||
+      olt->GetConfig() == ARM_CHAIR ||
+      olt->GetConfig() == BENCH ||
+      olt->GetConfig() == CHAIR ||
+      olt->GetConfig() == CHEAP_BED ||
+      olt->GetConfig() == COUCH ||
+      olt->GetConfig() == DESK ||
+      olt->GetConfig() == DOUBLE_BED ||
+      olt->GetConfig() == EXPENSIVE_BED ||
+      olt->GetConfig() == FORGE ||
+      olt->GetConfig() == OVEN ||
+      olt->GetConfig() == PEDESTAL ||
+      olt->GetConfig() == PLAIN_BED ||
+      olt->GetConfig() == STRANGE_TREE ||
+      olt->GetConfig() == TAILORING_BENCH ||
+      olt->GetConfig() == WELL ||
+      olt->GetConfig() == WORK_BENCH
+    ))
   ){
     olt->AddName(fs,INDEFINITE);
 //    fs<<olt->GetNameSingular();
@@ -1698,7 +1712,6 @@ void game::DrawMapOverlay(bitmap* buffer)
 
       v2KnownDungeonSize = (v2Max+v2(1,1)) -v2Min;
     }} DBG3(DBGAV2(v2Min),DBGAV2(v2Max),DBGAV2(v2KnownDungeonSize));
-
 
 //      v2 v2FullDungeonSize=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
     while(iMapTileSizeMax*v2KnownDungeonSize.X > RES.X*0.9)iMapTileSizeMax--;
