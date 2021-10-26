@@ -429,7 +429,7 @@ class character : public entity, public id
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
-  virtual void SwitchToCraft(recipedata rpd) { }
+  virtual bool SwitchToCraft(recipedata rpd) { return false; }
   virtual void SwitchToDig(item*, v2) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }

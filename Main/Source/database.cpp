@@ -954,8 +954,23 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
     ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
 }
 
+template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)
+{
+  const prototype* Proto = Instance->FindProtoType();
+  FindDataBase(Instance->DataBase, Proto, Config);
+
+  if(!Instance->DataBase){
+    FindDataBase(Instance->DataBase, Proto, OldConfig); //restore DataBase field
+    return false;
+  }
+  
+  return true;
+}
+
+// this allows final compilation linking step to succeed! It apparently requires each type to be explicitly declared once;
 #define INST_INSTALL_DATABASE(type)\
-template void databasecreator<type>::InstallDataBase(type*, int)
+template void databasecreator<type>::InstallDataBase(type*, int);\
+template truth databasecreator<type>::InstallDataBaseIfPossible(type*, int, int)
 
 INST_INSTALL_DATABASE(material);
 INST_INSTALL_DATABASE(character);
