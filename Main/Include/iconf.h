@@ -38,6 +38,7 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsUseLightEmiterBasedOnVolume(){return UseLightEmiterBasedOnVolume.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -66,6 +67,7 @@ class ivanconfig
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
+  static truth IsSetupCustomKeys() { return SetupCustomKeys.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
@@ -169,6 +171,7 @@ class ivanconfig
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SetupCustomKeysChanger(truthoption*, truth);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void SfxVolumeHandler(long);
@@ -197,6 +200,7 @@ class ivanconfig
   static truthoption AllowImportOldSavegame;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption UseLightEmiterBasedOnVolume;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
@@ -230,6 +234,7 @@ class ivanconfig
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static truthoption SetupCustomKeys;
   static cycleoption GoOnStopMode;
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
