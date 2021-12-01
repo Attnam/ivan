@@ -10,18 +10,21 @@
  *
  */
 
+#include "audio.h"
+#include "bitmap.h"
+#include "database.h"
+#include "dbgmsgproj.h"
 #include "dungeon.h"
-#include "level.h"
-#include "script.h"
 #include "error.h"
 #include "lsquare.h"
-#include "game.h"
-#include "save.h"
 #include "femath.h"
-#include "bitmap.h"
+#include "game.h"
 #include "graphics.h"
+#include "level.h"
 #include "message.h"
-#include "audio.h"
+#include "save.h"
+#include "script.h"
+
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -89,47 +92,78 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
-    level* NewLevel = Level[Index] = new level;
-    NewLevel->SetDungeon(this);
-    NewLevel->SetIndex(Index);
-    const levelscript* LevelScript = GetLevelScript(Index);
-    NewLevel->SetLevelScript(LevelScript);
+    festring fsGenLoopDL;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopID");if(pc!=NULL)fsGenLoopDL<<pc;}
+    int iGenLoopMax=250;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopMax");if(pc!=NULL)iGenLoopMax=atoi(pc);}
+    
+    festring fsDL;fsDL<<GetIndex()<<Index;
+    int iRetryMax = fsGenLoopDL==fsDL ? iGenLoopMax : 10;
+    
+    DBG3("GeneratingDungeonLevel",fsDL.CStr(),fsGenLoopDL.CStr());
+    
+    level* NewLevel=NULL;
+    cbitmap* EnterImage=NULL;
+    for(int i=0;i<iRetryMax;i++){
+      try{
+        if(!genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to become: true");
+        
+        NewLevel = Level[Index] = new level;
+        NewLevel->SetDungeon(this);
+        NewLevel->SetIndex(Index);
+        const levelscript* LevelScript = GetLevelScript(Index);
+        NewLevel->SetLevelScript(LevelScript);
+        DBG7("GeneratingDungeonLevel",NewLevel->GetDungeon()->GetIndex(),Index,fsDL.CStr(),fsGenLoopDL.CStr(),i,NewLevel->GetDungeon()->GetLevelDescription(Index, true).CStr());
 
-    if(Visual)
-    {
-      if(LevelScript->GetEnterImage())
-      {
-        cbitmap* EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
-        game::SetEnterImage(EnterImage);
-        v2 Displacement = *LevelScript->GetEnterTextDisplacement();
-        game::SetEnterTextDisplacement(Displacement);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nThis may take some time, please wait."),
-                         Displacement, WHITE, false, true, &game::BusyAnimation);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nPress any key to continue."),
-                         Displacement, WHITE, true, false, &game::BusyAnimation);
-        game::SetEnterImage(0);
-        delete EnterImage;
+        if(Visual)
+        {
+          if(LevelScript->GetEnterImage())
+          {
+            EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
+            game::SetEnterImage(EnterImage);
+            v2 Displacement = *LevelScript->GetEnterTextDisplacement();
+            game::SetEnterTextDisplacement(Displacement);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nThis may take some time, please wait."),
+                             Displacement, WHITE, false, 
+                             true, &game::BusyAnimation);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nPress any key to continue."),
+                             Displacement, WHITE, game::GetAutoPlayMode()<2, 
+                             false, &game::BusyAnimation);
+            game::SetEnterImage(0);
+            delete EnterImage;
+            EnterImage=NULL;
+          }
+          else
+          {
+            game::SetEnterTextDisplacement(ZERO_V2);
+            game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                             + CONST_S("...\n\nThis may take some time, please wait."),
+                             ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+          }
+        }
+
+        NewLevel->Generate(Index);
+        game::SetCurrentLSquareMap(NewLevel->GetMap());
+        Generated[Index] = true;
+        game::BusyAnimation();
+
+        if(*NewLevel->GetLevelScript()->GenerateMonsters())
+          NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
+
+        if(genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to become: false");
+        if(fsGenLoopDL!=fsDL)
+          return false; // new level is ok
+      }catch(const genericException& e){
+        // cleanup
+        //TODO it is not working well, memory usage keeps increasing...
+        if(NewLevel  ){delete NewLevel  ;NewLevel=NULL;}
+        if(EnterImage){delete EnterImage;EnterImage=NULL;}
+        
+        //retry
       }
-      else
-      {
-        game::SetEnterTextDisplacement(ZERO_V2);
-        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
-                         + CONST_S("...\n\nThis may take some time, please wait."),
-                         ZERO_V2, WHITE, false, true, &game::BusyAnimation);
-      }
-    }
-
-    NewLevel->Generate(Index);
-    game::SetCurrentLSquareMap(NewLevel->GetMap());
-    Generated[Index] = true;
-    game::BusyAnimation();
-
-    if(*NewLevel->GetLevelScript()->GenerateMonsters())
-      NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
-
-    return false;
+    } //for()
+    if(fsGenLoopDL==fsDL)ABORT("Generating dungeon loop test completed.");
+    ABORT("Generating new level failed after %d retries, aborting...",iRetryMax);
   }
 }
 
