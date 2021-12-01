@@ -1192,6 +1192,7 @@ class character : public entity, public id
   void SetNewVomitMaterial(int What) { MyVomitMaterial = What; }
   festring GetHitPointDescription() const;
   truth WillGetTurnSoon() const;
+  virtual void SetFeedingSumo(truth What) { return; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

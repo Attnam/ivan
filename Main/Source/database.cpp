@@ -13,6 +13,7 @@
 /* Compiled through dataset.cpp */
 
 #include <stack>
+#include "error.h"
 
 int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray,
                       long* TempTableInfo, int Type, int Configs, int TempTables)
@@ -950,8 +951,12 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   const prototype* Proto = Instance->FindProtoType();
   FindDataBase(Instance->DataBase, Proto, Config);
 
-  if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+  if(!Instance->DataBase){
+    if(genericException::IsGenNewLvl())
+      throw genericException([Proto,Config]{festring fsE;fsE << "UndefinedConfigurationSought,\"" << const_cast<char*>(Proto->GetClassID()) << "\","<<Config;return fsE.CStr();}());
+    else
+      ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
+  }
 }
 
 template <class type> truth databasecreator<type>::InstallDataBaseIfPossible(type* Instance, int Config, int OldConfig)

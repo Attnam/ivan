@@ -655,6 +655,7 @@ CHARACTER(bananagrower, humanoid)
   virtual festring& ProcessMessage(festring&) const;
   virtual truth IsBananaGrower() const { return true; }
   festring GetProfession() const { return Profession; }
+  virtual void SetFeedingSumo(truth What) { FeedingSumo = What; }
  protected:
   virtual truth HandleCharacterBlockingTheWay(character*, v2, int);
   virtual void PostConstruct();
