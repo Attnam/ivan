@@ -14,6 +14,7 @@
 
 #include "dbgmsgproj.h"
 #include "whandler.h"
+#include "devcons.h"
 
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
@@ -5378,8 +5379,40 @@ truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartInde
     return false;
 }
 
+void FixSumoWrestlerHouse(festring fsCmdParams)
+{
+  sumowrestler* SM = NULL;
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(dynamic_cast<sumowrestler*>(C)){
+      SM=(sumowrestler*)C;
+      break;
+    }
+  }
+  
+  if(SM){
+    for(int d = 0; d < SM->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = SM->GetNeighbourLSquare(d);
+
+      if(Square){
+        character* C2 = Square->GetCharacter();
+        if(C2 && dynamic_cast<bananagrower*>(C2)){
+          C2->TeleportRandomly(true);
+        }
+      }
+    }
+  }
+}
+
 void sumowrestler::GetAICommand()
 {
+  static bool bInitDummy = [](){
+    devcons::AddDevCmd("FixSumoHouse",FixSumoWrestlerHouse,
+      "BugFix sumo wrestler house in case banana growers over crowd it.");
+    return true;}();
+  
   EditNP(-25);
 
   SeekLeader(GetLeader());

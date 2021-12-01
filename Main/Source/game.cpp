@@ -6390,6 +6390,17 @@ truth game::EndSumoWrestling(int Result)
     DrawEverything();
   }
 
+  // Send the bananagrowers back to work
+  std::vector<character*> VillagePeople = bugfixdp::FindCharactersOnLevel();
+  for(int j = 0; j < VillagePeople.size(); j++)
+  {
+    character* Villager = VillagePeople[j];
+    if(Villager && dynamic_cast<bananagrower*>(Villager))
+    {
+      Villager->SetFeedingSumo(false);
+    }
+  }
+
   Player->EditNP(-25000);
   Player->CheckStarvationDeath(CONST_S("exhausted after controlling a mirror image for too long"));
   throw areachangerequest();
