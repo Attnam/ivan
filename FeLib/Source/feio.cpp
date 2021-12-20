@@ -161,7 +161,7 @@ int iSelectedPrevious=-1;
 int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
                    cfestring& Topic, cfestring& sMS,
                    col16 Color, cfestring& SmallText1,
-                   cfestring& SmallText2)
+                   cfestring& SmallText2, truth ExtraMenuGraphics)
 {
   if(CountChars('\r', sMS) < 1)
     return (-1);
@@ -180,7 +180,12 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
 
   while(!bReady)
   {
-    cbitmap* BackGround = vBackGround.size()>iSelected?vBackGround[iSelected]:NULL;
+    cbitmap* BackGround = NULL;
+    if(ExtraMenuGraphics)
+      BackGround = vBackGround.size()>iSelected?vBackGround[iSelected]:NULL;
+    else
+      BackGround = vBackGround[0];
+
     if(BackGround){
       if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
         blitdata B = DEFAULT_BLITDATA;
@@ -207,14 +212,14 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       }
     }else
       Buffer.ClearToColor(0);
-    
+
 #ifndef NOSOUND
-    if(iSelectedPrevious != iSelected){
+    if(ExtraMenuGraphics && iSelectedPrevious != iSelected){
       soundeffects::playSound(festring()<<"Main Menu Entry "<<(iSelected+1));
       iSelectedPrevious = iSelected;
     }
 #endif
-    
+
     clock_t StartTime = clock();
     sCopyOfMS = Topic;
     int i;
@@ -298,7 +303,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
     }
     else
     {
-                //FONT->Printf(&Buffer, v2(100, 100), Color, "%s", "NUKES IS HERE!");
+      //FONT->Printf(&Buffer, v2(100, 100), Color, "%s", "NUKES IS HERE!");
       Buffer.FastBlit(DOUBLE_BUFFER);
       graphics::BlitDBToScreen();
       k = GET_KEY(false);
@@ -921,7 +926,7 @@ struct sAlertConfirmMsg{
 void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
 {
   if(!sAlertConfirmMsgInst.bShow)return;
-  
+
   //TODO calc all line withs to determine the full popup width to not look bad if overflow, see specialkeys help dialog creation
   int iLineHeight=20;
   v2 v2Border(700,100+(sAlertConfirmMsgInst.vfsCritMsgs.size()*iLineHeight));
@@ -944,7 +949,7 @@ void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
 bool iosystem::AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs,bool bConfirmMode)
 {
   static bool bDummyInit = [](){graphics::AddDrawAboveAll(&AlertConfirmMsgDraw,100100,"iosystem::AlertConfirmMsgDraw"); return true;}();
-    
+
   bInUse=true;
 
   sAlertConfirmMsgInst.bShow=true;
@@ -1186,7 +1191,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          *    Generating a new level is probably bad as it will ignore whatever happened in that level and may create
          *    duplicated items (uniques) and characters (uniques that died) when they should not exist,
          *    may be only for fully random (with non unique things on it) levels such workaround could be used...
-         * 
+         *
          * TODO for file extensions, find the type only at the end, use std::string if easier/clearer to implement
          */
       }else

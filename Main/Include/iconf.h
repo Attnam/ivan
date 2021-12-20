@@ -72,11 +72,12 @@ class ivanconfig
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
-  static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
+  static truth IsAllowMouseOnFelist(){ return AllowMouseOnFelist.Value; }
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static truth GetExtraMenuGraphics(){ return UseExtraMenuGraphics.Value; }
   static v2 GetWorldSizeConfig();
   static int GetLandTypeConfig() { return LandTypeConfig.Value; }
   static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
@@ -154,6 +155,7 @@ class ivanconfig
   static void SfxVolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
+  static void UseExtraMenuGraphicsChanger(truthoption*, truth);
   static void WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry);
   static void LandTypeConfigDisplayer(const cycleoption* O, festring& Entry);
   static void WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry);
@@ -277,6 +279,7 @@ class ivanconfig
   static truthoption ShowTurn;
 
   static truthoption AllowMouseOnFelist;
+  static truthoption UseExtraMenuGraphics;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
