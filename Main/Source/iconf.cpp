@@ -356,6 +356,13 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
                                           "",
                                           0, 2,
                                           &ScalingQualityDisplayer);
+truthoption ivanconfig::UseExtraMenuGraphics("UseExtraMenuGraphics",
+                                          "Use extra main menu graphics",
+                                          "Add changing graphics and sounds to the main menu.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &UseExtraMenuGraphicsChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
@@ -1024,6 +1031,13 @@ void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
   graphics::SetAllowMouseInFullScreen(What);
 }
 
+void ivanconfig::UseExtraMenuGraphicsChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+  felist::SetAllowMouse(What);
+  graphics::SetAllowMouseInFullScreen(What);
+}
+
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
@@ -1070,9 +1084,9 @@ void ivanconfig::VolumeHandler(long Value)
 void ivanconfig::SfxVolumeHandler(long Value)
 {
   SfxVolumeChanger(&SfxVolume, Value);
-  
+
   soundeffects::SetSfxVolume(SfxVolume.Value);
-  
+
   if(game::IsRunning())
   {
     game::GetCurrentArea()->SendNewDrawRequest();
@@ -1165,6 +1179,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
@@ -1227,7 +1242,8 @@ void ivanconfig::Initialize()
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
-  
+  UseExtraMenuGraphicsChanger(NULL, UseExtraMenuGraphics.Value);
+
 #ifndef NOSOUND
   soundeffects::SetEnableSfx(PlaySounds.Value);
   soundeffects::SetSfxVolume(SfxVolume.Value);
