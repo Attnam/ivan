@@ -991,7 +991,7 @@ void ivanconfig::WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry
 
 v2 ivanconfig::GetWorldSizeConfig()
 {
-  v2 WorldSize = v2(64, 64);
+  v2 WorldSize = v2(49, 49);
   
   if(WorldSizeConfig.Value == HUGE_WORLD)
     WorldSize = v2(128, 128);
@@ -1006,7 +1006,7 @@ v2 ivanconfig::GetWorldSizeConfig()
   else if(WorldSizeConfig.Value == FOUR_SCREEN_WORLD)
     WorldSize = v2(84, 52);
   else
-    WorldSize = v2(64, 64); //MEDIUM_WORLD
+    WorldSize = v2(49, 49); //SMALL_WORLD
   
   return WorldSize;
 }
