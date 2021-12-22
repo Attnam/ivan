@@ -10,17 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: make-build-dir
+        run: mkdir build
       - name: CI-Build
         shell: bash
         working-directory: ${{runner.workspace}}/build
         env:
           CXXFLAGS: -DWIZARD
         run: |
-          echo $PWD
-          #export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
+          export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
           export BUILD_MAC_APP=ON
-          export IVAN_BUILD_DIR="$PWD/build"
-          mkdir build && cd build
+          export IVAN_BUILD_DIR="${{runner.workspace}}/build"
+          cd build
           ../ci/osx/requirements.sh
           ../ci/osx/build.sh
           make install
