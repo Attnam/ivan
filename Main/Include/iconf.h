@@ -78,6 +78,11 @@ class ivanconfig
   static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
   static truth GetExtraMenuGraphics(){ return UseExtraMenuGraphics.Value; }
+  static v2 GetWorldSizeConfig();
+  static int GetLandTypeConfig() { return LandTypeConfig.Value; }
+  static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
+  static int GetWorldSeedConfig() { return WorldSeedConfig.Value; }
+  static int GetWorldSizeNumber() { return WorldSizeConfig.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -151,6 +156,12 @@ class ivanconfig
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
   static void UseExtraMenuGraphicsChanger(truthoption*, truth);
+  static void WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void LandTypeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldSeedConfigDisplayer(const numberoption* O, festring& Entry);
+  static truth WorldSeedConfigChangeInterface(numberoption* O);
+  static void WorldSeedConfigChanger(numberoption* O, long What);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -251,6 +262,11 @@ class ivanconfig
   static scrollbaroption Volume;
   static scrollbaroption SfxVolume;
   static cycleoption MIDIOutputDevice;
+  
+  static cycleoption WorldSizeConfig;
+  static cycleoption LandTypeConfig;
+  static cycleoption WorldShapeConfig;
+  static numberoption WorldSeedConfig;
 
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
