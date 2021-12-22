@@ -511,7 +511,8 @@ class game
   static festring GetMoveKeyDesc(int i);
   static void LoadCustomCommandKeys();
   static int GetWorldShape() { return WorldShape; }
-  static void SetWorldShape(int What) { WorldShape = What; } private:
+  static void SetWorldShape(int What) { WorldShape = What; }
+ private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
   static god** God;
