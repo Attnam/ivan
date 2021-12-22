@@ -101,132 +101,39 @@ OWTERRAIN(blackmarket, owterrain)
 {
 };
 
-OWTERRAIN(locationAA, owterrain)
-{
-};
-
-OWTERRAIN(locationAB, owterrain)
-{
-};
-
-OWTERRAIN(locationAC, owterrain)
-{
-};
-
-OWTERRAIN(locationAD, owterrain)
-{
-};
-
-OWTERRAIN(locationAE, owterrain)
-{
-};
-
-OWTERRAIN(locationAF, owterrain)
-{
-};
-
-OWTERRAIN(locationAG, owterrain)
-{
-};
-
-OWTERRAIN(locationAH, owterrain)
-{
-};
-
-OWTERRAIN(locationAI, owterrain)
-{
-};
-
-OWTERRAIN(locationAJ, owterrain)
-{
-};
-
-
-OWTERRAIN(locationAK, owterrain)
-{
-};
-
-OWTERRAIN(locationAL, owterrain)
-{
-};
-
-OWTERRAIN(locationAM, owterrain)
-{
-};
-
-OWTERRAIN(locationAN, owterrain)
-{
-};
-
-OWTERRAIN(locationAO, owterrain)
-{
-};
-
-OWTERRAIN(locationAP, owterrain)
-{
-};
-
-OWTERRAIN(locationAQ, owterrain)
-{
-};
-
-OWTERRAIN(locationAR, owterrain)
-{
-};
-
-OWTERRAIN(locationAS, owterrain)
-{
-};
-
-OWTERRAIN(locationAT, owterrain)
-{
-};
-
-OWTERRAIN(locationAU, owterrain)
-{
-};
-
-OWTERRAIN(locationAV, owterrain)
-{
-};
-
 OWTERRAIN(xinrochtomb, owterrain)
 {
 };
 
-OWTERRAIN(locationAX, owterrain)
+OWTERRAIN(locationA, owterrain)
 {
 };
 
-OWTERRAIN(locationAY, owterrain)
+OWTERRAIN(locationB, owterrain)
 {
 };
 
-OWTERRAIN(locationAZ, owterrain)
+OWTERRAIN(locationC, owterrain)
 {
 };
 
-OWTERRAIN(locationBA, owterrain)
+OWTERRAIN(locationD, owterrain)
 {
 };
 
-OWTERRAIN(locationBB, owterrain)
+OWTERRAIN(locationE, owterrain)
 {
 };
 
-OWTERRAIN(locationBC, owterrain)
+OWTERRAIN(locationF, owterrain)
 {
 };
 
-OWTERRAIN(locationBD, owterrain)
+OWTERRAIN(locationG, owterrain)
 {
 };
 
-OWTERRAIN(locationBE, owterrain)
-{
-};
-
-OWTERRAIN(locationBF, owterrain)
+OWTERRAIN(locationH, owterrain)
 {
 };
 

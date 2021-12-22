@@ -331,6 +331,29 @@ cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Select an output device for the game music, or disable soundtrack.",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
+cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
+                                          "What land shapes to generate",
+                                          "Choose whether to generate continents or pangea. If Pangea is selected, the generator will make all locations reachable from the same landmass.",
+                                          0, 2,
+                                          &LandTypeConfigDisplayer);
+cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
+                                          "Size of the world map",
+                                          "Select a world size.",
+                                          2, 7,
+                                          &WorldSizeConfigDisplayer);
+cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
+                                          "Shape of the world",
+                                          "This affects the player's movement around the world. Pancake worlds are flat, and the player cannot cross the edges of the world map. Brandy snap worlds are like a cylinder, the world map wraps around the horizontal axis. Doughnut worlds are shaped like a torus, the player can wrap around the horizontal and vertical axes.",
+                                          0, 3,
+                                          &WorldShapeConfigDisplayer);
+numberoption ivanconfig::WorldSeedConfig("WorldSeedConfig",
+                                          "Select a world seed",
+                                          "0 gives a random world seed, else select a new one at your own risk. If a world cannot be generated with the given seed after a finite number of attempts, you will get a message saying the world generator encountered a bad seed, what that seed was, and a new world will be generated from a random seed instead of the one specified here.",
+                                          0,
+                                          &WorldSeedConfigDisplayer,
+                                          &WorldSeedConfigChangeInterface,
+                                          &WorldSeedConfigChanger);
+
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           "Select window scaling factor",
@@ -924,6 +947,89 @@ void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Huge (128x128)";
+  else if(O->Value == 1)
+    Entry << "Large (96x96)";
+  else if(O->Value == 2)
+    Entry << "Medium (64x64)";
+  else if(O->Value == 3)
+    Entry << "Small (49x49)";
+  else if(O->Value == 4)
+    Entry << "Tiny (32x32)";
+  else if(O->Value == 5)
+    Entry << "One screen (42x26)";
+  else if(O->Value == 6)
+    Entry << "Four screens (84x52)";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::LandTypeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pangea";
+  else if(O->Value == 1)
+    Entry << "Continents";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pancake (flat)";
+  else if(O->Value == 1)
+    Entry << "Brandy snap (cylinder)";
+  else if(O->Value == 2)
+    Entry << "Doughnut (torus)";
+  else
+    Entry << O->Value;
+}
+
+v2 ivanconfig::GetWorldSizeConfig()
+{
+  v2 WorldSize = v2(49, 49);
+  
+  if(WorldSizeConfig.Value == HUGE_WORLD)
+    WorldSize = v2(128, 128);
+  else if(WorldSizeConfig.Value == LARGE_WORLD)
+    WorldSize = v2(96, 96);
+  else if(WorldSizeConfig.Value == SMALL_WORLD)
+    WorldSize = v2(49, 49);
+  else if(WorldSizeConfig.Value == TINY_WORLD)
+    WorldSize = v2(32, 32);
+  else if(WorldSizeConfig.Value == ONE_SCREEN_WORLD)
+    WorldSize = v2(42, 26);
+  else if(WorldSizeConfig.Value == FOUR_SCREEN_WORLD)
+    WorldSize = v2(84, 52);
+  else
+    WorldSize = v2(49, 49); //SMALL_WORLD
+  
+  return WorldSize;
+}
+
+void ivanconfig::WorldSeedConfigDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/2147483647";
+}
+
+truth ivanconfig::WorldSeedConfigChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("0 gives random world seed, else select new one at your own risk."), GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+void ivanconfig::WorldSeedConfigChanger(numberoption* O, long What)
+{
+  if(What < -1)
+    What = 0;
+
+  O->Value = What;
+}
 
 #ifndef __DJGPP__
 
@@ -1205,6 +1311,15 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
   configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
+
+  fsCategory="World Generation";
+  configsystem::AddOption(fsCategory, &WorldSizeConfig);
+  configsystem::AddOption(fsCategory, &LandTypeConfig);
+  configsystem::AddOption(fsCategory, &WorldShapeConfig);
+  configsystem::AddOption(fsCategory, &WorldSeedConfig);
+
+  //World shape: Flat, [Horizontal Wrap (cylinder)]
+  //  Alt names for world shape: pancake (flat), doughnut (torus), brandy snap (cylinder).
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
