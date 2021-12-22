@@ -346,7 +346,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define FRIEND 4
 
 #define MARTIAL_SKILL_CATEGORIES 3
-#define WEAPON_SKILL_CATEGORIES 11
+#define WEAPON_SKILL_CATEGORIES 12
 
 #define UNARMED 0
 #define KICK 1
@@ -359,6 +359,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define POLE_ARMS 8
 #define WHIPS 9
 #define SHIELDS 10
+#define CRAFTING 11
 
 #define LOCKED 1
 
@@ -741,6 +742,14 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define EVERGREEN_FOREST 5
 #define TUNDRA 6
 #define GLACIER 7
+
+#define HUGE_WORLD 0
+#define LARGE_WORLD 1
+#define MEDIUM_WORLD 2
+#define SMALL_WORLD 3
+#define TINY_WORLD 4
+#define ONE_SCREEN_WORLD 5
+#define FOUR_SCREEN_WORLD 6
 
 #define NO_MOVE 0
 #define WALK 1

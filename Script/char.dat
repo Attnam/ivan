@@ -1502,7 +1502,7 @@ priest
     FriendlyReplies =
     {
       14,
-      "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
+      "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a @ws which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
       "\"The souls of the virtuous, the devout and the faithful bath forever in the radiant glory of Valpurus and sing praises on His greatness. The souls of sinners, heretics and unbelievers are swallowed by Mortifer and damned to relive their worst nightmares for all eternity!\"",
       "\"The Cathedral of Valpurus has no windows, for it is written in the Holy Book of Valpurus: 'Windows is Evil.'\"",
       "\"I am the Cardinal of Truth, therefore everything I say is truth.\"",
@@ -3517,7 +3517,7 @@ spider
     DefaultWisdom = 14;
     DefaultCharisma = 8;
     Adjective = "aranea";
-    SkinColor = rgb16(100, 64, 64);
+    SkinColor = rgb16(164, 64, 64);
     BaseBiteStrength = 400;
     CWeaponSkillHits == 150;
     TotalVolume = 5000;
@@ -3537,7 +3537,7 @@ spider
     DefaultCharisma = 14;
     DefaultMana = 14;
     Adjective = "phase";
-    SkinColor = rgb16(64, 100, 64);
+    SkinColor = rgb16(64, 164, 64);
     BaseBiteStrength = 400;
     CWeaponSkillHits == 150;
     TotalVolume = 5000;
@@ -5239,8 +5239,8 @@ nerfbat /* bat-> */
   DefaultArmStrength = 3;
   DefaultIntelligence = 12;
   DefaultMana = 20;
-  TorsoSpecialColor = rgb16(128, 0, 128); /* EyeColor */
-  SkinColor = rgb16(175, 150, 175);
+  TorsoSpecialColor = rgb16(220, 220, 220); /* EyeColor */
+  SkinColor = rgb16(128, 0, 128);
   Frequency = 500;
   Adjective = "nurphe";
   IgnoreDanger = true;

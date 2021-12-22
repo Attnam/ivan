@@ -14,6 +14,7 @@
 
 #include "dbgmsgproj.h"
 #include "whandler.h"
+#include "devcons.h"
 
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
@@ -1884,58 +1885,71 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(recipedata rpd)
+truth humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Craft = craft::Spawn(this);DBGLN;
-
-  if(rpd.GetTool()!=NULL){DBGLN;
-    if(GetRightArm())
-    {DBGLN;
-      item* Item = GetRightArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
-        GetRightArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetLeftArm())
-    {DBGLN;
-      item* Item = GetLeftArm()->GetWielded();
-
-      if(Item && Item != rpd.GetTool())
-      {
-        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
-        GetLeftArm()->GetWielded()->MoveTo(GetStack());
-      }
-    }
-
-    if(GetMainWielded() != rpd.GetTool())
-    {DBGLN;
-      Craft->SetMoveCraftTool(true);
-      rpd.GetTool()->RemoveFromSlot();
-
-      if(GetMainArm() && GetMainArm()->IsUsable())
-        GetMainArm()->SetWielded(rpd.GetTool());
-      else
-        GetSecondaryArm()->SetWielded(rpd.GetTool());
-    }
-    else
+  DBG4(rpd.GetTool(),rpd.GetTool2(),GetRightArm()?GetRightArm()->IsUsable():0,GetLeftArm()?GetLeftArm()->IsUsable():0);
+  
+  bool b1OK=false;
+  bool b2OK=false;
+  item* it;
+  if(rpd.GetTool()){
+    if(
+      (GetRightArm() && GetRightArm()->IsUsable() && GetRightWielded() == rpd.GetTool()) ||
+      (GetLeftArm()  && GetLeftArm()->IsUsable()  && GetLeftWielded()  == rpd.GetTool())
+    ){
+      b1OK=true;
       Craft->SetMoveCraftTool(false);
-  }DBGLN;
+    }
+    
+    if(!b1OK && GetRightArm() && GetRightArm()->IsUsable()){
+      if((it = GetRightWielded())){
+        Craft->SetRightBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
 
-  //TODO let the GetTool2() be equipped too
+      rpd.GetTool()->RemoveFromSlot();
+      SetRightWielded(rpd.GetTool());
 
-  Craft->SetCraftWhat(rpd);DBGLN;
-  SetAction(Craft);DBGLN;
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+    if(!b1OK && GetLeftArm() && GetLeftArm()->IsUsable()){
+      if((it = GetLeftWielded())){
+        Craft->SetLeftBackupID(it->GetID());
+        it->MoveTo(GetStack());
+      }
+
+      rpd.GetTool()->RemoveFromSlot();
+      SetLeftWielded(rpd.GetTool());
+
+      b1OK=true;
+      Craft->SetMoveCraftTool(true);
+    }
+    
+  }else{
+    b1OK=true; //can craft somethings w/o tools
+  }
+  
+  //TODO let the GetTool2() be equipped too?
+
+  if(b1OK){
+    Craft->SetCraftWhat(rpd);DBGLN;
+    SetAction(Craft);DBGLN;
+    return true;
+  }
+  
+  ADD_MESSAGE("You have no usable arm.");
+  rpd.SetAlreadyExplained();
+  return false;
 }
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   if(IsPlayer())
     ADD_MESSAGE("You start digging.");
-    
+
   dig* Dig = dig::Spawn(this);
 
   if(GetRightArm())
@@ -3849,7 +3863,7 @@ truth petrusswife::SpecialEnemySightedReaction(character* Char)
 {
   item* Weapon = Char->GetMainWielded();
 
-  if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
+  if(!(GetConfig() == 5) && Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
     ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"",
                 CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW,
                 Weapon->GetArticle(), Weapon->GetNameSingular().CStr());
@@ -5365,8 +5379,40 @@ truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartInde
     return false;
 }
 
+void FixSumoWrestlerHouse(festring fsCmdParams)
+{
+  sumowrestler* SM = NULL;
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(dynamic_cast<sumowrestler*>(C)){
+      SM=(sumowrestler*)C;
+      break;
+    }
+  }
+  
+  if(SM){
+    for(int d = 0; d < SM->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = SM->GetNeighbourLSquare(d);
+
+      if(Square){
+        character* C2 = Square->GetCharacter();
+        if(C2 && dynamic_cast<bananagrower*>(C2)){
+          C2->TeleportRandomly(true);
+        }
+      }
+    }
+  }
+}
+
 void sumowrestler::GetAICommand()
 {
+  static bool bInitDummy = [](){
+    devcons::AddDevCmd("FixSumoHouse",FixSumoWrestlerHouse,
+      "BugFix sumo wrestler house in case banana growers over crowd it.");
+    return true;}();
+  
   EditNP(-25);
 
   SeekLeader(GetLeader());
@@ -6622,7 +6668,10 @@ void petrusswife::BeTalkedTo()
 
   itemvector Item;
 
-  if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsLuxuryItem)
+  // NOTE: Remember that Petrus' wife number 5 is mute.
+  if(!PLAYER->SelectFromPossessions(Item,
+      (GetConfig() == 5) ? CONST_S("Do you want to offer her a gift?") : CONST_S("\"Do you have something to give me?\""),
+      0, &item::IsLuxuryItem)
      || Item.empty())
     humanoid::BeTalkedTo();
 
@@ -6643,6 +6692,12 @@ void petrusswife::BeTalkedTo()
       break;
     }
 
+  if((GetConfig() == 5) && (Accepted || RefusedSomething))
+  {
+    ADD_MESSAGE("%s smiles at you.", CHAR_NAME(DEFINITE));
+    return;
+  }
+
   if(Accepted)
     ADD_MESSAGE("\"I thank you for your little gift%s.\"", Accepted == 1 ? "" : "s");
 
@@ -6658,7 +6713,7 @@ void guard::BeTalkedTo()
     {
       itemvector Item;
 
-      if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
+      if(!PLAYER->SelectFromPossessions(Item, CONST_S("\"Do you have something to give me?\""), 0, &item::IsBeverage)
          || Item.empty())
 
 
@@ -6966,6 +7021,7 @@ void crimsonimp::CreateCorpse(lsquare* Square)
 {
   game::GetCurrentLevel()->Explosion(this, "consumed by the hellfire of "  + GetName(INDEFINITE),
                                      Square->GetPos(), 20 + RAND() % 5 - RAND() % 5);
+  SendToHell();
 }
 
 truth mirrorimp::DrinkMagic(const beamdata& Beam)
@@ -7000,6 +7056,7 @@ void mirrorimp::CreateCorpse(lsquare* Square)
   decoration* Shard = decoration::Spawn(SHARD);
   Shard->InitMaterials(MAKE_MATERIAL(GLASS));
   Square->ChangeOLTerrainAndUpdateLights(Shard);
+  SendToHell();
 }
 
 void elder::BeTalkedTo()

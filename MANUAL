@@ -110,12 +110,12 @@ A: Listing might be the most convenient way to answer this question:
 
    General gameplay:
      IVAN brings gameplay issues further than most roguelikes, while still
-     remaining easy to play. Besides the bodypart system and the material and
+     remaining easy to play. Besides the body part system and the material and
      equipment system there are such curiosities as 2x2 monsters, wandering
      mercenaries and slaves which you can recruit/buy, smiths and tailors who
      can repair broken equipment, and monsters which are able to reproduce.
      The game also features many different deities ranging from chaotic to
-     neutral and lawful. Each god has its own specialities and altars, and
+     neutral and lawful. Each god has its own specialties and altars, and
      you will be able to affect your own alignment by the way you play.
      And on the top of all that, IVAN's storyline will keep you pumped with
      its unique events!
@@ -137,7 +137,7 @@ A: Like the creators of other roguelikes, we think this makes gaming much
    sessions, since in these you are not meant to really die as replaying
    everything in exactly the same way would be annoying. But the same does
    not apply to games with a multitude of random areas and events like IVAN;
-   the whole fun is trying again and again in everchanging environment,
+   the whole fun is trying again and again in ever-changing environment,
    encountering stranger and more complex situations and becoming better
    and better in tackling them.
 
@@ -169,10 +169,10 @@ A:
    said modifications. If there is no net-bonus or net-minus, only the base
    attribute is shown.
 
-   If the first number is green, then it has increased a short while ago and
+   If the first number is yellow, then it has increased a short while ago, and
    if it is red it has decreased.
 
-   Ht   = Height         Your height in centimetres, or length of body for
+   Ht   = Height         Your height in centimeters, or length of body for
                          animals. Increases your health points, but also your
                          enemies' chance to hit you.
    Wt   = Weight         Your weight in kilograms.
@@ -279,6 +279,9 @@ A: Let's see:
 
    This armor of great health is made of phoenix feather material,
    enchanted up to +7, weights 1000 grams, and has Armor Value (AV) of 13.
+
+Q: A corpse of a large hedgehog is worth 6000 gold pieces?!
+A: No, as we just told you, that's its weight in grams!
 
 Q: Help, I still have no idea what am I doing!
 A: In this case, you might like our wiki:
