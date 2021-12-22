@@ -1,4 +1,4 @@
-name: Build with MinGW under MSYS2, CMake
+name: MSYS2-nonwizard
 on: [push]
 
 jobs:

@@ -1,4 +1,4 @@
-name: Build with MinGW under MSYS2, CMake
+name: MSYS2-wizmode
 on: [push]
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
         run: Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
         shell: pwsh
 
+      # Attention: you perform the release step when you push a tag, neat huh?
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
