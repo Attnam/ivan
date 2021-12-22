@@ -43,9 +43,9 @@ matrix:
       os: osx
       compiler: gcc
 
-    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=win
-      os: linux
-      compiler: gcc
+#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=win
+#      os: linux
+#      compiler: gcc
 
     - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=osx SDL2DIR=$HOME/Thirdparty/Frameworks
       os: osx
