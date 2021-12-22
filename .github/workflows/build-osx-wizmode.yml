@@ -12,6 +12,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: make-build-dir
         run: mkdir build
+      - name: Print github workspace
+        run: |
+          echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+          echo "github.workspace = ${{ github.workspace }}"
+          echo "${{runner.workspace}}"
       - name: CI-Build
         shell: bash
         working-directory: ${{runner.workspace}}/build
