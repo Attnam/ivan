@@ -70,7 +70,7 @@ CHARACTER(humanoid, character)
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
-  virtual void SwitchToCraft(recipedata rpd);
+  virtual truth SwitchToCraft(recipedata rpd);
   virtual void SwitchToDig(item*, v2);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;
@@ -655,6 +655,7 @@ CHARACTER(bananagrower, humanoid)
   virtual festring& ProcessMessage(festring&) const;
   virtual truth IsBananaGrower() const { return true; }
   festring GetProfession() const { return Profession; }
+  virtual void SetFeedingSumo(truth What) { FeedingSumo = What; }
  protected:
   virtual truth HandleCharacterBlockingTheWay(character*, v2, int);
   virtual void PostConstruct();

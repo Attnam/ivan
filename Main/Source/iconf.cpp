@@ -175,6 +175,10 @@ truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnim
                                           "Hide hit animations that look like miss",
                                           "",
                                           true);
+truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume",
+                                          "Small light sources emit less light",
+                                          "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show full name of current dungeon",
                                           "",
@@ -275,9 +279,16 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
+                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
+truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
+                                          "Custom command and movement", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign any command to any key binding of your preference. The default keys here will be from the control scheme option above. Only changed keybindings will be saved at the new config file. This global configuration won't work at main menu, load/start some game.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SetupCustomKeysChanger);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
                                           "Automatically try to open doors when you walk into them, and don't ask for the target of close/apply actions when only one viable target is present.",
@@ -363,6 +374,13 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
                                           "",
                                           0, 2,
                                           &ScalingQualityDisplayer);
+truthoption ivanconfig::UseExtraMenuGraphics("UseExtraMenuGraphics",
+                                          "Use extra main menu graphics",
+                                          "Add changing graphics and sounds to the main menu.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &UseExtraMenuGraphicsChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
@@ -565,18 +583,18 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
-        switch(O->Value)
-        {
-          case DIR_NORM:
-                Entry << CONST_S("Normal");
-                break;
-          case DIR_ALT:
-                Entry << CONST_S("Alternative");
-                break;
-          case DIR_HACK:
-                Entry << CONST_S("NetHack");
-                break;
-        }
+  switch(O->Value)
+  {
+    case DIR_NORM:
+      Entry << CONST_S("Normal");
+      break;
+    case DIR_ALT:
+      Entry << CONST_S("Alternative");
+      break;
+    case DIR_HACK:
+      Entry << CONST_S("NetHack");
+      break;
+  }
 }
 
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
@@ -1091,6 +1109,15 @@ void ivanconfig::FontGfxChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
+{
+  if(game::IsRunning() || !What){
+    O->Value = What;
+    if(O->Value)
+      game::ConfigureCustomKeys();
+  }
+}
+
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 {
   O->Value = What;
@@ -1099,6 +1126,13 @@ void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 }
 
 void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+  felist::SetAllowMouse(What);
+  graphics::SetAllowMouseInFullScreen(What);
+}
+
+void ivanconfig::UseExtraMenuGraphicsChanger(truthoption* O, truth What)
 {
   if(O!=NULL)O->Value = What;
   felist::SetAllowMouse(What);
@@ -1151,9 +1185,9 @@ void ivanconfig::VolumeHandler(long Value)
 void ivanconfig::SfxVolumeHandler(long Value)
 {
   SfxVolumeChanger(&SfxVolume, Value);
-  
+
   soundeffects::SetSfxVolume(SfxVolume.Value);
-  
+
   if(game::IsRunning())
   {
     game::GetCurrentArea()->SendNewDrawRequest();
@@ -1246,6 +1280,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
@@ -1265,6 +1300,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SetupCustomKeys);
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
@@ -1274,6 +1310,7 @@ void ivanconfig::Initialize()
   fsCategory="Advanced Options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
 
   fsCategory="World Generation";
   configsystem::AddOption(fsCategory, &WorldSizeConfig);
@@ -1304,6 +1341,9 @@ void ivanconfig::Initialize()
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
+  
+  if(ivanconfig::IsSetupCustomKeys())
+    game::LoadCustomCommandKeys();
 
   //TODO re-use changer methods for above configs too to avoid duplicating the algo?
   FrameSkipChanger(NULL,FrameSkip.Value);
@@ -1312,7 +1352,8 @@ void ivanconfig::Initialize()
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
-  
+  UseExtraMenuGraphicsChanger(NULL, UseExtraMenuGraphics.Value);
+
 #ifndef NOSOUND
   soundeffects::SetEnableSfx(PlaySounds.Value);
   soundeffects::SetSfxVolume(SfxVolume.Value);
