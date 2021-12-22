@@ -19,13 +19,13 @@ jobs:
           echo "${{runner.workspace}}"
       - name: CI-Build
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         env:
           CXXFLAGS: -DWIZARD
         run: |
           export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
           export BUILD_MAC_APP=ON
-          export IVAN_BUILD_DIR="${{runner.workspace}}/build"
+          export IVAN_BUILD_DIR="${{github.workspace}}/build"
           cd build
           ../ci/osx/requirements.sh
           ../ci/osx/build.sh
