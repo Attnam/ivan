@@ -16,7 +16,7 @@ jobs:
         env:
           CXXFLAGS: -DWIZARD
         run: |
-          export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
+          #export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
           export BUILD_MAC_APP=ON
           export IVAN_BUILD_DIR="$PWD/build"
           mkdir build && cd build
