@@ -33,7 +33,7 @@ jobs:
       - name: Package
         run: |
           $FILE_VERSION = "IVAN-${{env.RELEASE_VERSION}}-win"
-          Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\$FILE_VERSION.zip
+          Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath "${{ github.workspace }}\$FILE_VERSION.zip"
         shell: pwsh
 
       # Attention: you perform the release step when you push a tag, neat huh?
@@ -41,7 +41,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: IvanWin.zip
+          files: "${{ github.workspace }}\IVAN*.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #GITHUB_REPOSITORY: attnam/ivan
