@@ -34,3 +34,12 @@ jobs:
           ../ci/osx/package.sh
           ls ./osx
 
+      # Attention: you perform the release step when you push a tag, neat huh?
+      - name: Release
+        uses: softprops/action-gh-release@v1
+#        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{github.workspace}}/build/osx/IVAN-v000-osx.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #GITHUB_REPOSITORY: attnam/ivan
