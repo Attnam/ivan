@@ -41,7 +41,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: "${{ github.workspace }}\IVAN*.zip"
+          files: $FILE_VERSION.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #GITHUB_REPOSITORY: attnam/ivan
