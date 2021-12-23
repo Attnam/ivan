@@ -43,7 +43,7 @@ matrix:
       os: osx
       compiler: gcc
 
-    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=win
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
       os: linux
       compiler: gcc
 
