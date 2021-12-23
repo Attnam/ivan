@@ -19,6 +19,12 @@ jobs:
           echo "github.workspace = ${{ github.workspace }}"
           echo "${{runner.workspace}}"
           echo "HOME = $HOME"
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Show git tag
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ env.RELEASE_VERSION }}
       - name: CI-Build
         shell: bash
         working-directory: ${{github.workspace}}/build
@@ -28,6 +34,7 @@ jobs:
           export SDL2DIR="$HOME/Thirdparty/Frameworks"
           export BUILD_MAC_APP=ON
           export IVAN_BUILD_DIR="${{github.workspace}}/build"
+          export IVAN_FILE_VERSION=${RELEASE_VERSION#v}
           ../ci/osx/requirements.sh
           ../ci/osx/build.sh
           make install
@@ -39,7 +46,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{github.workspace}}/build/osx/IVAN-v000-osx.dmg
+          files: ${{github.workspace}}/build/osx/*.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #GITHUB_REPOSITORY: attnam/ivan
