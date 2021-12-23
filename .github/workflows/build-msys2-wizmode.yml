@@ -15,7 +15,13 @@ jobs:
           release: false
           update: false
           install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
-      - name: CI-Build
+      - name: Get tag name, print
+        shell: bash
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo $RELEASE_VERSION
+          echo ${{ env.RELEASE_VERSION }}
+      - name: Build and install
         run: |
           cd D:/a/ivan/ivan
           mkdir installation
@@ -25,7 +31,9 @@ jobs:
           make VERBOSE=1 -j4 install
 
       - name: Package
-        run: Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
+        run: |
+          $FILE_VERSION = "IVAN-${{env.RELEASE_VERSION}}-win"
+          Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\$FILE_VERSION.zip
         shell: pwsh
 
       # Attention: you perform the release step when you push a tag, neat huh?
