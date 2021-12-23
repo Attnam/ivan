@@ -28,7 +28,6 @@ jobs:
           export SDL2DIR="$HOME/Thirdparty/Frameworks"
           export BUILD_MAC_APP=ON
           export IVAN_BUILD_DIR="${{github.workspace}}/build"
-          cd build
           ../ci/osx/requirements.sh
           ../ci/osx/build.sh
           make install
