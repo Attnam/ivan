@@ -73,5 +73,6 @@ install_name_tool -change "${libpng}" @loader_path/../Frameworks/libpng.dylib "$
 #fi
 
 # for a compact dmg file
-hdiutil create -fs HFSX -fsargs '-c c=64,a=16,e=16' -format UDBZ \
+hdiutil create -fs HFSX -fsargs '-c c=64,a=16,e=16' \
+               -format UDZO -imagekey zlib-level=9 \
                -volname "${FILENAME}" -srcfolder "${GAME_DIR}" "${DMG_FILE}"
