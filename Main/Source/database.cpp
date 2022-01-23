@@ -707,10 +707,11 @@ template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(AttachedDungeon);
   ADD_MEMBER(AttachedArea);
   ADD_MEMBER(CanBeGenerated);
-  ADD_MEMBER(NativeGTerrainType);
+  ADD_MEMBER(NativeGTerrainTypes);
   ADD_MEMBER(RevealEnvironmentInitially);
   ADD_MEMBER(HideLocationInitially);
   ADD_MEMBER(CanBeOnAnyTerrain);
+  ADD_MEMBER(IsCoreLocation);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

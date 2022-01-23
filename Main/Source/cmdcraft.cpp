@@ -100,16 +100,16 @@ bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool 
 
 /**
  * Why this is important?
- * 
- * Because if the item remain on slot, and 1 turn has not passed, 
+ *
+ * Because if the item remain on slot, and 1 turn has not passed,
  * what may happpen on crafting code in case user gives up on crafting action,
  * it will provide inconsistent inventory contents (something that was sent to hell
  * but is still on inventory as the turn has not passed to properly send it to hell).
- * 
+ *
  * If all the above is correctly understood as "it is how thing work",
  * then crafting should be fixed to always pass one turn even if user giveup?
  * But that doesnt looks good, giveup = cancel, should not pass a turn at all.
- * 
+ *
  * This shall be used for anything related to crafting until something better is coded.
  */
 void craftcore::SendToHellSafely(item* it)
@@ -517,6 +517,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bFailedSuspend=false;
   
 
+
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
   //////////////////////////////////
@@ -561,7 +562,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bGradativeCraftOverride=false;
   bTailoringMode=false;
   v2TailoringWorkbenchLocation=v2(0,0);
-  
+
   lDamageFinalItem=0;
 }
 
@@ -1070,7 +1071,7 @@ struct recipe{
 
         if(!CI.bAllowMeltables && craftcore::IsMeltable(vi[i]))
           continue;
-        
+
         if(CI.bMustBeTailorable && !(vi[i]->GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED))
           continue;
 
@@ -1120,13 +1121,13 @@ struct recipe{
       craftcore::SendToHellSafely(LumpToAdd);
     }
   }
-  
+
   void joinLumpsEqualToFirst(recipedata& rpd){
     item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
     material* matM=Lump->GetMainMaterial();
     joinLumpsEqualTo(rpd,matM);
   }
-  
+
   void askForEqualLumps(recipedata& rpd){
     ci CI;
     CI.bOverridesQuestion=true;
@@ -1222,7 +1223,7 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
               ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol);
-            
+
             matM->SetVolume(lVolM);
             item* lumpR = craftcore::PrepareRemains(rpd,matM,CIT_NONE,lRemainingVol);
             item* lumpMixed=NULL;
@@ -1555,7 +1556,7 @@ struct srpCutWeb : public recipe{
         ADD_MESSAGE("You lost your %s!",itGlove->GetName(UNARTICLED).CStr());
         rpd.SetAlreadyExplained();
       }
-      
+
       if(bSelfPos && !bGetStuckOnTheWeb && !bLoseWeapon){
         w->StepOnEffect(h); //so every try will make it more difficult!! :)
       }
@@ -1589,7 +1590,7 @@ struct srpCutWeb : public recipe{
 //    }
 
     h->EditAP(-500); //to let time pass
-    craftcore::CraftSkillAdvance(rpd); 
+    craftcore::CraftSkillAdvance(rpd);
 
     rpd.bSpendCurrentTurn=true;
 
@@ -1766,7 +1767,7 @@ struct srpWorkBench : public srpOltBASE{
   }
 
   virtual void fillInfo(){
-    init("build","a workbench");
+    init("build","a crafting workbench");
     desc << "Build a workbench for further crafting. " << fsDescBASE;
   }
 
@@ -1833,7 +1834,7 @@ struct srpJoinLumps : public recipe{
 
   virtual bool work(recipedata& rpd){ // it is just like to put them all together, no effort, instant.
     rpd.fDifficulty=0.1;
-    
+
     askForEqualLumps(rpd);
 
     if(rpd.ingredientsIDs.empty()){
@@ -1846,7 +1847,7 @@ struct srpJoinLumps : public recipe{
     craftcore::CraftSkillAdvance(rpd);
 
     rpd.SetAlreadyExplained();
-    
+
     return true;
   }
 };srpJoinLumps rpJoinLumps;
@@ -2052,9 +2053,9 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       lumpMix(vitInv(rpd),RmnM,rpd.bSpendCurrentTurn);
     if(dynamic_cast<lump*>(RmnS)!=NULL)
       lumpMix(vitInv(rpd),RmnS,rpd.bSpendCurrentTurn);
-    
+
     craftcore::CraftSkillAdvance(rpd);
-    
+
     return true;
   }
 };srpDismantle rpDismantle;
@@ -2063,7 +2064,7 @@ void addMaterialInfo(character* C,item* it){
   itemvector v;
   material* matM = it->GetMainMaterial();
   C->GetStack()->FillItemVector(v);
-  if(!it->HasTag('m')){ //material info transfered to item from 
+  if(!it->HasTag('m')){ //material info transfered to item from
     for(int i=0;i<v.size();i++){
       if(dynamic_cast<materialmanual*>(v[i])){
         it->SetTag('m');
@@ -2076,7 +2077,7 @@ void addMaterialInfo(character* C,item* it){
   }
 }
 
-struct srpInspect : public recipe{ 
+struct srpInspect : public recipe{
   virtual void fillInfo(){
     init("inspect","item materials");
     desc << "Carefully inspect what materials an item is made of.";
@@ -2103,7 +2104,7 @@ struct srpInspect : public recipe{
       fs<<matS->GetName(UNARTICLED);
     }
     fs<<".";
-    
+
     if(matM||matS){
       ADD_MESSAGE("%s",fs.CStr());
       addMaterialInfo(rpd.rc.H(),it0);
@@ -2201,7 +2202,7 @@ struct srpSplitLump : public recipe{
     desc << "Split raw materials to make them easier to work with.\n"
             "To remove some volume, specify a negative value in cm3.\n"
             "It is good to cut precisely not to waste materials.\n"
-            "Obs.: stones will require a hammer and a dagger.";
+            "Note that stones will require a hammer and a dagger.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2288,13 +2289,13 @@ struct srpSplitLump : public recipe{
 
     if(ToSplit->GetSecondaryMaterial()!=NULL)
       ABORT("can only split items without secondary material");
-    
+
     if(ToSplit->GetVolume()<2){
       ADD_MESSAGE("It must have 2 or more cm3 to be splitable."); //TODO just for now.. negative volumes could be split one day with extra code
       rpd.SetAlreadyExplained();
       return false;
     }
-    
+
     // some items may not have main material like corpses
     long volTot=ToSplit->GetVolume();
 
@@ -2506,7 +2507,7 @@ struct srpForgeItem : public recipe{
 
     ci CIM;
     CIM.bMainMaterRemainsBecomeLump=true;
-    
+
     ci CIS;
     CIS.bMainMaterRemainsBecomeLump=true;
     CIS.bIsMainIngredient=false;
@@ -2518,11 +2519,11 @@ struct srpForgeItem : public recipe{
 
     bool bIsItemContainer = dynamic_cast<itemcontainer*>(itSpawn) !=NULL;
     bool bIsWeapon = itSpawn->IsWeapon(rpd.rc.H());
-    
+
     bool bMainMatOk = false;
     bool bMustTailor = dynamic_cast<whip*>(itSpawn) || dynamic_cast<cloak*>(itSpawn);
-    bool bCanTailor = dynamic_cast<armor*>(itSpawn) && 
-      !( dynamic_cast<helmet*>(itSpawn) || 
+    bool bCanTailor = dynamic_cast<armor*>(itSpawn) &&
+      !( dynamic_cast<helmet*>(itSpawn) ||
          dynamic_cast<shield*>(itSpawn)    );
     if(bMustTailor || bCanTailor){ // tailoring
       festring fsM("as MAIN material (cloth "); // only main can be cloth
@@ -2537,7 +2538,7 @@ struct srpForgeItem : public recipe{
           joinLumpsEqualToFirst(rpd);
           rpd.ingredientsIDs.clear();
         }
-        
+
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
         CI.bMustBeTailorable = true;
@@ -2555,7 +2556,7 @@ struct srpForgeItem : public recipe{
         festring fsM("as MAIN material (ingots 100%)");
         bMainMatOk = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
       }
-      
+
       if(!bMainMatOk){
         ci CI = CIM;
         CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
@@ -2565,9 +2566,9 @@ struct srpForgeItem : public recipe{
         fsM<<(int)(CI.fUsablePercVol*100)<<"%)";
         bMainMatOk = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
       }
-      
+
       // crafting with sticks and bones
-      if(!bMainMatOk){ 
+      if(!bMainMatOk){
         festring fsM("as MAIN material (sticks/bones ");
         float fPerc = bIsItemContainer ? 1.0 : 0.5;
         fsM<<(int)(fPerc*100)<<"%)";
@@ -2591,7 +2592,7 @@ struct srpForgeItem : public recipe{
         }
       }
     }
-    
+
     if(!bMainMatOk){
       ADD_MESSAGE("You don't have the materials to craft a %s.", Default.CStr());
       rpd.SetAlreadyExplained();
@@ -2649,7 +2650,7 @@ struct srpForgeItem : public recipe{
 
     if(bReqS && !bAllowS)
       ABORT("item reqs secondary mat but doesnt allow it??? %s",itSpawn->GetName(DEFINITE).CStr());
-    
+
     if(rpd.bTailoringMode){
       long lVolSewing = lVolM/100;
       if(lVolSewing==0)lVolSewing=1;
@@ -2665,7 +2666,7 @@ struct srpForgeItem : public recipe{
         return false;
       }
     }
-    
+
     rpd.bHasAllIngredients=true;
 
     rpd.bCanBeBroken = itSpawn->CanBeBroken();
@@ -2705,9 +2706,9 @@ struct srpForgeItem : public recipe{
         return false;
       }
     }
-    
+
     if(rpd.bTailoringMode){
-      if(!recipe::findOLT(rpd,TAILORING_BENCH)){ //must be near it //TODO should be a new bench called TAILORING_BENCH with new graphics one day...
+      if(!recipe::findOLT(rpd,TAILORING_BENCH)){ //must be near it
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -2787,7 +2788,7 @@ struct srpForgeItem : public recipe{
       rpd.itTool = findTailoringTool(rpd,itSpawn); // only main material can be tailored
       if(rpd.itTool==NULL)
         bMissingTools=true;
-      
+
       if(!bMissingTools){
         if(bMeltableS){
           rpd.itTool2 = FindBluntTool(rpd);
@@ -2799,9 +2800,9 @@ struct srpForgeItem : public recipe{
             bMissingTools=true;
         }
       }
-    }else{ 
-      if(bMeltableM){ 
-        rpd.itTool = FindBluntTool(rpd); 
+    }else{
+      if(bMeltableM){
+        rpd.itTool = FindBluntTool(rpd);
         if(rpd.itTool==NULL)
           bMissingTools=true;
       }else{
@@ -2811,7 +2812,7 @@ struct srpForgeItem : public recipe{
       }
 
       if(!bMissingTools){
-        if(bMeltableS){ 
+        if(bMeltableS){
           rpd.itTool2 = FindBluntTool(rpd);
           if(rpd.itTool2==NULL)
             bMissingTools=true;
@@ -2822,7 +2823,7 @@ struct srpForgeItem : public recipe{
         }
       }
     }
-    
+
     if(!bMissingTools){
       if(rpd.itTool2==rpd.itTool)
         rpd.itTool2=NULL;
@@ -3147,12 +3148,12 @@ void craftcore::UndoRemainsIfNeeded(recipedata& rpd)
       case 1: pur=&rpd.urSecond;break;
     }
     DBG6("UndoRemain:Work",i,pur->ulUndoRemainsIngredientID,pur->ulUndoRemainsLumpID,pur->lUndoRemainsVolume,rpd.dbgInfo().CStr());
-    
+
     if(pur->lUndoRemainsVolume==0)
       continue;
-    
+
     itIngredient = game::SearchItem(pur->ulUndoRemainsIngredientID);
-    if(itIngredient){ 
+    if(itIngredient){
       matM = itIngredient->GetMainMaterial();
       matM->SetVolume(matM->GetVolume()+pur->lUndoRemainsVolume);
       itIngredient->CalculateAll();
@@ -3160,7 +3161,7 @@ void craftcore::UndoRemainsIfNeeded(recipedata& rpd)
       // should abort? or this would be just a minor issue?
       DBG2("UndoRemain:IngredientVanished",rpd.dbgInfo().CStr());
     }
-    
+
     itLump = game::SearchItem(pur->ulUndoRemainsLumpID);
     if(itLump){
       matM = itLump->GetMainMaterial();
@@ -3265,9 +3266,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   recipe* prp=NULL;
   // just a simple macro to easify maintenance
   #define RP(MACRO_PARAM_rp) prp=CheckSelectedAndInitRecipeIfNeeded(bInitRecipes,rpd,prp,MACRO_PARAM_rp);
-  
+
   // RECIPES!
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Construction:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpAnvil);
   RP(rpChair);
@@ -3298,7 +3299,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
-  
+
   if(prp==NULL){
     // no crafting action was selected
     return false;
@@ -3314,7 +3315,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       ABORT("explain why crafting won't work.");
     return true;
   }
-  
+
   if(rpd.ingredientsIDs.size()==0){
     ABORT("no ingredients chosen?");
     return true; // dummy
@@ -3329,21 +3330,21 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     ABORT("requested to craft nothing? %s",rpd.dbgInfo().CStr());
     return true; //dummy
   }
-  
+
   if(rpd.iBaseTurnsToFinish<1){
     ABORT("invalid iBaseTurnsToFinish %d",rpd.iBaseTurnsToFinish);
     return true; //dummy
   }
-  
+
   if(rpd.itTool!=NULL && rpd.itTool2!=NULL){
     if(rpd.itTool==rpd.itTool2){ //keep this check to fix any code bofore this.
       ABORT("both tools are the same item %lu:%s %lu:%s",rpd.itTool->GetID(),rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetID(),rpd.itTool2->GetName(INDEFINITE).CStr());
       return true; //dummy
     }
   }
-  
+
   ///////////////////////// finally all looks ok //////////////////////////////
-  
+
   festring fsTools;
   if(rpd.itTool!=NULL)
     fsTools=rpd.itTool->GetName(INDEFINITE);
@@ -3493,7 +3494,7 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
         bCanBeBroken=false; // missing BROKEN config at .dat file but no problem, see below
       }
     }
-    
+
     if(!bCanBeBroken){
       /**
        * things that can't be broken are special.
@@ -3619,13 +3620,13 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
       itSpawn->GetName(DEFINITE).CStr()
     );
   }
-  
+
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
-  
+
   if(itSpawn!=NULL){
     if(fsCreated.GetSize()<200) // this will prevent a crash about "stack smashing detected". TODO to test it and provide a better solution, just comment this `if` line and split a corpse in 40 parts or more
       fsCreated << itSpawn->GetName(INDEFINITE);
-    
+
     if(rpd.bCanBeBroken && !itSpawn->IsBroken()){
       // this may break it too!
       if(rpd.lDamageFinalItem>0){
@@ -3638,10 +3639,10 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
         }
       }
     }
-    
+
     if(itSpawn)
       craftcore::FinishSpawning(rpd,itSpawn);
-    
+
     return itSpawn;
   }
   return NULL;
@@ -3875,7 +3876,7 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
     bool bXplod = bFumbled;
     if(rpd.bOnlyXplodIfCriticalFumble && !bCriticalFumble)
       bXplod=false;
-    
+
     rpd.xplodStr=0;
     if(bXplod){
       rpd.xplodStr = iFumblePower;
@@ -4208,7 +4209,7 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* matWorkWith, int Forc
 
 //    delete itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
   /**
-   * the material must be completely ready/configured before assigning it as 
+   * the material must be completely ready/configured before assigning it as
    * main or secondary, as there will happen important calculations, including
    * emitation!
    */
@@ -4216,7 +4217,7 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* matWorkWith, int Forc
   matNew->SetVolume(NewMaterialVolume);
   craftcore::CopyDegradation(matWorkWith,matNew);
   delete itTmp->SetMainMaterial(matNew);
-  
+
   FinishSpawning(rpd,itTmp);
 
   ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
@@ -4234,11 +4235,11 @@ void craftcore::FinishSpawning(recipedata& rpd,item* itSpawn){
 
     rpd.rc.H()->GetLSquareUnder()->SignalEmitationDecrease(itSpawn->GetEmitation());
     rpd.rc.H()->GetLSquareUnder()->CalculateLuminance();
-    
+
     // last
     itSpawn->SignalEmitationDecrease(itSpawn->GetEmitation());
     itSpawn->CalculateEmitation();
-  }  
+  }
 }
 
 std::vector<uint> vBone;

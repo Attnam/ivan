@@ -12,6 +12,8 @@
 
 /* Compiled through wmapset.cpp */
 
+#include "FastNoise.h"
+
 #define MAX_TEMPERATURE   27            // increase for a warmer world
 #define LATITUDE_EFFECT   40            // increase for more effect
 #define ALTITUDE_EFFECT   0.02
@@ -24,6 +26,8 @@
 int DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
+FastNoise WorldNoise; // Create a FastNoise object
+
 continent* worldmap::GetContinentUnder(v2 Pos) const
 { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
 v2 worldmap::GetEntryPos(ccharacter*, int I) const
@@ -32,6 +36,7 @@ continent* worldmap::GetContinent(int I) const { return Continent[I]; }
 int worldmap::GetAltitude(v2 Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 charactervector& worldmap::GetPlayerGroup() { return PlayerGroup; }
 character* worldmap::GetPlayerGroupMember(int c) { return PlayerGroup[c]; }
+std::vector<v2> worldmap::GetWasPlaced() { return WasPlaced;}
 
 struct location
 {
@@ -47,7 +52,7 @@ struct distancetoattnam
 {
   inline bool operator() (const location& loc1, const location& loc2)
   {
-      return (loc1.DistanceToAttnam < loc2.DistanceToAttnam);
+    return (loc1.DistanceToAttnam < loc2.DistanceToAttnam);
   }
 };
 
@@ -55,11 +60,12 @@ struct place
 {
   int Type;
   int Config;
-  int NativeGTerrainType;
+  std::vector<int> NativeGroundTerrainTypes;
   truth HasBeenPlaced;
   truth CanBeOnAnyTerrain;
+  truth IsCoreLocation;
 
-  place(int t, int c, int n, truth p, truth a) : Type(t), Config(c), NativeGTerrainType(n), HasBeenPlaced(p), CanBeOnAnyTerrain(a) {}
+  place(int t, int c, std::vector<int> s, truth p, truth a, truth i) : Type(t), Config(c), NativeGroundTerrainTypes(s), HasBeenPlaced(p), CanBeOnAnyTerrain(a), IsCoreLocation(i) {}
 };
 
 worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
@@ -81,6 +87,8 @@ worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
   continent::PossibleLocationBuffer = PossibleLocationBuffer;
+
+  InitializeShapeDescription();
 }
 
 worldmap::~worldmap()
@@ -114,7 +122,7 @@ void worldmap::Save(outputfile& SaveFile) const
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile << Continent << PlayerGroup;
+  SaveFile << Continent << PlayerGroup << WorldSeed << WasPlaced;
 }
 
 void worldmap::Load(inputfile& SaveFile)
@@ -151,7 +159,15 @@ void worldmap::Load(inputfile& SaveFile)
     }
 
   CalculateNeighbourBitmapPoses();
-  SaveFile >> Continent >> PlayerGroup;
+  SaveFile >> Continent >> PlayerGroup >> WorldSeed >> WasPlaced;
+}
+
+void worldmap::InitializeShapeDescription()
+{
+  int Shape = ivanconfig::GetWorldShapeConfig();
+  game::SetWorldShape(Shape);
+
+  return;
 }
 
 void worldmap::Generate()
@@ -160,17 +176,111 @@ void worldmap::Generate()
   Alloc2D(OldTypeBuffer, XSize, YSize);
   Alloc2D(NoIslandAltitudeBuffer, XSize, YSize);
 
+  int GeometricMeanSize = sqrt(XSize*YSize);
+  truth UsingPangea = !ivanconfig::GetLandTypeConfig() ? true : false;
+
+  // Counters
+  int WorldAttempts = 0;
+  int PlacementAttempts = 0;
+  int ForcedWorldReGens = 0;
+
+  // Limits
+  uint maxSeededWorldAttempts = 4;
+  uint maxForcedWorldRegenerations = 20;
+  uint maxDiscSamplingAttempts = 6;
+
+  // Flags
+  truth ForcePlacementOnAnyTerrain = false;
+  truth ForceWorldReGen = false;
+  truth CoreLocationFailure = false;
+
+  // World seed flags
+  int InitialSeed = ivanconfig::GetWorldSeedConfig();
+  truth CustomSeedRequested = (!InitialSeed ? false : true);
+  truth InitialSeedFailed = false;
+
+  // Determining noise distribution according to world size and shape
+  int WorldSize = ivanconfig::GetWorldSizeNumber();
+  // A general rule-of-thumb for NoiseFrequency for the noise type and fractal type and octaves we are using here:
+  // NoiseFrequency = 1.0 => larger landmasses
+  // NoiseFrequency = 2.0 => smaller landmasses
+  double NoiseFrequency = 1.1;
+
+  switch(WorldSize)
+  {
+    case HUGE_WORLD:
+      NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 10;
+      break;
+    case LARGE_WORLD:
+      NoiseFrequency = (!UsingPangea ? 2.0 : 1.2);
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 10;
+      break;
+    case FOUR_SCREEN_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.4 : 1.2);
+      maxSeededWorldAttempts = 4;
+      break;
+    case MEDIUM_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.4 : 1.3);
+      maxSeededWorldAttempts = 8;
+      break;
+    case SMALL_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.3 : 1.0);
+      maxSeededWorldAttempts = 8;
+      break;
+    case TINY_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.3 : 1.2);
+      maxSeededWorldAttempts = 16;
+      maxForcedWorldRegenerations = 40;
+      break;
+    case ONE_SCREEN_WORLD:
+      NoiseFrequency = (!UsingPangea ? 1.2 : 1.1);
+      maxSeededWorldAttempts = 16;
+      maxForcedWorldRegenerations = 30;
+      break;
+    default:
+      NoiseFrequency = 1.1;
+      maxSeededWorldAttempts = 4;
+      maxForcedWorldRegenerations = 20;
+  }
+
+  WorldNoise.SetNoiseType(FastNoise::SimplexFractal);
+  WorldNoise.SetFrequency(NoiseFrequency);
+  WorldNoise.SetFractalType(FastNoise::Billow);
+  WorldNoise.SetFractalOctaves(4);
+
   for(;;)
   {
-    RandomizeAltitude();
-    SmoothAltitude();
+
+    if(CustomSeedRequested && (WorldAttempts >= maxSeededWorldAttempts) && !InitialSeedFailed)
+    {
+      InitialSeedFailed = true;
+    }
+
+    if(InitialSeedFailed == true && InitialSeed != 0)
+    {
+      ADD_MESSAGE("World generator encountered bad seed: %d", InitialSeed);
+      InitialSeed = 0;
+      ForcedWorldReGens = 0;
+      PlacementAttempts = 0;
+    }
+    
+    ForceWorldReGen = false;
+    CoreLocationFailure = false;
+    
+    WorldAttempts++;
+    //RandomizeAltitude(); // Old method
+    PeriodicSimplexNoiseAltitude(InitialSeed);
+    //SmoothAltitude(); // Used to have a smoothing step here, probably not needed anymore
     GenerateClimate();
     SmoothClimate();
     CalculateContinents();
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 250 && Continent[c]->GetSize() < 750
+      if(Continent[c]->GetSize() > GeometricMeanSize && Continent[c]->GetSize() < (!UsingPangea ? 1024 : 16385)
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -178,9 +288,10 @@ void worldmap::Generate()
     if(!PerfectForAttnam.size())
       continue;
 
-    v2 AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
+    v2 NewAttnamPos, TunnelEntry, TunnelExit;
     truth Correct = false;
     continent* PetrusLikes;
+    truth Completed = true;
 
     // Store this before we start making islands which have no continent number.
     for(int x = 0; x < XSize; ++x)
@@ -191,137 +302,136 @@ void worldmap::Generate()
     {
       game::BusyAnimation();
       PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
-      AttnamPos = PetrusLikes->GetRandomMember(EGForestType);
-      ElpuriCavePos = PetrusLikes->GetRandomMember(SnowType);
+      
+      int EGForestAmount = PetrusLikes->GetGTerrainAmount(EGForestType);
+      int SnowAmount = PetrusLikes->GetGTerrainAmount(SnowType);
+      //ADD_MESSAGE("PetrusLikes has %d EGForest and %d Snow tiles.", EGForestAmount, SnowAmount);
 
       for(int c2 = 1; c2 < 50; ++c2)
       {
         TunnelExit = PetrusLikes->GetMember(RAND() % PetrusLikes->GetSize());
 
-        if(AttnamPos != TunnelExit && ElpuriCavePos != TunnelExit)
+        for(int d1 = 0; d1 < 8; ++d1)
         {
-          for(int d1 = 0; d1 < 8; ++d1)
+          v2 Pos = TunnelExit + game::GetMoveVector(d1);
+
+          if(IsValidPos(Pos) && AltitudeBuffer[Pos.X][Pos.Y] <= 0)
           {
-            v2 Pos = TunnelExit + game::GetMoveVector(d1);
+            int Distance = 3 + (RAND() & 3);
+            truth Error = false;
+            TunnelEntry = Pos;
 
-            if(IsValidPos(Pos) && AltitudeBuffer[Pos.X][Pos.Y] <= 0)
+            for(int c2 = 0; c2 < Distance; ++c2)
             {
-              int Distance = 3 + (RAND() & 3);
-              truth Error = false;
-              TunnelEntry = Pos;
+              TunnelEntry += game::GetMoveVector(d1);
 
-              for(int c2 = 0; c2 < Distance; ++c2)
+              if(!IsValidPos(TunnelEntry)
+                 || AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] > 0)
               {
-                TunnelEntry += game::GetMoveVector(d1);
+                Error = true;
+                break;
+              }
+            }
 
-                if(!IsValidPos(TunnelEntry)
-                   || AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] > 0)
+            if(Error)
+              continue;
+
+            int x, y;
+            int Counter = 0;
+
+            for(x = TunnelEntry.X - 3; x <= TunnelEntry.X + 3; ++x)
+            {
+              for(y = TunnelEntry.Y - 3; y <= TunnelEntry.Y + 3;
+                  ++y, ++Counter)
+                if(Counter != 0 && Counter != 6
+                   && Counter != 42 && Counter != 48
+                   && (!IsValidPos(x, y)
+                       || AltitudeBuffer[x][y] > 0
+                       || AltitudeBuffer[x][y] < -350))
                 {
                   Error = true;
                   break;
                 }
-              }
 
               if(Error)
-                continue;
-
-              int x, y;
-              int Counter = 0;
-
-              for(x = TunnelEntry.X - 3; x <= TunnelEntry.X + 3; ++x)
-              {
-                for(y = TunnelEntry.Y - 3; y <= TunnelEntry.Y + 3;
-                    ++y, ++Counter)
-                  if(Counter != 0 && Counter != 6
-                     && Counter != 42 && Counter != 48
-                     && (!IsValidPos(x, y)
-                         || AltitudeBuffer[x][y] > 0
-                         || AltitudeBuffer[x][y] < -350))
-                  {
-                    Error = true;
-                    break;
-                  }
-
-                if(Error)
-                  break;
-              }
-
-              if(Error)
-                continue;
-
-              Error = true;
-
-              for(x = 0; x < XSize; ++x)
-                if(TypeBuffer[x][TunnelEntry.Y] == JungleType)
-                {
-                  Error = false;
-                  break;
-                }
-
-              if(Error)
-                continue;
-
-              Counter = 0;
-
-              for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
-                for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2;
-                    ++y, ++Counter)
-                  if(Counter != 0 && Counter != 4
-                     && Counter != 20 && Counter != 24)
-                    AltitudeBuffer[x][y] /= 2;
-
-              AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] = 1 + RAND() % 50;
-              TypeBuffer[TunnelEntry.X][TunnelEntry.Y] = JungleType;
-              GetWSquare(TunnelEntry)->ChangeGWTerrain(jungle::Spawn());
-              int NewAttnamIndex;
-
-              for(NewAttnamIndex = RAND() & 7;
-                  NewAttnamIndex == 7 - d1;
-                  NewAttnamIndex = RAND() & 7);
-
-              NewAttnamPos = TunnelEntry
-                             + game::GetMoveVector(NewAttnamIndex);
-              static int DiagonalDir[4] = { 0, 2, 5, 7 };
-              static int NotDiagonalDir[4] = { 1, 3, 4, 6 };
-              static int AdjacentDir[4][2] = { { 0, 1 }, { 0, 2 },
-                                               { 1, 3 }, { 2, 3 } };
-              truth Raised[] = { false, false, false, false };
-              int d2;
-
-              for(d2 = 0; d2 < 4; ++d2)
-                if(NotDiagonalDir[d2] != 7 - d1
-                   && (NotDiagonalDir[d2] == NewAttnamIndex
-                       || !(RAND() & 2)))
-                {
-                  v2 Pos = TunnelEntry
-                           + game::GetMoveVector(NotDiagonalDir[d2]);
-                  AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
-                  TypeBuffer[Pos.X][Pos.Y] = JungleType;
-                  GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
-                  Raised[d2] = true;
-                }
-
-              for(d2 = 0; d2 < 4; ++d2)
-                if(DiagonalDir[d2] != 7 - d1
-                   && (DiagonalDir[d2] == NewAttnamIndex
-                       || (Raised[AdjacentDir[d2][0]]
-                           && Raised[AdjacentDir[d2][1]] && !(RAND() & 2))))
-                {
-                  v2 Pos = TunnelEntry
-                           + game::GetMoveVector(DiagonalDir[d2]);
-                  AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
-                  TypeBuffer[Pos.X][Pos.Y] = JungleType;
-                  GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
-                }
-
-              Correct = true;
-              break;
+                break;
             }
-          }
 
-          if(Correct)
+            if(Error)
+              continue;
+
+            Error = true;
+
+            for(x = 0; x < XSize; ++x)
+              if(TypeBuffer[x][TunnelEntry.Y] == JungleType)
+              {
+                Error = false;
+                break;
+              }
+
+            if(Error)
+              continue;
+
+            Counter = 0;
+
+            for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
+              for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2;
+                  ++y, ++Counter)
+                if(Counter != 0 && Counter != 4
+                   && Counter != 20 && Counter != 24)
+                  AltitudeBuffer[x][y] /= 2;
+
+            AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] = 1 + RAND() % 50;
+            TypeBuffer[TunnelEntry.X][TunnelEntry.Y] = JungleType;
+            GetWSquare(TunnelEntry)->ChangeGWTerrain(jungle::Spawn());
+            int NewAttnamIndex;
+
+            for(NewAttnamIndex = RAND() & 7;
+                NewAttnamIndex == 7 - d1;
+                NewAttnamIndex = RAND() & 7);
+
+            NewAttnamPos = TunnelEntry
+                           + game::GetMoveVector(NewAttnamIndex);
+            static int DiagonalDir[4] = { 0, 2, 5, 7 };
+            static int NotDiagonalDir[4] = { 1, 3, 4, 6 };
+            static int AdjacentDir[4][2] = { { 0, 1 }, { 0, 2 },
+                                             { 1, 3 }, { 2, 3 } };
+            truth Raised[] = { false, false, false, false };
+            int d2;
+
+            for(d2 = 0; d2 < 4; ++d2)
+              if(NotDiagonalDir[d2] != 7 - d1
+                 && (NotDiagonalDir[d2] == NewAttnamIndex
+                     || !(RAND() & 2)))
+              {
+                v2 Pos = TunnelEntry
+                         + game::GetMoveVector(NotDiagonalDir[d2]);
+                AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
+                TypeBuffer[Pos.X][Pos.Y] = JungleType;
+                GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
+                Raised[d2] = true;
+              }
+
+            for(d2 = 0; d2 < 4; ++d2)
+              if(DiagonalDir[d2] != 7 - d1
+                 && (DiagonalDir[d2] == NewAttnamIndex
+                     || (Raised[AdjacentDir[d2][0]]
+                         && Raised[AdjacentDir[d2][1]] && !(RAND() & 2))))
+              {
+                v2 Pos = TunnelEntry
+                         + game::GetMoveVector(DiagonalDir[d2]);
+                AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
+                TypeBuffer[Pos.X][Pos.Y] = JungleType;
+                GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
+              }
+
+            Correct = true;
             break;
+          }
         }
+
+        if(Correct)
+          break;
       }
 
       if(Correct)
@@ -331,133 +441,265 @@ void worldmap::Generate()
     if(!Correct)
       continue;
 
-    // Use a Poisson disc sampler to find random nicely-spaced points on the world map
-    // Third argument is radius. Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together)
-    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
-
     // Create a vector of location data structures from the available locations
-    std::vector <location> AvailableLocations;
-
-    // Pick out all the locations above ground as valid candidate locations
-    for(int x1 = 0; x1 < XSize; ++x1)
-      for(int y1 = 0; y1 < YSize; ++y1)
-        if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
-        {
-          AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()));
-        }
-
-    // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
-    std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit, AttnamPos, ElpuriCavePos};
-    for(uint i = 0; i < ForbiddenPositions.size(); i++)
-    {
-      AvailableLocations.erase(
-        std::remove_if(
-          AvailableLocations.begin(),
-          AvailableLocations.end(),
-          [ForbiddenPositions, i](location vec) -> truth {return vec.Position == ForbiddenPositions[i];}),
-        AvailableLocations.end());
-    }
-
-    // Sort the vector of global available locations according to distance to attnam. Closest places are first.
-    std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
-
+    std::vector<location> AvailableLocations;
     // Make up a vector of places from the script that need to be placed
     std::vector<place> ToBePlaced;
-    // Pick out only the places that can be generated, and get their native ground terrain type
-    for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
+    std::vector<place> ShallBePlaced;
+    std::vector<v2> AtTheseCoordinates;
+
+    for(int k1 = 0; k1 < maxDiscSamplingAttempts; k1++)
     {
-      const owterrain::prototype* Proto = protocontainer<owterrain>::GetProto(Type);
-      const owterrain::database*const* ConfigData = Proto->GetConfigData();
-      int ConfigSize = Proto->GetConfigSize();
-
-      for(int c = 0; c < ConfigSize; ++c)
-      {
-        const owterrain::database* DataBase = ConfigData[c];
-
-        if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
-        {
-          place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType, false, DataBase->CanBeOnAnyTerrain);
-          ToBePlaced.push_back(ConfigID);
-        }
-      }
-    }
-
-    // Re-order the places so they appear in random order:
-    std::random_shuffle(ToBePlaced.begin(), ToBePlaced.end());
-
-    // Do this for as many times as there are number of continents.
-    for(uint c = 1; c < Continent.size(); ++c)
-    {
-      // Get the next nearest continent index by looking at the top of the available locations.
-      int ThisContinent = AvailableLocations[0].ContinentIndex;
+      AvailableLocations.clear();
+      ShallBePlaced.clear();
+      AtTheseCoordinates.clear();
+      ToBePlaced.clear();
       
-      // Get each available location on the first continent.
-      std::vector<location> AvailableLocationsOnThisContinent;
-      
-      // Collect all remaining available locations on this continent.
-      for(uint i = 0; i < AvailableLocations.size(); i++)
-      {
-        if(AvailableLocations[i].ContinentIndex == ThisContinent)
-        {
-          AvailableLocationsOnThisContinent.push_back(AvailableLocations[i]);
-        }
-      }
-      // Go through all the locations on the continent. These are always in order of distance to Attnam, closest at the top.
-      for(uint i = 0; i < AvailableLocationsOnThisContinent.size(); i++)
-      {
-        // Go through all remaining places. These are always in a random order :)
-        for(uint j = 0; j < ToBePlaced.size(); j++)
-        {
-          // If the terrain type of the available location matches that of the place, then put the place there.
-          if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain))
+      // Is this appropriate here, or does it introduce a bug?? Note that reaching this point means k1 has been incremented...
+      if(ForceWorldReGen)
+        break;
+
+      PlacementAttempts++;
+
+      int PoissonRadius = 3;
+      // Add a check on world gen attempts here, no point using a coarse radius if ForcedWorldReGens > 3, or for tiny worlds
+      if((k1 <= 1) && (ForcedWorldReGens <= 2) && (WorldSize == HUGE_WORLD || WorldSize == LARGE_WORLD))
+        PoissonRadius = 5; // COARSE_RADIUS
+      else if(k1 > 1 && k1 <= 3 && (ForcedWorldReGens <= 4) && (WorldSize != ONE_SCREEN_WORLD || WorldSize != TINY_WORLD))
+        PoissonRadius = 4; // FINER_RADIUS
+      else
+        PoissonRadius = 3; // FINEST_RADIUS
+
+      // Use a Poisson disc sampler to find random nicely-spaced points on the world map
+      // Third argument is radius. On a 128x128 tile map, Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together).
+      AllocateGlobalPossibleLocations(XSize, YSize, PoissonRadius, 10); // default is 6
+
+      // Pick out all the locations above ground as valid candidate locations
+      for(int x1 = 0; x1 < XSize; ++x1)
+        for(int y1 = 0; y1 < YSize; ++y1)
+          if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
           {
-            owterrain* NewPlace = protocontainer<owterrain>::GetProto(ToBePlaced[j].Type)->Spawn();
-            v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
+            AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (TunnelExit - v2(x1, y1)).GetManhattanLength())); // was AttnamPos
+          }
 
-            if(!NewPlace->HideLocationInitially())
-              GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
+      // Remove those positions that have already been taken up by core places, plus the origin.
+      // To get a nice boundary around the TunnelExit, we could add the neighbouring positions to the forbidden positions. Later perhaps.
+      std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit};
+      for(uint i = 0; i < ForbiddenPositions.size(); i++)
+      {
+        AvailableLocations.erase(
+          std::remove_if(
+            AvailableLocations.begin(),
+            AvailableLocations.end(),
+            [ForbiddenPositions, i](location vec) -> truth {return vec.Position == ForbiddenPositions[i];}),
+          AvailableLocations.end());
+      }
 
-            SetEntryPos(NewPlace->GetAttachedDungeon(), NewPos);
-            ToBePlaced[j].HasBeenPlaced = true;
+      // Sort the vector of global available locations according to distance to Attnam. Closest places are first.
+      std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
+      
+      // Pick out only the places that can be generated that are not core locations, and get their native ground terrain type
+      for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
+      {
+        const owterrain::prototype* Proto = protocontainer<owterrain>::GetProto(Type);
+        const owterrain::database*const* ConfigData = Proto->GetConfigData();
+        int ConfigSize = Proto->GetConfigSize();
 
-            if(NewPlace->RevealEnvironmentInitially())
-              RevealEnvironment(NewPos, 1);
+        for(int c = 0; c < ConfigSize; ++c)
+        {
+          const owterrain::database* DataBase = ConfigData[c];
 
-            break;
+          if(!DataBase->IsAbstract && DataBase->CanBeGenerated && !DataBase->IsCoreLocation)
+          {
+            const fearray<int> &TerrainTypes = DataBase->NativeGTerrainTypes;
+            std::vector<int> NativeGroundTerrainTypes;
+            for (uint f = 0; f < TerrainTypes.Size; ++f)
+            {
+              NativeGroundTerrainTypes.push_back(TerrainTypes[f]);
+            }
+
+            place ConfigID(Type, DataBase->Config, NativeGroundTerrainTypes, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
+            ToBePlaced.push_back(ConfigID);
           }
         }
-        // Remove any places that have been placed, so we don't try to pick them out of our vector again.
-        ToBePlaced.erase(
-          std::remove_if(
-            ToBePlaced.begin(),
-            ToBePlaced.end(),
-            [](place vec) -> truth {return vec.HasBeenPlaced;}),
-          ToBePlaced.end());
       }
-      // Remove the locations on the continent we have just examined. Whether or not they populate with places, they will not be re-visited.
-      AvailableLocations.erase(
-        std::remove_if(
-          AvailableLocations.begin(),
-          AvailableLocations.end(),
-          [ThisContinent](location vec) -> truth {return vec.ContinentIndex == ThisContinent;}),
-        AvailableLocations.end());
 
-      AvailableLocationsOnThisContinent.clear();
+      // Re-order the places so they appear in random order:
+      std::random_shuffle(ToBePlaced.begin(), ToBePlaced.end());
+      
+      // Then pick out the places that are generable core locations, and get their native terrain types
+      for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
+      {
+        const owterrain::prototype* Proto = protocontainer<owterrain>::GetProto(Type);
+        const owterrain::database*const* ConfigData = Proto->GetConfigData();
+        int ConfigSize = Proto->GetConfigSize();
 
-      // Two early stopping criteria. In the default case we just run out of continents to step through.
-      if(AvailableLocations.empty())
-        break;
+        for(int c = 0; c < ConfigSize; ++c)
+        {
+          const owterrain::database* DataBase = ConfigData[c];
 
-      if(ToBePlaced.empty())
-        break;
+          if(!DataBase->IsAbstract && DataBase->CanBeGenerated && DataBase->IsCoreLocation)
+          {
+            const fearray<int> &TerrainTypes = DataBase->NativeGTerrainTypes;
+            std::vector<int> NativeGroundTerrainTypes;
+            for (uint f = 0; f < TerrainTypes.Size; ++f)
+            {
+              NativeGroundTerrainTypes.push_back(TerrainTypes[f]);
+            }
+
+            place ConfigID(Type, DataBase->Config, NativeGroundTerrainTypes, false, DataBase->CanBeOnAnyTerrain, DataBase->IsCoreLocation);
+            ToBePlaced.push_back(ConfigID); // Append core locations Attnam and Gloomy Caves
+          }
+        }
+      }
+      
+      // Pre-pend Attnam and Gloomy Caves to vector ToBePlaced by reversing ToBePlaced. Now Attnam and GC will be more likely to be placed first for their respective terrain type and hence appear on the same continent as the underwater tunnel exit.
+      std::reverse(ToBePlaced.begin(), ToBePlaced.end());
+
+      // Do this for as many times as there are number of continents.
+      for(uint c = 1; c < Continent.size(); ++c)
+      {
+        if(UsingPangea && (c != PetrusLikes->GetIndex()))
+          continue; // continues to the end of loop until we are using the right continent
+        
+        // Get the next nearest continent index by looking at the top of the available locations.
+        int ThisContinent = AvailableLocations[0].ContinentIndex;
+        
+        // Get each available location on the first continent.
+        std::vector<location> AvailableLocationsOnThisContinent;
+        
+        // Collect all remaining available locations on this continent.
+        for(uint i = 0; i < AvailableLocations.size(); i++)
+        {
+          if(AvailableLocations[i].ContinentIndex == ThisContinent)
+          {
+            AvailableLocationsOnThisContinent.push_back(AvailableLocations[i]);
+          }
+        }
+        // Go through all the locations on the continent. These are always in order of distance to Attnam, closest at the top.
+        for(uint i = 0; i < AvailableLocationsOnThisContinent.size(); i++)
+        {
+          // Go through all remaining places. These are always in a random order :)
+          for(uint j = 0; j < ToBePlaced.size(); j++)
+          {
+            // Go through the possible terrain types for each place (NativeGTerrainTypes from owterra.dat)
+            for(uint j2 = 0; j2 < ToBePlaced[j].NativeGroundTerrainTypes.size(); j2++)
+            {
+              // If the terrain type of the available location matches that of the place, then put the place there.
+              if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGroundTerrainTypes[j2])) || (ToBePlaced[j].CanBeOnAnyTerrain) || ForcePlacementOnAnyTerrain)
+              {
+                v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
+
+                // Check that Attnam and Gloomy Caves (core locations) appear on the same continent as PetrusLikes
+                if(ToBePlaced[j].IsCoreLocation && (ThisContinent != PetrusLikes->GetIndex()))
+                {
+                  //ADD_MESSAGE("Failed to place core location on continent with UT exit!");
+                  //ADD_MESSAGE("ThisContinent: %d, PetrusLikes: %d", ThisContinent, PetrusLikes->GetIndex());
+                  // Just a simple flag with a break will do
+                  CoreLocationFailure = true;
+                  break;
+                }
+
+                ShallBePlaced.push_back(ToBePlaced[j]);
+                AtTheseCoordinates.push_back(NewPos);
+                ToBePlaced[j].HasBeenPlaced = true;
+
+                break;
+              }
+              //ADD_MESSAGE("There are %d places to be placed", ToBePlaced.size());
+            }
+            if(CoreLocationFailure)
+              break;
+
+            if(ToBePlaced[j].HasBeenPlaced == true)
+              break;
+          }
+          if(CoreLocationFailure)
+            break;
+
+          // Remove any places that have been placed, so we don't try to pick them out of our vector again.
+          ToBePlaced.erase(
+            std::remove_if(
+              ToBePlaced.begin(),
+              ToBePlaced.end(),
+              [](place vec) -> truth {return vec.HasBeenPlaced;}),
+            ToBePlaced.end());
+        }
+        if(CoreLocationFailure)
+          break;
+
+        // Remove the locations on the continent we have just examined. Whether or not they populate with places, they will not be re-visited because their terrains don't match
+        AvailableLocations.erase(
+          std::remove_if(
+            AvailableLocations.begin(),
+            AvailableLocations.end(),
+            [ThisContinent](location vec) -> truth {return vec.ContinentIndex == ThisContinent;}),
+          AvailableLocations.end());
+
+        AvailableLocationsOnThisContinent.clear();
+
+        if(ToBePlaced.empty())
+        {
+          Completed = true;
+          break; // this is success and should break out to the worldgen (outer) loop.
+        }
+      }
+      
+      // If there are still towns to be placed, or Attnam or GC not appearing on start continent, then re-roll
+      if(!ToBePlaced.empty() || CoreLocationFailure)
+      {
+        AvailableLocations.clear();
+        ShallBePlaced.clear();
+        AtTheseCoordinates.clear();
+        ToBePlaced.clear();
+
+        if(k1 >= maxDiscSamplingAttempts - 1)
+          ForceWorldReGen = true;
+
+        if(ForcedWorldReGens >= maxForcedWorldRegenerations)
+        {
+          //ADD_MESSAGE("Forcing placement on any terrain...");
+          ForcePlacementOnAnyTerrain = true;
+        }
+
+        continue; // this continue statement breaks out only to the disc re-sample loop.
+      }
+      
+      if(Completed)
+      {
+        ForceWorldReGen = false;
+        break; // prevents further disc sampling
+      }
+    }  //for loop for poisson disc sampling attempts
+    if(ForceWorldReGen)
+    {
+      ForcedWorldReGens++;
+      continue;
     }
 
-    GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
-    SetEntryPos(ATTNAM, AttnamPos);
-    RevealEnvironment(AttnamPos, 1);
+    if(ShallBePlaced.size() != AtTheseCoordinates.size())
+    {
+      ABORT("Mismatched location placement!"); // In theory should never get to here
+    }
+    else
+    {
+      // Actually spawn the worldmap locations in their final positions
+      for(uint j = 0; j < ShallBePlaced.size(); j++)
+      {
+        owterrain* NewPlace = protocontainer<owterrain>::GetProto(ShallBePlaced[j].Type)->Spawn();
+        if(!NewPlace->HideLocationInitially())
+          GetWSquare(AtTheseCoordinates[j])->ChangeOWTerrain(NewPlace);
+
+        SetEntryPos(NewPlace->GetAttachedDungeon(), AtTheseCoordinates[j]);
+        if(NewPlace->RevealEnvironmentInitially())
+          RevealEnvironment(AtTheseCoordinates[j], 1);
+
+        WasPlaced.emplace_back(v2(ShallBePlaced[j].Type, NewPlace->GetAttachedDungeon()));
+      }
+    }
+    
     GetWSquare(NewAttnamPos)->ChangeOWTerrain(newattnam::Spawn());
     SetEntryPos(NEW_ATTNAM, NewAttnamPos);
-    SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
     GetWSquare(TunnelEntry)->ChangeOWTerrain(underwatertunnel::Spawn());
     SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
     GetWSquare(TunnelExit)->ChangeOWTerrain(underwatertunnelexit::Spawn());
@@ -471,15 +713,72 @@ void worldmap::Generate()
   delete [] OldAltitudeBuffer;
   delete [] OldTypeBuffer;
   delete [] NoIslandAltitudeBuffer;
+  
+  //ADD_MESSAGE("World generation attempts, %d", WorldAttempts);
+  //ADD_MESSAGE("Forced world re-generations, %d", ForcedWorldReGens);
+  //ADD_MESSAGE("Location placement attempts, %d", PlacementAttempts);
+
+  // Add a message to indicate that dungeons may show up on weird terrains
+  if(ForcePlacementOnAnyTerrain == true)
+    ADD_MESSAGE("\"It's the world %s, but not as we know it...\"", ivanconfig::GetDefaultPetName().CStr());
 }
 
 void worldmap::RandomizeAltitude()
 {
   game::BusyAnimation();
+  
+  WorldSeed = 0;
 
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
       AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
+}
+
+void worldmap::PeriodicSimplexNoiseAltitude(int InitialSeed)
+{
+  game::BusyAnimation();
+  
+  if((InitialSeed <= 0) || (InitialSeed >= 2147483647))
+    WorldSeed = RAND() % 2147483647;
+  else
+    WorldSeed = InitialSeed;
+  
+  WorldNoise.SetSeed(WorldSeed);
+  
+  float multiplier = 1.0 / ( 2.0 * FPI );
+  
+  for(int x = 0; x < XSize; ++x)
+  {
+    for(int y = 0; y < YSize; ++y)
+    {
+      float s = x / (float)XSize;
+      float t = y / (float)YSize;
+      
+      float nx = (float)cos(s * 2.0 * FPI) * multiplier;
+      float ny = (float)cos(t * 2.0 * FPI) * multiplier;
+      float nz = (float)sin(s * 2.0 * FPI) * multiplier;
+      float nw = (float)sin(t * 2.0 * FPI) * multiplier;
+      
+      AltitudeBuffer[x][y] = (short)(1000 * WorldNoise.GetNoise(nx, ny, nz, nw)) + 600;
+      // Could add frog shape in here and blend to get Valpuri-shaped continent
+    }
+  }
+}
+
+void worldmap::SimplexNoiseAltitude()
+{
+  game::BusyAnimation();
+  
+  WorldSeed = RAND() % 2147483647;
+  WorldNoise.SetSeed(WorldSeed);
+
+  for (int x = 0; x < XSize; x++)
+  {
+    for (int y = 0; y < YSize; y++)
+    {
+      AltitudeBuffer[x][y] = (short)(1000 * WorldNoise.GetNoise(x, y));
+    }
+  }
 }
 
 void worldmap::SmoothAltitude()
@@ -922,9 +1221,10 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
 
   // Allocate a grid and a queue
   memset(PossibleLocationBuffer[0], 0, XSizeTimesYSize * sizeof(uchar));
-  std::vector<v2> Grid(GridCellWidth*GridCellHeight, v2(0, 0));
+  Grid.clear();
 
-  std::vector<v2> Queue;
+  for(int k = 0; k < GridCellWidth*GridCellHeight; k++)
+    Grid.emplace_back(v2(0, 0));
 
   int QueueSize = 0;
   int SampleSize = 0;
@@ -936,7 +1236,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
 
   // Do the SetPoint function
   v2 Sample = v2(XPos, YPos);
-  Queue.push_back(Sample);
+  Queue.clear();
+  Queue.emplace_back(Sample);
   // Find where (x,y) sits in the grid
   int XIndex = int(XPos / CellSize);
   int YIndex = int(YPos / CellSize);
@@ -946,6 +1247,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   QueueSize += 1;
   SampleSize += 1;
 
+  v2 NewSample = v2(0, 0);
+
   while(QueueSize)
   {
     int XIdx = int((RAND() % 100 / 100.0) * QueueSize);
@@ -954,8 +1257,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
     {
       double Angle = 2 * FPI * (RAND() % 100) / 100.0;
       double Hypotenuse = sqrt( A * (RAND() % 100) / 100.0 + RadiusSquared);
-      int XPos = int(Sample.X + Hypotenuse*cos(Angle));
-      int YPos = int(Sample.Y + Hypotenuse*sin(Angle));
+      XPos = int(Sample.X + Hypotenuse*cos(Angle));
+      YPos = int(Sample.Y + Hypotenuse*sin(Angle));
       if((XPos >= 0) && (XPos < XSize))
       {
         if((YPos >= 0) && (YPos < YSize))
@@ -963,8 +1266,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
           if(PoissonDiscSamplerCheckDistance(XPos, YPos, CellSize, GridCellWidth, GridCellHeight, RadiusSquared, Grid))
           {
             // Do the SetPoint function
-            v2 NewSample = v2(XPos, YPos);
-            Queue.push_back(NewSample);
+            NewSample = v2(XPos, YPos);
+            Queue.emplace_back(NewSample);
             // Find where (x,y) sits in the grid
             XIndex = int(XPos / CellSize);
             YIndex = int(YPos / CellSize);

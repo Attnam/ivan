@@ -813,17 +813,21 @@ festring GetUserDataDir()
 {
 #ifdef UNIX
   festring Dir;
-  Dir << getenv("HOME");
 #ifdef MAC_APP
-  Dir << "/Library/Application Support/IVAN/";
+  Dir << getenv("HOME") << "/Library/Application Support/IVAN/";
 #else
-  Dir << "/.ivan/";
-#endif
+  char *xdg_home = getenv("XDG_DATA_HOME"); // check if XDG_DATA_HOME is set
+  if (xdg_home != NULL) { // if it is, use that directory
+          Dir << xdg_home << "/ivan/";
+  } else { // otherwise, default to home directory
+          Dir << getenv("HOME") << "/.ivan/";
+  }
+#endif /* MAC_APP */
 #ifdef DBGMSG
   dbgmsg::SetDebugLogPath(Dir.CStr());
-#endif
+#endif /* DBGMSG */
   return Dir;
-#endif
+#endif /* UNIX */
 
 #if defined(WIN32) || defined(__DJGPP__)
   return "./";

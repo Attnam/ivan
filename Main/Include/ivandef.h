@@ -745,6 +745,14 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define TUNDRA 6
 #define GLACIER 7
 
+#define HUGE_WORLD 0
+#define LARGE_WORLD 1
+#define MEDIUM_WORLD 2
+#define SMALL_WORLD 3
+#define TINY_WORLD 4
+#define ONE_SCREEN_WORLD 5
+#define FOUR_SCREEN_WORLD 6
+
 #define NO_MOVE 0
 #define WALK 1
 #define SWIM 2
