@@ -2549,7 +2549,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
   if(curseddeveloper::IsCursedDeveloper())
     return;
   
-  highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+  highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
 
   if(!HScore.CheckVersion())
   {
