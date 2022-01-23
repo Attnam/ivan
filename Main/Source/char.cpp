@@ -1586,6 +1586,37 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
   {
     /** No multitile support */
 
+    int Shape = game::GetWorldShape();
+    area* Area = game::GetCurrentArea();
+
+    if(Shape == 0)
+    {
+      MoveTo = MoveTo; // Flat
+    }
+    else if(Shape == 1)
+    {
+      // Cylinder
+      if(MoveTo.X > Area->GetXSize() - 1)
+        MoveTo.X = 0;
+      if(MoveTo.X < 0)
+        MoveTo.X = Area->GetXSize() - 1;
+    }
+    else if(Shape == 2)
+    {
+      // Toroidal
+    if(MoveTo.X > Area->GetXSize() - 1)
+      MoveTo.X = 0;
+    if(MoveTo.X < 0)
+      MoveTo.X = Area->GetXSize() - 1;
+    if(MoveTo.Y > Area->GetYSize() - 1)
+      MoveTo.Y = 0;
+    if(MoveTo.Y < 0)
+      MoveTo.Y = Area->GetYSize() - 1;
+    }
+    else
+      MoveTo = MoveTo; // Flat (default)
+    
+    
     if(CanMove()
        && GetArea()->IsValidPos(MoveTo)
        && (CanMoveOn(GetNearWSquare(MoveTo))
@@ -2535,11 +2566,11 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(!game::WizardModeIsReallyActive())
   {
-    highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+    highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
 
     if(!HScore.CheckVersion())
     {
-      if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+      if(game::Menu(std::vector<bitmap*>(), v2(RES.X >> 1, RES.Y >> 1),
                     CONST_S("The highscore version doesn't match.\rDo you want to erase "
                             "previous records and start a new file?\rNote, if you answer "
                             "no, the score of your current game will be lost!\r"),
@@ -5405,6 +5436,20 @@ void character::AddName(festring& String, int Case) const
     id::AddName(String, Case);
     String << " named " << AssignedName;
   }
+}
+
+festring character::GetWorldShapeDescription() const
+{
+  int Shape = game::GetWorldShape();
+
+  if(Shape == 0)
+    return CONST_S("square pancake"); // Flat
+  else if(Shape == 1)
+    return CONST_S("square brandy snap"); // Cylinder
+  else if(Shape == 2)
+    return CONST_S("square doughnut"); // Toroidal
+  else
+    return CONST_S("square pancake"); // Default
 }
 
 int character::GetHungerState() const
@@ -8620,6 +8665,7 @@ festring& character::ProcessMessage(festring& Msg) const
   SEARCH_N_REPLACE(Msg, "@Sp", GetPossessivePronoun().CapitalizeCopy());
   SEARCH_N_REPLACE(Msg, "@Op", GetObjectPronoun().CapitalizeCopy());
   SEARCH_N_REPLACE(Msg, "@Gd", GetMasterGod()->GetName());
+  SEARCH_N_REPLACE(Msg, "@ws", GetWorldShapeDescription());
   return Msg;
 }
 

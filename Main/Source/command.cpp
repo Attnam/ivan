@@ -52,14 +52,19 @@
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
-: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), Key4(0),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
   game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
-char command::GetKey() const
+int command::GetKey() const
 {
+  if(ivanconfig::IsSetupCustomKeys()){
+    if(Key4>0)
+      return Key4;
+  }
+  
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
@@ -70,7 +75,7 @@ char command::GetKey() const
     return Key3;
    default:
     ABORT("This is not Vim!");
-    return Key1;
+    return Key1; //?
   }
 }
 
@@ -126,6 +131,7 @@ command* commandsystem::Command[] =
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
+  new command(&ShowWorldSeed, "display the world seed", '^', '^', '^', true),
 
 #ifdef WIZARD
   new command(&WizardMode, "wizard mode activation (Ctrl+ for console)", '`', '`', '`', true),
@@ -156,7 +162,7 @@ command* commandsystem::Command[] =
 
 #endif
 
-  0
+  0 //this is important as an end of array indicator
 };
 
 #ifndef WIZARD
@@ -239,16 +245,16 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   return false;
 }
 
-char findCmdKey(truth (*func)(character*))
+int findCmdKey(truth (*func)(character*))
 {
-  char cKey=0;
+  int iKey=0;
   for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
     if(cmd->GetLinkedFunction()==func){
-      cKey = cmd->GetKey();
+      iKey = cmd->GetKey();
       break;
     }
-  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
-  return cKey;
+  if(iKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return iKey;
 }
 
 truth commandsystem::GoUp(character* Char)
@@ -761,7 +767,7 @@ truth commandsystem::Quit(character* Char)
 
 truth commandsystem::Talk(character* Char)
 {
-  static char cmdKey = findCmdKey(&Talk);
+  static int cmdKey = findCmdKey(&Talk);
 
   if(!Char->CheckTalk())
     return false;
@@ -795,7 +801,7 @@ truth commandsystem::Talk(character* Char)
   else
   {
     static festring fsQ;
-    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<cmdKey<<"']";return true;}();
+    static bool bInitDummy=[](){fsQ<<"To whom do you wish to talk? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
     static int iPreviousDirChosen = DIR_ERROR;
     int Dir = game::DirectionQuestion(fsQ, false, true, cmdKey, iPreviousDirChosen);
 
@@ -991,7 +997,7 @@ truth commandsystem::ShowKeyLayout(character*)
     if(!GetCommand(c)->IsWizardModeFunction())
     {
       Buffer.Empty();
-      Buffer << GetCommand(c)->GetKey();
+      Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
     }
@@ -1006,7 +1012,7 @@ truth commandsystem::ShowKeyLayout(character*)
       if(GetCommand(c)->IsWizardModeFunction())
       {
         Buffer.Empty();
-        Buffer << GetCommand(c)->GetKey();
+        Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
         Buffer.Resize(10);
         List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
@@ -1254,7 +1260,7 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
-  static char cmdKey = findCmdKey(&Kick);
+  static int cmdKey = findCmdKey(&Kick);
 
   /** No multi-tile support */
 
@@ -1269,7 +1275,7 @@ truth commandsystem::Kick(character* Char)
   }
 
   static festring fsQ;
-  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";return true;}();
+  static bool bInitDummy=[](){fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<(char)cmdKey<<"']";return true;}();
   static int iPreviousDirChosen = DIR_ERROR;
   int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
@@ -1345,7 +1351,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  static char cmdKey = findCmdKey(&Throw);
+  static int cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;
@@ -1927,6 +1933,17 @@ truth commandsystem::Search(character* Char)
   return true;
 }
 
+truth commandsystem::ShowWorldSeed(character*)
+{
+  int Seed = game::GetWorldMap()->GetWorldSeed();
+  if(!Seed)
+    ADD_MESSAGE("World seed is 0");
+  else
+    ADD_MESSAGE("World seed is %d", Seed);
+
+  return false;
+}
+
 #ifdef WIZARD
 
 truth commandsystem::WizardMode(character* Char)
@@ -1940,74 +1957,27 @@ truth commandsystem::WizardMode(character* Char)
 
       if(game::IsInWilderness())
       {
-        v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-        game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
-        game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-
-        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
-        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
-        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-
-        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
-        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
-        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
-
-        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
-        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
-        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
-
-        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
-        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
-        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
-
-        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
-        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
-        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
-
-        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
-        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
-        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
-
-        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
-        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
+        for(uint j = 0; j < game::GetWorldMap()->GetWasPlaced().size(); j++)
+        {
+          owterrain* NewPlace = protocontainer<owterrain>::GetProto(game::GetWorldMap()->GetWasPlaced()[j].X)->Spawn();
+          v2 LocationPosition = game::GetWorldMap()->GetEntryPos(0, game::GetWorldMap()->GetWasPlaced()[j].Y);
+          game::GetWorldMap()->GetWSquare(LocationPosition)->ChangeOWTerrain(NewPlace);
+          game::GetWorldMap()->RevealEnvironment(LocationPosition, 1);
+        }
 
         game::GetWorldMap()->SendNewDrawRequest();
       }
       else
       {
         game::LoadWorldMap();
-        v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-        game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
-        game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
 
-        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
-        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
-        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-
-        v2 AslonaPos = game::GetWorldMap()->GetEntryPos(0, ASLONA_CASTLE);
-        game::GetWorldMap()->GetWSquare(AslonaPos)->ChangeOWTerrain(aslonacastle::Spawn());
-        game::GetWorldMap()->RevealEnvironment(AslonaPos, 1);
-
-        v2 RebelPos = game::GetWorldMap()->GetEntryPos(0, REBEL_CAMP);
-        game::GetWorldMap()->GetWSquare(RebelPos)->ChangeOWTerrain(rebelcamp::Spawn());
-        game::GetWorldMap()->RevealEnvironment(RebelPos, 1);
-
-        v2 GoblinFortPos = game::GetWorldMap()->GetEntryPos(0, GOBLIN_FORT);
-        game::GetWorldMap()->GetWSquare(GoblinFortPos)->ChangeOWTerrain(goblinfort::Spawn());
-        game::GetWorldMap()->RevealEnvironment(GoblinFortPos, 1);
-
-        v2 FungalCavePos = game::GetWorldMap()->GetEntryPos(0, FUNGAL_CAVE);
-        game::GetWorldMap()->GetWSquare(FungalCavePos)->ChangeOWTerrain(fungalcave::Spawn());
-        game::GetWorldMap()->RevealEnvironment(FungalCavePos, 1);
-
-        v2 PyramidPos = game::GetWorldMap()->GetEntryPos(0, PYRAMID);
-        game::GetWorldMap()->GetWSquare(PyramidPos)->ChangeOWTerrain(pyramid::Spawn());
-        game::GetWorldMap()->RevealEnvironment(PyramidPos, 1);
-
-        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
-        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
-        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
+        for(uint j = 0; j < game::GetWorldMap()->GetWasPlaced().size(); j++)
+        {
+          owterrain* NewPlace = protocontainer<owterrain>::GetProto(game::GetWorldMap()->GetWasPlaced()[j].X)->Spawn();
+          v2 LocationPosition = game::GetWorldMap()->GetEntryPos(0, game::GetWorldMap()->GetWasPlaced()[j].Y);
+          game::GetWorldMap()->GetWSquare(LocationPosition)->ChangeOWTerrain(NewPlace);
+          game::GetWorldMap()->RevealEnvironment(LocationPosition, 1);
+        }
 
         game::SaveWorldMap();
       }
@@ -2275,8 +2245,8 @@ truth commandsystem::SecretKnowledge(character* Char)
       delete Material[c];
   }
 
-  List.PrintToFile(game::GetUserDataDir() + "secret" + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetUserDataDir().CStr(), Chosen);
+  List.PrintToFile(GetUserDataDir() + "secret" + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", GetUserDataDir().CStr(), Chosen);
   return false;
 }
 

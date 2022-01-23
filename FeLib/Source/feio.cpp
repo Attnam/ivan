@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <vector>
 
 #ifdef WIN32
 #define stat _stat
@@ -49,6 +50,7 @@
 #include "rawbit.h"
 #include "save.h"
 #include "whandler.h"
+#include "sfx.h"
 
 #include "dbgmsgproj.h"
 
@@ -155,10 +157,11 @@ truth iosystem::IsOnMenu(){
    If you need to use this function use the comments. Don't try to
    understand it. It is impossible. */
 
-int iosystem::Menu(cbitmap* BackGround, v2 Pos,
+int iSelectedPrevious=-1;
+int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
                    cfestring& Topic, cfestring& sMS,
                    col16 Color, cfestring& SmallText1,
-                   cfestring& SmallText2)
+                   cfestring& SmallText2, truth ExtraMenuGraphics)
 {
   if(CountChars('\r', sMS) < 1)
     return (-1);
@@ -172,38 +175,51 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   Buffer.ActivateFastFlag();
   int c = 0;
 
-  if(BackGround){
-    if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
-      blitdata B = DEFAULT_BLITDATA;
-      B.Bitmap = &Buffer;
-
-      B.Src.X = (RES.X - BackGround->GetSize().X)/2;
-      if(B.Src.X>0)B.Src.X=0;
-      if(B.Src.X<0)B.Src.X*=-1;
-      B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
-      if(B.Src.Y>0)B.Src.Y=0;
-      if(B.Src.Y<0)B.Src.Y*=-1;
-
-      B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
-      if(B.Dest.X<0)B.Dest.X=0;
-      B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
-      if(B.Dest.Y<0)B.Dest.Y=0;
-
-      B.Border = BackGround->GetSize() - v2();
-
-      Buffer.ClearToColor(0);
-      BackGround->NormalBlit(B);
-    }else{
-      BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
-    }
-  }else
-    Buffer.ClearToColor(0);
-
   festring sCopyOfMS;
   festring VeryUnGuruPrintf;
 
   while(!bReady)
   {
+    cbitmap* BackGround = NULL;
+    if(ExtraMenuGraphics)
+      BackGround = vBackGround.size()>iSelected?vBackGround[iSelected]:NULL;
+    else
+      BackGround = vBackGround[0];
+
+    if(BackGround){
+      if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+        blitdata B = DEFAULT_BLITDATA;
+        B.Bitmap = &Buffer;
+
+        B.Src.X = (RES.X - BackGround->GetSize().X)/2;
+        if(B.Src.X>0)B.Src.X=0;
+        if(B.Src.X<0)B.Src.X*=-1;
+        B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
+        if(B.Src.Y>0)B.Src.Y=0;
+        if(B.Src.Y<0)B.Src.Y*=-1;
+
+        B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
+        if(B.Dest.X<0)B.Dest.X=0;
+        B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
+        if(B.Dest.Y<0)B.Dest.Y=0;
+
+        B.Border = BackGround->GetSize() - v2();
+
+        Buffer.ClearToColor(0);
+        BackGround->NormalBlit(B);
+      }else{
+        BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
+      }
+    }else
+      Buffer.ClearToColor(0);
+
+#ifndef NOSOUND
+    if(ExtraMenuGraphics && iSelectedPrevious != iSelected){
+      soundeffects::playSound(festring()<<"Main Menu Entry "<<(iSelected+1));
+      iSelectedPrevious = iSelected;
+    }
+#endif
+
     clock_t StartTime = clock();
     sCopyOfMS = Topic;
     int i;
@@ -287,7 +303,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
     }
     else
     {
-                //FONT->Printf(&Buffer, v2(100, 100), Color, "%s", "NUKES IS HERE!");
+      //FONT->Printf(&Buffer, v2(100, 100), Color, "%s", "NUKES IS HERE!");
       Buffer.FastBlit(DOUBLE_BUFFER);
       graphics::BlitDBToScreen();
       k = GET_KEY(false);
@@ -325,6 +341,21 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   return iSelected;
 }
 
+/**
+ * this prevents all possibly troublesome characters in all OSs
+ */
+void iosystem::fixChars(festring& fs)
+{
+  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
+  {
+    if(fs[i]>='A' && fs[i]<='Z')continue;
+    if(fs[i]>='a' && fs[i]<='z')continue;
+    if(fs[i]>='0' && fs[i]<='9')continue;
+
+    fs[i] = '_';
+  }
+}
+
 /* Asks the user a question requiring a string answer. The answer is saved
    to Input. Input can also already have a default something pretyped for
    the user. Topic is the question or other topic for the question. Pos is the
@@ -346,7 +377,35 @@ int iosystem::StringQuestion(festring& Input,
                              stringkeyhandler StringKeyHandler)
 {
   bInUse=true;
-
+  
+  /**
+   * History files are based on tokens to make them more shareable.
+   * Questions (topic) must have '?' or ':' after the static string part and 
+   * after that all can be dynamic.
+   * So the files will be named up to these tokens only!
+   * TODO This means some questions should be revised to share the history file for the very "same" base question...
+   */
+  festring fsFixTopicToFileName = Topic;
+  ulong cutAt;
+  cutAt = fsFixTopicToFileName.Find("?");
+  if(cutAt!=festring::NPos)fsFixTopicToFileName.Resize(cutAt);
+  cutAt = fsFixTopicToFileName.Find(":");
+  if(cutAt!=festring::NPos)fsFixTopicToFileName.Resize(cutAt);
+  fixChars(fsFixTopicToFileName);  
+  festring fsHistFile = festring()+GetUserDataDir()+".QuestionHistory_"+fsFixTopicToFileName+".txt";
+  DBG1(fsHistFile.CStr());
+  FILE *fl = fopen(fsHistFile.CStr(), "a+");
+  rewind(fl);
+  festring Line;
+  static const int iBuffSz=0xFF;
+  char str[iBuffSz];
+  std::vector<festring> vHist;
+  while(fgets(str, iBuffSz, fl)){
+    Line=str;
+    Line.Resize(Line.GetSize()-1);
+    vHist.push_back(Line); //removes trailing \n
+  }
+  
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -372,6 +431,9 @@ int iosystem::StringQuestion(festring& Input,
   FONT->Printf(DOUBLE_BUFFER, Pos, Color, "%s", Topic.CStr());
   Swap(B.Src, B.Dest);
 
+  bool bAbort = false;
+  int iHistIndex = 0;
+  if(vHist.size())iHistIndex=vHist.size()-1;
   for(int LastKey = 0, CursorPos = Input.GetSize();; LastKey = 0)
   {
     B.Bitmap = DOUBLE_BUFFER;
@@ -397,16 +459,22 @@ int iosystem::StringQuestion(festring& Input,
        character not available in the font */
 
     while(!(LastKey >= 0x20 && LastKey < 0x7F)
-          && LastKey != KEY_ENTER && LastKey != KEY_ESC
-          && LastKey != KEY_HOME && LastKey != KEY_END
-          && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
-          && LastKey != KEY_BACK_SPACE)
-    {
+      && LastKey != KEY_BACK_SPACE
+      && LastKey != KEY_DELETE
+      && LastKey != KEY_DOWN
+      && LastKey != KEY_END
+      && LastKey != KEY_ENTER
+      && LastKey != KEY_ESC
+      && LastKey != KEY_HOME 
+      && LastKey != KEY_LEFT 
+      && LastKey != KEY_RIGHT
+      && LastKey != KEY_UP
+    ){
       LastKey = GET_KEY(false);
 
       if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
       {
-        LastKey = 0;
+        LastKey = 0; // to `continue;` below
         break;
       }
     }
@@ -416,13 +484,22 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_ESC && AllowExit){
       bInUse=false;
-      return ABORTED;
+      bAbort=true;
+      break;
     }
 
     if(LastKey == KEY_BACK_SPACE)
     {
       if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
+
+      continue;
+    }
+
+    if(LastKey == KEY_DELETE)
+    {
+      if(CursorPos < Input.GetSize())
+        Input.Erase(static_cast<festring::sizetype>(CursorPos), 1);
 
       continue;
     }
@@ -468,12 +545,44 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
+    if(LastKey == KEY_UP)
+    {
+      if(vHist.size()){
+        if(iHistIndex == (vHist.size()-1))
+          vHist.push_back(Input);
+
+        --iHistIndex;
+        if(iHistIndex<0)iHistIndex=0;
+        Input=vHist[iHistIndex];
+        if(CursorPos>Input.GetSize())
+          CursorPos=Input.GetSize();
+      }
+
+      continue;
+    }
+    
+    if(LastKey == KEY_DOWN)
+    {
+      if(vHist.size()){
+        ++iHistIndex;
+        if(iHistIndex>=vHist.size())iHistIndex=vHist.size()-1;
+        Input=vHist[iHistIndex];
+        if(CursorPos>Input.GetSize())
+          CursorPos=Input.GetSize();
+      }
+
+      continue;
+    }
+    
     if(LastKey >= 0x20 && LastKey < 0x7F
        && (LastKey != ' ' || !Input.IsEmpty())
        && Input.GetSize() < MaxLetters)
       Input.Insert(static_cast<festring::sizetype>(CursorPos++),
                    static_cast<char>(LastKey));
   }
+  
+  if(bAbort)
+    return ABORTED;
 
   /* Delete all the trailing spaces */
 
@@ -487,6 +596,12 @@ int iosystem::StringQuestion(festring& Input,
 
   Input.Resize(LastAlpha + 1);
 
+  if(!vHist.size() || Input!=vHist[vHist.size()-1]){
+    //vHist.push_back(Input);
+    fprintf(fl, "%s\n", Input.CStr());
+  }
+  fclose(fl);
+  
   bInUse=false;
   return NORMAL_EXIT;
 }
@@ -811,7 +926,7 @@ struct sAlertConfirmMsg{
 void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
 {
   if(!sAlertConfirmMsgInst.bShow)return;
-  
+
   //TODO calc all line withs to determine the full popup width to not look bad if overflow, see specialkeys help dialog creation
   int iLineHeight=20;
   v2 v2Border(700,100+(sAlertConfirmMsgInst.vfsCritMsgs.size()*iLineHeight));
@@ -834,7 +949,7 @@ void iosystem::AlertConfirmMsgDraw(bitmap* Buffer)
 bool iosystem::AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs,bool bConfirmMode)
 {
   static bool bDummyInit = [](){graphics::AddDrawAboveAll(&AlertConfirmMsgDraw,100100,"iosystem::AlertConfirmMsgDraw"); return true;}();
-    
+
   bInUse=true;
 
   sAlertConfirmMsgInst.bShow=true;
@@ -1076,7 +1191,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          *    Generating a new level is probably bad as it will ignore whatever happened in that level and may create
          *    duplicated items (uniques) and characters (uniques that died) when they should not exist,
          *    may be only for fully random (with non unique things on it) levels such workaround could be used...
-         * 
+         *
          * TODO for file extensions, find the type only at the end, use std::string if easier/clearer to implement
          */
       }else

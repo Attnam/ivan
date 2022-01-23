@@ -366,6 +366,7 @@
 #define POLYMORPHINE (LIQUID_ID + 58)
 #define LAVA (LIQUID_ID + 59)
 #define NAPALM (LIQUID_ID + 60)
+#define _LIQUID_ID_END_ (LIQUID_ID + 61) //this must be the last one always!
 
 #define FLESH_ID (5 << 12)
 
@@ -747,7 +748,12 @@
 #define CARPET 4
 #define COUCH 5
 #define CHAIR 6
+#define ARM_CHAIR 7
+#define BENCH 8
 #define DOUBLE_BED 9
+#define CHEAP_BED 10
+#define PLAIN_BED 11
+#define EXPENSIVE_BED 12
 #define POOL_BORDER 13
 #define POOL_CORNER 14
 #define PALM 15
@@ -760,9 +766,15 @@
 #define BIRCH 22
 #define TEAK 23
 #define DWARF_BIRCH 24
+#define PEDESTAL 25
 #define FORGE 26
 #define FURNACE 27
+#define OVEN 28
+#define DESK 31
 #define WORK_BENCH 32
+#define WELL 34
+#define STRANGE_TREE 38
+#define TAILORING_BENCH 39
 
 #define SNOW_BOULDER 4
 

@@ -23,15 +23,17 @@ class command
   command(truth (*)(character*), cchar*, char, char, char, truth, truth = false);
   truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   cchar* GetDescription() const { return Description; }
-  char GetKey() const;
+  int GetKey() const;
   truth IsUsableInWilderness() const { return UsableInWilderness; }
   truth IsWizardModeFunction() const { return WizardModeFunction; }
+  int SetCustomKey(int iKey){ int iKeyBkp=Key4; Key4 = iKey; return iKeyBkp; }
  private:
   truth (*LinkedFunction)(character*);
   cchar* Description;
   char Key1;
   char Key2;
   char Key3;
+  int Key4; // custom keys can be more than 1 char long as ex.: KEY_HOME is 0x147 or 0x0147
   truth UsableInWilderness;
   truth WizardModeFunction;
 };
@@ -98,6 +100,7 @@ class commandsystem
   static truth AssignName(character*);
   static truth Search(character*);
   static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
+  static truth ShowWorldSeed(character*);
 #ifdef WIZARD
   static truth WizardMode(character*);
   static truth AutoPlay(character* Char);

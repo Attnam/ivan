@@ -342,8 +342,7 @@ static void ScoreFlexibleName(
     cfestring& Identifier,
     festring& Name,
     festring::sizetype& NamePos,
-    int& NameScore,
-    std::pair<int, int>& Result)
+    int& NameScore)
 {
   // noop
 }
@@ -354,8 +353,7 @@ void ScoreFlexibleName<item>(
     cfestring& Identifier,
     festring& Name,
     festring::sizetype& NamePos,
-    int& NameScore,
-    std::pair<int, int>& Result)
+    int& NameScore)
 {
   if(!DataBase->FlexibleNameSingular.IsEmpty() && DataBase->NameSingular != DataBase->FlexibleNameSingular)
   {
@@ -363,12 +361,7 @@ void ScoreFlexibleName<item>(
     {
       Name = DataBase->FlexibleNameSingular;
       NameScore = DataBase->FlexibleNameSingular.GetSize();
-
-      if(Result.second > 0)  // view NameSingular plus FlexibleNameSingular as one
-        --Result.second;
     }
-    else if(Result.second < 1)
-      ++Result.second;
   }
 }
 
@@ -390,18 +383,37 @@ static std::pair<int, int> ScoreName(const typename type::database* DataBase, cf
       Name = DataBase->NameSingular;
       NameScore = DataBase->NameSingular.GetSize();
     }
-    else
-      ++Result.second;
   }
 
   if(NamePos == festring::NPos)
-    ScoreFlexibleName<type>(DataBase, Identifier, Name, NamePos, NameScore, Result);
+    ScoreFlexibleName<type>(DataBase, Identifier, Name, NamePos, NameScore);
+
+  for(uint c = 0; c < DataBase->Alias.Size; ++c)
+  {
+    cfestring& Alias = DataBase->Alias[c];
+
+    if((AliasPos = festring::IgnoreCaseFind(Identifier, " " + Alias + ' ')) != festring::NPos)
+    {
+      AliasScore = Alias.GetSize();
+
+      // XXX: alias may contain adjective and postfix
+      if(AliasScore > NameScore)
+      {
+        Name = Alias;
+        NamePos = AliasPos;
+        NameScore = AliasScore;
+      }
+    }
+  }
+
+  if(NamePos == festring::NPos)
+    ++Result.second;
 
   if(!DataBase->Adjective.IsEmpty())
   {
     if((AdjectivePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ')) != festring::NPos)
     {
-      if(NamePos == festring::NPos || AdjectivePos < NamePos)
+      if(NamePos != festring::NPos && AdjectivePos + DataBase->Adjective.GetSize() < NamePos)
         AdjectiveScore = DataBase->Adjective.GetSize();
       else
         AdjectiveScore = DataBase->Adjective.GetSize() / 2;
@@ -414,7 +426,7 @@ static std::pair<int, int> ScoreName(const typename type::database* DataBase, cf
   {
     if((PostfixPos = festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ')) != festring::NPos)
     {
-      if(NamePos == festring::NPos || PostfixPos >= NamePos + Name.GetSize() + 1)
+      if(NamePos != festring::NPos && PostfixPos > NamePos + Name.GetSize())
         PostfixScore = DataBase->PostFix.GetSize();
       else
         PostfixScore = DataBase->PostFix.GetSize() / 2;
@@ -423,31 +435,7 @@ static std::pair<int, int> ScoreName(const typename type::database* DataBase, cf
       ++Result.second;
   }
 
-  for(uint c = 0; c < DataBase->Alias.Size; ++c)
-  {
-    cfestring& Alias = DataBase->Alias[c];
-
-    if((AliasPos = festring::IgnoreCaseFind(Identifier, " " + Alias + ' ')) != festring::NPos)
-    {
-      if(AdjectivePos != festring::NPos && AdjectivePos >= AliasPos)
-        AdjectivePos /= 2;
-
-      if(PostfixPos != festring::NPos && PostfixPos < AliasPos + Alias.GetSize() + 1)
-        PostfixScore /= 2;
-
-      if(AliasPos == AdjectivePos)
-        AliasScore += (Alias.GetSize() + DataBase->Adjective.GetSize()) / 2;
-      else if(AliasPos + Alias.GetSize() == PostfixPos + DataBase->PostFix.GetSize())
-        AliasScore += (Alias.GetSize() + DataBase->PostFix.GetSize()) / 2;
-      else
-        AliasScore += Alias.GetSize();
-
-      if(NamePos == festring::NPos)
-        --Result.second;
-    }
-  }
-
-  Result.first = NameScore + AdjectiveScore + PostfixScore + AliasScore;
+  Result.first = NameScore + AdjectiveScore + PostfixScore;
   return Result;
 }
 

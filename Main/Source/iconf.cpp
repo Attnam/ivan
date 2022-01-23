@@ -23,6 +23,7 @@
 #include "stack.h"
 #include "whandler.h"
 #include "bugworkaround.h"
+#include "sfx.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "Player's default name",
@@ -174,6 +175,10 @@ truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnim
                                           "Hide hit animations that look like miss",
                                           "",
                                           true);
+truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume",
+                                          "Small light sources emit less light",
+                                          "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show full name of current dungeon",
                                           "",
@@ -274,9 +279,16 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select keybindings for movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys.",
+                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
+truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
+                                          "Custom command and movement", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign any command to any key binding of your preference. The default keys here will be from the control scheme option above. Only changed keybindings will be saved at the new config file. This global configuration won't work at main menu, load/start some game.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SetupCustomKeysChanger);
 truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
                                           "Smart open/close/apply behavior",
                                           "Automatically try to open doors when you walk into them, and don't ask for the target of close/apply actions when only one viable target is present.",
@@ -298,18 +310,50 @@ numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
                                           &AltListItemWidthChangeInterface,
                                           &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
-                                          "Volume",
-                                          "Select volume for sound effects and game music.",
+                                          "Music Volume",
+                                          "Select volume for game MIDI music",
                                           127,
                                           &VolumeDisplayer,
                                           &VolumeChangeInterface,
                                           &VolumeChanger,
                                           &VolumeHandler);
+scrollbaroption ivanconfig::SfxVolume(    "SfxVolume",
+                                          "Soud Effects (SFX) Volume",
+                                          "Select volume for sound effects",
+                                          127,
+                                          &SfxVolumeDisplayer,
+                                          &SfxVolumeChangeInterface,
+                                          &SfxVolumeChanger,
+                                          &SfxVolumeHandler);
+
 cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Use MIDI soundtrack",
                                           "Select an output device for the game music, or disable soundtrack.",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
+cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
+                                          "What land shapes to generate",
+                                          "Choose whether to generate continents or pangea. If Pangea is selected, the generator will make all locations reachable from the same landmass.",
+                                          0, 2,
+                                          &LandTypeConfigDisplayer);
+cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
+                                          "Size of the world map",
+                                          "Select a world size.",
+                                          2, 7,
+                                          &WorldSizeConfigDisplayer);
+cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
+                                          "Shape of the world",
+                                          "This affects the player's movement around the world. Pancake worlds are flat, and the player cannot cross the edges of the world map. Brandy snap worlds are like a cylinder, the world map wraps around the horizontal axis. Doughnut worlds are shaped like a torus, the player can wrap around the horizontal and vertical axes.",
+                                          0, 3,
+                                          &WorldShapeConfigDisplayer);
+numberoption ivanconfig::WorldSeedConfig("WorldSeedConfig",
+                                          "Select a world seed",
+                                          "0 gives a random world seed, else select a new one at your own risk. If a world cannot be generated with the given seed after a finite number of attempts, you will get a message saying the world generator encountered a bad seed, what that seed was, and a new world will be generated from a random seed instead of the one specified here.",
+                                          0,
+                                          &WorldSeedConfigDisplayer,
+                                          &WorldSeedConfigChangeInterface,
+                                          &WorldSeedConfigChanger);
+
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           "Select window scaling factor",
@@ -330,6 +374,13 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
                                           "",
                                           0, 2,
                                           &ScalingQualityDisplayer);
+truthoption ivanconfig::UseExtraMenuGraphics("UseExtraMenuGraphics",
+                                          "Use extra main menu graphics",
+                                          "Add changing graphics and sounds to the main menu.",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &UseExtraMenuGraphicsChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
@@ -512,6 +563,10 @@ void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << "/127";
 }
+void ivanconfig::SfxVolumeDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/127";
+}
 
 void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 {
@@ -528,18 +583,18 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
-        switch(O->Value)
-        {
-          case DIR_NORM:
-                Entry << CONST_S("Normal");
-                break;
-          case DIR_ALT:
-                Entry << CONST_S("Alternative");
-                break;
-          case DIR_HACK:
-                Entry << CONST_S("NetHack");
-                break;
-        }
+  switch(O->Value)
+  {
+    case DIR_NORM:
+      Entry << CONST_S("Normal");
+      break;
+    case DIR_ALT:
+      Entry << CONST_S("Alternative");
+      break;
+    case DIR_HACK:
+      Entry << CONST_S("NetHack");
+      break;
+  }
 }
 
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
@@ -751,6 +806,17 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
 
   return false;
 }
+truth ivanconfig::SfxVolumeChangeInterface(numberoption* O)
+{
+  iosystem::ScrollBarQuestion(CONST_S("Set new SFX volume value (0-127, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 127, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+
+  clearToBackgroundAfterChangeInterface();
+
+  return false;
+}
 
 void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
 {
@@ -874,6 +940,97 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   audio::SetVolumeLevel(What);
 }
 
+void ivanconfig::SfxVolumeChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 127) What = 127;
+  O->Value = What;
+}
+
+void ivanconfig::WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Huge (128x128)";
+  else if(O->Value == 1)
+    Entry << "Large (96x96)";
+  else if(O->Value == 2)
+    Entry << "Medium (64x64)";
+  else if(O->Value == 3)
+    Entry << "Small (49x49)";
+  else if(O->Value == 4)
+    Entry << "Tiny (32x32)";
+  else if(O->Value == 5)
+    Entry << "One screen (42x26)";
+  else if(O->Value == 6)
+    Entry << "Four screens (84x52)";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::LandTypeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pangea";
+  else if(O->Value == 1)
+    Entry << "Continents";
+  else
+    Entry << O->Value;
+}
+
+void ivanconfig::WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value == 0)
+    Entry << "Pancake (flat)";
+  else if(O->Value == 1)
+    Entry << "Brandy snap (cylinder)";
+  else if(O->Value == 2)
+    Entry << "Doughnut (torus)";
+  else
+    Entry << O->Value;
+}
+
+v2 ivanconfig::GetWorldSizeConfig()
+{
+  v2 WorldSize = v2(49, 49);
+  
+  if(WorldSizeConfig.Value == HUGE_WORLD)
+    WorldSize = v2(128, 128);
+  else if(WorldSizeConfig.Value == LARGE_WORLD)
+    WorldSize = v2(96, 96);
+  else if(WorldSizeConfig.Value == SMALL_WORLD)
+    WorldSize = v2(49, 49);
+  else if(WorldSizeConfig.Value == TINY_WORLD)
+    WorldSize = v2(32, 32);
+  else if(WorldSizeConfig.Value == ONE_SCREEN_WORLD)
+    WorldSize = v2(42, 26);
+  else if(WorldSizeConfig.Value == FOUR_SCREEN_WORLD)
+    WorldSize = v2(84, 52);
+  else
+    WorldSize = v2(49, 49); //SMALL_WORLD
+  
+  return WorldSize;
+}
+
+void ivanconfig::WorldSeedConfigDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/2147483647";
+}
+
+truth ivanconfig::WorldSeedConfigChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("0 gives random world seed, else select new one at your own risk."), GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+void ivanconfig::WorldSeedConfigChanger(numberoption* O, long What)
+{
+  if(What < -1)
+    What = 0;
+
+  O->Value = What;
+}
+
 #ifndef __DJGPP__
 
 void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
@@ -952,6 +1109,15 @@ void ivanconfig::FontGfxChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SetupCustomKeysChanger(truthoption* O, truth What)
+{
+  if(game::IsRunning() || !What){
+    O->Value = What;
+    if(O->Value)
+      game::ConfigureCustomKeys();
+  }
+}
+
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 {
   O->Value = What;
@@ -960,6 +1126,13 @@ void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 }
 
 void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+  felist::SetAllowMouse(What);
+  graphics::SetAllowMouseInFullScreen(What);
+}
+
+void ivanconfig::UseExtraMenuGraphicsChanger(truthoption* O, truth What)
 {
   if(O!=NULL)O->Value = What;
   felist::SetAllowMouse(What);
@@ -1002,6 +1175,18 @@ void ivanconfig::ContrastHandler(long Value)
 void ivanconfig::VolumeHandler(long Value)
 {
   VolumeChanger(&Volume, Value);
+
+  if(game::IsRunning())
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
+}
+void ivanconfig::SfxVolumeHandler(long Value)
+{
+  SfxVolumeChanger(&SfxVolume, Value);
+
+  soundeffects::SetSfxVolume(SfxVolume.Value);
 
   if(game::IsRunning())
   {
@@ -1095,6 +1280,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
@@ -1110,9 +1296,11 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(fsCategory,&MIDIOutputDevice);
   configsystem::AddOption(fsCategory,&Volume);
+  configsystem::AddOption(fsCategory,&SfxVolume);
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SetupCustomKeys);
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
@@ -1122,14 +1310,24 @@ void ivanconfig::Initialize()
   fsCategory="Advanced Options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
+
+  fsCategory="World Generation";
+  configsystem::AddOption(fsCategory, &WorldSizeConfig);
+  configsystem::AddOption(fsCategory, &LandTypeConfig);
+  configsystem::AddOption(fsCategory, &WorldShapeConfig);
+  configsystem::AddOption(fsCategory, &WorldSeedConfig);
+
+  //World shape: Flat, [Horizontal Wrap (cylinder)]
+  //  Alt names for world shape: pancake (flat), doughnut (torus), brandy snap (cylinder).
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
    ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.cfg");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.conf");
+  configsystem::SetConfigFileName(GetUserDataDir() + "ivan.conf");
 #endif
 
   configsystem::Load();
@@ -1143,6 +1341,9 @@ void ivanconfig::Initialize()
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
+  
+  if(ivanconfig::IsSetupCustomKeys())
+    game::LoadCustomCommandKeys();
 
   //TODO re-use changer methods for above configs too to avoid duplicating the algo?
   FrameSkipChanger(NULL,FrameSkip.Value);
@@ -1151,4 +1352,11 @@ void ivanconfig::Initialize()
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AutoPickUpMatchingChanger(NULL, AutoPickUpMatching.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
+  UseExtraMenuGraphicsChanger(NULL, UseExtraMenuGraphics.Value);
+
+#ifndef NOSOUND
+  soundeffects::SetEnableSfx(PlaySounds.Value);
+  soundeffects::SetSfxVolume(SfxVolume.Value);
+  soundeffects::SetDataDir(game::GetDataDir());
+#endif
 }
