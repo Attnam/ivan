@@ -1186,7 +1186,7 @@ truth commandsystem::AskFavour(character* Char)
       if(bGodSectionEntry){
         festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment());
         fsGodEntry.Resize(4); // Longest alignment name is L++ or C--, so have min of one space.
-        fsGodEntry << pgod->GetName() + " might grant you a favour."; //TODO: won't for known gods with no favours, or only name?
+        fsGodEntry << pgod->GetName() << " might grant you a favour."; //TODO: won't for known gods with no favours, or only name?
         if(ivanconfig::IsShowGodInfo())
           fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
         felFavourList.AddEntry(fsGodEntry, DARK_GRAY, 20, c, false);
