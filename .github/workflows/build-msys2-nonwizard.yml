@@ -1,0 +1,29 @@
+name: MSYS2-nonwizard
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          release: false
+          update: false
+          install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
+      - name: CI-Build
+        run: |
+          cd D:/a/ivan/ivan
+          mkdir installation
+          mkdir build
+          cd build
+          cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=D:/a/ivan/ivan/installation
+          make VERBOSE=1 -j4 install
+
+      - name: Package
+        run: Compress-Archive -Path "D:\a\ivan\ivan\installation\ivan\*" -DestinationPath ${{ github.workspace }}\IvanWin.zip
+        shell: pwsh

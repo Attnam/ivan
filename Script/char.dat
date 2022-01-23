@@ -1502,7 +1502,7 @@ priest
     FriendlyReplies =
     {
       14,
-      "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
+      "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a @ws which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
       "\"The souls of the virtuous, the devout and the faithful bath forever in the radiant glory of Valpurus and sing praises on His greatness. The souls of sinners, heretics and unbelievers are swallowed by Mortifer and damned to relive their worst nightmares for all eternity!\"",
       "\"The Cathedral of Valpurus has no windows, for it is written in the Holy Book of Valpurus: 'Windows is Evil.'\"",
       "\"I am the Cardinal of Truth, therefore everything I say is truth.\"",

@@ -73,8 +73,8 @@
 
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 135 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 119 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 136 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 120 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -239,6 +239,8 @@ std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
 int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
+
+int game::WorldShape = 0;
 
 /**
  * IMPORTANT!!!
@@ -844,9 +846,11 @@ truth game::Init(cfestring& loadBaseName)
       InitDangerMap();
       Petrus = 0;
       InitDungeons();
-      SetCurrentArea(WorldMap = new worldmap(128, 128));
+      v2 NewWorldSize = ivanconfig::GetWorldSizeConfig();
+      SetCurrentArea(WorldMap = new worldmap(NewWorldSize.X, NewWorldSize.Y));
       CurrentWSquareMap = WorldMap->GetMap();
       WorldMap->Generate();
+      GetCurrentArea()->SendNewDrawRequest();
       UpdateCamera();
       SendLOSUpdateRequest();
       Tick = 0;
@@ -3470,6 +3474,7 @@ truth game::Save(cfestring& SaveName)
   /* or in more readable format: time() - LastLoad + TimeAtLastLoad */
 
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
+  SaveFile << WorldShape;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
@@ -3565,6 +3570,7 @@ int game::Load(cfestring& saveName)
   SaveFile >> DefaultWish >> DefaultChangeMaterial >> DefaultDetectMaterial;
   SaveFile >> TimePlayedBeforeLastLoad;
   SaveFile >> PlayerHasReceivedAllGodsKnownBonus;
+  SaveFile >> WorldShape;
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
@@ -4654,7 +4660,8 @@ int game::Menu(std::vector<bitmap*> vBackGround, v2 Pos, cfestring& Topic, cfest
                col16 Color, cfestring& SmallText1, cfestring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
-  int Return = iosystem::Menu(vBackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
+  int Return = iosystem::Menu(vBackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2,
+                              ivanconfig::GetExtraMenuGraphics());
   globalwindowhandler::EnableControlLoops();
   return Return;
 }
@@ -6334,6 +6341,17 @@ truth game::EndSumoWrestling(int Result)
     TextScreen(Msg);
     GetCurrentArea()->SendNewDrawRequest();
     DrawEverything();
+  }
+
+  // Send the bananagrowers back to work
+  std::vector<character*> VillagePeople = bugfixdp::FindCharactersOnLevel();
+  for(int j = 0; j < VillagePeople.size(); j++)
+  {
+    character* Villager = VillagePeople[j];
+    if(Villager && dynamic_cast<bananagrower*>(Villager))
+    {
+      Villager->SetFeedingSumo(false);
+    }
   }
 
   Player->EditNP(-25000);
