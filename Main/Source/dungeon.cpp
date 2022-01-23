@@ -24,6 +24,7 @@
 #include "message.h"
 #include "save.h"
 #include "script.h"
+#include "wizautoplay.h"
 
 
 dungeon::dungeon(int Index) : Index(Index)
