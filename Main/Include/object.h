@@ -46,6 +46,7 @@ class object : public entity, public id
   virtual int GetForcedVisualEffects() const { return 0; }
   int GetAnimationFrames() const { return GraphicData.AnimationFrames; }
   virtual truth IsAnimated() const { return GraphicData.AnimationFrames > 1; }
+  static col24 CalcEmitationBasedOnVolume(col24 BaseEmit,col24 Emit,ulong vol);
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   virtual const fearray<long>& GetMaterialConfigChances() const = 0;

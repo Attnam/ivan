@@ -43,7 +43,8 @@ cchar* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
     "axes",
     "polearms",
     "whips",
-    "shields"
+    "shields",
+    "crafting"
 };
 
 int SWeaponSkillLevelMap[]
