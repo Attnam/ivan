@@ -39,6 +39,8 @@ class worldmap : public area
   void SmoothAltitude();
   void SmoothClimate();
   void RandomizeAltitude();
+  void PeriodicSimplexNoiseAltitude(int);
+  void SimplexNoiseAltitude();
   continent* GetContinentUnder(v2) const;
   continent* GetContinent(int) const;
   void RemoveEmptyContinents();
@@ -58,6 +60,9 @@ class worldmap : public area
   void UpdateLOS();
   virtual int GetTypeOfNativeGTerrainType(int) const;
   truth PoissonDiscSamplerCheckDistance(int, int, double, int, int, long, std::vector<v2>);
+  int GetWorldSeed() const { return WorldSeed; }
+  void InitializeShapeDescription();
+  std::vector<v2> GetWasPlaced();
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;
@@ -69,6 +74,10 @@ class worldmap : public area
   uchar** PossibleLocationBuffer;
   short** NoIslandAltitudeBuffer;
   charactervector PlayerGroup;
+  int WorldSeed;
+  std::vector<v2> Grid;
+  std::vector<v2> Queue;
+  std::vector<v2> WasPlaced;
 };
 
 outputfile& operator<<(outputfile&, const worldmap*);
