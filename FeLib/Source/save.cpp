@@ -820,7 +820,9 @@ festring GetUserDataDir()
   if (xdg_home != NULL) { // if it is, use that directory
           Dir << xdg_home << "/ivan/";
   } else { // otherwise, default to home directory
+          struct stat folderInfo = {0};
           Dir << getenv("HOME") << "/.ivan/";
+          if(stat(Dir.CStr(), &folderInfo) == -1) mkdir(Dir.CStr(), 0755); //Check if user data folder doesn't exists, create it if true
   }
 #endif /* MAC_APP */
 #ifdef DBGMSG
