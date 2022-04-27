@@ -1877,6 +1877,7 @@ darkknight
     BodyArmor = PIG_IRON bodyarmor(PLATE_MAIL);
     RightWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
     LeftWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
+    NameSingular = "dark knightess";
     Adjective = "rookie";
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 200;
@@ -1915,6 +1916,7 @@ darkknight
     LeftWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
     RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
     RightBoot = IRON boot { Enchantment = 1; }
+    NameSingular = "dark knightess";
     Adjective = "veteran";
     KnownCWeaponSkills == LARGE_SWORDS;
     CWeaponSkillHits == 500;
@@ -2017,6 +2019,7 @@ darkknight
     RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = STEEL boot { Enchantment = 2; }
     UsesLongAdjectiveArticle = true;
+    NameSingular = "dark knightess";
     Adjective = "elite";
     KnownCWeaponSkills == LARGE_SWORDS;
     CWeaponSkillHits == 1000;
@@ -9307,6 +9310,8 @@ siren
 
   Config LIGHT_ASIAN_SIREN;
   {
+    UsesLongAdjectiveArticle = true;
+    NameSingular = "erd-siren";
     SkinColor = rgb16(254, 247, 208);
     HairColor = rgb16(80, 48, 32);
     TorsoMainColor = rgb16(70, 40, 25);
@@ -9314,6 +9319,8 @@ siren
 
   Config DARK_ASIAN_SIREN;
   {
+    UsesLongAdjectiveArticle = true;
+    NameSingular = "ygg-siren";
     SkinColor = rgb16(254, 247, 183);
     HairColor = rgb16(64, 48, 32);
     TorsoMainColor = rgb16(50, 40, 28);
@@ -9321,6 +9328,8 @@ siren
 
   Config CAUCASIAN_SIREN;
   {
+    UsesLongAdjectiveArticle = true;
+    NameSingular = "ary-siren";
     SkinColor = rgb16(255, 212, 192);
     HairColor = rgb16(35, 35, 35);
     TorsoMainColor = rgb16(30, 30, 30);
@@ -9328,6 +9337,8 @@ siren
 
   Config DARK_SIREN;
   {
+    UsesLongAdjectiveArticle = true;
+    NameSingular = "unn-siren";
     SkinColor = rgb16(128, 80, 48);
     HairColor = rgb16(35, 35, 35);
     TorsoMainColor = rgb16(30, 30, 30);
@@ -9335,6 +9346,8 @@ siren
 
   Config GREEN_SIREN;
   {
+    UsesLongAdjectiveArticle = true;
+    NameSingular = "eli-siren";
     SkinColor = rgb16(180, 255, 150);
     HairColor = rgb16(200, 48, 32);
     TorsoMainColor = rgb16(180, 255, 150);
@@ -9342,6 +9355,7 @@ siren
 
   Config BLUE_SIREN;
   {
+    NameSingular = "zar-siren";
     SkinColor = rgb16(153, 204, 255);
     HairColor = rgb16(51, 51, 255);
     TorsoMainColor = rgb16(153, 204, 255);
@@ -9350,6 +9364,7 @@ siren
 
   Config RED_SIREN;
   {
+    NameSingular = "pra-siren";
     SkinColor = rgb16(255, 51, 51);
     HairColor = rgb16(255, 255, 255);
     TorsoMainColor = rgb16(255, 51, 51);
@@ -9358,6 +9373,7 @@ siren
 
   Config PINK_SIREN;
   {
+    NameSingular = "jin-siren";
     SkinColor = rgb16(240, 200, 201);
     HairColor = rgb16(255, 51, 153);
     TorsoMainColor = rgb16(240, 200, 201);
@@ -9366,6 +9382,7 @@ siren
 
   Config HISPANIC_SIREN;
   {
+    NameSingular = "kos-siren";
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     TorsoMainColor = rgb16(160, 100, 64);
