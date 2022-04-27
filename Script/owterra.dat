@@ -60,8 +60,8 @@ elpuricave
   AttachedDungeon = ELPURI_CAVE;
   CanBeGenerated = true;
   NativeGTerrainTypes = { 1, TUNDRA; }
-  RevealEnvironmentInitially = true;
-  HideLocationInitially = false;
+  RevealEnvironmentInitially = false;
+  HideLocationInitially = true;
   CanBeOnAnyTerrain = false;
   IsCoreLocation = true;
 }
