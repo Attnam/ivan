@@ -521,7 +521,7 @@ farmer
       "\"When the first grand master dark knight fell and Neerc Se-ulb was lost for a time, Mortifer vowed to never lend his mace again but to a true champion of Chaos. But Cruentus trusted in the power of his dark knights and the next grand master received the terrible halberd named Mjolak to crush all who would oppose the god of blood.\"",
       "\"The second grand master dark knight was a son of the first one. He swore an oath of revenge, to slay the high priest of Valpurus in honor of his father's death. Yet his name was erased from all records to clean the stain of shame he brought upon his family.\"",
       "\"The second grand master dark knight ruthlessly crushed all resistance and many an enemy fled even before battle, for his trumpeters used horns of fear to devastating effect. Where the father took nearly a decade to slowly force valpurian troops back, the son brought his army of dark knights before the gates of the Citadel of Valpurus in only a few years.\"",
-      "\"As his men razed and burned the once-mightly Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
+      "\"As his men razed and burned the once-mighty Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
       "\"In a hubris of an easy victory, the second grand master dark knight turned his back to the dead high priest Pervetus he just slain and did not see a strange glow of a magical amulet that brought Pervetus back with renewed vigor. The high priest lifted Justifier and with a single mightly blow, cut off both of the grand master's hands. And in a single moment of weakness, the grand master shamed his family for the ages to come, for he didn't face death with dignity, but panicked and ran for his life.\"",
       "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. His two crossed flaming swords are still found on the banner of the grand master dark knights to this day.\"",
       "\"Some sources claim Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted.\"",
@@ -2675,13 +2675,22 @@ skeleton
     HostileReplies =
     {
       5,
-      "\"I remember... life. I want to be whole again.\"",
-      "\"I remember my sword. My precious sword. What has become of it?\"",
-      "\"I feel... empty. Hollow.\"",
-      "\"I have lost what made me whole. I am now nothing but a soulless husk.\"",
+      "@Dd mumbles: \"I remember... life. I want to be whole again.\"",
+      "@Dd mutters: \"I remember my sword. My precious sword. What has become of it?\"",
+      "@Dd utters: \"I feel... empty. Hollow.\"",
+      "@Dd rasps: \"I have lost what made me whole. I am now nothing but a soulless husk.\"",
       "@Dd rasps: \"How deep have I fallen...\"";
     }
-    FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
+    /* No taming, but he can actually be conjured by a friendly master necromancer, becoming friendly himself. */
+    FriendlyReplies =
+    {
+      5,
+      "@Dd mumbles: \"I remember... life. I want to be whole again.\"",
+      "@Dd mutters: \"I remember my sword. My precious sword. What has become of it?\"",
+      "@Dd utters: \"I feel... empty. Hollow.\"",
+      "@Dd rasps: \"I have lost what made me whole. I am now nothing but a soulless husk.\"",
+      "@Dd rasps: \"How deep have I fallen...\"";
+    }
     DeathMessage = "As @Dd crumples into a heap of bones, you hear an echoing whisper: \"We shall meet again...\"";
     AllowedDungeons = { 7, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
   }
@@ -2775,7 +2784,7 @@ goblin
     RightGauntlet = gauntlet { Enchantment = 1; }
     Belt = BLACK_LEATHER belt;
     AttackStyle = USE_ARMS|USE_LEGS;
-    BaseUnarmedStrength = 800;
+    BaseUnarmedStrength = 1000;
     KnownCWeaponSkills = { 2, UNARMED, KICK; }
     CWeaponSkillHits = { 2, 200, 200; }
     NameSingular = "goblin monk";
@@ -8930,20 +8939,20 @@ archangel
   {
     DefaultName = "Amatrix";
     Helmet = DARK_GOLD helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
-    RightWielded = 0;
-    LeftWielded = 0;
+    RightWielded = TOPAZ DREAM_CLOTH meleeweapon(CLAW) { Enchantment = 10; }
+    LeftWielded = TOPAZ DREAM_CLOTH meleeweapon(CLAW) { Enchantment = 10; }
     KnownCWeaponSkills = { 2, UNARMED, BITE; }
     AttackStyle = USE_ARMS|USE_HEAD;
     BaseUnarmedStrength = 2000;
-    BaseBiteStrength = 1500;
+    BaseBiteStrength = 5500;
   }
 
   Config SEGES;
   {
     DefaultName = "Salubris";
     Helmet = UNICORN_HORN helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
-    RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
-    LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
+    RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 7; }
+    LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 7; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, LARGE_SWORDS; }
     Inventory == Random { Category = FOOD; Times = 2; }
   }
@@ -8952,10 +8961,10 @@ archangel
   {
     DefaultName = "Magus";
     Helmet = ARCANITE helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
-    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
-    Cloak = SPIDER_SILK cloak { Enchantment = 0; }
-    RightWielded = OCCULTUM OCCULTUM meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
-    Belt = SPIDER_SILK belt { Enchantment = 0; }
+    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+    Cloak = SPIDER_SILK cloak { Enchantment = 4; }
+    RightWielded = OCCULTUM OCCULTUM meleeweapon(QUARTER_STAFF) { Enchantment = 7; }
+    Belt = SPIDER_SILK belt { Enchantment = 4; }
     RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
@@ -8989,7 +8998,7 @@ archangel
     RightWielded = SAPPHIRE GOLD meleeweapon(BASTARD_SWORD) { Enchantment = 4; }
     LeftWielded = SAPPHIRE shield { Enchantment = 4; }
     Belt = SAPPHIRE belt(BELT_OF_CARRYING) { Enchantment = 4; }
-    Inventory == fiftymillionroubles;
+    Inventory == fiftymillionroubles { LifeExpectancy = 10000; }
   }
 
   Config CLEPTIA;
@@ -9029,7 +9038,7 @@ archangel
     DefaultName = "Sinistra";
     IsSadist = true;
     Helmet = OCTIRON helmet(HELM_OF_MANA) { Enchantment = 4; }
-    RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
+    RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 10; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
@@ -9042,7 +9051,7 @@ archangel
     Belt = RUBY belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 4; }
     RightGauntlet = OCTIRON gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
     KnownCWeaponSkills = { 2, POLE_ARMS, LARGE_SWORDS; }
-    Inventory == RUBY OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; }
+    Inventory == RUBY OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; LifeExpectancy = 15000; }
   }
 
   Config MORTIFER;
@@ -9051,7 +9060,7 @@ archangel
     IsSadist = true;
     IsUndead = true;
     Helmet = OMMEL_BONE skull;
-    RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 2; }
+    RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 4; }
     LeftWielded = PSYPHER OCTIRON meleeweapon(SICKLE) { Enchantment = 4; }
     KnownCWeaponSkills = { 2, POLE_ARMS, SMALL_SWORDS; }
   }
