@@ -64,7 +64,7 @@ int command::GetKey() const
     if(Key4>0)
       return Key4;
   }
-  
+
   switch(ivanconfig::GetDirectionKeyMap())
   {
    case DIR_NORM: // Normal
@@ -630,11 +630,12 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, cchar* Consume
 
 truth commandsystem::ShowInventory(character* Char)
 {
+  itemvector WhichItem;
   festring Title("Your inventory (total weight: ");
   Title << Char->GetStack()->GetWeight();
   Title << "g)";
-  Char->GetStack()->DrawContents(Char, Title, NO_SELECT);
 
+  Char->GetStack()->DrawContents(WhichItem, Char, Title, REMEMBER_SELECTED);
   return false;
 }
 
