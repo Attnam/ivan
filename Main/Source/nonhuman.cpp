@@ -1052,10 +1052,10 @@ int nerfbat::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2
   if(Return != HAS_DIED)
   {
     // Compare Mana against enemy Willpower to see if they resist polymorph.
-    if(RAND_N(GetAttribute(MANA)) > RAND_N(Enemy->GetAttribute(WILL_POWER)))
+    if(game::OpposedCheck(GetAttribute(MANA), Enemy->GetAttribute(WILL_POWER)))
     {
       if(IsPlayer())
-        ADD_MESSAGE("You are engulfed in a malignant aura!.");
+        ADD_MESSAGE("You are engulfed in a malignant aura!");
       else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is engulfed in a malignant aura!", CHAR_DESCRIPTION(DEFINITE));
 

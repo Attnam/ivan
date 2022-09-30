@@ -7031,7 +7031,7 @@ truth mirrorimp::DrinkMagic(const beamdata& Beam)
   if(!Beam.Wand->IsExplosive())
     return false;
 
-  if(Beam.Owner && RAND_N(GetAttribute(MANA)) <= RAND_N(Beam.Owner->GetAttribute(WILL_POWER)))
+  if(Beam.Owner && game::OpposedCheck(Beam.Owner->GetAttribute(WILL_POWER), GetAttribute(MANA))
   {
     Beam.Owner->EditExperience(WILL_POWER, 100, 1 << 12);
     return false;
