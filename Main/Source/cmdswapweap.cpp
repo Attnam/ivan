@@ -285,7 +285,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     }else
     if(bMaintenanceMode && Selected==iKeyUndoLastRm){DBGLN;
       vSWCfg.push_back(vSWCfgRemoved[vSWCfgRemoved.size()-1]);
-      vSWCfgRemoved.erase(vSWCfgRemoved.end());//-1);
+      //vSWCfgRemoved.erase(vSWCfgRemoved.end());//-1);
     }else
     if(Selected==iKeyMaintenance){
       bMaintenanceMode=true;
