@@ -28,6 +28,7 @@
 #include "specialkeys.h"
 #include "confdef.h"
 #include "lterras.h"
+#include "dbgmsgproj.h"
 
 /**
  * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
@@ -46,6 +47,23 @@ std::vector<character*> vCharLastSearch;
 std::vector<item*>      vItemLastSearch;
 
 #ifdef WIZARD
+#ifdef DBGMSG
+void DbgSetVar(festring fsParams){
+  if(!fsParams.IsEmpty()){
+    std::string part;
+    std::stringstream iss(fsParams.CStr());
+    
+    iss >> part;
+    std::string strId=part;
+    
+    iss >> part;
+    std::string strValue=part;
+    
+    DBGSETV(strId,strValue);
+    DEVCMDMSG2P("DBG ID='%s' Value='%s'",strId.c_str(),strValue.c_str());
+  }
+}
+#endif //DBGMSG
 truth IsValidChar(character* C){
   if(!C->Exists())
     return false;
@@ -392,7 +410,7 @@ void ListItems(festring fsParams){
   }
   DEVCMDMSG2P("total: Chars=%d Items=%d",vCharLastSearch.size(),vItemLastSearch.size());
 }
-#endif
+#endif //WIZARD
 
 void devcons::Init()
 {
@@ -442,9 +460,12 @@ void devcons::OpenCommandsConsole()
     ADDCMD(ListChars,"[[filterCharID:ulong]|[strCharNamePart:string]] List characters on current dungeon level",true);
     ADDCMD(ListItems,"[[c|i] <<filterID:ulong>|<filterName:string>>] List items on current dungeon level, including on characters ('c' will filter by character ID or name) inventory and containers",true);
     ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
+#ifdef DBGMSG
+    ADDCMD(DbgSetVar,"<VarID:string> <VarValue:any> sets a DBGMSG variable.",true);
+#endif //DBGMSG
     ADDCMD(TeleToChar,"<filterName:string> teleports near 1st character matching filter.",true);
     ADDCMD(TeleToMe,"<filterName:string> teleports all NPCs matching filter to you.",true);
-#endif
+#endif //WIZARD
     return true;
   }();
 
@@ -472,11 +493,31 @@ void devcons::OpenCommandsConsole()
     festring fsQ;
     if(game::WizardModeIsReallyActive())
       fsQ="Developer(WIZ) ";
-    fsQ<<"Console Command (try 'help' or '?'):";
+    fsQ<<"Console Command(s) separated by ';' (try 'help' or '?'):";
     //TODO key up/down commands history and save/load to a txt file
     if(game::StringQuestion(fsFullCmd, fsQ, WHITE, 1, 255, true) == NORMAL_EXIT){
-      runCommand(fsFullCmd);
-      msgsystem::DrawMessageHistory();
+      festring fsCmd;
+      DBG1(fsFullCmd.CStr());
+      for(;;){
+        fsCmd=fsFullCmd;
+        
+        if(fsCmd.IsEmpty())
+          break;
+        
+        int iPos=fsFullCmd.Find(";",0);
+        if(iPos!=festring::NPos){ //found it
+          fsCmd.Resize(iPos); //erases from ';' inclusive
+          DBG1(fsCmd.CStr());
+          fsFullCmd.Erase(0,iPos+1); //erases til ';' inclusive
+          DBG1(fsFullCmd.CStr());
+        }
+        
+        runCommand(fsCmd);
+        msgsystem::DrawMessageHistory();
+        
+        if(iPos==festring::NPos) //no more commands to be run
+          break;
+      }
     }else
       break;
   }

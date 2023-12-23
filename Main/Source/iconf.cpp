@@ -13,12 +13,14 @@
 #include "area.h"
 #include "audio.h"
 #include "bitmap.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "game.h"
 #include "graphics.h"
 #include "iconf.h"
 #include "igraph.h"
+#include "message.h"
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
@@ -52,7 +54,11 @@ stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
                                           &SelectedBkgColorChanger);
 stringoption ivanconfig::AutoPickUpMatching("AutoPickUpMatching",
                                           "Auto pick up regex",
-                                          "Automatically pick up items according to a regular expression. To disable something, you can invalidate it with '_' without removing it from the expression (eg. '_dagger'). To disable everything at once, begin this config option with '!'. Due to current constraints on length of options, editing is easier to do externally for now.",  //TODO if multiline text editing is implemented, remove the last help statement.
+                                          "Automatically pick up items according to a regular expression.\n"
+                                            " To disable something, you can invalidate it with '_' without removing it from the expression (eg. '_dagger').\n"
+                                            " To disable everything at once, begin this config option with '!'.\n"
+                                            " Containers can also auto store items when inscribed with a regular expression (regex).\n"
+                                            " Due to current constraints on length of options, editing is easier to do externally for now.",  //TODO if multiline text editing is implemented, remove the last help statement.
                                           "!((book|can|dagger|grenade|horn of|kiwi|key|ring|scroll|wand|whistle)|^(?:(?!(broken|empty)).)*(bottle|vial)|sol stone)",
                                           &configsystem::NormalStringDisplayer,
                                           &AutoPickUpMatchingChangeInterface,
@@ -143,6 +149,10 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           "",
                                           false);
+truthoption ivanconfig::OverloadedFight(  "OverloadedFight",
+                                          "Allow fighting while overloaded",
+                                          "Moving is, of course, still denied.",
+                                          false);
 truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
                                           "Auto pick up thrown weapons",
                                           "Automatically annotate any thrown weapon and pick it up without loosing a turn when you step on its square.",
@@ -161,6 +171,14 @@ truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           false);
 truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
+                                          "",
+                                          false);
+truthoption ivanconfig::DropBeforeOffering("DropBeforeOffering",
+                                          "Drop the item on altar in case it is not accepted",
+                                          "Automatically drop offered items on an altar to prevent them from cluttering your inventory should the god not accept your gift. Beware it may be owned floor!",
+                                          false);
+truthoption ivanconfig::AllowContrastBackground("AllowContrastBackground",
+                                          "Better contrast background to dark items and materials",
                                           "",
                                           false);
 truthoption ivanconfig::ShowVolume(       "ShowVolume",
@@ -250,7 +268,7 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           "Breeders' active range",
-                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively.",
+                                          "Select the maximum distance where breeding monsters will spawn more of their own. This option can be used to prevent lag from high number of creatures on slow computers, but may impact the intended game balance negatively. After you lower this option value to the minimum, you have to wait for all magic clouds (from magic mushrooms) to disappear as they are the main source of lag.",
                                           0, 5,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
@@ -386,7 +404,10 @@ col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects",
                                           "Use sound effects for combat, explosions and more.",
-                                          true);
+                                          true,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &EnableSFX);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "Show game turn on message log",
                                           "Add a game turn number to each action described in the message log.",
@@ -419,16 +440,11 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value == 0)
-    Entry << "everywhere";
-  else if(O->Value == 1)
-    Entry << "close";
-  else if(O->Value == 2)
-    Entry << "near";
-  else if(O->Value == 3)
-    Entry << "medium";
-  else if(O->Value == 4)
-    Entry << "far";
+  if     (O->Value == 0) Entry << "everywhere";
+  else if(O->Value == 1) Entry << "close";
+  else if(O->Value == 2) Entry << "near";
+  else if(O->Value == 3) Entry << "medium";
+  else if(O->Value == 4) Entry << "far";
   else
     Entry << O->Value;
 }
@@ -906,12 +922,31 @@ void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
   }
 }
 
+col16 ivanconfig::CheckChangeColor(col16 col)
+{
+  if(IsAllowContrastBackground()){
+    static col16 colRef = DARK_GRAY;
+    static col16 iR = GetRed16(colRef);
+    static col16 iG = GetGreen16(colRef);
+    static col16 iB = GetBlue16(colRef);
+    if(
+      GetRed16(col)  <iR &&
+      GetGreen16(col)<iG &&
+      GetBlue16(col) <iB
+    ){
+      static col16 iVeryDarkGray = [](){float f=0.66;return MakeRGB16(iR*f,iG*f,iB*f);}();
+      return iVeryDarkGray;
+    }
+  }
+  return col;
+}
+
 void ivanconfig::AutoPickUpMatchingChanger(stringoption* O, cfestring& What)
 {
   if(O!=NULL){
     O->Value.Empty();
     O->Value<<What;
-    game::UpdateAutoPickUpMatching();
+    game::UpdateAutoPickUpRegex();
   }
 }
 
@@ -1144,6 +1179,11 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
   graphics::SwitchMode();
 }
 
+void ivanconfig::EnableSFX(truthoption* O, truth What)
+{
+  soundeffects::SetEnableSfx(What);
+}
+
 void ivanconfig::ScalingQualityDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -1248,6 +1288,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
   configsystem::AddOption(fsCategory,&AutoPickUpMatching);
+  configsystem::AddOption(fsCategory,&DropBeforeOffering);
+  configsystem::AddOption(fsCategory,&OverloadedFight);
 
   fsCategory="Game Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -1280,6 +1322,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
+  configsystem::AddOption(fsCategory,&AllowContrastBackground);
   configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
 
   fsCategory="Sounds";

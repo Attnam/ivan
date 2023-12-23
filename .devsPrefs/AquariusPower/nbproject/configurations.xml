@@ -2,21 +2,51 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="audio" name="0">
+      <in>MIDIDebug.cpp</in>
+      <in>MIDIUtils.cpp</in>
+      <in>RtMidi.cpp</in>
+      <in>audio.cpp</in>
+      <in>audio_stack.cpp</in>
+      <in>linkedlist.cpp</in>
+      <in>midiparser.cpp</in>
+      <in>midiplayback.cpp</in>
     </df>
+    <logicalFolder name="CMakeFiles"
+                   displayName="CMakeFiles"
+                   projectFiles="true"
+                   root="CMakeFiles">
+      <logicalFolder name="3.10.2" displayName="3.10.2" projectFiles="true">
+        <logicalFolder name="CompilerIdC" displayName="CompilerIdC" projectFiles="true">
+          <itemPath>CMakeFiles/3.10.2/CompilerIdC/CMakeCCompilerId.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="CompilerIdCXX"
+                       displayName="CompilerIdCXX"
+                       projectFiles="true">
+          <itemPath>CMakeFiles/3.10.2/CompilerIdCXX/CMakeCXXCompilerId.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <itemPath>CMakeFiles/feature_tests.c</itemPath>
+      <itemPath>CMakeFiles/feature_tests.cxx</itemPath>
+    </logicalFolder>
     <df root="fantasyname" name="1">
+      <in>example.cc</in>
+      <in>namegen.cc</in>
     </df>
     <df root="Main/Include" name="2">
     </df>
-    <df root="FeLib/Include" name="3">
-      <in>felist.h</in>
-      <in>feloops.h</in>
-      <in>femath.h</in>
-      <in>festring.h</in>
-      <in>fetime.h</in>
-      <in>graphics.h</in>
-      <in>hscore.h</in>
+    <df root="SDL2-2.0.4/include" name="3">
     </df>
-    <df root="FeLib/Source" name="4">
+    <df root="FeLib/Include" name="4">
+    </df>
+    <logicalFolder name="Modules"
+                   displayName="Modules"
+                   projectFiles="true"
+                   root="/usr/share/cmake-3.10/Modules">
+      <itemPath>/usr/share/cmake-3.10/Modules/CMakeCCompilerABI.c</itemPath>
+      <itemPath>/usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp</itemPath>
+      <itemPath>/usr/share/cmake-3.10/Modules/CMakeCompilerABI.h</itemPath>
+    </logicalFolder>
+    <df root="FeLib/Source" name="5">
       <in>bitmap.cpp</in>
       <in>config.cpp</in>
       <in>dbgmsg.cpp</in>
@@ -34,7 +64,7 @@
       <in>specialkeys.cpp</in>
       <in>whandler.cpp</in>
     </df>
-    <df root="Main/Source" name="5">
+    <df root="Main/Source" name="6">
       <in>action.cpp</in>
       <in>actions.cpp</in>
       <in>actset.cpp</in>
@@ -50,6 +80,7 @@
       <in>command.cpp</in>
       <in>cont.cpp</in>
       <in>coreset.cpp</in>
+      <in>curseddeveloper.cpp</in>
       <in>database.cpp</in>
       <in>dataset.cpp</in>
       <in>definesvalidator.cpp</in>
@@ -86,6 +117,7 @@
       <in>trap.cpp</in>
       <in>traps.cpp</in>
       <in>trapset.cpp</in>
+      <in>wizautoplay.cpp</in>
       <in>wmapset.cpp</in>
       <in>worldmap.cpp</in>
       <in>wskill.cpp</in>
@@ -93,7 +125,11 @@
       <in>wterra.cpp</in>
       <in>wterras.cpp</in>
     </df>
-    <df root="xbrzscale" name="6">
+    <df root="xbrzscale" name="7">
+      <df name="xbrz">
+        <in>xbrz.cpp</in>
+      </df>
+      <in>libxbrzscale.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -113,6 +149,7 @@
     <Elem>Main/Source</Elem>
     <Elem>Main/Include</Elem>
     <Elem>FeLib/Include</Elem>
+    <Elem>SDL2-2.0.4/include</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -123,27 +160,7 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <codeAssistance>
-      </codeAssistance>
-      <makefileType>
-        <makeTool>
-          <buildCommandWorkingDir>.</buildCommandWorkingDir>
-          <buildCommand>${MAKE} -f Makefile</buildCommand>
-          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
-        </makeTool>
-        <preBuild>
-          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
-          <preBuildCommand>${CMAKE} -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX} -DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .</preBuildCommand>
-        </preBuild>
-      </makefileType>
-    </conf>
-    <conf name="myCfg" type="0">
-      <toolsSet>
-        <compilerSet>default</compilerSet>
-        <dependencyChecking>false</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
-      </toolsSet>
-      <codeAssistance>
+        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -153,6 +170,7 @@
           <executablePath></executablePath>
           <ccTool>
             <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
               <Elem>DBGMSG</Elem>
               <Elem>FELIST_WAITKEYUP</Elem>
               <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
@@ -167,165 +185,653 @@
           <preBuildCommand>${CMAKE} -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX} -DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .</preBuildCommand>
         </preBuild>
       </makefileType>
-      <item path="FeLib/Include/felist.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/feloops.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/femath.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/festring.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/fetime.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/graphics.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Include/hscore.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FeLib/Source/bitmap.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/config.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/dbgmsg.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/error.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/febot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/feio.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/felist.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/femath.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/festring.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/fetime.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/graphics.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/hscore.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/rawbit.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/save.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/specialkeys.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FeLib/Source/whandler.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/actions.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/actset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/area.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/areaset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/bodypart.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/bugworkaround.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/char.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/charset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/charsset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/cmdcraft.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/cmdswapweap.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/command.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/cont.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/coreset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/database.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/dataset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/definesvalidator.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/devcons.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/dungeon.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/entity.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/fluid.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/game.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/gear.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/god.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/gods.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/godset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/hiteffect.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/iconf.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/id.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/igraph.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/item.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/itemset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/level.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/levelset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/materia.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/materias.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/materset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/message.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/object.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/room.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/rooms.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/roomset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/script.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/slot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/slotset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/stack.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/trap.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/traps.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/trapset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/wmapset.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/worldmap.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/wskill.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/wsquare.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/wterra.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Main/Source/wterras.cpp" ex="false" tool="1" flavor2="0">
+    </conf>
+    <conf name="myCfg" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <flagsDictionary>
+        <element flagsID="0" commonFlags="-std=c++11"/>
+        <element flagsID="1" commonFlags="-std=c++14"/>
+        <element flagsID="2" commonFlags="-std=c++1z"/>
+        <element flagsID="3" commonFlags="-std=c11"/>
+      </flagsDictionary>
+      <codeAssistance>
+        <includeAdditional>true</includeAdditional>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>CMakeFiles/CMakeTmp</pElem>
+            </incDir>
+          </cTool>
+          <ccTool>
+            <incDir>
+              <pElem>CMakeFiles/CMakeTmp</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>CURSEDDEVELOPER</Elem>
+              <Elem>DBGMSG</Elem>
+              <Elem>FELIST_WAITKEYUP</Elem>
+              <Elem>WIZARD</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+        <preBuild>
+          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
+          <preBuildCommand>${CMAKE} -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX} -DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .</preBuildCommand>
+        </preBuild>
+      </makefileType>
+      <item path="/usr/share/cmake-3.10/Modules/CMakeCCompilerABI.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="/usr/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="CMakeFiles/3.10.2/CompilerIdC/CMakeCCompilerId.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="CMakeFiles/3.10.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="CMakeFiles/feature_tests.c" ex="false" tool="0" flavor2="10">
+        <cTool flags="3">
+          <incDir>
+            <pElem>CMakeFiles/CMakeTmp</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="CMakeFiles/feature_tests.cxx" ex="false" tool="1" flavor2="11">
+        <ccTool flags="2">
+          <incDir>
+            <pElem>CMakeFiles/CMakeTmp</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/bitmap.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>FeLib/Include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/libpng16</pElem>
+            <pElem>xbrzscale</pElem>
+            <pElem>xbrzscale/xbrz</pElem>
+            <pElem>FeLib</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BACKTRACE</Elem>
+            <Elem>DATADIR="/home/teique/Projects/ivan/ivan.instDev.THE_MERGED_BRANCHES_I_AM_PLAYING/share"</Elem>
+            <Elem>GCC</Elem>
+            <Elem>IVAN_VERSION="0.58"</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/config.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>FeLib/Include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/libpng16</pElem>
+            <pElem>xbrzscale</pElem>
+            <pElem>xbrzscale/xbrz</pElem>
+            <pElem>FeLib</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BACKTRACE</Elem>
+            <Elem>DATADIR="/home/teique/Projects/ivan/ivan.instDev.THE_MERGED_BRANCHES_I_AM_PLAYING/share"</Elem>
+            <Elem>GCC</Elem>
+            <Elem>IVAN_VERSION="0.58"</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/dbgmsg.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>FeLib/Include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/libpng16</pElem>
+            <pElem>xbrzscale</pElem>
+            <pElem>xbrzscale/xbrz</pElem>
+            <pElem>FeLib</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BACKTRACE</Elem>
+            <Elem>DATADIR="/home/teique/Projects/ivan/ivan.instDev.THE_MERGED_BRANCHES_I_AM_PLAYING/share"</Elem>
+            <Elem>GCC</Elem>
+            <Elem>IVAN_VERSION="0.58"</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/error.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>FeLib/Include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/libpng16</pElem>
+            <pElem>xbrzscale</pElem>
+            <pElem>xbrzscale/xbrz</pElem>
+            <pElem>FeLib</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BACKTRACE</Elem>
+            <Elem>DATADIR="/home/teique/Projects/ivan/ivan.instDev.THE_MERGED_BRANCHES_I_AM_PLAYING/share"</Elem>
+            <Elem>GCC</Elem>
+            <Elem>IVAN_VERSION="0.58"</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/febot.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>FeLib/Include</pElem>
+            <pElem>/usr/include/SDL2</pElem>
+            <pElem>/usr/include/libpng16</pElem>
+            <pElem>xbrzscale</pElem>
+            <pElem>xbrzscale/xbrz</pElem>
+            <pElem>FeLib</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BACKTRACE</Elem>
+            <Elem>DATADIR="/home/teique/Projects/ivan/ivan.instDev.THE_MERGED_BRANCHES_I_AM_PLAYING/share"</Elem>
+            <Elem>GCC</Elem>
+            <Elem>IVAN_VERSION="0.58"</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/feio.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/felist.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/femath.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/festring.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/fetime.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/graphics.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/hscore.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/rawbit.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/save.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/specialkeys.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="FeLib/Source/whandler.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/actions.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/actset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/area.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/areaset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/bodypart.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/bugworkaround.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/char.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/charset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/charsset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/cmdcraft.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/cmdswapweap.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/command.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/cont.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/coreset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/curseddeveloper.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/database.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/dataset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/definesvalidator.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/devcons.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/dungeon.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/entity.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/fluid.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/game.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/gear.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/god.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/gods.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/godset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/hiteffect.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/iconf.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/id.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/igraph.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/item.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/itemset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/level.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/levelset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/main.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/materia.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/materias.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/materset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/message.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/object.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/room.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/rooms.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/roomset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/script.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/slot.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/slotset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/stack.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/trap.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/traps.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/trapset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wizautoplay.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wmapset.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/worldmap.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wskill.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wsquare.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wterra.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="Main/Source/wterras.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/MIDIDebug.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/MIDIUtils.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/RtMidi.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/audio.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/audio_stack.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/linkedlist.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/midiparser.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="audio/midiplayback.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <folder path="0">
+        <ccTool>
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+            <Elem>UNIX</Elem>
+            <Elem>USE_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="1">
+        <ccTool>
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+            <Elem>UNIX</Elem>
+            <Elem>USE_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="5">
+        <ccTool>
+          <preprocessorList>
+            <Elem>UNIX</Elem>
+            <Elem>USE_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="6">
+        <ccTool>
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+            <Elem>UNIX</Elem>
+            <Elem>USE_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="7">
+        <ccTool>
+          <incDir>
+            <pElem>SDL2-2.0.4/include</pElem>
+            <pElem>/usr/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CURSEDDEVELOPER</Elem>
+            <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+            <Elem>UNIX</Elem>
+            <Elem>USE_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <item path="fantasyname/example.cc" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="fantasyname/namegen.cc" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="xbrzscale/libxbrzscale.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="xbrzscale/xbrz/xbrz.cpp" ex="false" tool="1" flavor2="11">
+        <ccTool flags="1">
+        </ccTool>
       </item>
     </conf>
   </confs>

@@ -30,6 +30,7 @@
 #endif
 
 #include "game.h"
+#include "curseddeveloper.h"
 #include "database.h"
 #include "definesvalidator.h"
 #include "devcons.h"
@@ -122,6 +123,9 @@ int main(int argc, char** argv)
 #ifdef WIZARD    
     std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG wizard auto play AI will not leave that Dungeon Level after entering it" << std::endl;
 #endif
+#ifdef CURSEDDEVELOPER
+    std::cout << "IVAN_CURSEDDEVELOPER=[true] #DEBUG (only for developer tests) this will prevent player's death (and scoring) in normal (non wizard) gameplay" << std::endl;
+#endif
     return 0;
   }
 
@@ -149,6 +153,9 @@ int main(int argc, char** argv)
   specialkeys::init();
   bugfixdp::init();
   devcons::Init();
+#ifdef CURSEDDEVELOPER
+  curseddeveloper::Init();
+#endif
   definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();

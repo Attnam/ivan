@@ -7970,3 +7970,30 @@ pica
     EnchantmentPlusChance = 15;
   }
 }
+
+/* nail was initially based on stone and ingot data */
+/*
+nail
+{
+  DefaultSize = 5;
+  Possibility = 100;
+  Category = VALUABLE;
+  BitmapPos = 128, 32;
+  NameSingular = "nail";
+  IsValuable = true;
+  MainMaterialConfig = { 35,
+                         VALPURIUM, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, SILVER,
+                         MOON_SILVER, FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL,
+                         PLATINUM, DARK_GOLD, ELECTRUM, IRIDIUM, PALLADIUM, CHROME,
+                         TITANITE, STAINLESS_STEEL, PLASTIC_STEEL, DURALLOY,
+                         VITRELLOY, URANIUM, SOLARIUM, NEUTRONIUM, ARCANITE,
+                         OCCULTUM, ILLITHIUM, METEORIC_STEEL, UKKU_STEEL, ADAMANT,
+                         SOUL_STEEL, BLOOD_STEEL, WHITE_STEEL, UR_STEEL; }
+  MaterialConfigChances = { 35,
+                            1, 200, 75, 25, 5, 300, 250, 100, 75, 25, 5, 50, 50, 50,
+                            30, 20, 10, 5, 20, 15, 10, 5, 15, 10, 5, 100, 15, 150,
+                            150, 75, 5, 200, 200, 200, 75; }
+  Alias == "metal";
+  DescriptiveInfo = "Useful in wood crafting.";
+}
+*/

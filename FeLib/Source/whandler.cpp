@@ -727,7 +727,6 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
 #if SDL_MAJOR_VERSION == 1 
    default:
     KeyPressed = Event->key.keysym.unicode;
-
     if(!KeyPressed)
       return;
 #endif

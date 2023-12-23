@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 material* materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags)
 { return SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void materialcontainer::InitMaterials(material* M1, material* M2, truth CUP)
@@ -61,8 +63,9 @@ long nuke::GetTotalExplosivePower() const
 { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
-
-//long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
+/*
+long nail::GetTruePrice() const { return item::GetTruePrice() << 1; }
+*/
 
 col16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
@@ -188,115 +191,126 @@ void scrolloffireballs::FinishReading(character* Reader)
   Square->FireBall(Beam);
 }
 
+void scrollofearthquake::EarthQuakeMagic(festring fsMsgHitNPC)
+{
+  ADD_MESSAGE("Suddenly a horrible earthquake shakes the level!");
+  int c, Tunnels = 2 + RAND() % 3;
+  if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
+    Tunnels = 0;
+
+  for(c = 0; c < Tunnels; ++c){
+    v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE);
+    if(Pos == ERROR_V2)continue;
+    game::GetCurrentLevel()->AttachPos(Pos);
+  }
+
+  int ToEmpty = 10 + RAND() % 11;
+
+  for(c = 0; c < ToEmpty; ++c){
+    for(int i = 0; i < 50; ++i)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+      if(Pos == ERROR_V2)continue; //this may probably happen at Spider Nest dungeon level
+
+      truth Correct = false;
+
+      for(int d = 0; d < 8; ++d)
+      {
+        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+        if(Square && Square->IsFlyable())
+        {
+          Correct = true;
+          break;
+        }
+      }
+
+      if(Correct)
+      {
+        game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
+        break;
+      }
+    }
+  }
+
+  int ToGround = 20 + RAND() % 21;
+
+  for(c = 0; c < ToGround; ++c)
+    for(int i = 0; i < 50; ++i)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+      if(Pos == ERROR_V2)
+        continue;
+
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+      character* Char = Square->GetCharacter();
+
+      if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+        continue;
+
+      int Walkables = 0;
+
+      for(int d = 0; d < 8; ++d)
+      {
+        lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+        if(NearSquare && NearSquare->IsFlyable())
+          ++Walkables;
+      }
+
+      if(Walkables > 6)
+      {
+        Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
+
+        if(Char)
+        {
+          if(Char->CanBeSeenByPlayer())
+            ADD_MESSAGE(fsMsgHitNPC.IsEmpty()?"%s is hit by a rock falling from the ceiling!":fsMsgHitNPC.CStr(), 
+              Char->CHAR_NAME(DEFINITE));
+
+          Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+          Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
+        }
+
+        Square->KickAnyoneStandingHereAway();
+        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+        break;
+      }
+    }
+
+  // Generate a few boulders in the level
+
+  int BoulderNumber = 10 + RAND() % 10;
+
+  for(c = 0; c < BoulderNumber; ++c)
+  {
+    v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
+    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+    character* MonsterHere = Square->GetCharacter();
+
+    if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
+    {
+      Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
+
+      if(MonsterHere)
+        MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+      Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
+    }
+  }
+
+  // Damage to items in the level
+
+  for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+    for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+      game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+}
 void scrollofearthquake::FinishReading(character* Reader)
 {
   if(!game::GetCurrentLevel()->IsOnGround())
   {
-    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level!");
-    int c, Tunnels = 2 + RAND() % 3;
-    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
-      Tunnels = 0;
-
-    for(c = 0; c < Tunnels; ++c)
-      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
-
-    int ToEmpty = 10 + RAND() % 11;
-
-    for(c = 0; c < ToEmpty; ++c)
-      for(int i = 0; i < 50; ++i)
-      {
-        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
-        truth Correct = false;
-
-        for(int d = 0; d < 8; ++d)
-        {
-          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
-
-          if(Square && Square->IsFlyable())
-          {
-            Correct = true;
-            break;
-          }
-        }
-
-        if(Correct)
-        {
-          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
-          break;
-        }
-      }
-
-    int ToGround = 20 + RAND() % 21;
-
-    for(c = 0; c < ToGround; ++c)
-      for(int i = 0; i < 50; ++i)
-      {
-        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
-
-        if(Pos == ERROR_V2)
-          continue;
-
-        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
-        character* Char = Square->GetCharacter();
-
-        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
-          continue;
-
-        int Walkables = 0;
-
-        for(int d = 0; d < 8; ++d)
-        {
-          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
-
-          if(NearSquare && NearSquare->IsFlyable())
-            ++Walkables;
-        }
-
-        if(Walkables > 6)
-        {
-          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
-
-          if(Char)
-          {
-            if(Char->CanBeSeenByPlayer())
-              ADD_MESSAGE("%s is hit by a rock falling from the ceiling!", Char->CHAR_NAME(DEFINITE));
-
-            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
-          }
-
-          Square->KickAnyoneStandingHereAway();
-          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
-          break;
-        }
-      }
-
-    // Generate a few boulders in the level
-
-    int BoulderNumber = 10 + RAND() % 10;
-
-    for(c = 0; c < BoulderNumber; ++c)
-    {
-      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
-      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
-      character* MonsterHere = Square->GetCharacter();
-
-      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
-      {
-        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
-
-        if(MonsterHere)
-          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-
-        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
-      }
-    }
-
-    // Damage to items in the level
-
-    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
-      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
-        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+    EarthQuakeMagic();
   }
   else
   {
@@ -1170,7 +1184,7 @@ truth key::Apply(character* User)
     }
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
-
+    
     if(DirVect != ERROR_V2 && User->GetArea()->IsValidPos(User->GetPos() + DirVect))
       return GetLevel()->GetLSquare(User->GetPos() + DirVect)->TryKey(this, User);
   }
@@ -1330,6 +1344,8 @@ void magicalwhistle::BlowEffect(character* Whistler)
 itemcontainer::itemcontainer()
 {
   Contained = new stack(0, this, HIDDEN);
+  pcreAutoStoreRegex = festring::CompilePCRE(NULL,GetLabel());
+  bLazyInitPcre=true;
 }
 
 void itemcontainer::PostConstruct()
@@ -1374,6 +1390,32 @@ void materialcontainer::GenerateMaterials()
                GetDefaultSecondaryVolume());
 }
 
+truth itemcontainer::OpenGeneric(character* Opener, stack* Stk, festring fsName, long volume, ulong ID)
+{
+  festring Question = CONST_S("Do you want to (t)ake something from or "
+                              "(p)ut something in this container? [t,p]");
+  truth Success;
+
+  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
+  {
+   case 't':
+   case 'T':
+    Success = Stk->TakeSomethingFrom(Opener, fsName);
+    break;
+   case 'p':
+   case 'P':
+    Success = Stk->PutSomethingIn(Opener, fsName, volume, ID);
+    break;
+   default:
+    return false;
+  }
+
+  if(Success)
+    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
+  
+  return Success;
+}
+
 /* Returns true if container opens fine else false */
 
 truth itemcontainer::Open(character* Opener)
@@ -1384,28 +1426,7 @@ truth itemcontainer::Open(character* Opener)
     return false;
   }
 
-  festring Question = CONST_S("Do you want to (t)ake something from or "
-                              "(p)ut something in this container? [t,p]");
-  truth Success;
-
-  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
-  {
-   case 't':
-   case 'T':
-    Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
-    break;
-   case 'p':
-   case 'P':
-    Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), GetID());
-    break;
-   default:
-    return false;
-  }
-
-  if(Success)
-    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-
-  return Success;
+  return OpenGeneric(Opener,GetContained(),GetName(DEFINITE),GetStorageVolume(),ID);
 }
 
 void itemcontainer::Save(outputfile& SaveFile) const
@@ -1590,7 +1611,7 @@ void beartrap::StepOnEffect(character* Stepper)
 
 truth beartrap::CheckPickUpEffect(character* Picker)
 {
-  if(Picker->IsStuckToTrap(GetTrapID()))
+  if(Picker->ValidateTrapData() && Picker->IsStuckToTrap(GetTrapID()))
   {
     if(Picker->IsPlayer())
       ADD_MESSAGE("You are tightly stuck in %s.", CHAR_NAME(DEFINITE));
@@ -1624,7 +1645,6 @@ truth stethoscope::Apply(character* Doctor)
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
   int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false, true);
-
   if(Dir == DIR_ERROR)
     return false;
 
@@ -1660,8 +1680,8 @@ truth itemcontainer::ContentsCanBeSeenBy(ccharacter* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ")
-                                              + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) &&
+    !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1695,8 +1715,8 @@ truth beartrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer()
-     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) &&
+     !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1769,7 +1789,31 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : mybase(MC)
 itemcontainer::itemcontainer(const itemcontainer& Container) : mybase(Container)
 {
   Contained = new stack(0, this, HIDDEN);
+  pcreAutoStoreRegex = festring::CompilePCRE(NULL,Container.GetLabel());
+  bLazyInitPcre=true;
+  
   CalculateAll();
+}
+
+void itemcontainer::SetLabel(cfestring& What)
+{
+  item::SetLabel(What);
+  pcreAutoStoreRegex = festring::CompilePCRE(pcreAutoStoreRegex,GetLabel());
+}
+
+truth itemcontainer::IsAutoStoreMatch(cfestring fs) {
+  if(bLazyInitPcre){
+    if(!pcreAutoStoreRegex && !GetLabel().IsEmpty()){
+      pcreAutoStoreRegex = festring::CompilePCRE(pcreAutoStoreRegex,GetLabel());
+      DBGEXEC( if(!pcreAutoStoreRegex){ DBG2("InvalidRegex",GetLabel().CStr()); } );
+    }
+    bLazyInitPcre=false;
+  }
+    
+  if(!pcreAutoStoreRegex)
+    return false;
+  
+  return pcre_exec(pcreAutoStoreRegex, 0, fs.CStr(), fs.GetSize(), 0, 0, NULL, 0) >= 0;
 }
 
 oillamp::oillamp(const oillamp& Lamp) : mybase(Lamp), InhabitedByGenie(false)
@@ -3764,7 +3808,7 @@ void materialmanual::FinishReading(character* Reader)
       Entry << Material[c]->GetFlexibility();
       Entry.Resize(70);
       Entry << Material[c]->GetDensity();
-      List.AddEntry(Entry, Material[c]->GetColor());
+      List.AddEntry(Entry, ivanconfig::CheckChangeColor(Material[c]->GetColor()));
     }
 
     List.Draw();
@@ -4057,8 +4101,8 @@ truth gastrap::Apply(character* User)
     return false;
   }
 
-  if(User->IsPlayer()
-     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && (!wizautoplay::IsPlayerAutoPlay(User)) && 
+    !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();

@@ -404,7 +404,7 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
 
     long Price = GetTruePrice();
 
-    if(Price)
+    if(Midas && Price)
     {
       Price /= 4; /* slightly lower than with 10 Cha */
       ADD_MESSAGE("Gold pieces clatter on the floor.");
@@ -530,7 +530,7 @@ void item::AddName(festring& Name, int Case) const
 {
   object::AddName(Name,Case);
 
-  if(label.GetSize())
+  if(!(Case&UNLABELED) && label.GetSize())
     Name << " inscribed " << label;
 }
 
@@ -1513,6 +1513,12 @@ void item::Draw(blitdata& BlitData) const
   }
   cbitmap* P = bmp;
 
+  if(GetMainMaterial() && (BlitData.CustomData & ALLOW_CONTRAST)){
+    col16 col = ivanconfig::CheckChangeColor(GetMainMaterial()->GetColor());
+    if(col!=GetMainMaterial()->GetColor())
+      BlitData.Bitmap->Fill(BlitData.Dest,TILE_V2,col);
+  }
+    
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaLuminanceBlit(BlitData);
   else
@@ -1704,8 +1710,12 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
       if(Slot[c])
       {
         lsquare* Square = GetLSquareUnder(c);
-        Square->SendNewDrawRequest();
-        Square->SendMemorizedUpdateRequest();
+        if(Square){ //TODO is this fix ok? let it crash elsewhere better to track the problem...
+          Square->SendNewDrawRequest();
+          Square->SendMemorizedUpdateRequest();
+        }else{
+          DBG4("Is nowhere to be found, how!?",Square,GetNameSingular().CStr(),SquaresUnder);
+        }
       }
 }
 

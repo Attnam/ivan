@@ -25,6 +25,8 @@ class ivanconfig
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static cfestring& GetAutoPickUpMatching() { return AutoPickUpMatching.Value; }
   static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
+  static truth IsDropBeforeOffering() { return DropBeforeOffering.Value; }
+  static truth IsAllowContrastBackground() { return AllowContrastBackground.Value; };
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -42,11 +44,12 @@ class ivanconfig
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
+  static truth IsOverloadedFight() { return OverloadedFight.Value; }
   static truth IsTransparentMapLM() { return TransparentMapLM.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return 2; /*MemorizeEquipmentMode.Value;*/ }
-  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value * 4; }
+  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -77,6 +80,7 @@ class ivanconfig
   static long GetVolume() { return Volume.Value; }
   static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static col16 CheckChangeColor(col16 col);
   static truth GetExtraMenuGraphics(){ return UseExtraMenuGraphics.Value; }
   static v2 GetWorldSizeConfig();
   static int GetLandTypeConfig() { return LandTypeConfig.Value; }
@@ -171,6 +175,7 @@ class ivanconfig
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
 
+  static void EnableSFX(truthoption* O, truth What);
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void FontGfxDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
@@ -217,9 +222,12 @@ class ivanconfig
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
+  static truthoption OverloadedFight;
   static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
   static truthoption AllWeightIsRelevant;
+  static truthoption DropBeforeOffering;
+  static truthoption AllowContrastBackground;
   static truthoption ShowVolume;
   static truthoption EnhancedLights;
 

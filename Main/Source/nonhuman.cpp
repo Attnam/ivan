@@ -313,12 +313,14 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
-  if(GetBurdenState() == OVER_LOADED)
-  {
-    if(IsPlayer())
-      ADD_MESSAGE("You cannot fight while carrying so much.");
+  if(!ivanconfig::IsOverloadedFight()){
+    if(GetBurdenState() == OVER_LOADED)
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You cannot fight while carrying so much.");
 
-    return false;
+      return false;
+    }
   }
 
   /* Behold this Terrible Father of Gum Solutions! */
@@ -328,8 +330,10 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(AttackStyle & USE_LEGS)
   {
     room* Room = GetNearLSquare(HitPos)->GetRoom();
-
     if(Room && !Room->AllowKick(this, GetNearLSquare(HitPos)))
+      AttackStyle &= ~USE_LEGS;
+    
+    if(ivanconfig::IsOverloadedFight() && GetBurdenState() == OVER_LOADED && RAND()%3!=0)
       AttackStyle &= ~USE_LEGS;
   }
 
@@ -357,6 +361,8 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_LEGS:
+    if(OverloadedKickFailCheck())        
+      return false;
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
     Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);
@@ -1137,6 +1143,53 @@ truth eddy::Hit(character* Enemy, v2, int, int)
   return true;
 }
 
+/**
+ * This is not gameplay wise as far AI events will not happen,
+ * but will allow the game to still be playable at least...
+ * Use this on any NPC class that may encumber the CPU too much.
+ * 
+ * TODO Confirm if the main lag problem is related to magic clouds *animations* 
+ * or other magic cloud calculations? If the problem is about animations, 
+ * non visible (or simply far away) ones could just be skipped w/o problem!
+ */
+bool CPUwiseAI(nonhumanoid* nh)
+{
+  if(!nh->IsRooted())return true; //only NPCs that can't move
+
+  int iDist = ivanconfig::GetDistLimitMagicMushrooms();
+  if(iDist==0)return true; //everywhere allowed
+  
+  iDist*=4; // this gives min AI = 64, max = 1024 but the lag seems related to magic clouds (non visible animations?) from magic mushrooms, as soon the clouds vanish, lag goes away too
+
+  int iSqDist = nh->GetDistanceSquareFrom(PLAYER);
+  int iSqLim = iDist*iDist;
+  int iMaxActiveAI = iDist*2 * iDist*2;
+
+  static int iPreviousTurnActivatedAIs=0;
+  static int iTurnChkAI = 0;
+  if(iTurnChkAI != game::GetTurn()){ DBG6(iTurnChkAI,iPreviousTurnActivatedAIs,iDist,iSqDist,iSqLim,iMaxActiveAI);
+    iPreviousTurnActivatedAIs=0;
+    iTurnChkAI = game::GetTurn();
+  }
+
+  bool bActivated = false;
+  if(iTurnChkAI==game::GetTurn()){
+    if(iPreviousTurnActivatedAIs<iMaxActiveAI){
+      /**
+       * this keeps levitating ones still active what may be good 
+       * to keep some far away randomicity, but it may compromize AI from nearby ones,
+       * anyway the point is to keep the game fastly playable
+       */
+      if(iSqDist<=iSqLim || nh->StateIsActivated(LEVITATION)){
+        iPreviousTurnActivatedAIs++;
+        bActivated=true; 
+      }
+    }
+  }
+
+  return bActivated;
+}
+
 void mushroom::Save(outputfile& SaveFile) const
 {
   nonhumanoid::Save(SaveFile);
@@ -1151,6 +1204,8 @@ void mushroom::Load(inputfile& SaveFile)
 
 void mushroom::GetAICommand()
 {
+  if(!CPUwiseAI(this))return;
+  
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -1215,45 +1270,9 @@ void mushroom::PostConstruct()
   }
 }
 
-/**
- * This is not gameplay wise as far AI events will not happen,
- * but will allow the game to still be playable at least...
- * Use this on any NPC class that may encumber the CPU too much.
- */
-bool CPUwiseAI(nonhumanoid* nh)
-{
-  if(!nh->IsRooted())return true; //only NPCs that can't move
-  if(nh->StateIsActivated(LEVITATION))return true; //this keeps levitating ones still active what may be good TODO add user option to deny them?
-
-  int iDist = ivanconfig::GetDistLimitMagicMushrooms();
-  if(iDist==0)return true;
-
-  int iSqDist = nh->GetDistanceSquareFrom(PLAYER);
-  int iSqLim = iDist*iDist;
-  int iMaxActiveAI = iDist*2 * iDist*2;
-
-  static int iPreviousTurnActivatedAIs=0;
-  static int iTurnChkAI = 0;
-  if(iTurnChkAI != game::GetTurn()){ DBG4(iTurnChkAI,iPreviousTurnActivatedAIs,iSqLim,iMaxActiveAI);
-    iPreviousTurnActivatedAIs=0;
-    iTurnChkAI = game::GetTurn();
-  }
-
-  bool bActivated = false;
-  if(iTurnChkAI==game::GetTurn()){
-    if(iPreviousTurnActivatedAIs<iMaxActiveAI && iSqDist<=iSqLim){
-      bActivated=true;
-      iPreviousTurnActivatedAIs++;
-    }
-  }
-
-  return bActivated;
-}
-
 void magicmushroom::GetAICommand()
 {
-  if(!CPUwiseAI(this))
-    return;
+  if(!CPUwiseAI(this))return;
 
   if(!(RAND() % 750))
   {
@@ -1300,12 +1319,14 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
-  if(GetBurdenState() == OVER_LOADED)
-  {
-    if(IsPlayer())
-      ADD_MESSAGE("You cannot fight while carrying so much.");
+  if(!ivanconfig::IsOverloadedFight()){
+    if(GetBurdenState() == OVER_LOADED)
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You cannot fight while carrying so much.");
 
-    return false;
+      return false;
+    }
   }
 
   Hostility(Enemy);
@@ -2467,6 +2488,7 @@ void spider::GetAICommand()
 
   if(NearestChar)
   {
+    NearestChar->ValidateTrapData();
     if(NearestChar->IsStuck() || GetConfig() == ARANEA ||
        (GetConfig() == PHASE && !CanBeSeenBy(NearestChar)))
       SetGoingTo(NearestChar->GetPos());
@@ -2521,23 +2543,7 @@ truth largecat::SpecialSaveLife()
   if(!IsPlayer() && CanBeSeenByPlayer())
     ADD_MESSAGE("%s appears!", CHAR_NAME(INDEFINITE));
 
-  if(IsPlayer())
-    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
-
-  RestoreBodyParts();
-  ResetSpoiling();
-  ResetBurning();
-  RestoreHP();
-  RestoreStamina();
-  ResetStates();
-
-  if(GetNP() < SATIATED_LEVEL)
-    SetNP(SATIATED_LEVEL);
-
-  SendNewDrawRequest();
-
-  if(GetAction())
-    GetAction()->Terminate(false);
+  SaveLifeBase();
 
   return true;
 }
@@ -2706,6 +2712,7 @@ void lobhse::GetAICommand()
 
     if(NearestChar)
     {
+      NearestChar->ValidateTrapData();
       if(NearestChar->IsStuck())
         SetGoingTo(NearestChar->GetPos());
       else

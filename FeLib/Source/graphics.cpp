@@ -634,7 +634,7 @@ void graphics::AddDrawAboveAll(drawabove da, int iPriority, const char* desc)
     vDrawaboveTmp.erase(vDrawaboveTmp.begin()+iIndexLP);
   }
 
-  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //to help on development, so all priorities can be adjusted easily
+  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //output to terminal to help on development, so all priorities can be adjusted easily
   bool bCOut = c!=NULL && strcmp(c,"true")==0;
   festring fsDrawAbovePriority;
   for(int i=0;i<vDrawabove.size();i++){

@@ -1254,13 +1254,15 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-        for(character* p : game::GetTeam(c)->GetMember())
+        for(character* p : game::GetTeam(c)->GetMember()){
+          p->ValidateTrapData();
           if(p->IsEnabled() && Leader->CanBeSeenBy(p)
              && Leader->SquareUnderCanBeSeenBy(p, true) && p->CanFollow())
           {
             ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
             return false;
           }
+        }
 
   truth TakeAll = true;
 
@@ -1274,7 +1276,8 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(character* p : game::GetTeam(c)->GetMember())
+      for(character* p : game::GetTeam(c)->GetMember()){
+        p->ValidateTrapData();
         if(p->IsEnabled() && p != Leader
            && (TakeAll
                || (Leader->CanBeSeenBy(p)
@@ -1292,6 +1295,7 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
             p->Remove();
           }
         }
+      }
 
   return true;
 }

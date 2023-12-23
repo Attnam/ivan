@@ -335,9 +335,10 @@ void recipedata::Save(outputfile& SaveFile) const
     << bGradativeCraftOverride
     << bTailoringMode
     << v2TailoringWorkbenchLocation
-
+    
     << lDamageFinalItem
-
+    << lInitialTurn
+    
     ;
 }
 
@@ -394,18 +395,12 @@ void recipedata::Load(inputfile& SaveFile)
     >> bGradativeCraftOverride
     >> bTailoringMode
     >> v2TailoringWorkbenchLocation
-
+    
     >> lDamageFinalItem
+    >> lInitialTurn
 
     ;
-
-  if(game::GetCurrentSavefileVersion() >= 135){
-    SaveFile >> bTailoringMode;
-    SaveFile >> v2TailoringWorkbenchLocation;
-  }
-
-//  if(otSpawnType!=CTT_NONE)
-//    SaveFile >> otSpawn;
+  
   rc.integrityCheck();
 }
 cfestring recipedata::id() const
@@ -420,6 +415,7 @@ cfestring recipedata::id() const
   festring fs;
 
   #define RPDINFO(o) fs<<(#o)<<"="<<(o)<<"; ";
+  RPDINFO(lInitialTurn);
   RPDINFO(rc.IsCanBeSuspended());
 
   RPDINFO(itToolID);
@@ -519,6 +515,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   iMinTurns=0;
   bFailedTerminateCancel=false;
   bFailedSuspend=false;
+  
 
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -705,7 +702,59 @@ struct recipe{
   }
 
   virtual void fillInfo(){ ABORT("missing recipe info implementation"); }
+  
+  static itemvector vitInv(recipedata& rpd,bool bAllowWielded=true,bool bAllowAllEquipped=false){
+    itemvector vi;
 
+    //prefer already equipped
+    if(bAllowWielded){ //TODO not showing on list...
+      if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
+      if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
+    }
+
+    if(bAllowAllEquipped){ //TODO not showing on list...
+      for(int c = 0; c < rpd.rc.H()->GetEquipments(); ++c){
+        if( 
+          c!=RIGHT_WIELDED_INDEX && 
+          c!=LEFT_WIELDED_INDEX &&
+          rpd.rc.H()->GetEquipment(c)
+        ){
+          vi.push_back(rpd.rc.H()->GetEquipment(c));
+        }
+      }
+    }
+
+    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
+
+    return vi;
+  }
+
+  /**
+   * @return the lump where it was mixed into (or the input lump)
+   */
+  static item* lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
+    // to easily (as possible) create a big lump
+    lump* lumpAtInv=NULL;
+    for(int i=0;i<vi.size();i++){
+      if(lumpToMix==vi[i])continue;
+
+      if(dynamic_cast<lump*>(vi[i])!=NULL){
+        lump* lumpAtInv = (lump*)vi[i];
+        if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
+          lumpAtInv->GetMainMaterial()->SetVolume(
+            lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
+          lumpAtInv->CalculateAll();
+
+          craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
+          bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+          break;
+        }
+      }
+    }
+
+    return lumpAtInv!=NULL ? lumpAtInv : lumpToMix;
+  }
+  
   void failPlacementMsg(recipedata& rpd){
     ADD_MESSAGE("%s can't be placed here.",name.CStr());
     rpd.SetAlreadyExplained();
@@ -1263,58 +1312,6 @@ struct recipe{
       CIok);
   }
 
-  static itemvector vitInv(recipedata& rpd,bool bAllowWielded=true,bool bAllowAllEquipped=false){
-    itemvector vi;
-
-    //prefer already equipped
-    if(bAllowWielded){ //TODO not showing on list...
-      if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
-      if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
-    }
-
-    if(bAllowAllEquipped){ //TODO not showing on list...
-      for(int c = 0; c < rpd.rc.H()->GetEquipments(); ++c){
-        if(
-          c!=RIGHT_WIELDED_INDEX &&
-          c!=LEFT_WIELDED_INDEX &&
-          rpd.rc.H()->GetEquipment(c)
-        ){
-          vi.push_back(rpd.rc.H()->GetEquipment(c));
-        }
-      }
-    }
-
-    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
-
-    return vi;
-  }
-
-  /**
-   * @return the lump where it was mixed into (or the input lump)
-   */
-  static item* lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
-    // to easily (as possible) create a big lump
-    lump* lumpAtInv=NULL;
-    for(int i=0;i<vi.size();i++){
-      if(lumpToMix==vi[i])continue;
-
-      if(dynamic_cast<lump*>(vi[i])!=NULL){
-        lump* lumpAtInv = (lump*)vi[i];
-        if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
-          lumpAtInv->GetMainMaterial()->SetVolume(
-            lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
-          lumpAtInv->CalculateAll();
-
-          craftcore::SendToHellSafely(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
-          bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
-          break;
-        }
-      }
-    }
-
-    return lumpAtInv!=NULL ? lumpAtInv : lumpToMix;
-  }
-
   static void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
     switch(iCfgOLT){
     case FORGE:
@@ -1495,7 +1492,10 @@ struct srpCutWeb : public recipe{
     if(bSuccess){
       rpd.SetAlreadyExplained();
       material* matSSilk=material::MakeMaterial(SPIDER_SILK);
-      craftcore::FinishSpawning(rpd, craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,RAND()%6+3));
+      item* itSS = craftcore::PrepareRemains(rpd,matSSilk,CIT_LUMP,RAND()%6+3);
+      craftcore::FinishSpawning(rpd, itSS);
+      bool b=false;
+      lumpMix(vitInv(rpd),itSS,b);
     }else{
       bool bGetStuckOnTheWeb=false;
       bool bLoseWeapon=false;
@@ -2096,8 +2096,9 @@ struct srpInspect : public recipe{
     material* matM = it0->GetMainMaterial();
     material* matS = it0->GetSecondaryMaterial();
     festring fs;
-    fs<<it0->GetName(DEFINITE)<<" is made of ";
-    if(matM)fs<<matM->GetName(UNARTICLED);
+    fs << it0->GetName(DEFINITE) << " is made of ";
+    if(matM)
+      fs<<matM->GetName(UNARTICLED);
     if(matS){
       if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...
       fs<<matS->GetName(UNARTICLED);
@@ -2707,7 +2708,7 @@ struct srpForgeItem : public recipe{
     }
 
     if(rpd.bTailoringMode){
-      if(!recipe::findOLT(rpd,TAILORING_BENCH)){ //must be near it //TODO should be a new bench called TAILORING_BENCH with new graphics one day...
+      if(!recipe::findOLT(rpd,TAILORING_BENCH)){ //must be near it
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
@@ -3428,7 +3429,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     prp->action+" "+prp->name+
     (rpd.itSpawnCfg!=0 ? festring(" ("+rpd.fsItemSpawnSearchPrototype+")") : festring())+
     ", started at "+game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true);
-
+  
+  rpd.lInitialTurn=game::GetTurn();
+  
   rpd.ClearRefs(); //pointers must be revalidated on the action handler
   DBG1(rpd.dbgInfo().CStr());
   if(Char->SwitchToCraft(rpd)) // everything must be set before this!!!
@@ -3586,7 +3589,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 //  matM->SetSpoilCounter(rpd.itSpawnMatMainSpoilLevel);
   material* matM = craftcore::CreateMaterial(MAIN_MATERIAL,rpd);
   delete itSpawn->SetMainMaterial(matM);
-
+  
   if(rpd.itSpawnMatSecCfg==0)
     craftcore::EmptyContentsIfPossible(rpd,itSpawn);
   else{

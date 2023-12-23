@@ -754,6 +754,8 @@ stairs /* olterrain-> */
   DigMessage = "The stairs are too hard to dig.";
   MainMaterialConfig == GRANITE;
   MaterialColorB = rgb16(160, 64, 0);
+  MaterialColorC = rgb16(220, 220, 0);
+  MaterialColorD = rgb16(175, 130, 0);
   NameSingular = "stairway";
 
   Config STAIRS_UP;

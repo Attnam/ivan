@@ -22,6 +22,7 @@
 #include "game.h"
 #include "gear.h"
 #include "god.h"
+#include "gods.h"
 #include "graphics.h"
 #include "human.h"
 #include "iconf.h"
@@ -37,6 +38,7 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
@@ -114,6 +116,7 @@ command* commandsystem::Command[] =
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
+  new command(&AskFavour, "pray for a favour", 'P', 'P', 'P', false),
   new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
   new command(&Save, "save and quit", 'S', 'S', 'S', true),
@@ -530,12 +533,7 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems()){
-          ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
-          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
-            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
-          }
-        }
+        game::SetDropTag(ToDrop[c]);
       }
       Success = true;
     }
@@ -687,6 +685,8 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(PileVector[0][c]->GetName(DEFINITE))){
             PileVector[0][c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
+
+          game::AutoStoreItemInContainer(PileVector[0][c],Char);
         }
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
@@ -733,6 +733,8 @@ truth commandsystem::PickUp(character* Char)
           if(game::IsAutoPickupMatch(ToPickup[c]->GetName(DEFINITE))){
             ToPickup[c]->ClearTag('d'); //intentionally drop tag dismissed for autopickup regex match
           }
+
+          game::AutoStoreItemInContainer(ToPickup[c],Char);
         }
 
         ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
@@ -873,8 +875,8 @@ truth commandsystem::Read(character* Char)
 
 #ifdef WIZARD
   // stops auto question timeout that was preventing reading at all
-  if(Item && game::GetAutoPlayMode())
-    game::DisableAutoPlayMode();
+  if(Item && wizautoplay::GetAutoPlayMode())
+    wizautoplay::DisableAutoPlayMode();
 #endif
 
   return Item && Char->ReadItem(Item);
@@ -1089,9 +1091,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
             What=c;
             if(What.GetSize()>0){
               if(What[0]==game::MapNoteToken()){ //having map note token means it is already a map note, so let it be read/write at will
-                std::string str=What.CStr();
-                What.Empty();
-                What<<str.substr(1).c_str(); //removes token prefix TODO implement substr() at festring
+                What.Erase(0,1); //removes token prefix
               } else { // this is a case of non-map note "engraving" (like normal vanilla engraving from golemns)
                 if(!lsqrN->HasBeenSeen()){
                   /*****
@@ -1146,13 +1146,107 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
           break;
 
         festring What = ToAddLabel[0]->GetLabel();
-        if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+        int iMaxChars=150; // item labels can contain user custom hints to let the algorithm use these to perform automatic actions
+        if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, iMaxChars, true) == NORMAL_EXIT)
           for(int i=0;i<ToAddLabel.size();i++)
             ToAddLabel[i]->SetLabel(What);
       }
 
       break;
     }
+  }
+
+  return false;
+}
+
+truth commandsystem::AskFavour(character* Char)
+{
+  felist felFavourList(CONST_S("Ask a favour from Whom?"));
+  felFavourList.SetEntryDrawer(game::GodEntryDrawer);
+
+  int iTot=0;
+  std::vector<std::pair<god*,int>> vSelectableFavours;
+  for(int c = 1; c <= GODS; ++c){
+    god* pgod = game::GetGod(c);
+    if(!pgod->IsKnown()) continue;
+
+    bool bOk=false;
+    if(pgod->GetBasicAlignment() == GOOD    && game::GetPlayerAlignment()  > 0) bOk=true;
+    if(pgod->GetBasicAlignment() == NEUTRAL && game::GetPlayerAlignment() == 0) bOk=true;
+    if(pgod->GetBasicAlignment() == EVIL    && game::GetPlayerAlignment()  < 0) bOk=true;
+    if(c == Char->GetLSquareUnder()->GetDivineMaster()) bOk=true;
+
+    bool bGodSectionEntry=true;
+    std::vector<int> v = pgod->GetKnownSpells();
+    for(auto piFavour = v.begin(); piFavour != v.end(); ++piFavour){
+      festring fsFavour = CONST_S("") + god::GetFavourName(*piFavour);
+
+      col16 col = bOk ? LIGHT_GRAY : DARK_GRAY;
+      // if(!bOk && game::WizardModeIsReallyActive()) col=RED;
+
+      if(bGodSectionEntry){
+        festring fsGodEntry = CONST_S("") + game::GetAlignment(pgod->GetAlignment());
+        fsGodEntry.Resize(4); // Longest alignment name is L++ or C--, so have min of one space.
+        fsGodEntry << pgod->GetName() << " might grant you a favour."; //TODO: won't for known gods with no favours, or only name?
+        if(ivanconfig::IsShowGodInfo())
+          fsGodEntry << " " << game::GetGod(c)->GetLastKnownRelation();
+        felFavourList.AddEntry(fsGodEntry, DARK_GRAY, 20, c, false);
+        bGodSectionEntry=false;
+      }
+      felFavourList.AddEntry(fsFavour, col, 0, NO_IMAGE, bOk || game::WizardModeIsReallyActive());
+      // TODO: favour F1 Description
+
+      if(bOk || game::WizardModeIsReallyActive()){
+//        std::pair<god*,int> GS;
+//        GS.first = pgod;
+//        GS.second = *piSpell;
+        vSelectableFavours.push_back(std::make_pair(pgod,*piFavour));
+      }
+
+      iTot++;
+    }
+  }
+
+  festring fsMsg;
+  //fsMsg = fsMsg+"You don't know about any "+game::GetVerbalPlayerAlignment()+" favours..."; //TODO: How exactly to phrase this?
+  fsMsg = fsMsg+"You can call upon no favours.";
+  
+  if(iTot>0 && vSelectableFavours.size()==0){
+    felFavourList.AddEntry(cfestring("(")+fsMsg+")", DARK_GRAY, 0, NO_IMAGE, false);
+  }
+
+  int Select = LIST_WAS_EMPTY;
+  if(iTot>0){
+    game::SetStandardListAttributes(felFavourList);
+    if(vSelectableFavours.size()>0)
+      felFavourList.AddFlags(SELECTABLE);
+    Select = felFavourList.Draw();
+  }
+
+  if(Select == LIST_WAS_EMPTY || vSelectableFavours.size()==0)
+  {
+//    ADD_MESSAGE("You don't know about any %s favours...", game::GetVerbalPlayerAlignment());
+    ADD_MESSAGE(fsMsg.CStr());
+    return false;
+  }
+
+  if(Select & FELIST_ERROR_BIT)
+    return false;
+
+  god* G = vSelectableFavours[Select].first;
+  int iFavour = vSelectableFavours[Select].second;
+  int iDebit=FAVOURDEBIT_AUTO;
+  int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
+  if(DivineMaster){
+    if(G == game::GetGod(DivineMaster))
+      iDebit=FAVOURDEBIT_AUTOHALF;
+    else
+      iDebit=FAVOURDEBIT_AUTODOUBLE;
+  }
+
+  if(G->Favour(iFavour,iDebit)){
+    Char->EditAP(-1000);
+    return true;
   }
 
   return false;
@@ -1172,9 +1266,9 @@ truth commandsystem::Pray(character* Char)
     return false;
   }
 
+  festring desc;
   if(!DivineMaster)
   {
-    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
@@ -1189,7 +1283,9 @@ truth commandsystem::Pray(character* Char)
   else
     if(game::GetGod(DivineMaster)->IsKnown())
     {
-      Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+      desc << game::GetGod(DivineMaster)->GetCompleteDescription();
+      if(ivanconfig::IsShowGodInfo())desc << " " << game::GetGod(DivineMaster)->GetLastKnownRelation();
+      Panthenon.AddEntry(desc, LIGHT_GRAY, 20, DivineMaster);
       Panthenon.SetLastEntryHelp(festring() << game::GetGod(DivineMaster)->GetName() << ", the " << game::GetGod(DivineMaster)->GetDescription());
       Known[0] = DivineMaster;
     }
@@ -1331,9 +1427,14 @@ truth commandsystem::Offer(character* Char)
         Item->SendToHell();
         Char->DexterityAction(5); /** C **/
         return true;
-      }
-      else
+      } else {
+        if(ivanconfig::IsDropBeforeOffering())
+          if(!game::IsQuestItem(Item)){
+            Item->MoveTo(Char->GetLSquareUnder()->GetStack()); //drops before offering so non accepted will unclutter player inventory
+            game::SetDropTag(Item);
+          }
         return false;
+      }
     }
     else
       return false;
@@ -2000,7 +2101,7 @@ truth commandsystem::WizardMode(character* Char)
 
 truth commandsystem::AutoPlay(character* Char)
 {
-  game::IncAutoPlayMode();
+  wizautoplay::IncAutoPlayMode();
   return false;
 }
 

@@ -41,6 +41,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "curseddeveloper.h"
 #include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
@@ -67,6 +68,7 @@
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
+#include "wizautoplay.h"
 #include "wsquare.h"
 
 #include "dbgmsgproj.h"
@@ -193,7 +195,6 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
-int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -298,6 +299,7 @@ int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
+  DBG2(ID,Char->GetID()); // do not use GetName() here, will crash!:  ,Char->GetName(INDEFINITE).CStr());
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID)
@@ -311,6 +313,7 @@ void game::RemoveCharacterID(ulong ID)
 }
 void game::AddItemID(item* Item, ulong ID)
 {
+  DBG2(ID,Item->GetID());// do not use GetName() here, will crash!:  ,Item->GetName(INDEFINITE).CStr());
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 
@@ -341,7 +344,10 @@ void game::UpdateItemID(item* Item, ulong ID)
 }
 void game::AddTrapID(entity* Trap, ulong ID)
 {
-  if(ID) TrapIDMap.insert(std::make_pair(ID, Trap));
+  if(ID){
+    DBG2(ID,Trap->GetTrapID()); // do not use GetTrapType() here, will crash!: ,Trap->GetTrapType());
+    TrapIDMap.insert(std::make_pair(ID, Trap));
+  }
 }
 void game::RemoveTrapID(ulong ID)
 {
@@ -350,8 +356,10 @@ void game::RemoveTrapID(ulong ID)
     if(itr == TrapIDMap.end() || itr->second == NULL){
       if(!bugfixdp::IsFixing())
         ABORT("AlreadyErased:TrapID %lu",ID);
-    }else
+    }else{
+      DBG1(ID);
       TrapIDMap.erase(itr);
+    }
   }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
@@ -385,7 +393,7 @@ void game::InitScript()
 
 truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
 {
-  return it->IsQuestItem();
+  return it->IsQuestItem(); //TODO this code (used outside here) should suffice instead of this game::IsQuestItem() whole function
 }
 
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
@@ -957,6 +965,8 @@ void game::DeInit()
   delete GameScript;
   msgsystem::Format();
   DangerMap.clear();
+  
+  Player = 0;
 }
 
 void game::Run()
@@ -1260,6 +1270,19 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+//static int iMaxNoteLength=100;
+//void game::AppendMapNote(lsquare* lsqrN,festring What)
+//{
+//  festring finalWhat;
+//  finalWhat << game::MapNoteToken();
+//  finalWhat << What;
+//  if(lsqrN->GetEngraved())
+//    finalWhat << " " << lsqrN->GetEngraved();
+//  static int iMaxLength=100;
+//  if(finalWhat.GetSize()>iMaxLength)
+//    finalWhat.Resize(iMaxLength);
+//  lsqrN->Engrave(finalWhat);
+//}
 void game::SetMapNote(lsquare* lsqrN,festring What)
 {
   festring finalWhat;
@@ -1324,40 +1347,82 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
-std::vector<festring> afsAutoPickupMatch;
-pcre *reAutoPickup=NULL;
-void game::UpdateAutoPickUpMatching() //simple matching syntax
+void game::SetDropTag(item* it)
 {
-  afsAutoPickupMatch.clear();
-
-  bool bSimple=false;
-  if(bSimple){ //TODO just drop the simple code? or start the string with something to let it be used instead of regex? tho is cool to let ppl learn regex :)
-    if(ivanconfig::GetAutoPickUpMatching().GetSize()==0 || ivanconfig::GetAutoPickUpMatching()[0]=='!')return;
-
-    std::stringstream ss(ivanconfig::GetAutoPickUpMatching().CStr());
-    std::string match;
-    while(std::getline(ss,match,'|'))
-      afsAutoPickupMatch.push_back(festring(match.c_str()));
-  }else{
-    //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
-  //  static bool bDummyInit = [](){reAutoPickup=NULL;return true;}();
-    const char *errMsg;
-    int iErrOffset;
-    if(reAutoPickup)pcre_free(reAutoPickup);
-    reAutoPickup = pcre_compile(
-      ivanconfig::GetAutoPickUpMatching().CStr(), //pattern
-      0, //no options
-      &errMsg,    &iErrOffset,
-      0); // default char tables
-    if (!reAutoPickup){
-      std::vector<festring> afsFullProblems;
-      afsFullProblems.push_back(festring(errMsg));
-      afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
-      bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
+  if(ivanconfig::IsAutoPickupThrownItems()){
+    it->ClearTag('t'); //throw: to avoid auto-pickup
+    if(game::IsAutoPickupMatch(it->GetName(DEFINITE))){
+      it->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
     }
   }
 }
+
+/**
+ * 
+ * @param it
+ * @param bUnarticled if false is GetNameSingular()
+ * @return 
+ */
+cchar* game::StoreMatchNameKey(item* it,bool bUnarticled)
+{
+  static festring fsRet,fsSpace=" ",fsEmpty="";
+  static cchar* cToken="+";
+  
+  fsRet="";
+  fsRet<<cToken;
+  if(bUnarticled){
+//    fsRet<<it->GetName(UNARTICLED|UNLABELED|STRIPPED|NOPOSTFIX);
+    fsRet<<it->GetNameToMatch();
+  }else{
+    fsRet<<it->GetNameSingular()<<cToken;
+  }
+  
+  festring::SearchAndReplace(fsRet,fsSpace,fsEmpty,0);
+  
+  return fsRet.CStr();
+}
+
+void game::AutoStoreItemInContainer(item* itToStore,character* C)
+{
+  if(!C->IsPlayer())
+    return;
+  
+  static itemvector vit;vit.clear();
+  C->GetStack()->FillItemVector(vit);
+  for(int i=0;i<vit.size();i++){
+    DBGITEM(vit[i],"checkingIfIsAContainer");
+    itemcontainer* itc = dynamic_cast<itemcontainer*>(vit[i]);
+    if(itc){
+      long lRemainingVol = itc->GetStorageVolume() - itc->GetContained()->GetVolume();
+      DBG3(lRemainingVol,itToStore->GetVolume(),itc->GetLabel().CStr());
+      if(lRemainingVol<itToStore->GetVolume())
+        continue;
+      
+      if(itc->IsAutoStoreMatch(itToStore->GetName(DEFINITE))){
+        itToStore->RemoveFromSlot();
+        itc->GetContained()->AddItem(itToStore);
+        ADD_MESSAGE("%s was safely stored in %s",itToStore->GetName(DEFINITE).CStr(),itc->GetName(DEFINITE).CStr());
+        break;
+      }
+    }
+  }
+}
+
+pcre *reAutoPickup=NULL;
+void game::UpdateAutoPickUpRegex()
+{
+  //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
+  festring fsErr;
+  reAutoPickup = festring::CompilePCRE(reAutoPickup,ivanconfig::GetAutoPickUpMatching(),&fsErr);
+  if(!fsErr.IsEmpty()){
+    std::vector<festring> afsFullProblems;
+    afsFullProblems.push_back(fsErr);
+    bool bDummy = iosystem::AlertConfirmMsg("Failed updating auto-pickup regex.",afsFullProblems,false);
+  }
+}
 bool game::IsAutoPickupMatch(cfestring fsName) {
+  if(!reAutoPickup)
+    return false;
   return pcre_exec(reAutoPickup, 0, fsName.CStr(), fsName.GetSize(), 0, 0, NULL, 0) >= 0;
 }
 int game::CheckAutoPickup(square* sqr)
@@ -1370,34 +1435,31 @@ int game::CheckAutoPickup(square* sqr)
 
   lsquare* lsqr = (lsquare*)sqr;
 
-  static bool bDummyInit = [](){UpdateAutoPickUpMatching();return true;}();
+  static bool bDummyInit = [](){UpdateAutoPickUpRegex();return true;}();
   itemvector iv;
   lsqr->GetStack()->FillItemVector(iv);
   int iTot=0;
   for(int i=0;i<iv.size();i++){
     item* it = iv[i];
     if(it->GetRoom() && it->GetRoom()->GetMaster())continue; //not from owned rooms
-    if(it->GetSpoilLevel()>0)continue;
+    if(it->GetSpoilLevel()>0)continue; //just a guess no one auto-wants it
+    
     bool b=false;
     if(!b && ivanconfig::IsAutoPickupThrownItems() && it->HasTag('t') )b=true; //was thrown
-    if(!b && !it->HasTag('d')){
-      if(reAutoPickup!=NULL){
-        if(IsAutoPickupMatch(it->GetName(DEFINITE))){
-          b=true;
-        }
-      }
-    }
-    if(!b){ //TODO use player's perception, in case of a stack of items, to allow random pickup based on item volume (size) where smaller = harder like tiny rings, to compensate for the easiness of not losing a round having to pick up the item interactively
-      for(int i=0;i<afsAutoPickupMatch.size();i++){ //each simple match
-        if(it->GetNameSingular().Find(afsAutoPickupMatch[i].CStr(),0) != festring::NPos){
-          b=true;
-          break; //each simple match loop
-        }
-      }
+    if(!b && !it->HasTag('d')){ //was NOT intentionally dropped (dropping adds such tag)
+      /**
+       * TODO ?
+       * Use player's perception, in case of a stack of items, 
+       * to allow random pickup based on item volume (size) where smaller = harder like tiny rings, 
+       * to compensate for the easiness of not losing a round having to pick up the item interactively.
+       * But it may just be annnoying...
+       */
+      b = IsAutoPickupMatch(it->GetName(DEFINITE));
     }
     if(b){
       it->MoveTo(PLAYER->GetStack());
       ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      AutoStoreItemInContainer(it,PLAYER);
       iTot++;
     }
   }
@@ -1528,7 +1590,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
   //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
   int iLineHeightPixels=15; //line height in pixels
-  int iFontWidth=8; //font width
+  int iFontWidth=FONT->GetFontSize().X;
   int iM=3; //margin
 
   const static int iTotCol=5;
@@ -1589,6 +1651,15 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
       col16 colMapNoteBkg2=colMapNoteBkg;
+      if(festring(vMapNotes[i].note).Find("@")!=festring::NPos)
+        colMapNoteBkg2=BLACK;
+      else
+      if(festring(vMapNotes[i].note).Find("?")!=festring::NPos)
+        colMapNoteBkg2=GREEN;
+      else
+      if(festring(vMapNotes[i].note).Find("!!!")!=festring::NPos)
+        colMapNoteBkg2=YELLOW;
+      else
       if(festring(vMapNotes[i].note).Find("!!")!=festring::NPos)
         colMapNoteBkg2=RED;
       else
@@ -1668,6 +1739,7 @@ void game::DrawMapOverlay(bitmap* buffer)
   static v2 v2BmpSize(0,0);
   static v2 v2TopLeftFinal(0,0);
   static v2 v2MapScrSizeFinal(0,0);
+  static v2 v2MinTopLeft(10,10); // this prevents a crash related to drawing lines too near top and left game gfx buffer edges
   static bitmap* bmpFinal;
 
   bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
@@ -1739,8 +1811,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 //      v2 v2VisibleDungeonScrSize=v2CL*TILE_SIZE;
     v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
     v2TopLeft = v2Center -v2MapScrSize/2;
-    if(v2TopLeft.X<0)v2TopLeft.X=0;
-    if(v2TopLeft.Y<0)v2TopLeft.Y=0;
+    if(v2TopLeft.X<v2MinTopLeft.X)v2TopLeft.X=v2MinTopLeft.X;
+    if(v2TopLeft.Y<v2MinTopLeft.Y)v2TopLeft.Y=v2MinTopLeft.Y;
 //        v2(
 //          RES.X/2 -(v2CL.X * iMapTileSize)/2,
 //          RES.Y/2 -(v2CL.Y * iMapTileSize)/2);
@@ -2003,8 +2075,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
     if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
-    if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
-    if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    if(v2TopLeftFinal.X<v2MinTopLeft.X)v2TopLeftFinal.X=v2MinTopLeft.X;
+    if(v2TopLeftFinal.Y<v2MinTopLeft.Y)v2TopLeftFinal.Y=v2MinTopLeft.Y;
     DBGSV2(v2TopLeftFinal);
 
     // prepare notes
@@ -2930,8 +3002,16 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     }
   }
 
-  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0)
-    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, DARK_GRAY, false);
+  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0){
+    col16 col = DARK_GRAY;
+    if(PLAYER->StateIsActivated(PANIC)){
+      static float fMaxSec=1.5; //it will flash every half of this time
+      static clock_t tmMax = (clock_t)CLOCKS_PER_SEC*fMaxSec;
+      static clock_t tmHalf = (clock_t)tmMax/2.0;
+      col = ((clock()%tmMax) < tmHalf) ? YELLOW : DARK_GRAY;
+    }
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, col, false);
+  }
 
   iAltSilBlitCount++;
 }
@@ -3101,6 +3181,8 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
+  if(ivanconfig::IsAllowContrastBackground())
+    B.CustomData |= ALLOW_CONTRAST;
   B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
   B.Border = { TILE_SIZE, TILE_SIZE };
   B.Luminance = ivanconfig::GetContrastLuminance();
@@ -3583,21 +3665,6 @@ int game::Load(cfestring& saveName)
   return LOADED;
 }
 
-/**
- * this prevents all possibly troublesome characters in all OSs
- */
-void fixChars(festring& fs)
-{
-  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
-  {
-    if(fs[i]>='A' && fs[i]<='Z')continue;
-    if(fs[i]>='a' && fs[i]<='z')continue;
-    if(fs[i]>='0' && fs[i]<='9')continue;
-
-    fs[i] = '_';
-  }
-}
-
 bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
   std::string strChk;
   strChk = fs.CStr();
@@ -3635,7 +3702,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
   else
   {
     // this is important in case player name changes like when using the fantasy name generator
-    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    festring fsPN; fsPN<<PlayerName; iosystem::fixChars(fsPN);
     std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
     if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
       CurrentBaseSaveFileName.Empty();
@@ -3646,7 +3713,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;
-      fixChars(CurrentBaseSaveFileName);
+      iosystem::fixChars(CurrentBaseSaveFileName);
     }
 
     PathAndBaseSaveName << CurrentBaseSaveFileName;
@@ -3806,10 +3873,20 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 
 void game::SetPlayer(character* NP)
 {
+#ifdef CURSEDDEVELOPER    
+  if(NP && Player && Player->Exists() && Player->GetTorso())
+    NP->GetTorso()->SetLabel( Player->GetTorso()->GetLabel() );
+#endif
+  
   Player = NP;
 
   if(Player)
     Player->AddFlags(C_PLAYER);
+
+#ifdef CURSEDDEVELOPER  
+  if(Player)
+    curseddeveloper::UpdateKillCredit();
+#endif
 }
 
 void game::InitDungeons()
@@ -4068,6 +4145,38 @@ int game::GetPlayerAlignment()
   return -4;
 }
 
+int game::GetGodAlignmentVsPlayer(god* G)
+{
+  switch(G->GetAlignment()){
+    case ALPP: return  4; //L++
+    case ALP:  return  3; //L+
+    case AL:   return  2; //L
+    case ALM:  return  1; //L-
+    
+    /**
+     * There are 15 gods, 11 god alignments and 9 player alignments, so lets make it work:
+     * Neutrality has 1 less god, so 1 less source of favours (and no major/extreme god).
+     * These 3 neutral gods returning 0 will compensate by using less favour cost, to all of them,
+     * for a neutrally aligned player at gods.cpp/CalcDebit().
+     * (the alternative would be to expand player alignments to 11 to match gods' ones, anyone up to it?)
+     * 
+     * Btw, these "N" matches the base Neutral alignment for these gods.
+     * And... it won't match very well the description at GetVerbalPlayerAlignment(), but that shouldn't be a problem.
+     */
+    case ANP:  return  0; //N+ 
+    case AN:   return  0; //N=
+    case ANM:  return  0; //N- 
+    
+    case ACP:  return -1; //C+
+    case AC:   return -2; //C
+    case ACM:  return -3; //C-
+    case ACMM: return -4; //C--
+  }
+  
+  ABORT("unsupported alignment %d",G->GetAlignment());
+  return -1000; //dummy
+}
+
 cchar* game::GetVerbalPlayerAlignment()
 {
   switch(GetPlayerAlignment()){
@@ -4214,7 +4323,7 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  if(game::GetAutoPlayMode()==0)
+  if(wizautoplay::GetAutoPlayMode()==AUTOPLAYMODE_DISABLED)
     for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
@@ -4512,7 +4621,11 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
         stack* Stack = LSquare->GetStack();
 
         if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
-          Stack->DrawContents(Player, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
+          Stack->DrawContents(Player, "Items here", 
+            NO_SELECT| // that square may have an adjacent square with a wall lantern, checking for Stack->GetItem(0) prevents a SEGFAULT
+            (GetSeeWholeMapCheatMode() || (Stack->GetItem(0) && Stack->GetItem(0)->GetRoom()) || Player->GetLSquareUnder()==LSquare ?
+              0 : NO_SPECIAL_INFO)
+          );
         else
           ADD_MESSAGE("You see no items here.");
       }
@@ -4789,7 +4902,6 @@ truth game::LeaveArea(charactervector& Group, truth AllowHostiles, truth AlliesF
 }
 
 /* Used always when the player enters an area. */
-
 void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 {
   if(Area != WORLD_MAP)
@@ -5532,69 +5644,6 @@ truth game::MassacreListsEmpty()
 }
 
 #ifdef WIZARD
-
-void game::AutoPlayModeApply(){
-  int iTimeout=0;
-  bool bPlayInBackground=false;
-
-  const char* msg;
-  switch(game::AutoPlayMode){
-  case 0:
-    // disabled
-    msg="%s says \"I can rest now.\"";
-    break;
-  case 1:
-    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
-    msg="%s says \"I won't rest!\"";
-    break;
-  case 2: // TIMEOUTs key press from here to below
-    msg="%s says \"I can't wait anymore!\"";
-    iTimeout=(1000);
-    bPlayInBackground=true;
-    break;
-  case 3:
-    msg="%s says \"I am in a hurry!\"";
-    iTimeout=(1000/2);
-    bPlayInBackground=true;
-    break;
-  case 4:
-    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
-    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
-    bPlayInBackground=true;
-    break;
-  }
-  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
-
-  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
-
-  if(!ivanconfig::IsXBRZScale()){
-    /**
-     * TODO
-     * This is an horrible gum solution...
-     * I still have no idea why this happens.
-     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
-     * But the debug log shows the correct timeouts :(, clueless for now...
-     */
-    iTimeout/=2;
-  }
-
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
-}
-
-void game::IncAutoPlayMode() {
-//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
-//    if(AutoPlayMode>=2){
-//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
-//      AutoPlayModeApply();
-//    }
-//  }
-
-  ++AutoPlayMode;
-  if(AutoPlayMode>4)AutoPlayMode=0;
-
-  AutoPlayModeApply();
-}
-
 void game::SeeWholeMap()
 {
   if(SeeWholeMapCheatMode < 2)
@@ -5604,7 +5653,6 @@ void game::SeeWholeMap()
 
   GetCurrentArea()->SendNewDrawRequest();
 }
-
 #endif
 
 void game::CreateBone()
@@ -6151,8 +6199,12 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
     if(ItemVector[c]->AllowAlphaEverywhere())
       B.CustomData |= ALLOW_ALPHA;
 
+    if(ivanconfig::IsAllowContrastBackground())
+      B.CustomData |= ALLOW_CONTRAST;
+    
     ItemVector[c]->Draw(B);
     B.CustomData &= ~ALLOW_ALPHA;
+    B.CustomData &= ~ALLOW_CONTRAST;
   }
 
   if(ItemVector.size() > 3)
@@ -6469,7 +6521,7 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
-  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+  if(wizautoplay::IsPlayerAutoPlay(Wisher))return ABORTED;
 
   for(;;)
   {
@@ -6930,6 +6982,7 @@ double game::GetGameSituationDanger()
 {
   double SituationDanger = 0;
   character* Player = GetPlayer();
+  Player->ValidateTrapData();
   truth PlayerStuck = Player->IsStuck();
   v2 PlayerPos = Player->GetPos();
   character* TruePlayer = Player;
@@ -6944,6 +6997,7 @@ double game::GetGameSituationDanger()
         if(Enemy->IsEnabled() && Enemy->CanAttack()
            && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
         {
+          Enemy->ValidateTrapData();
           truth EnemyStuck = Enemy->IsStuck();
           v2 EnemyPos = Enemy->GetPos();
           truth Sees = TruePlayer->CanBeSeenBy(Enemy);
@@ -6964,6 +7018,7 @@ double game::GetGameSituationDanger()
                   v2 FriendPos = Friend->GetPos();
                   truth Sees = TrueEnemy->CanBeSeenBy(Friend);
 
+                  Friend->ValidateTrapData();
                   if(Friend->IsStuck())
                   {
                     Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);

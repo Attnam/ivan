@@ -27,6 +27,7 @@ class id
   virtual festring GetName(int, int) const;
   virtual void AddName(festring&, int) const;
   virtual festring GetName(int) const;
+  virtual festring GetNameToMatch() const;
   cchar* GetArticle() const { return UsesLongArticle() ? "an" : "a"; }
  protected:
   virtual cfestring& GetNameSingular() const = 0;

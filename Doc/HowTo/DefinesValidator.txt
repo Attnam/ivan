@@ -16,3 +16,7 @@ or when someone changes a value only at `define.dat` or at some c++ .h file, so 
 in case c++ has no such define, it will be ignored ex.: the check will be performed only `#ifdef EMISSARY` (currently not used in c++ .h files)
 
 7) run any game, go to the console ctrl+` and run the validator, it will abort complaining about TORSO value with this message: "Defined TORSO with value 2 from .dat file mismatches hardcoded c++ define value of 1!"
+
+Ps.: alternatively (instead of using developer console), you can run this command line commands:
+./ivan --defgen # that creates definesvalidator.h
+./ivan --defval # to validate it
