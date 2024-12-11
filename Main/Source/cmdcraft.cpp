@@ -2658,6 +2658,7 @@ struct srpForgeItem : public recipe{
       CISW.bMainMaterRemainsBecomeLump=true;
       CISW.bMixRemainingLump = false;
       CISW.iReqMatCfgMain=SPIDER_SILK;
+      CISW.bIsMainIngredient = false;
       if(!choseIngredients<lump>(cfestring("as sewing material"),lVolSewing,rpd,iSCfg,CISW)){ //TODO instead of <lump> should be <sewingthread> with new graphics
         ADD_MESSAGE("You don't have enough sewing thread...");
         rpd.SetAlreadyExplained();
