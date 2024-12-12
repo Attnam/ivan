@@ -12099,6 +12099,8 @@ struct trapidcomparer
 void character::RemoveTrap(ulong ID)
 {
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
+  if (T == nullptr)
+    return;
   trapdata* ToDel = T;
   T = T->Next;
   delete ToDel;
