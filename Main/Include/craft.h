@@ -16,6 +16,11 @@
 #include <ctime>
 #include <vector>
 
+static constexpr int ingredient_slot_main = 0;
+static constexpr int ingredient_slot_second = 1;
+static constexpr int ingredient_slot_thread = 2;
+static constexpr int ingredient_slots = 3;
+
 class craft;
 class humanoid;
 class item;
@@ -172,9 +177,8 @@ class recipedata {
     int iMinTurns;
     bool bFailedTerminateCancel;
     bool bFailedSuspend;
-    
-    undoremains urMain;
-    undoremains urSecond;
+
+    undoremains urRemains[ingredient_slots];
 
     /*******************************************
      * save REQUIRED fields!!!
