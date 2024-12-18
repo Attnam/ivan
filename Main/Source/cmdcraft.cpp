@@ -689,7 +689,7 @@ struct ci{ //create item info/helper/data/config/param
   bool bMustBeTailorable=false;
   bool bMixRemainingLump=true;
   bool bAddEquippedItemsToChoiceList=false;
-  bool bIsMainIngredient=true; //false if it is secondary ingredient
+  int iIngredientSlot=ingredient_slot_main;
 };
 struct recipe{
   festring action;
@@ -1180,9 +1180,9 @@ struct recipe{
             item* lumpMixed=NULL;
             if(CI.bMixRemainingLump)
               lumpMixed=lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
-            undoremains* pur = CI.bIsMainIngredient ? &rpd.urMain : &rpd.urSecond;
+            undoremains* pur = &rpd.urRemains[CI.iIngredientSlot];
             if(pur->ulUndoRemainsIngredientID!=0)
-              ABORT("craft remains undo for %s ingredient was already set!",(CI.bIsMainIngredient?"MAIN":"SECOND"));
+              ABORT("craft remains undo for ingredient %i was already set!", CI.iIngredientSlot + 1);
             pur->ulUndoRemainsIngredientID = ToUse[i]->GetID();
             pur->ulUndoRemainsLumpID = lumpMixed!=NULL ? lumpMixed->GetID() : lumpR->GetID();
             pur->lUndoRemainsVolume = lRemainingVol;
@@ -2509,7 +2509,7 @@ struct srpForgeItem : public recipe{
 
     ci CIS;
     CIS.bMainMaterRemainsBecomeLump=true;
-    CIS.bIsMainIngredient=false;
+    CIS.iIngredientSlot=ingredient_slot_second;
 
     // some material constraints/limitations
     if(dynamic_cast<potion*>(itSpawn)!=NULL){
@@ -2658,7 +2658,7 @@ struct srpForgeItem : public recipe{
       CISW.bMainMaterRemainsBecomeLump=true;
       CISW.bMixRemainingLump = false;
       CISW.iReqMatCfgMain=SPIDER_SILK;
-      CISW.bIsMainIngredient = false;
+      CISW.iIngredientSlot=ingredient_slot_thread;
       if(!choseIngredients<lump>(cfestring("as sewing material"),lVolSewing,rpd,iSCfg,CISW)){ //TODO instead of <lump> should be <sewingthread> with new graphics
         ADD_MESSAGE("You don't have enough sewing thread...");
         rpd.SetAlreadyExplained();
@@ -3142,11 +3142,8 @@ void craftcore::UndoRemainsIfNeeded(recipedata& rpd)
   static undoremains* pur;
   static item *itIngredient, *itLump;
   static material* matM;
-  for(int i=0;i<2;i++){
-    switch(i){
-      case 0: pur=&rpd.urMain;break;
-      case 1: pur=&rpd.urSecond;break;
-    }
+  for(int i=0;i<ingredient_slots;i++){
+    pur = &rpd.urRemains[i];
     DBG6("UndoRemain:Work",i,pur->ulUndoRemainsIngredientID,pur->ulUndoRemainsLumpID,pur->lUndoRemainsVolume,rpd.dbgInfo().CStr());
 
     if(pur->lUndoRemainsVolume==0)
