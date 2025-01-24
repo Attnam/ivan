@@ -18,7 +18,8 @@
 #include <vector>
 #include <bitset>
 #include <ctime>
-#include <pcre.h>
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -1325,7 +1326,8 @@ int game::RotateMapNotes()
 }
 
 std::vector<festring> afsAutoPickupMatch;
-pcre *reAutoPickup=NULL;
+pcre2_code *reAutoPickup=NULL;
+pcre2_match_data *match_data = NULL;
 void game::UpdateAutoPickUpMatching() //simple matching syntax
 {
   afsAutoPickupMatch.clear();
@@ -1341,24 +1343,29 @@ void game::UpdateAutoPickUpMatching() //simple matching syntax
   }else{
     //TODO test regex about: ignoring broken lanterns and bottles, ignore sticks on fire but pickup scrolls on fire
   //  static bool bDummyInit = [](){reAutoPickup=NULL;return true;}();
-    const char *errMsg;
-    int iErrOffset;
-    if(reAutoPickup)pcre_free(reAutoPickup);
-    reAutoPickup = pcre_compile(
-      ivanconfig::GetAutoPickUpMatching().CStr(), //pattern
+    int errCode;
+    PCRE2_SIZE iErrOffset;
+    if(reAutoPickup)pcre2_code_free(reAutoPickup);
+    reAutoPickup = pcre2_compile(
+      reinterpret_cast<const unsigned char *>(ivanconfig::GetAutoPickUpMatching().CStr()), //pattern
+      0, // PCRE2_ZERO_TERMINATED,   // indicates the pattern is zero-terminated
       0, //no options
-      &errMsg,    &iErrOffset,
+      &errCode,    &iErrOffset,
       0); // default char tables
     if (!reAutoPickup){
       std::vector<festring> afsFullProblems;
-      afsFullProblems.push_back(festring(errMsg));
+      afsFullProblems.push_back(festring()+"error code:"+errCode);
       afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
       bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
     }
+    match_data = pcre2_match_data_create_from_pattern(reAutoPickup, NULL);
   }
 }
 bool game::IsAutoPickupMatch(cfestring fsName) {
-  return pcre_exec(reAutoPickup, 0, fsName.CStr(), fsName.GetSize(), 0, 0, NULL, 0) >= 0;
+  if (reAutoPickup == NULL) {
+        return false; // pattern not compiled
+    }
+  return pcre2_match(reAutoPickup, reinterpret_cast<const unsigned char *>(fsName.CStr()), fsName.GetSize(), 0, 0, match_data, 0) >= 0;
 }
 int game::CheckAutoPickup(square* sqr)
 {
