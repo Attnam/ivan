@@ -1348,7 +1348,7 @@ void game::UpdateAutoPickUpMatching() //simple matching syntax
     if(reAutoPickup)pcre2_code_free(reAutoPickup);
     reAutoPickup = pcre2_compile(
       reinterpret_cast<const unsigned char *>(ivanconfig::GetAutoPickUpMatching().CStr()), //pattern
-      0, // PCRE2_ZERO_TERMINATED,   // indicates the pattern is zero-terminated
+      ivanconfig::GetAutoPickUpMatching().GetSize(), // PCRE2_ZERO_TERMINATED,   // indicates the pattern is zero-terminated
       0, //no options
       &errCode,    &iErrOffset,
       0); // default char tables

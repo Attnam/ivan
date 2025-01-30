@@ -179,7 +179,7 @@ void soundeffects::initSound()
         }
 
         // configure the regex
-        *si.re = pcre2_compile(reinterpret_cast<const unsigned char *>(Pattern.CStr()), 0, 0, &errorCode, &erroffset, NULL);
+        *si.re = pcre2_compile(reinterpret_cast<const unsigned char *>(Pattern.CStr()), Pattern.GetSize(), 0, &errorCode, &erroffset, NULL);
         if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %ld: %d\n", erroffset, errorCode);
         //if(*si.re) *si.extra = pcre_study(*si.re, 0, &error);
         //if(error) *si.extra = NULL;
