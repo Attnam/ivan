@@ -59,11 +59,8 @@ struct SoundFile
 struct SoundInfo
 {
   std::vector<int> sounds;
-  //std::unique_ptr<pcre_code*> re = std::unique_ptr<pcre_code*>(new (pcre_code*)(NULL));
-  //std::unique_ptr<pcre_extra*> extra = std::unique_ptr<pcre_extra*>(new (pcre_extra*)(NULL));
   
   std::unique_ptr<pcre2_code*> re = std::unique_ptr<pcre2_code*>(new (pcre2_code*)(NULL));
-  //std::unique_ptr<pcre2_code*> re (new pcre2_code*(NULL));
   std::unique_ptr<pcre2_match_data*> match_data = std::unique_ptr<pcre2_match_data*>(new pcre2_match_data*(NULL));
 
   SoundInfo() = default;
@@ -72,7 +69,6 @@ struct SoundInfo
   ~SoundInfo()
   {
     if(re.get() && *re) pcre2_code_free(*re);
-    //if(extra.get() && *extra) pcre_free_study(*extra);
   }
 };
 
@@ -181,8 +177,6 @@ void soundeffects::initSound()
         // configure the regex
         *si.re = pcre2_compile(reinterpret_cast<const unsigned char *>(Pattern.CStr()), Pattern.GetSize(), 0, &errorCode, &erroffset, NULL);
         if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %ld: %d\n", erroffset, errorCode);
-        //if(*si.re) *si.extra = pcre_study(*si.re, 0, &error);
-        //if(error) *si.extra = NULL;
 
         if (*si.match_data.get() && *si.match_data)
         {
