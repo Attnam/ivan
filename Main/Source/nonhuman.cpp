@@ -2559,7 +2559,7 @@ void lobhse::FinalProcessForBone()
 
 void lobhse::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 {
-  if(!RAND_N(7))
+  if(!RAND_N(4))
   {
     if(IsPlayer())
       ADD_MESSAGE("You vomit at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
