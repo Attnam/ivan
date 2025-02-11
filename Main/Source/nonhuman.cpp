@@ -2086,7 +2086,7 @@ void mommo::GetAICommand()
 void dog::GetAICommand()
 {
   if(!game::IsInWilderness() && !(RAND() & 7))
-    GetLSquareUnder()->SpillFluid(this, liquid::Spawn(DOG_DROOL, 25 + RAND() % 50), false, false);
+    GetLSquareUnder()->SpillFluid(this, liquid::Spawn(GetConfig() == SKELETON_DOG ? ECTOPLASM : DOG_DROOL, 25 + RAND() % 50), false, false);
 
   character::GetAICommand();
 }
