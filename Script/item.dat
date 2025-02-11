@@ -25,7 +25,7 @@
 
 item
 {
-  DescriptiveInfo = "";
+  DescriptiveInfo = "It might come in handy.";
   Possibility = 0;
   IsDestroyable = true;
   CanBeWished = true;
