@@ -7053,9 +7053,12 @@ truth mirrorimp::DrinkMagic(const beamdata& Beam)
 
 void mirrorimp::CreateCorpse(lsquare* Square)
 {
-  decoration* Shard = decoration::Spawn(SHARD);
-  Shard->InitMaterials(MAKE_MATERIAL(GLASS));
-  Square->ChangeOLTerrainAndUpdateLights(Shard);
+  // Do not replace any interesting terrain!
+  if (!Square->GetOLTerrain()) {
+    decoration* Shard = decoration::Spawn(SHARD);
+    Shard->InitMaterials(MAKE_MATERIAL(GLASS));
+    Square->ChangeOLTerrainAndUpdateLights(Shard);
+  }
   SendToHell();
 }
 
