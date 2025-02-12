@@ -12759,7 +12759,14 @@ truth character::ReceiveSirenSong(character* Siren)
   if(Siren->GetRelation(this) != HOSTILE)
     return false;
 
-  if(game::OpposedCheck(GetAttribute(WILL_POWER), Siren->GetAttribute(CHARISMA)))
+  // Since siren song is a sound-based attack, modify base resistance by any sound resistance the character may have.
+  int songResist = GetAttribute(WILL_POWER);
+  if(!IsHumanoid())
+    songResist *= 1 + GetResistance(SOUND);
+  else if(HasHead())
+    songResist *= 1 + GetHead()->GetTotalResistance(SOUND);
+
+  if(game::OpposedCheck(songResist, Siren->GetAttribute(CHARISMA)))
   {
     if(IsPlayer())
       ADD_MESSAGE("The beautiful song of %s makes you feel a little sad.", Siren->CHAR_NAME(DEFINITE));
