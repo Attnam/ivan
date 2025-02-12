@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 
 #ifdef __DJGPP__
 #include <go32.h>
@@ -43,6 +44,7 @@
 #include "message.h"
 #include "proto.h"
 #include "audio.h"
+#include "sfx.h"
 
 #include "dbgmsgproj.h"
 
@@ -76,11 +78,50 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
-  game::GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
+  GetUserDataDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
 
   if(argc > 1 && festring(argv[1]) == "--version")
   {
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--defgen")
+  {
+    std::cout << "Generate defines validator file. " << std::endl;
+    game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
+    definesvalidator::GenerateDefinesValidator("generate");
+    std::cout << "Finished: Generate DefinesValidator" << std::endl;
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--defval")
+  {
+    std::cout << "Validate defines. " << std::endl;
+    game::InitGlobalValueMap();
+    std::cout << "DONE: InitGlobalValueMap()" << std::endl;
+    definesvalidator::GenerateDefinesValidator("validate");
+    std::cout << "Finished: Validate defines" << std::endl;
+    return 0;
+  }
+
+  if(argc > 1 && festring(argv[1]) == "--help")
+  {
+    std::cout << "Command line options:" << std::endl;
+    std::cout << "--defgen Generate defines validator source file. " << std::endl;
+    std::cout << "--defval Validate defines. " << std::endl;
+    std::cout << "--version Show current game version. " << std::endl;
+    std::cout << std::endl;
+    std::cout << "Environment Variables:" << std::endl;
+    std::cout << "IVAN_SHOWFPS=[true] # show FPS at top right" << std::endl;
+    std::cout << "IVAN_DebugShowTinyDungeon=[true] #DEBUG always show tiny dungeon above stretched one" << std::endl;
+    std::cout << "IVAN_LISTDRAWABOVE=[true] #DEBUG output the draw above priority list to text console terminal" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopID=[DungeonLevelIndex] #DEBUG DungeonLevelIndex must be an integer matching a some dungeon level" << std::endl;
+    std::cout << "IVAN_DebugGenDungeonLevelLoopMax=[integer] #DEBUG generate the dungeon level how many times" << std::endl;
+#ifdef WIZARD    
+    std::cout << "IVAN_DebugStayOnDungeonLevel=[DungeonLevelIndex] #DEBUG wizard auto play AI will not leave that Dungeon Level after entering it" << std::endl;
+#endif
     return 0;
   }
 
@@ -134,7 +175,8 @@ int main(int argc, char** argv)
                                 CONST_S("Released under the GNU\r"
                                         "General Public License\r"
                                         "More info: see COPYING\r"),
-                                CONST_S("IVAN v" IVAN_VERSION "\r"));
+                                CONST_S("IVAN v" IVAN_VERSION "\r"),
+                                ivanconfig::GetExtraMenuGraphics());
 
     switch(Select)
     {
@@ -174,7 +216,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
+        highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }

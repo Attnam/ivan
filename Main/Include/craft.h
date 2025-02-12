@@ -16,6 +16,11 @@
 #include <ctime>
 #include <vector>
 
+static constexpr int ingredient_slot_main = 0;
+static constexpr int ingredient_slot_second = 1;
+static constexpr int ingredient_slot_thread = 2;
+static constexpr int ingredient_slots = 3;
+
 class craft;
 class humanoid;
 class item;
@@ -101,6 +106,11 @@ class recipecore {
 //class recipedata : public recipecore {
 
 /**/
+struct undoremains {
+  ulong ulUndoRemainsIngredientID = 0;
+  ulong ulUndoRemainsLumpID = 0;
+  long lUndoRemainsVolume = 0;
+};
 class recipedata {
   /**
    * tip: for clarity group fields by max of 5 no matter group context (despite in context would be better)
@@ -129,6 +139,7 @@ class recipedata {
   friend struct srpForge;
   friend struct srpJoinLumps;
   friend struct srpWorkBench;
+  friend struct srpTWorkBench;
   friend struct srpResistanceVS;
   friend struct srpCutWeb;
   
@@ -147,7 +158,9 @@ class recipedata {
     item* itWeakestIngredient;
     lsquare* lsqrActor;
 
-    // no need to save
+    /*****************************************
+     *  no need to save
+     */
     uint SelectedRecipe;
     bool bSpendCurrentTurn;
     bool bAlreadyExplained;
@@ -165,12 +178,14 @@ class recipedata {
     bool bFailedTerminateCancel;
     bool bFailedSuspend;
 
+    undoremains urRemains[ingredient_slots];
+
     /*******************************************
      * save REQUIRED fields!!!
      * if re-organized, do also at constructor initializer please!
      * but save and load will make existing saved games with suspended crafting incompatible then,
      * so better avoid doing it.
-     */
+     *******************************************/
     std::vector<ulong> ingredientsIDs;
     int iAddDexterity;
     int iBaseTurnsToFinish;
@@ -214,6 +229,10 @@ class recipedata {
     v2 v2WorkbenchLocation;
     int iRemainingTurnsToFinish;
     bool bGradativeCraftOverride;
+    bool bTailoringMode;
+    v2 v2TailoringWorkbenchLocation;
+    
+    long lDamageFinalItem;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
@@ -228,10 +247,11 @@ class recipedata {
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
 
     void ClearRefs();
-    item* GetTool(){return itTool;}
-    item* GetTool2(){return itTool2;}
+    item* GetTool();
+    item* GetTool2();
 
     bool IsFailedSuspendOrCancel(){return bFailedTerminateCancel || bFailedSuspend;}
+    void SetAlreadyExplained(){bAlreadyExplained=true;}
 };
 
 class craftcore {
@@ -269,7 +289,9 @@ class craftcore {
     static bool IsWooden(material* mat);
     static bool IsBone(material* mat);
 
-    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE);
+    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE, long NewMaterialVolume = 0);
+    static void UndoRemainsIfNeeded(recipedata& rpd);
+    static void FinishSpawning(recipedata& rpd,item* itSpawn);
 
     static void AddSuspended(const recipedata& rpd);
     static void RemoveIfSuspended(const recipedata&rpd);
@@ -285,6 +307,7 @@ class craftcore {
     
     static int CitType(item* it);
     static bool CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower);
+    static void CraftSkillAdvance(recipedata&);
 };
 
 class crafthandle {

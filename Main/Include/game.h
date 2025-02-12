@@ -169,6 +169,7 @@ class areachangerequest { };
 typedef void (*dbgdrawoverlay)();
 
 #define AUTOSAVE_SUFFIX ".AutoSave"
+#define CUSTOM_KEYS_FILENAME "CustomCommandKeys.cfg"
 class game
 {
  public:
@@ -309,7 +310,7 @@ class game
   static truth IsGenerating() { return Generating; }
   static void SetIsGenerating(truth What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
+  static int Menu(std::vector<bitmap*> v, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static truth TryTravel(int, int, int, truth = false, truth = true);
@@ -362,7 +363,6 @@ class game
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
-  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetBoneDir();
@@ -505,6 +505,13 @@ class game
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
+  static truth ConfigureCustomKeys();
+  static festring ToCharIfPossible(int i);
+  static truth ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys);
+  static festring GetMoveKeyDesc(int i);
+  static void LoadCustomCommandKeys();
+  static int GetWorldShape() { return WorldShape; }
+  static void SetWorldShape(int What) { WorldShape = What; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -514,6 +521,7 @@ class game
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
+  static int  MoveCustomCommandKey[];
   static cv2 MoveVector[];
   static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
@@ -626,6 +634,7 @@ class game
   const static int iListWidth = 652;
   static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
   static int iCurrentDungeonTurn;
+  static int WorldShape;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

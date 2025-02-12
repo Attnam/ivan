@@ -119,7 +119,8 @@ inline beamdata::beamdata
 Owner(Owner),
 DeathMsg(DeathMsg),
 Direction(Direction),
-SpecialParameters(SpecialParameters)
+SpecialParameters(SpecialParameters),
+Wand(NULL)
 { }
 
 inline beamdata::beamdata

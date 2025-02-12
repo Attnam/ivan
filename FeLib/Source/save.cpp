@@ -808,3 +808,30 @@ void MakePath(cfestring& Path)
 #endif
   }
 }
+
+festring GetUserDataDir()
+{
+#ifdef UNIX
+  festring Dir;
+#ifdef MAC_APP
+  Dir << getenv("HOME") << "/Library/Application Support/IVAN/";
+#else
+  char *xdg_home = getenv("XDG_DATA_HOME"); // check if XDG_DATA_HOME is set
+  if (xdg_home != NULL) { // if it is, use that directory
+          Dir << xdg_home << "/ivan/";
+  } else { // otherwise, default to home directory
+          struct stat folderInfo = {0};
+          Dir << getenv("HOME") << "/.ivan/";
+          if(stat(Dir.CStr(), &folderInfo) == -1) mkdir(Dir.CStr(), 0755); //Check if user data folder doesn't exists, create it if true
+  }
+#endif /* MAC_APP */
+#ifdef DBGMSG
+  dbgmsg::SetDebugLogPath(Dir.CStr());
+#endif /* DBGMSG */
+  return Dir;
+#endif /* UNIX */
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "./";
+#endif
+}

@@ -4668,6 +4668,7 @@ organic /* Substances that spoil but are not flesh. */
   {
     StrengthValue = 250;
     ConsumeType = CT_MAGIC;
+    NutritionValue = 10000;
     Density = 10000;
     Color = rgb16(107, 255, 251);
     NameStem = "residuum";
@@ -4942,7 +4943,7 @@ liquid
     Emitation = rgb24(139, 0, 139);
     NameStem = "raw liquefied magic";
     Alpha = 150;
-    EffectStrength = 250;
+    EffectStrength = 2500;
     PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
@@ -5158,7 +5159,7 @@ liquid
   Config CIDER;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(206, 156, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "cider";
@@ -5212,7 +5213,7 @@ liquid
   Config BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 150;
+    NutritionValue = 750;
     Color = rgb16(216, 120, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "beer";
@@ -5230,7 +5231,7 @@ liquid
   Config ELF_ALE;
   {
     StrengthValue = 1;
-    NutritionValue = 150;
+    NutritionValue = 800;
     Color = rgb16(247, 148, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "elven ale";
@@ -5248,7 +5249,7 @@ liquid
   Config DWARF_BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 150;
+    NutritionValue = 900;
     Color = rgb16(192, 72, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "dwarven stout";
@@ -6367,7 +6368,7 @@ flesh
     AttachedGod = MORTIFER;
     Effect = EFFECT_CONFUSE; /* elven flesh is sweet and addictive */
     ConsumeWisdomLimit = 15;
-    EffectStrength = 20;
+    EffectStrength = 10;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 }

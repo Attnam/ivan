@@ -38,6 +38,7 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsUseLightEmiterBasedOnVolume(){return UseLightEmiterBasedOnVolume.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -66,14 +67,22 @@ class ivanconfig
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
+  static truth IsSetupCustomKeys() { return SetupCustomKeys.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
-  static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
+  static truth IsAllowMouseOnFelist(){ return AllowMouseOnFelist.Value; }
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
+  static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static truth GetExtraMenuGraphics(){ return UseExtraMenuGraphics.Value; }
+  static v2 GetWorldSizeConfig();
+  static int GetLandTypeConfig() { return LandTypeConfig.Value; }
+  static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
+  static int GetWorldSeedConfig() { return WorldSeedConfig.Value; }
+  static int GetWorldSizeNumber() { return WorldSizeConfig.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -139,10 +148,20 @@ class ivanconfig
   static void MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
+  static void SfxVolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
+  static truth SfxVolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static void SfxVolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
   static void AllowMouseOnFelistChanger(truthoption*, truth);
+  static void UseExtraMenuGraphicsChanger(truthoption*, truth);
+  static void WorldSizeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void LandTypeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry);
+  static void WorldSeedConfigDisplayer(const numberoption* O, festring& Entry);
+  static truth WorldSeedConfigChangeInterface(numberoption* O);
+  static void WorldSeedConfigChanger(numberoption* O, long What);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -165,8 +184,10 @@ class ivanconfig
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SetupCustomKeysChanger(truthoption*, truth);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
+  static void SfxVolumeHandler(long);
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
@@ -192,6 +213,7 @@ class ivanconfig
   static truthoption AllowImportOldSavegame;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption UseLightEmiterBasedOnVolume;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
@@ -225,6 +247,7 @@ class ivanconfig
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static truthoption SetupCustomKeys;
   static cycleoption GoOnStopMode;
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
@@ -237,7 +260,13 @@ class ivanconfig
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static scrollbaroption Volume;
+  static scrollbaroption SfxVolume;
   static cycleoption MIDIOutputDevice;
+  
+  static cycleoption WorldSizeConfig;
+  static cycleoption LandTypeConfig;
+  static cycleoption WorldShapeConfig;
+  static numberoption WorldSeedConfig;
 
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
@@ -250,6 +279,7 @@ class ivanconfig
   static truthoption ShowTurn;
 
   static truthoption AllowMouseOnFelist;
+  static truthoption UseExtraMenuGraphics;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

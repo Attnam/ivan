@@ -418,6 +418,7 @@ class character : public entity, public id
   festring GetPersonalPronoun(truth = true) const;
   festring GetPossessivePronoun(truth = true) const;
   festring GetObjectPronoun(truth = true) const;
+  festring GetWorldShapeDescription() const;
   virtual truth BodyPartCanBeSevered(int) const;
   virtual void AddName(festring&, int) const;
   void ReceiveHeal(long);
@@ -428,7 +429,7 @@ class character : public entity, public id
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
-  virtual void SwitchToCraft(recipedata rpd) { }
+  virtual bool SwitchToCraft(recipedata rpd) { return false; }
   virtual void SwitchToDig(item*, v2) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }
@@ -1191,6 +1192,7 @@ class character : public entity, public id
   void SetNewVomitMaterial(int What) { MyVomitMaterial = What; }
   festring GetHitPointDescription() const;
   truth WillGetTurnSoon() const;
+  virtual void SetFeedingSumo(truth What) { return; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

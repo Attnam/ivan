@@ -10,6 +10,36 @@
 Next version
 ------------
 
+Changes:
+* xx
+
+Fixes:
+* Hide Gloomy Cave again.
+* Fix crash when missing user data.
+* Fix polymorph conflict for sirens. Now you should be able to poly into one.
+* Rebalance archangels.
+* And many minor fixes.
+
+Version 0.59, released 23rd December 2021
+-----------------------------------------
+
+Changes:
+* Crafting skill!
+* Custom key bindings! Check the Options menu.
+* Item light emitation is now based on material volume.
+* Add question history to prompts.
+* Optional whizz-bang changing menu background.
+* Something about a new world map generator. ;)
+* Improve item search algorithm.
+* Now built on Azure. (lol in your face m$!!!1!)
+
+Fixes:
+* Many crafting bugs removed, more added in!
+* Fix player getting stuck in the sumo house.
+* Fix aborted dungeon generation.
+* Fix string question crashing.
+* Fix crashes related to mirror imps.
+
 Version 0.58, released 15th March 2020
 --------------------------------------
 
