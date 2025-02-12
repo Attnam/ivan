@@ -7545,6 +7545,7 @@ fish
     BitmapPos = 80, 336;
     Adjective = "dead";
     NameSingular = "fish";
+    NamePlural = "fish";
     Alias == "sardine";
     MainMaterialConfig == SARDINE;
     AttachedGod = SEGES;
