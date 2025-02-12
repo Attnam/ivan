@@ -1017,6 +1017,7 @@ Dungeon GOBLIN_FORT;
     {
       AllowBoobyTrappedDoors = false;
       Flags = NO_MONSTER_GENERATION;
+      Size = 4:7,4:7;
 
       Square, Random HAS_NO_OTERRAIN;
       {
@@ -1041,6 +1042,7 @@ Dungeon GOBLIN_FORT;
     {
       AllowBoobyTrappedDoors = false;
       Flags = NO_MONSTER_GENERATION;
+      Size = 4:7,4:7;
 
       Square, Random HAS_NO_OTERRAIN;
       {
@@ -1065,6 +1067,7 @@ Dungeon GOBLIN_FORT;
     {
       AllowBoobyTrappedDoors = false;
       Flags = NO_MONSTER_GENERATION;
+      Size = 5:7,5:7;
 
       Square, Random HAS_NO_OTERRAIN;
       {
