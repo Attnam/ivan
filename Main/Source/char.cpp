@@ -1575,80 +1575,8 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWai
         return true;
       }
 
-      if((GetPos().Y == 0) && (Direction == NORTH))
-        ADD_MESSAGE("You are going north.");
-      if((GetPos().X == (game::GetCurrentLevel()->GetXSize() - 1)) && (Direction == EAST))
-        ADD_MESSAGE("You are going east.");
-      if((GetPos().Y == (game::GetCurrentLevel()->GetYSize() - 1)) && (Direction == SOUTH))
-        ADD_MESSAGE("You are going south.");
-      if((GetPos().X == 0) && (Direction == WEST))
-        ADD_MESSAGE("You are going west.");
-
-      if(GetLevel()->LeaveToWorldMap())
-      {
-        if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-          return true;
-      }
-      else if((GetPos().Y == 0) && (Direction == NORTH))
-      {
-        if(GetLevel()->AttachedAreaNorth() == WORLD_MAP)
-        {
-          if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-            return true;
-        }
-        if(GetLevel()->AttachedAreaNorth() == NO_EXIT)
-        {
-          ADD_MESSAGE("You cannot leave this area from this direction.");
-          return false;
-        }
-        if(game::TryTravel(game::GetCurrentDungeonIndex(), GetLevel()->AttachedAreaNorth(), STAIRS_UP + SOUTH))
-          return true;
-      }
-      else if((GetPos().X == (game::GetCurrentLevel()->GetXSize() - 1)) && (Direction == EAST))
-      {
-        if(GetLevel()->AttachedAreaEast() == WORLD_MAP)
-        {
-          if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-            return true;
-        }
-        if(GetLevel()->AttachedAreaEast() == NO_EXIT)
-        {
-          ADD_MESSAGE("You cannot leave this area from this direction.");
-          return false;
-        }
-        if(game::TryTravel(game::GetCurrentDungeonIndex(), GetLevel()->AttachedAreaEast(), STAIRS_UP + WEST))
-          return true;
-      }
-      else if((GetPos().Y == (game::GetCurrentLevel()->GetYSize() - 1)) && (Direction == SOUTH))
-      {
-        if(GetLevel()->AttachedAreaSouth() == WORLD_MAP)
-        {
-          if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-            return true;
-        }
-        if(GetLevel()->AttachedAreaSouth() == NO_EXIT)
-        {
-          ADD_MESSAGE("You cannot leave this area from this direction.");
-          return false;
-        }
-        if(game::TryTravel(game::GetCurrentDungeonIndex(), GetLevel()->AttachedAreaSouth(), STAIRS_UP + NORTH))
-          return true;
-      }
-      else if((GetPos().X == 0) && (Direction == WEST))
-      {
-        if(GetLevel()->AttachedAreaWest() == WORLD_MAP)
-        {
-          if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-            return true;
-        }
-        if(GetLevel()->AttachedAreaWest() == NO_EXIT)
-        {
-          ADD_MESSAGE("You cannot leave this area from this direction.");
-          return false;
-        }
-        if(game::TryTravel(game::GetCurrentDungeonIndex(), GetLevel()->AttachedAreaWest(), STAIRS_UP + EAST))
-          return true;
-      }
+      if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
+        return true;
     }
 
     return false;
@@ -12764,7 +12692,7 @@ truth character::ReceiveSirenSong(character* Siren)
   if(!IsHumanoid())
     songResist *= 1 + GetResistance(SOUND);
   else if(HasHead())
-    songResist *= 1 + GetHead()->GetTotalResistance(SOUND);
+    songResist *= 1 + dynamic_cast<humanoid*>(this)->GetHead()->GetTotalResistance(SOUND);
 
   if(game::OpposedCheck(songResist, Siren->GetAttribute(CHARISMA)))
   {

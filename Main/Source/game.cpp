@@ -7091,7 +7091,7 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
     graphics::BlitDBToScreen();
 }
 
-bool game::OpposedCheck(int first, int second, int cap = 5)
+bool game::OpposedCheck(int first, int second, int cap)
 {
   /* Opposed random check
    *
@@ -7108,5 +7108,5 @@ bool game::OpposedCheck(int first, int second, int cap = 5)
    * cap of 5 will result in chances between 5% and 95%, even if the numbers
    * would otherwise have worse/better chances.
    */
-  return RAND_N(100) < max(cap, min(100 - cap, (first * 100) / (first + second)));
+  return RAND_N(100) < std::max(cap, std::min(100 - cap, (first * 100) / (first + second)));
 }
