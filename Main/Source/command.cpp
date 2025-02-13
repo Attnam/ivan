@@ -102,7 +102,7 @@ command* commandsystem::Command[] =
   new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
   new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
   new command(&Dip, "dip into liquid", '!', '!', '!', false),
-  new command(&Open, "open", 'o', 'O', 'o', false),
+  new command(&Open, "open", 'o', 'O', 'o', true),
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Look, "look around", 'l', 'L', 'L', true),
@@ -330,6 +330,12 @@ truth commandsystem::Open(character* Char)
 {
   if(Char->CanOpen())
   {
+    if(game::IsInWilderness())
+    {
+      item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
+      return Item && Item->Open(Char);
+    }
+
     int Key;
 
     if(ivanconfig::GetSmartOpenCloseApply())
@@ -367,9 +373,7 @@ truth commandsystem::Open(character* Char)
 
         if(Key == 'i')
         {
-          item* Item = Char->GetStack()->DrawContents(Char,
-                                                      CONST_S("What do you want to open?"),
-                                                      0, &item::IsOpenable);
+          item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
           return Item && Item->Open(Char);
         }
       }
@@ -391,7 +395,7 @@ truth commandsystem::Open(character* Char)
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
                                            "[press a direction key or space]"));
     }
-    else
+    else  // Old "stupid" open
     {
       truth OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
 
@@ -404,16 +408,14 @@ truth commandsystem::Open(character* Char)
 
       if(Key == 'i' && OpenableItems)
       {
-        item* Item = Char->GetStack()->DrawContents(Char,
-                                                    CONST_S("What do you want to open?"),
-                                                    0, &item::IsOpenable);
+        item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
         return Item && Item->Open(Char);
       }
     }
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
-    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)){
+    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)) {
       return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
     }
   }

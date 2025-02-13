@@ -7288,8 +7288,8 @@ void aslonawizard::GetAICommand()
 
       EditAP(-GetSpellAPCost());
 
-      int GasMaterial[] = { MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, TELEPORT_GAS,
-                            EVIL_WONDER_STAFF_VAPOUR, EVIL_WONDER_STAFF_VAPOUR };
+      const int GasMaterial[] = { MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, TELEPORT_GAS,
+                                  EVIL_WONDER_STAFF_VAPOUR, EVIL_WONDER_STAFF_VAPOUR };
       ToBeCalled = golem::Spawn(GasMaterial[RAND() % 6]);
       v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
 
