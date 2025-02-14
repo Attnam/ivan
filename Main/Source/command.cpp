@@ -71,7 +71,7 @@ int command::GetKey() const
     return Key1;
    case DIR_ALT: // Alternative
     return Key2;
-   case DIR_HACK: // Nethack
+   case DIR_HACK: // NetHack
     return Key3;
    default:
     ABORT("This is not Vim!");
@@ -83,7 +83,7 @@ command* commandsystem::Command[] =
 {
   0,
 
-  /* Sort according to relaiton and assumed frequency of use */
+  /* Sort according to relation and assumed frequency of use */
 
   new command(&NOP, "wait a turn", '.', '.', '.', true),
   new command(&Go, "go / fastwalk", 'g', 'g', 'g', false),
@@ -109,10 +109,10 @@ command* commandsystem::Command[] =
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
   new command(&WhatToEngrave, "engrave / inscribe", 'G', 'G', 'G', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
-  new command(&Craft, "craft", 'f', 'F', 'f', false),
+  new command(&Craft, "craft", 'f', 'f', 'f', false),
   new command(&AssignName, "name team members", 'n', 'n', 'N', false),
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
-  new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
+  new command(&Offer, "offer to gods", 'O', 'F', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
   new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
