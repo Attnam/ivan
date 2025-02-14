@@ -399,11 +399,6 @@ void recipedata::Load(inputfile& SaveFile)
 
     ;
 
-  if(game::GetCurrentSavefileVersion() >= 135){
-    SaveFile >> bTailoringMode;
-    SaveFile >> v2TailoringWorkbenchLocation;
-  }
-
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
   rc.integrityCheck();
