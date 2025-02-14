@@ -3093,8 +3093,13 @@ void addMissingMsg(festring& where, cfestring& what){
  */
 truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
-  return craftcore::Craft(Char);
+  if(ivanconfig::IsCraftingEnabled())
+    return craftcore::Craft(Char);
+
+  ADD_MESSAGE("Crafting is an experimental system and may cause issues. Enable it in Options, if you wish.");
+  return false;
 }
+
 truth craftcore::CheckArms(humanoid* h)
 {
   bool bLOk,bROk; //dummy

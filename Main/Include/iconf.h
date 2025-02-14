@@ -83,6 +83,7 @@ class ivanconfig
   static int GetWorldShapeConfig() { return WorldShapeConfig.Value; }
   static int GetWorldSeedConfig() { return WorldSeedConfig.Value; }
   static int GetWorldSizeNumber() { return WorldSizeConfig.Value; }
+  static truth IsCraftingEnabled() { return CraftingEnabled.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
@@ -267,6 +268,8 @@ class ivanconfig
   static cycleoption LandTypeConfig;
   static cycleoption WorldShapeConfig;
   static numberoption WorldSeedConfig;
+
+  static truthoption CraftingEnabled;
 
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;

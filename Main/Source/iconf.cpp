@@ -179,6 +179,10 @@ truthoption ivanconfig::UseLightEmiterBasedOnVolume("UseLightEmiterBasedOnVolume
                                           "Small light sources emit less light",
                                           "This experimental feature still has bugs that happen when splitting rocks etc. Most are fixed after restarting the game.",
                                           false);
+truthoption ivanconfig::CraftingEnabled(  "CraftingEnabled",
+                                          "Enable crafting",
+                                          "Crafting is an experimental system and may cause issues.",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show full name of current dungeon",
                                           "",
@@ -1320,6 +1324,12 @@ void ivanconfig::Initialize()
 
   //World shape: Flat, [Horizontal Wrap (cylinder)]
   //  Alt names for world shape: pancake (flat), doughnut (torus), brandy snap (cylinder).
+
+  fsCategory="Advanced and Experimental";
+  configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
+  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
+  configsystem::AddOption(fsCategory,&CraftingEnabled);
+  configsystem::AddOption(fsCategory,&AutoPickUpMatching);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
