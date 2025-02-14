@@ -5866,7 +5866,7 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
 festring IntToHexStr(int i)
 {
   static char hexbuf[100];
-  sprintf(hexbuf, "0x%04X", i);
+  snprintf(hexbuf, sizeof(hexbuf) "0x%04X", i);
   festring fs;fs=hexbuf;
   return fs;
 }
