@@ -99,7 +99,7 @@ command* commandsystem::Command[] =
   new command(&Zap, "zap a wand", 'z', 'z', 'z', false),
   new command(&Read, "read", 'r', 'r', 'r', false),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
-  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
+  new command(&Drink, "drink liquid", 'D', 'D', 'q', true),
   new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
   new command(&Dip, "dip into liquid", '!', '!', '!', false),
   new command(&Open, "open", 'o', 'O', 'o', true),
