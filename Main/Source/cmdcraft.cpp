@@ -3062,7 +3062,7 @@ void updateCraftDesc(){
   float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
   festring fsSkill="Crafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
-  sprintf(cSkill, "%.1f",fSkill);
+  snprintf(cSkill, sizeof(cSkill), "%.1f",fSkill);
   fsSkill<<cSkill;
 
   festring fsDesc=fsSkill;
