@@ -14,7 +14,7 @@ jobs:
           msystem: MINGW32
           release: false
           update: false
-          install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
+          install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-pcre
       - name: Get tag name, print
         shell: bash
         run: |
