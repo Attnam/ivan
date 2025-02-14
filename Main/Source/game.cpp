@@ -874,7 +874,7 @@ truth game::Init(cfestring& loadBaseName)
       DefaultDetectMaterial.Empty();
       Player->GetStack()->AddItem(encryptedscroll::Spawn());
 
-      if(!ivanconfig::GetNoPet())
+      if(ivanconfig::GetPet())
       {
         character* Doggie = dog::Spawn();
         Doggie->SetTeam(GetTeam(0));

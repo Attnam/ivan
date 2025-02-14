@@ -85,7 +85,7 @@ cycleoption ivanconfig::HoldPosMaxDist(   "HoldPosMaxDist",
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player's square",
                                           "",
-                                          0, 12,
+                                          5, 12,
                                           &ShowItemsAtPlayerSquareDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &ShowItemsAtPlayerSquareChanger);
@@ -152,13 +152,13 @@ truthoption ivanconfig::TransparentMapLM( "TransparentMapLM",
                                           "Show transparent map of the whole level when in look mode.",
                                           true);
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
-                                          "Import old savegames (v131 up, experimental)",
-                                          "",
+                                          "Import old or corrupted save files",
+                                          "Attempt to import save files that may be incompatible with the current version of the game, or corrupted. May still result in unstable gameplay.",
                                           false);
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "Wait until neutral NPCs move from your path",
                                           "When you try to move in a direction that is blocked by a neutral NPC, skip turns until the path is clear. Will not skip turns if the NPC doesn't move from their square, or if there are hostiles nearby.",
-                                          false);
+                                          true);
 truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "Only pile items with equal weight on lists", //clutter are useful now for crafting so their weight matters...
                                           "",
@@ -188,37 +188,37 @@ truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "",
                                           false);
 truthoption ivanconfig::ShowGodInfo(      "ShowGodInfo",
-                                          "Show extra info about gods when praying",
+                                          "Extra info about gods",
                                           "Remember the last response to a prayer for each god.",
-                                          false);
+                                          true);
 truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
                                           "Center camera on player after exiting look mode",
                                           "Always center the displayed region of the dungeon back on player after exiting look mode.",
-                                          false);
+                                          true);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           "Display a warning prompt when you encounter an unusually dangerous monster.",
                                           true);
 truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
                                           "Drop food leftovers automatically",
-                                          "",
+                                          "If there are any remains of your edibles (empty bottle, fish skeleton), drop them automatically.",
                                           true);
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "Zoom in look mode",
-                                          "",
-                                          false);
-truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
-                                          "Enhanced message review mode after death",
-                                          "",
-                                          false);
+                                          "Show a zoomed-in view of selected square in look mode.",
+                                          true);
+truthoption ivanconfig::AltAdventureInfo( "AltAdventureInfo",
+                                          "Extra info after death",
+                                          "Show more information about your adventure, once it comes to its likely quite bloody end.",
+                                          true);
 truthoption ivanconfig::DescriptiveHP(    "DescriptiveHP",
                                           "Use health level descriptions",
                                           "Display description of your relative health rather than numeric value of your hit points.",
                                           false);
-truthoption ivanconfig::StartWithNoPet(   "StartWithNoPet",
-                                          "Start with no pet",
-                                          "Do not start the game with a puppy.",
-                                          false);
+truthoption ivanconfig::StartWithPet(     "StartWithPet",
+                                          "Start with a pet",
+                                          "Start the game with a happy little puppy who likes you very much.",
+                                          true);
 cycleoption ivanconfig::MemorizeEquipmentMode("MemorizeEquipmentMode",
                                           "NPCs restore equipped items after polymorph",
                                           "",
@@ -258,8 +258,8 @@ cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           0, 5,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
-                                          "Sort savegame files by dungeon IDs",
-                                          "Savegame selection menu will be sorted according to the chosen criterion.",
+                                          "Sort save files by",
+                                          "Saved game selection menu will be sorted according to the chosen criterion.",
                                           0, 4,
                                           &SaveGameSortModeDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
@@ -283,12 +283,12 @@ cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventCol
                                           &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
-                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in game keybindings help to see the currently active movement keys. Any other command keys may be auto changed also to not conflict with this movement keys choice.",
+                                          "Select a pre-defined keybinding scheme for the movement of your character. Normal scheme uses NumPad, or arrow keys along with Home, End, PgUp and PgDn for diagonal directions. Alternative scheme is better suited for laptops and uses number and letter keys on the main keyboard. NetHack scheme uses vi keys. After you select a movement control scheme, you may also check the in-game keybindings help (press '?') to see the currently active movement keys. Other command keys may be changed to avoid conflict with the movement keys.",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
 truthoption ivanconfig::SetupCustomKeys(  "SetupCustomKeys",
-                                          "Custom command and movement", //TODO all keys one day, and let it work on main menu
-                                          "Lets you assign any command to any key binding of your preference. The default keys here will be from the control scheme option above. Only changed keybindings will be saved at the new config file. This global configuration won't work at main menu, load/start some game.",
+                                          "Custom control scheme", //TODO all keys one day, and let it work on main menu
+                                          "Lets you assign any command to any key binding of your preference. The default keys are defined by the movement control scheme chosen in the option above.",  // This configuration won't work at main menu, load/start some game.
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
@@ -329,30 +329,29 @@ scrollbaroption ivanconfig::SfxVolume(    "SfxVolume",
                                           &SfxVolumeChangeInterface,
                                           &SfxVolumeChanger,
                                           &SfxVolumeHandler);
-
 cycleoption ivanconfig::MIDIOutputDevice( "MIDIOutputDevice",
                                           "Use MIDI soundtrack",
                                           "Select an output device for the game music, or disable soundtrack.",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
-cycleoption ivanconfig::LandTypeConfig("LandTypeConfig",
-                                          "What land shapes to generate",
+cycleoption ivanconfig::LandTypeConfig(   "LandTypeConfig",
+                                          "Shape of the continents",
                                           "Choose whether to generate continents or pangea. If Pangea is selected, the generator will make all locations reachable from the same landmass.",
                                           0, 2,
                                           &LandTypeConfigDisplayer);
-cycleoption ivanconfig::WorldSizeConfig("WorldSizeConfig",
-                                          "Size of the world map",
+cycleoption ivanconfig::WorldSizeConfig(  "WorldSizeConfig",
+                                          "Size of the world",
                                           "Select a world size.",
                                           2, 7,
                                           &WorldSizeConfigDisplayer);
-cycleoption ivanconfig::WorldShapeConfig("WorldShapeConfig",
+cycleoption ivanconfig::WorldShapeConfig( "WorldShapeConfig",
                                           "Shape of the world",
                                           "This affects the player's movement around the world. Pancake worlds are flat, and the player cannot cross the edges of the world map. Brandy snap worlds are like a cylinder, the world map wraps around the horizontal axis. Doughnut worlds are shaped like a torus, the player can wrap around the horizontal and vertical axes.",
                                           0, 3,
                                           &WorldShapeConfigDisplayer);
-numberoption ivanconfig::WorldSeedConfig("WorldSeedConfig",
+numberoption ivanconfig::WorldSeedConfig( "WorldSeedConfig",
                                           "Select a world seed",
-                                          "0 gives a random world seed, else select a new one at your own risk. If a world cannot be generated with the given seed after a finite number of attempts, you will get a message saying the world generator encountered a bad seed, what that seed was, and a new world will be generated from a random seed instead of the one specified here.",
+                                          "Selecting 0 gives you a random world seed, or select a new one at your own risk. If a world cannot be generated with the given seed after a finite number of attempts, you will get a message saying the world generator encountered a bad seed, what that seed was, and a new world will be generated from a random seed instead of the one specified here.",
                                           0,
                                           &WorldSeedConfigDisplayer,
                                           &WorldSeedConfigChangeInterface,
@@ -369,7 +368,7 @@ cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "Full screen mode",
                                           "Display the game in full screen mode.",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &FullScreenModeChanger);
@@ -379,7 +378,7 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
                                           0, 2,
                                           &ScalingQualityDisplayer);
 truthoption ivanconfig::UseExtraMenuGraphics("UseExtraMenuGraphics",
-                                          "Use extra main menu graphics",
+                                          "Use alternate main menu graphics",
                                           "Add changing graphics and sounds to the main menu.",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
@@ -392,7 +391,7 @@ truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects for combat, explosions and more.",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
-                                          "Show game turn on message log",
+                                          "Show game turn in message log",
                                           "Add a game turn number to each action described in the message log.",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
@@ -510,19 +509,19 @@ void ivanconfig::ShowMapDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value>=10){
-    Entry << "Use corners if NPC";
-    if(O->Value==11)Entry << "+Items";
+  if(O->Value >= 10) {
+    Entry << "corners if NPC";
+    if(O->Value == 11)
+      Entry << " or items";
     Entry << " above";
     return;
   }
 
   int iCode = game::ItemUnderCode(O->Value);
-
-  if(iCode==0){
+  if(iCode == 0){
     Entry << "disabled";
   }else
-  if(iCode==1){
+  if(iCode == 1){
     Entry << "above head";
   }else{
     switch(game::ItemUnderCorner(iCode)){
@@ -996,7 +995,7 @@ void ivanconfig::WorldShapeConfigDisplayer(const cycleoption* O, festring& Entry
 v2 ivanconfig::GetWorldSizeConfig()
 {
   v2 WorldSize = v2(49, 49);
-  
+
   if(WorldSizeConfig.Value == HUGE_WORLD)
     WorldSize = v2(128, 128);
   else if(WorldSizeConfig.Value == LARGE_WORLD)
@@ -1011,7 +1010,7 @@ v2 ivanconfig::GetWorldSizeConfig()
     WorldSize = v2(84, 52);
   else
     WorldSize = v2(49, 49); //SMALL_WORLD
-  
+
   return WorldSize;
 }
 
@@ -1221,6 +1220,7 @@ int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
 int  ivanconfig::iStartingFontGfx=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
+
 void ivanconfig::Initialize()
 {
   festring fsCategory;
@@ -1228,21 +1228,21 @@ void ivanconfig::Initialize()
   fsCategory="General Setup";
   configsystem::AddOption(fsCategory,&DefaultName);
   configsystem::AddOption(fsCategory,&FantasyNamePattern);
+  configsystem::AddOption(fsCategory,&StartWithPet);
   configsystem::AddOption(fsCategory,&DefaultPetName);
-  configsystem::AddOption(fsCategory,&StartWithNoPet);
   configsystem::AddOption(fsCategory,&AutoSaveInterval);
-  configsystem::AddOption(fsCategory,&AltAdentureInfo);
 
-  fsCategory="Gameplay Options";
+  fsCategory="Gameplay";
   configsystem::AddOption(fsCategory,&BeNice);
   configsystem::AddOption(fsCategory,&HoldPosMaxDist);
-  //configsystem::AddOption(fsCategory,&MemorizeEquipmentMode); // Let everyone retore equipped items on unpolymorph.
+  //configsystem::AddOption(fsCategory,&MemorizeEquipmentMode); // Let everyone restore equipped items on unpolymorph.
   configsystem::AddOption(fsCategory,&WarnAboutDanger);
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
   configsystem::AddOption(fsCategory,&DescriptiveHP);
-  configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
+  configsystem::AddOption(fsCategory,&AltAdventureInfo);
+  configsystem::AddOption(fsCategory,&ShowGodInfo);
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
@@ -1251,19 +1251,32 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&EnhancedLights);
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
-  configsystem::AddOption(fsCategory,&AutoPickUpMatching);
 
-  fsCategory="Game Window";
+  fsCategory="Sounds";
+  configsystem::AddOption(fsCategory,&PlaySounds);
+
+  std::vector<std::string> DeviceNames;
+  int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
+  MIDIOutputDevice.Value = 0;
+  if( NumDevices )
+  {
+     MIDIOutputDevice.Value = 1;
+  }
+  MIDIOutputDevice.CycleCount = NumDevices+1;
+
+  configsystem::AddOption(fsCategory,&MIDIOutputDevice);
+  configsystem::AddOption(fsCategory,&Volume);
+  configsystem::AddOption(fsCategory,&SfxVolume);
+
+  fsCategory="Graphics";
+#ifndef __DJGPP__
+  configsystem::AddOption(fsCategory,&FullScreenMode);
+#endif
   configsystem::AddOption(fsCategory,&Contrast);
   configsystem::AddOption(fsCategory,&WindowWidth);
   configsystem::AddOption(fsCategory,&WindowHeight);
 #ifndef __DJGPP__
   configsystem::AddOption(fsCategory,&GraphicsScale);
-  configsystem::AddOption(fsCategory,&FullScreenMode);
-#endif
-
-  fsCategory="Graphics";
-#ifndef __DJGPP__
   configsystem::AddOption(fsCategory,&ScalingQuality);
 #endif
   configsystem::AddOption(fsCategory,&LookZoom);
@@ -1282,25 +1295,10 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
   configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
   configsystem::AddOption(fsCategory,&HitIndicator);
+  configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
   configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
-
-  fsCategory="Sounds";
-  configsystem::AddOption(fsCategory,&PlaySounds);
-
-  std::vector<std::string> DeviceNames;
-  int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
-  MIDIOutputDevice.Value = 0;
-  if( NumDevices )
-  {
-     MIDIOutputDevice.Value = 1;
-  }
-  MIDIOutputDevice.CycleCount = NumDevices+1;
-
-  configsystem::AddOption(fsCategory,&MIDIOutputDevice);
-  configsystem::AddOption(fsCategory,&Volume);
-  configsystem::AddOption(fsCategory,&SfxVolume);
 
   fsCategory="Input and Interface";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
@@ -1311,15 +1309,10 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&SelectedBkgColor);
   configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
-  fsCategory="Advanced Options";
-  configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
-  configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
-  configsystem::AddOption(fsCategory,&UseLightEmiterBasedOnVolume);
-
   fsCategory="World Generation";
   configsystem::AddOption(fsCategory, &WorldSizeConfig);
-  configsystem::AddOption(fsCategory, &LandTypeConfig);
   configsystem::AddOption(fsCategory, &WorldShapeConfig);
+  configsystem::AddOption(fsCategory, &LandTypeConfig);
   configsystem::AddOption(fsCategory, &WorldSeedConfig);
 
   //World shape: Flat, [Horizontal Wrap (cylinder)]
@@ -1351,7 +1344,7 @@ void ivanconfig::Initialize()
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
-  
+
   if(ivanconfig::IsSetupCustomKeys())
     game::LoadCustomCommandKeys();
 

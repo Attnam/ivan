@@ -55,9 +55,9 @@ class ivanconfig
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
   static truth IsAutoPickupThrownItems() { return AutoPickupThrownItems.Value; }
-  static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
+  static truth IsAltAdventureInfo() { return AltAdventureInfo.Value; }
   static truth UseDescriptiveHP() { return DescriptiveHP.Value; }
-  static truth GetNoPet() { return StartWithNoPet.Value; }
+  static truth GetPet() { return StartWithPet.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetStartingFontGfx() { return iStartingFontGfx; }
@@ -197,7 +197,7 @@ class ivanconfig
   static stringoption SelectedBkgColor;
   static stringoption AutoPickUpMatching;
   static numberoption AutoSaveInterval;
-  static truthoption AltAdentureInfo;
+  static truthoption AltAdventureInfo;
   static truthoption CenterOnPlayerAfterLook;
   static scrollbaroption Contrast;
   static truthoption ShowGodInfo;
@@ -232,7 +232,7 @@ class ivanconfig
   static truthoption XBRZScale;
   static truthoption AutoPickupThrownItems;
   static truthoption DescriptiveHP;
-  static truthoption StartWithNoPet;
+  static truthoption StartWithPet;
 
   static cycleoption SaveGameSortMode;
   static cycleoption DistLimitMagicMushrooms;
@@ -263,7 +263,7 @@ class ivanconfig
   static scrollbaroption Volume;
   static scrollbaroption SfxVolume;
   static cycleoption MIDIOutputDevice;
-  
+
   static cycleoption WorldSizeConfig;
   static cycleoption LandTypeConfig;
   static cycleoption WorldShapeConfig;

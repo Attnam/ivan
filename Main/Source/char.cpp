@@ -9374,7 +9374,7 @@ void character::ShowAdventureInfo() const
 {
   graphics::SetAllowStretchedBlit();
 
-  if(ivanconfig::IsAltAdentureInfo())
+  if(ivanconfig::IsAltAdventureInfo())
   {
     ShowAdventureInfoAlt();
   }
