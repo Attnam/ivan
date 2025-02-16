@@ -876,7 +876,7 @@ truth game::Init(cfestring& loadBaseName)
 
       if(ivanconfig::GetPet())
       {
-        character* Doggie = dog::Spawn();
+        character* Doggie = dog::Spawn(IsSamhain() ? SKELETON_DOG : 0);
         Doggie->SetTeam(GetTeam(0));
         GetWorldMap()->GetPlayerGroup().push_back(Doggie);
         Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
@@ -6106,11 +6106,19 @@ truth game::TweraifIsFree()
   return true;
 }
 
-truth game::IsXMas() // returns true if date is christmaseve or day
+truth game::IsXMas() // returns true if date is Christmas Eve or Day.
 {
   time_t Time = time(0);
   struct tm* TM = localtime(&Time);
   return (TM->tm_mon == 11 && (TM->tm_mday == 24 || TM->tm_mday == 25));
+}
+
+truth game::IsSamhain()
+{
+  time_t Time = time(0);
+  struct tm* TM = localtime(&Time);
+  // Celebrations of Samhain begin on the evening of 31st October and go through 1st November.
+  return (TM->tm_mon == 9 && TM->tm_mday == 31) || (TM->tm_mon == 10 && TM->tm_mday == 1);
 }
 
 int game::AddToItemDrawVector(const itemvector& What)

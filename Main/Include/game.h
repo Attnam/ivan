@@ -433,6 +433,7 @@ class game
   static long GetScore();
   static truth TweraifIsFree();
   static truth IsXMas();
+  static truth IsSamhain();
   static int AddToItemDrawVector(const itemvector&);
   static void ClearItemDrawVector();
   static void ItemEntryDrawer(bitmap*, v2, uint);
