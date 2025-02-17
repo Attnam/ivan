@@ -3125,7 +3125,6 @@ golem
   DefaultCharisma = 5;
   DefaultMana = 5;
   TotalVolume = 100000;
-  TorsoBitmapPos = 256, 0;
   TotalSize = 250;
   NameSingular = "golem";
   CanBeGenerated = true;
@@ -3168,12 +3167,11 @@ golem
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
   Frequency = 100;
-  DangerModifier = 2000;
+  DangerModifier = 1000;
   DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
-  DangerModifier = 75;
   AlwaysUseMaterialAttributes = true;
   IsEnormous = true;
   CanChoke = false;
@@ -5917,7 +5915,6 @@ gibberling
   LegBitmapPos = 16, 128;
   TotalVolume = 30000;
   TotalSize = 90;
-  SkinColor = rgb16(100, 100, 200);
   NameSingular = "gibberling";
   CanBeGenerated = true;
   Sex = UNDEFINED;
@@ -6122,7 +6119,6 @@ angel
   Sex = FEMALE;
   ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   TotalVolume = 60000;
-  TorsoBitmapPos = 432, 0;
   TotalSize = 200;
   CanRead = true;
   NameSingular = "angel";
@@ -6788,7 +6784,6 @@ orc
     Belt = RUBY belt { Enchantment = 2; }
     RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
     RightBoot = SPIDER_SILK boot { Enchantment = 2; }
-    LeftWielded = 0;
     KnownCWeaponSkills == POLE_ARMS;
     CWeaponSkillHits == 2000;
     RightSWeaponSkillHits = 1000;
@@ -7662,7 +7657,6 @@ eddy
   HasEyes = false;
   HasHead = false;
   HasALeg = false;
-  CanBeGenerated = true;
   IgnoreDanger = true;
   HPRequirementForGeneration = 50;
   DayRequirementForGeneration = 5;
@@ -7836,7 +7830,6 @@ darkmage
     DayRequirementForGeneration = 15;
     Frequency = 1500;
     PanicLevel = 75;
-    Inventory == lantern;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
@@ -8610,7 +8603,6 @@ necromancer
     IsUnique = true;
     CanRead = true;
     IsPolymorphable = false;
-    PanicLevel = 0;
     CanBeCloned = false;
     BodyPartsDisappearWhenSevered = true;
     CanBeConfused = false;

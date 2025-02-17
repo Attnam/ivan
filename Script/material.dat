@@ -4575,7 +4575,6 @@ organic /* Substances that spoil but are not flesh. */
     Color = rgb16(244, 241, 235);
     NutritionValue = 1000;
     NameStem = "ommel bone";
-    ConsumeEndMessage = CEM_BONE;
     SpoilModifier = 48000;
     AttachedGod = MORTIFER;
     SoftenedMaterial = DRAGON_BONE;
@@ -4651,7 +4650,6 @@ organic /* Substances that spoil but are not flesh. */
     Color = rgb16(200, 200, 255);
     NutritionValue = 1000;
     NameStem = "ommel tooth";
-    ConsumeEndMessage = CEM_BONE;
     SpoilModifier = 48000;
     AttachedGod = MORTIFER;
     SoftenedMaterial = MAMMOTH_TUSK;
@@ -5625,7 +5623,7 @@ liquid
     Alpha = 175;
     Flexibility = 40;
     AttachedGod = CRUENTUS;
-    Acidicity = 500:
+    Acidicity = 500;
     RustModifier = 500;
     ConsumeWisdomLimit = 4;
     CategoryFlags = IS_BLOOD;
@@ -5955,7 +5953,6 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 9000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~IS_WARM_BLOODED;
     BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -5968,7 +5965,6 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 9000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~IS_WARM_BLOODED;
     BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
