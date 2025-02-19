@@ -1889,7 +1889,7 @@ truth humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Craft = craft::Spawn(this);DBGLN;
   DBG4(rpd.GetTool(),rpd.GetTool2(),GetRightArm()?GetRightArm()->IsUsable():0,GetLeftArm()?GetLeftArm()->IsUsable():0);
-  
+
   bool b1OK=false;
   bool b2OK=false;
   item* it;
@@ -1901,7 +1901,7 @@ truth humanoid::SwitchToCraft(recipedata rpd)
       b1OK=true;
       Craft->SetMoveCraftTool(false);
     }
-    
+
     if(!b1OK && GetRightArm() && GetRightArm()->IsUsable()){
       if((it = GetRightWielded())){
         Craft->SetRightBackupID(it->GetID());
@@ -1914,7 +1914,7 @@ truth humanoid::SwitchToCraft(recipedata rpd)
       b1OK=true;
       Craft->SetMoveCraftTool(true);
     }
-    
+
     if(!b1OK && GetLeftArm() && GetLeftArm()->IsUsable()){
       if((it = GetLeftWielded())){
         Craft->SetLeftBackupID(it->GetID());
@@ -1927,11 +1927,11 @@ truth humanoid::SwitchToCraft(recipedata rpd)
       b1OK=true;
       Craft->SetMoveCraftTool(true);
     }
-    
+
   }else{
     b1OK=true; //can craft somethings w/o tools
   }
-  
+
   //TODO let the GetTool2() be equipped too?
 
   if(b1OK){
@@ -1939,7 +1939,7 @@ truth humanoid::SwitchToCraft(recipedata rpd)
     SetAction(Craft);DBGLN;
     return true;
   }
-  
+
   ADD_MESSAGE("You have no usable arm.");
   rpd.SetAlreadyExplained();
   return false;
@@ -5390,7 +5390,7 @@ void FixSumoWrestlerHouse(festring fsCmdParams)
       break;
     }
   }
-  
+
   if(SM){
     for(int d = 0; d < SM->GetNeighbourSquares(); ++d)
     {
@@ -5412,7 +5412,7 @@ void sumowrestler::GetAICommand()
     devcons::AddDevCmd("FixSumoHouse",FixSumoWrestlerHouse,
       "BugFix sumo wrestler house in case banana growers over crowd it.");
     return true;}();
-  
+
   EditNP(-25);
 
   SeekLeader(GetLeader());
@@ -7227,7 +7227,7 @@ void aslonawizard::GetAICommand()
   }
 
   if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos) &&
-     (!(RAND() & 4) || StateIsActivated(PANIC)))
+     (!(RAND() % 4) || StateIsActivated(PANIC)))
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
