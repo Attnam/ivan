@@ -46,7 +46,7 @@ jobs:
           key="$(grep -o "'https://[^']*'" ci/osx/requirements.sh | openssl dgst -sha256 -hex)"
           echo "CACHE_KEY=${key#* }" >> $GITHUB_ENV
       - name: Reuse cached files
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/Thirdparty/Frameworks
