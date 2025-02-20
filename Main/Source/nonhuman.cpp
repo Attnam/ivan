@@ -1052,10 +1052,10 @@ int nerfbat::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2
   if(Return != HAS_DIED)
   {
     // Compare Mana against enemy Willpower to see if they resist polymorph.
-    if(RAND_N(GetAttribute(MANA)) > RAND_N(Enemy->GetAttribute(WILL_POWER)))
+    if(game::OpposedCheck(GetAttribute(MANA), Enemy->GetAttribute(WILL_POWER)))
     {
       if(IsPlayer())
-        ADD_MESSAGE("You are engulfed in a malignant aura!.");
+        ADD_MESSAGE("You are engulfed in a malignant aura!");
       else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is engulfed in a malignant aura!", CHAR_DESCRIPTION(DEFINITE));
 
@@ -2086,7 +2086,7 @@ void mommo::GetAICommand()
 void dog::GetAICommand()
 {
   if(!game::IsInWilderness() && !(RAND() & 7))
-    GetLSquareUnder()->SpillFluid(this, liquid::Spawn(DOG_DROOL, 25 + RAND() % 50), false, false);
+    GetLSquareUnder()->SpillFluid(this, liquid::Spawn(GetConfig() == SKELETON_DOG ? BLOOD : DOG_DROOL, 25 + RAND() % 50), false, false);
 
   character::GetAICommand();
 }
@@ -2559,7 +2559,7 @@ void lobhse::FinalProcessForBone()
 
 void lobhse::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 {
-  if(!RAND_N(7))
+  if(!RAND_N(4))
   {
     if(IsPlayer())
       ADD_MESSAGE("You vomit at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));

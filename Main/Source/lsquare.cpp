@@ -1895,7 +1895,7 @@ truth lsquare::LowerEnchantment(const beamdata& Beam)
 
   if(Char)
   {
-    if(Beam.Owner && RAND_N(Char->GetAttribute(WILL_POWER)) > RAND_N(Beam.Owner->GetAttribute(MANA)))
+    if(Beam.Owner && game::OpposedCheck(Char->GetAttribute(WILL_POWER), Beam.Owner->GetAttribute(MANA)))
     {
       if(Char->IsPlayer())
         ADD_MESSAGE("%s glows dull brown for a second, but then it passes.", RandomItem->CHAR_NAME(DEFINITE));

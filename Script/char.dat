@@ -3125,7 +3125,6 @@ golem
   DefaultCharisma = 5;
   DefaultMana = 5;
   TotalVolume = 100000;
-  TorsoBitmapPos = 256, 0;
   TotalSize = 250;
   NameSingular = "golem";
   CanBeGenerated = true;
@@ -3168,12 +3167,11 @@ golem
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
   Frequency = 100;
-  DangerModifier = 2000;
+  DangerModifier = 1000;
   DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
-  DangerModifier = 75;
   AlwaysUseMaterialAttributes = true;
   IsEnormous = true;
   CanChoke = false;
@@ -5917,7 +5915,6 @@ gibberling
   LegBitmapPos = 16, 128;
   TotalVolume = 30000;
   TotalSize = 90;
-  SkinColor = rgb16(100, 100, 200);
   NameSingular = "gibberling";
   CanBeGenerated = true;
   Sex = UNDEFINED;
@@ -6122,7 +6119,6 @@ angel
   Sex = FEMALE;
   ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   TotalVolume = 60000;
-  TorsoBitmapPos = 432, 0;
   TotalSize = 200;
   CanRead = true;
   NameSingular = "angel";
@@ -6788,7 +6784,6 @@ orc
     Belt = RUBY belt { Enchantment = 2; }
     RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
     RightBoot = SPIDER_SILK boot { Enchantment = 2; }
-    LeftWielded = 0;
     KnownCWeaponSkills == POLE_ARMS;
     CWeaponSkillHits == 2000;
     RightSWeaponSkillHits = 1000;
@@ -7662,7 +7657,6 @@ eddy
   HasEyes = false;
   HasHead = false;
   HasALeg = false;
-  CanBeGenerated = true;
   IgnoreDanger = true;
   HPRequirementForGeneration = 50;
   DayRequirementForGeneration = 5;
@@ -7836,7 +7830,6 @@ darkmage
     DayRequirementForGeneration = 15;
     Frequency = 1500;
     PanicLevel = 75;
-    Inventory == lantern;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
@@ -8610,7 +8603,6 @@ necromancer
     IsUnique = true;
     CanRead = true;
     IsPolymorphable = false;
-    PanicLevel = 0;
     CanBeCloned = false;
     BodyPartsDisappearWhenSevered = true;
     CanBeConfused = false;
@@ -9274,7 +9266,6 @@ siren
   DefaultIntelligence = 10;
   DefaultWillPower = 10;
   DefaultWisdom = 15;
-  DefaultCharisma = 50;
   DefaultMana = 5;
   Sex = FEMALE;
   StandVerb = "flaunting";
@@ -9319,6 +9310,7 @@ siren
 
   Config LIGHT_ASIAN_SIREN;
   {
+    DefaultCharisma = 45;
     UsesLongAdjectiveArticle = true;
     NameSingular = "erd-siren";
     SkinColor = rgb16(254, 247, 208);
@@ -9328,6 +9320,7 @@ siren
 
   Config DARK_ASIAN_SIREN;
   {
+    DefaultCharisma = 42;
     UsesLongAdjectiveArticle = true;
     NameSingular = "ygg-siren";
     SkinColor = rgb16(254, 247, 183);
@@ -9337,6 +9330,7 @@ siren
 
   Config CAUCASIAN_SIREN;
   {
+    DefaultCharisma = 39;
     UsesLongAdjectiveArticle = true;
     NameSingular = "ary-siren";
     SkinColor = rgb16(255, 212, 192);
@@ -9346,6 +9340,7 @@ siren
 
   Config DARK_SIREN;
   {
+    DefaultCharisma = 36;
     UsesLongAdjectiveArticle = true;
     NameSingular = "unn-siren";
     SkinColor = rgb16(128, 80, 48);
@@ -9355,6 +9350,7 @@ siren
 
   Config GREEN_SIREN;
   {
+    DefaultCharisma = 33;
     UsesLongAdjectiveArticle = true;
     NameSingular = "eli-siren";
     SkinColor = rgb16(180, 255, 150);
@@ -9364,6 +9360,7 @@ siren
 
   Config BLUE_SIREN;
   {
+    DefaultCharisma = 30;
     NameSingular = "zar-siren";
     SkinColor = rgb16(153, 204, 255);
     HairColor = rgb16(51, 51, 255);
@@ -9373,6 +9370,7 @@ siren
 
   Config RED_SIREN;
   {
+    DefaultCharisma = 27;
     NameSingular = "pra-siren";
     SkinColor = rgb16(255, 51, 51);
     HairColor = rgb16(255, 255, 255);
@@ -9382,6 +9380,7 @@ siren
 
   Config PINK_SIREN;
   {
+    DefaultCharisma = 24;
     NameSingular = "jin-siren";
     SkinColor = rgb16(240, 200, 201);
     HairColor = rgb16(255, 51, 153);
@@ -9391,6 +9390,7 @@ siren
 
   Config HISPANIC_SIREN;
   {
+    DefaultCharisma = 21;
     NameSingular = "kos-siren";
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
@@ -9402,7 +9402,7 @@ siren
     DefaultIntelligence = 30;
     DefaultWillPower = 30;
     DefaultWisdom = 35;
-    DefaultCharisma = 75;
+    DefaultCharisma = 50;
     HeadBitmapPos = 112, 400;
     SkinColor = rgb16(180, 255, 150);
     HairColor = rgb16(200, 48, 32);
