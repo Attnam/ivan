@@ -8527,8 +8527,11 @@ void character::ReceiveAntidote(long Amount)
     }
     else
     {
-      if(IsPlayer())
+      if(IsPlayer()) {
         ADD_MESSAGE("Aaaah... You feel much better.");
+      } else if(CanBeSeenByPlayer()) {
+        ADD_MESSAGE("%s looks much better.", CHAR_NAME(DEFINITE));
+      }
 
       Amount -= GetTemporaryStateCounter(POISONED);
       DeActivateTemporaryState(POISONED);
@@ -8897,33 +8900,27 @@ truth character::MoveTowardsHomePos()
 
 truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Chosen)
 {
-  if(!GetBodyPartOfEquipment(Chosen))
-  {
+  if(!GetBodyPartOfEquipment(Chosen)) {
     ADD_MESSAGE("Bodypart missing!");
     return false;
   }
 
   item* OldEquipment = GetEquipment(Chosen);
+  if(OldEquipment) {
+    if(!IsPlayer() && BoundToUse(OldEquipment, Chosen)) {
+      ADD_MESSAGE("%s refuses to unequip %s.", CHAR_DESCRIPTION(DEFINITE), OldEquipment->CHAR_NAME(DEFINITE));
+      return false;
+    }
 
-  if(!IsPlayer() && BoundToUse(OldEquipment, Chosen))
-  {
-    ADD_MESSAGE("%s refuses to unequip %s.", CHAR_DESCRIPTION(DEFINITE), OldEquipment->CHAR_NAME(DEFINITE));
-    return false;
-  }
-
-  if(OldEquipment)
-  {
-    if(!OldEquipment->CanBeUnEquipped(Chosen))
-    {
+    if(!OldEquipment->CanBeUnEquipped(Chosen)) {
       if(IsPlayer())
         ADD_MESSAGE("You fail to unequip %s.", OldEquipment->CHAR_NAME(DEFINITE));
       else
         ADD_MESSAGE("%s fails to unequip %s.", CHAR_DESCRIPTION(DEFINITE), OldEquipment->CHAR_NAME(DEFINITE));
-
       return false;
     }
-    else
-      OldEquipment->MoveTo(MainStack);
+
+    OldEquipment->MoveTo(MainStack);
   }
 
   sorter Sorter = EquipmentSorter(Chosen);
@@ -8948,7 +8945,7 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
                                          SecStack ? festring(GetDescription(DEFINITE) + " is "
                                                              + GetVerbalBurdenState()) : CONST_S(""),
                                          GetVerbalBurdenStateColor(),
-                                         NONE_AS_CHOICE|NO_MULTI_SELECT,
+                                         NONE_AS_CHOICE|NO_MULTI_SELECT|SELECT_PAIR,
                                          Sorter);
 
     if(Return == ESCAPED)
@@ -8963,6 +8960,7 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
     }
 
     item* Item = ItemVector.empty() ? 0 : ItemVector[0];
+    int otherChosen = -1;
 
     if(Item)
     {
@@ -8982,11 +8980,83 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
         return false;
       }
 
+      // Handle paired items:
+      if(Item->HandleInPairs() && ItemVector.size() > 1) {
+        switch (Chosen) {
+          case RIGHT_GAUNTLET_INDEX: otherChosen = LEFT_GAUNTLET_INDEX; break;
+          case LEFT_GAUNTLET_INDEX: otherChosen = RIGHT_GAUNTLET_INDEX; break;
+          case RIGHT_BOOT_INDEX: otherChosen = LEFT_BOOT_INDEX; break;
+          case LEFT_BOOT_INDEX: otherChosen = RIGHT_BOOT_INDEX; break;
+          default: break;
+        }
+
+        if(otherChosen != -1) {
+          if(!GetBodyPartOfEquipment(otherChosen) || !game::TruthQuestion("Do you want to wear both items? [y/N]", YES))
+            otherChosen = -1;
+        }
+      }
+
       Item->RemoveFromSlot();
       SetEquipment(Chosen, Item);
 
-      if(CheckIfEquipmentIsNotUsable(Chosen))
-        Item->MoveTo(MainStack); // small bug?
+      // Wear first/only item:
+      if(CheckIfEquipmentIsNotUsable(Chosen)) {
+        // TODO small bug?
+        Item->MoveTo(MainStack);
+        Item = 0;
+        otherChosen = -1;
+      }
+
+      // Wear possible second item:
+      if(otherChosen != -1)
+      {
+        item* otherOldEquipment = GetEquipment(otherChosen);
+
+        if(otherOldEquipment) {
+          if(!IsPlayer() && BoundToUse(otherOldEquipment, otherChosen)) {
+            ADD_MESSAGE("%s refuses to unequip %s.", CHAR_DESCRIPTION(DEFINITE), otherOldEquipment->CHAR_NAME(DEFINITE));
+            otherChosen = -1;
+          }
+
+          if(otherChosen != -1 && !otherOldEquipment->CanBeUnEquipped(otherChosen)) {
+            if(IsPlayer())
+              ADD_MESSAGE("You fail to unequip %s.", otherOldEquipment->CHAR_NAME(DEFINITE));
+            else
+              ADD_MESSAGE("%s fails to unequip %s.", CHAR_DESCRIPTION(DEFINITE), otherOldEquipment->CHAR_NAME(DEFINITE));
+            otherChosen = -1;
+          }
+
+          if(otherChosen != -1)
+            otherOldEquipment->MoveTo(MainStack);
+        }
+
+        item* otherItem = ItemVector[1];
+        if(otherChosen != -1 && otherItem)
+        {
+          if(!IsPlayer() && !AllowEquipment(otherItem, otherChosen)) {
+            ADD_MESSAGE("%s refuses to equip %s.", CHAR_DESCRIPTION(DEFINITE), otherItem->CHAR_NAME(DEFINITE));
+            otherChosen = -1;
+          }
+
+          if(otherChosen != -1 && !otherItem->CanBeEquipped(otherChosen)) {
+            if(IsPlayer())
+              ADD_MESSAGE("You fail to equip %s.", otherItem->CHAR_NAME(DEFINITE));
+            else
+              ADD_MESSAGE("%s fails to equip %s.", CHAR_DESCRIPTION(DEFINITE), otherItem->CHAR_NAME(DEFINITE));
+            otherChosen = -1;
+          }
+
+          if(otherChosen != -1) {
+            otherItem->RemoveFromSlot();
+            SetEquipment(otherChosen, otherItem);
+
+            if(CheckIfEquipmentIsNotUsable(otherChosen)) {
+              otherItem->MoveTo(MainStack);
+              otherChosen = -1;
+            }
+          }
+        }
+      }
     }
 
     return Item != OldEquipment;
@@ -12511,17 +12581,19 @@ void character::ForcePutNear(v2 Pos)
   PutTo(NewPos);
 }
 
-void character::ReceiveMustardGas(int BodyPart, long Volume)
+void character::ReceiveMustardGas(int BodyPartIndex, long Volume)
 {
-  if(Volume)
-    GetBodyPart(BodyPart)->AddFluid(liquid::Spawn(MUSTARD_GAS_LIQUID, Volume), CONST_S("skin"), 0, true);
+  bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+
+  if(BodyPart && Volume)
+    BodyPart->AddFluid(liquid::Spawn(MUSTARD_GAS_LIQUID, Volume), CONST_S("skin"), 0, true);
 }
 
 void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
-  if(BodyPart->GetMainMaterial()->GetInteractionFlags() & IS_AFFECTED_BY_MUSTARD_GAS)
+  if(BodyPart && BodyPart->GetMainMaterial()->GetInteractionFlags() & IS_AFFECTED_BY_MUSTARD_GAS)
   {
     long Tries = Modifier;
     Modifier -= Tries; //opt%?
