@@ -908,6 +908,8 @@ truth game::Init(cfestring& loadBaseName)
         Player->GetStack()->AddItem(Present);
         ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
       }
+      if(IsSamhain())
+        ADD_MESSAGE("%s looks a little under the weather.", ivanconfig::GetDefaultPetName());
 
       /* Set off the worldmap music */
       audio::SetPlaybackStatus(0);
@@ -6105,6 +6107,14 @@ truth game::TweraifIsFree()
 
   return true;
 }
+
+// FIXME:
+//  The time related functions such as time fill data into a tm struct or char array in shared memory and then
+//  returns a pointer to that memory. If the function is called from multiple places in the same program, and
+//  especially if it is called from multiple threads in the same program, then the calls will overwrite each other's
+//  data. Possibly replace calls to localtime with localtime_r. With _r, the application code manages allocation
+//  of the tm struct. That way, separate calls to the function can use their own storage.
+//  Unfortunately, localtime_r was only added in C23.
 
 truth game::IsXMas() // returns true if date is Christmas Eve or Day.
 {
