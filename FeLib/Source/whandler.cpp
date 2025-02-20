@@ -340,7 +340,7 @@ void ShowFPS(){ //TODO still flickers sometimes cuz of silhouette?
       static v2 v2Margin(iMargin,iMargin);
       static char c[100];
 
-      sprintf(c,"FPS:ls=%.1f,insta=%.1f",globalwindowhandler::GetFPS(false),globalwindowhandler::GetFPS(true));
+      snprintf(c, sizeof(c), "FPS:ls=%.1f,insta=%.1f", globalwindowhandler::GetFPS(false), globalwindowhandler::GetFPS(true));
       int iDistX = strlen(c)*8 + 10 + 100; // +10 to look good, + 100 cuz of silhouette area
       v2 v2Pos = RES-v2(iDistX,RES.Y)+v2Margin;
       v2 v2Size(iDistX, 8+iMargin*2);

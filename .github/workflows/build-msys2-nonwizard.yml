@@ -8,13 +8,13 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW32
           release: false
           update: false
-          install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
+          install: git mingw-w64-i686-gcc make mingw-w64-i686-cmake mingw-w64-i686-libpng mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-pcre
       - name: CI-Build
         run: |
           cd D:/a/ivan/ivan
