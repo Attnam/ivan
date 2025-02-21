@@ -3442,7 +3442,7 @@ void holyhandgrenade::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int
     Entry.PutWeight(GetWeight());
 
     if(!!WillExplodeSoon())
-      Entry << ", " << "(armed)";
+      Entry << ", armed";
 
     Entry << "]";
   }
