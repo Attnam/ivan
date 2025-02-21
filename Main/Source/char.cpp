@@ -5042,7 +5042,7 @@ void character::DoDetecting()
   if(Squares > GetAttribute(INTELLIGENCE) * (25 + RAND() % 51))
   {
     ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
-    Level->BlurMemory();
+    Level->BlurMemory();  // !game::IsInWilderness() is already checked by DetectHandler()
     BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
     EditExperience(INTELLIGENCE, -100, 1 << 12);
   }

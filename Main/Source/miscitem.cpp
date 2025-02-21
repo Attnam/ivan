@@ -3087,7 +3087,7 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   {
     ADD_MESSAGE("An enormous burst of geographical information overwhelms your "
                 "consciousness. Your mind cannot cope with it and your memories blur.");
-    Level->BlurMemory();
+    Level->BlurMemory();  // !game::IsInWilderness() is already handled by reading command
     Reader->BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
     Reader->EditExperience(INTELLIGENCE, -100, 1 << 12);
   }
