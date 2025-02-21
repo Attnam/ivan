@@ -119,6 +119,8 @@ class festring
   void ExtractWord(festring&);
   long GetCheckSum() const;
   void EnsureOwnsData(bool = false);
+  inline bool IsUnique () const { return (OwnsData && Data && (REFS(Data) == 0)); }
+  void PutWeight (int w);  // Nicely formatted weight
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
@@ -126,6 +128,8 @@ class festring
   void CreateNewData(sizetype);
   void CreateOwnData(cchar*, sizetype);
   festring& AppendInt(long);
+  festring& AppendIntr (cchar* CStr, sizetype clen);
+  festring& AppendStr (cchar* s);
   festring& Append(char);
   festring& Append(cchar*, sizetype);
   festring& Append(cfestring&);

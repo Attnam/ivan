@@ -11542,9 +11542,7 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
     if(IsPlayer())
     {
       festring Total("Total weight: ");
-      Total << TotalEquippedWeight;
-      Total << "g";
-
+      Total.PutWeight(TotalEquippedWeight);
       List.AddDescription(CONST_S(""));
       List.AddDescription(Total);
     }

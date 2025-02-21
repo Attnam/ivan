@@ -634,8 +634,8 @@ truth commandsystem::ShowInventory(character* Char)
 {
   itemvector WhichItem;
   festring Title("Your inventory (total weight: ");
-  Title << Char->GetStack()->GetWeight();
-  Title << "g)";
+  Title.PutWeight(Char->GetStack()->GetWeight());
+  Title << ")";
 
   Char->GetStack()->DrawContents(WhichItem, Char, Title, REMEMBER_SELECTED);
   return false;

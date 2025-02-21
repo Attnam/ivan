@@ -427,7 +427,8 @@ void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
@@ -646,7 +647,8 @@ void armor::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sh
   }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight() * Amount);
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", AV " << GetStrengthValue() << ']';
@@ -659,7 +661,8 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", AV " << GetStrengthValue();
@@ -1408,7 +1411,8 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
@@ -1913,7 +1917,8 @@ void chastitybelt::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, t
   }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight() * Amount);
     if(ivanconfig::IsShowVolume())
       Entry << ", " << GetVolume() << "cm3";
     Entry << ", AV " << GetStrengthValue();

@@ -1810,7 +1810,8 @@ void wand::AddInventoryEntry(ccharacter*, festring& Entry, int, truth ShowSpecia
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
 
@@ -2735,7 +2736,8 @@ void holybanana::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, tru
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
@@ -3436,12 +3438,13 @@ void holyhandgrenade::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
 
     if(!!WillExplodeSoon())
       Entry << ", " << "(armed)";
 
-    Entry << ']';
+    Entry << "]";
   }
 }
 
@@ -3829,7 +3832,8 @@ void ullrbone::AddInventoryEntry(const character* Viewer, festring& Entry, int, 
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g";
+    Entry << " [";
+    Entry.PutWeight(GetWeight());
     if(ivanconfig::IsShowVolume())
       Entry << " " << GetVolume() << "cm3";
     Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
