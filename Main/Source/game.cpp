@@ -909,7 +909,7 @@ truth game::Init(cfestring& loadBaseName)
         ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
       }
       if(IsSamhain())
-        ADD_MESSAGE("%s looks a little under the weather.", ivanconfig::GetDefaultPetName());
+        ADD_MESSAGE("%s looks a little under the weather.", ivanconfig::GetDefaultPetName().CStr());
 
       /* Set off the worldmap music */
       audio::SetPlaybackStatus(0);
