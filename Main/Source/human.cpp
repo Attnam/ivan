@@ -7031,7 +7031,7 @@ truth mirrorimp::DrinkMagic(const beamdata& Beam)
   if(!Beam.Wand->IsExplosive())
     return false;
 
-  if(Beam.Owner && RAND_N(GetAttribute(MANA)) <= RAND_N(Beam.Owner->GetAttribute(WILL_POWER)))
+  if(Beam.Owner && game::OpposedCheck(Beam.Owner->GetAttribute(WILL_POWER), GetAttribute(MANA)))
   {
     Beam.Owner->EditExperience(WILL_POWER, 100, 1 << 12);
     return false;
@@ -7053,9 +7053,12 @@ truth mirrorimp::DrinkMagic(const beamdata& Beam)
 
 void mirrorimp::CreateCorpse(lsquare* Square)
 {
-  decoration* Shard = decoration::Spawn(SHARD);
-  Shard->InitMaterials(MAKE_MATERIAL(GLASS));
-  Square->ChangeOLTerrainAndUpdateLights(Shard);
+  // Do not replace any interesting terrain!
+  if (!Square->GetOLTerrain()) {
+    decoration* Shard = decoration::Spawn(SHARD);
+    Shard->InitMaterials(MAKE_MATERIAL(GLASS));
+    Square->ChangeOLTerrainAndUpdateLights(Shard);
+  }
   SendToHell();
 }
 
@@ -7285,8 +7288,8 @@ void aslonawizard::GetAICommand()
 
       EditAP(-GetSpellAPCost());
 
-      int GasMaterial[] = { MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, TELEPORT_GAS,
-                            EVIL_WONDER_STAFF_VAPOUR, EVIL_WONDER_STAFF_VAPOUR };
+      const int GasMaterial[] = { MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, TELEPORT_GAS,
+                                  EVIL_WONDER_STAFF_VAPOUR, EVIL_WONDER_STAFF_VAPOUR };
       ToBeCalled = golem::Spawn(GasMaterial[RAND() % 6]);
       v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
 

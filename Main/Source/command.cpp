@@ -71,7 +71,7 @@ int command::GetKey() const
     return Key1;
    case DIR_ALT: // Alternative
     return Key2;
-   case DIR_HACK: // Nethack
+   case DIR_HACK: // NetHack
     return Key3;
    default:
     ABORT("This is not Vim!");
@@ -83,7 +83,7 @@ command* commandsystem::Command[] =
 {
   0,
 
-  /* Sort according to relaiton and assumed frequency of use */
+  /* Sort according to relation and assumed frequency of use */
 
   new command(&NOP, "wait a turn", '.', '.', '.', true),
   new command(&Go, "go / fastwalk", 'g', 'g', 'g', false),
@@ -99,20 +99,20 @@ command* commandsystem::Command[] =
   new command(&Zap, "zap a wand", 'z', 'z', 'z', false),
   new command(&Read, "read", 'r', 'r', 'r', false),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
-  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
+  new command(&Drink, "drink liquid", 'D', 'D', 'q', true),
   new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
   new command(&Dip, "dip into liquid", '!', '!', '!', false),
-  new command(&Open, "open", 'o', 'O', 'o', false),
+  new command(&Open, "open", 'o', 'O', 'o', true),
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Look, "look around", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
   new command(&WhatToEngrave, "engrave / inscribe", 'G', 'G', 'G', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
-  new command(&Craft, "craft", 'f', 'F', 'f', false),
+  new command(&Craft, "craft", 'f', 'f', 'f', false),
   new command(&AssignName, "name team members", 'n', 'n', 'N', false),
   new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
-  new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
+  new command(&Offer, "offer to gods", 'O', 'F', 'O', false),
   new command(&Pray, "pray to gods", 'p', 'p', 'p', false),
   new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
@@ -330,6 +330,12 @@ truth commandsystem::Open(character* Char)
 {
   if(Char->CanOpen())
   {
+    if(game::IsInWilderness())
+    {
+      item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
+      return Item && Item->Open(Char);
+    }
+
     int Key;
 
     if(ivanconfig::GetSmartOpenCloseApply())
@@ -367,9 +373,7 @@ truth commandsystem::Open(character* Char)
 
         if(Key == 'i')
         {
-          item* Item = Char->GetStack()->DrawContents(Char,
-                                                      CONST_S("What do you want to open?"),
-                                                      0, &item::IsOpenable);
+          item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
           return Item && Item->Open(Char);
         }
       }
@@ -391,7 +395,7 @@ truth commandsystem::Open(character* Char)
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
                                            "[press a direction key or space]"));
     }
-    else
+    else  // Old "stupid" open
     {
       truth OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
 
@@ -404,16 +408,14 @@ truth commandsystem::Open(character* Char)
 
       if(Key == 'i' && OpenableItems)
       {
-        item* Item = Char->GetStack()->DrawContents(Char,
-                                                    CONST_S("What do you want to open?"),
-                                                    0, &item::IsOpenable);
+        item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
         return Item && Item->Open(Char);
       }
     }
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
-    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)){
+    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)) {
       return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
     }
   }
@@ -632,8 +634,8 @@ truth commandsystem::ShowInventory(character* Char)
 {
   itemvector WhichItem;
   festring Title("Your inventory (total weight: ");
-  Title << Char->GetStack()->GetWeight();
-  Title << "g)";
+  Title.PutWeight(Char->GetStack()->GetWeight());
+  Title << ")";
 
   Char->GetStack()->DrawContents(WhichItem, Char, Title, REMEMBER_SELECTED);
   return false;

@@ -3564,17 +3564,21 @@ void head::SignalPossibleUsabilityChange()
         if(RAND_N(5))
         {
           ADD_MESSAGE("Your memory becomes blurred.");
-          GetLevel()->Amnesia(25 + RAND_N(50));
           Master->EditExperience(INTELLIGENCE, -80, 1 << 13);
-          game::SendLOSUpdateRequest();
+          if(!game::IsInWilderness()) {
+            GetLevel()->Amnesia(25 + RAND_N(50));
+            game::SendLOSUpdateRequest();
+          }
         }
         else
         {
           ADD_MESSAGE("A terrible concussion garbles your consciousness.");
           Master->BeginTemporaryState(CONFUSED, 5000 + RAND_N(5000));
           Master->EditExperience(INTELLIGENCE, -100, 1 << 14);
-          GetLevel()->BlurMemory();
-          game::SendLOSUpdateRequest();
+          if(!game::IsInWilderness()) {
+            GetLevel()->BlurMemory();
+            game::SendLOSUpdateRequest();
+          }
         }
       }
       else

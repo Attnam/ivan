@@ -907,3 +907,66 @@ void festring::EnsureOwnsData(bool Unique)
     CreateOwnData(Data, Size);
   }
 }
+
+festring& festring::AppendIntr(cchar* CStr, sizetype N)
+{
+  if(N == 0)
+    return *this;
+
+  sizetype OldSize = Size;
+  sizetype NewSize = OldSize+N;
+  char* OldPtr = Data;
+
+  if(OwnsData && IsUnique() && NewSize <= Reserved) {
+    memmove(OldPtr + OldSize, CStr, N);
+    Size = NewSize;
+  } else {
+    SlowAppend(CStr, N);
+  }
+  return *this;
+}
+
+festring& festring::AppendStr(cchar* s)
+{
+  if(s && s[0]) {
+    return AppendIntr(s, (sizetype)strlen(s));
+  } else {
+    return *this;
+  }
+}
+
+void festring::PutWeight(int w) {
+  if(w < 1000) {
+    *this << w << "g";
+  } else {
+    int kg = w / 1000;
+    int g = w % 1000;
+
+    if(g != 0) {
+      if(g % 100 != 0) {
+        AppendStr("~");
+
+        if(g % 100 > 50)
+          g = g / 100 + 1;
+        else
+          g = g / 100;
+
+        if(g == 10) {
+          kg += 1;
+          g = 0;
+        }
+      } else {
+        g /= 100;
+      }
+    }
+
+    *this << kg;
+
+    if (g != 0) {
+      AppendStr(".");
+      (*this) << g;
+    }
+
+    AppendStr("kg");
+  }
+}
