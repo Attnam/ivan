@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     # custom libpng build fails a test on macos-latest (11.x)
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v2
         with:
@@ -46,7 +46,7 @@ jobs:
           key="$(grep -o "'https://[^']*'" ci/osx/requirements.sh | openssl dgst -sha256 -hex)"
           echo "CACHE_KEY=${key#* }" >> $GITHUB_ENV
       - name: Reuse cached files
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/Thirdparty/Frameworks

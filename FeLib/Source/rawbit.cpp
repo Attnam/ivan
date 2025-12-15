@@ -423,7 +423,7 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, .
 
   va_list AP;
   va_start(AP, Format);
-  vsprintf(Buffer, Format, AP);
+  vsnprintf(Buffer, sizeof(Buffer), Format, AP);
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
@@ -467,7 +467,7 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* F
 
   va_list AP;
   va_start(AP, Format);
-  vsprintf(Buffer, Format, AP);
+  vsnprintf(Buffer, sizeof(Buffer), Format, AP);
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);

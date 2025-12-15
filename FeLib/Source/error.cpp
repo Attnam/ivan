@@ -123,7 +123,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
 
   va_list AP;
   va_start(AP, Format);
-  vsprintf(Buffer, Format, AP);
+  vsnprintf(Buffer, sizeof(Buffer), Format, AP);
   va_end(AP);
 
   strcat(Buffer, BugMsg);
