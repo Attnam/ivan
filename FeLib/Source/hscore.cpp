@@ -103,7 +103,7 @@ void highscore::Save(cfestring& File) const
 {
   outputfile HighScore(File.IsEmpty() ? DefaultFile : File);
   long CheckSum = HIGH_SCORE_VERSION + LastAdd;
-  for(ushort c = 0; c < Score.size(); ++c)
+  for(size_t c = 0; c < Score.size(); ++c)
   {
     CheckSum += Score[c] + Entry[c].GetCheckSum() + RandomID[c];
   }
