@@ -442,6 +442,7 @@ ITEM(itemcontainer, lockableitem)
  public:
   itemcontainer();
   itemcontainer(const itemcontainer&);
+  static truth OpenGeneric(character* Opener, stack* Stk, festring fsName, long volume, ulong ID);
   virtual ~itemcontainer();
   virtual truth Open(character*);
   virtual void Load(inputfile&);
@@ -469,10 +470,14 @@ ITEM(itemcontainer, lockableitem)
   virtual void SetParameters(int);
   virtual void Disappear();
   virtual stack* GetContained() const { return Contained; }
+  virtual void SetLabel(cfestring& What);
+  truth IsAutoStoreMatch(cfestring fs);
  protected:
   virtual col16 GetMaterialColorB(int) const;
   virtual void PostConstruct();
   stack* Contained;
+  pcre* pcreAutoStoreRegex;
+  bool bLazyInitPcre;
 };
 
 ITEM(beartrap, itemtrap<item>)
