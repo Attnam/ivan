@@ -30,6 +30,7 @@
 #endif
 
 #include "game.h"
+#include "curseddeveloper.h"
 #include "database.h"
 #include "definesvalidator.h"
 #include "devcons.h"
@@ -149,6 +150,9 @@ int main(int argc, char** argv)
   specialkeys::init();
   bugfixdp::init();
   devcons::Init();
+#ifdef CURSEDDEVELOPER
+  curseddeveloper::Init();
+#endif
   definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();
