@@ -1821,7 +1821,6 @@ holybanana /* materialcontainer->banana-> */
   CanBeMirrored = true; /* will create a peel */
   AllowEquip = true;
   IsValuable = true;
-  CanBePiled = false;
   IsMaterialChangeable = false;
   DescriptiveInfo = "Oily Orpiv was an explorer turned merchant. His commercial empire began its rise when on one expedition, he discovered a small village that never had to deal with the hardships of agriculture because of a seemingly miraculous crop. Oily Orpiv had discovered the banana. Being a follower of Mellis, he saw the monetary potential in this new fruit, subjugated the people and turned them into a highly efficient banana production facility. He made a quick profit that he soon used as investment for further business ventures. It is said that Oily Orpiv saved the third banana he ever saw (he ate the first and sold the second, claiming it was the first one) as a keepsake. When later in his life he became the champion of Mellis, this banana was imbued with powers both beneficial and deadly by Oily Orpiv's appreciative patron.";
 }
@@ -5112,7 +5111,6 @@ itemcontainer
                          OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD; }
   MaterialConfigChances = { 20,
                             5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 500, 5, 5, 5, 5, 5, 5; }
-  Roundness = 60;
   CanBePiled = false;
   IsAbstract = true;
   IsPolymorphSpawnable = false;
@@ -7545,6 +7543,7 @@ fish
     BitmapPos = 80, 336;
     Adjective = "dead";
     NameSingular = "fish";
+    NamePlural = "fish";
     Alias == "sardine";
     MainMaterialConfig == SARDINE;
     AttachedGod = SEGES;

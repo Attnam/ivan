@@ -94,18 +94,18 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   {
     festring fsGenLoopDL;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopID");if(pc!=NULL)fsGenLoopDL<<pc;}
     int iGenLoopMax=250;{const char* pc = std::getenv("IVAN_DebugGenDungeonLevelLoopMax");if(pc!=NULL)iGenLoopMax=atoi(pc);}
-    
+
     festring fsDL;fsDL<<GetIndex()<<Index;
     int iRetryMax = fsGenLoopDL==fsDL ? iGenLoopMax : 10;
-    
+
     DBG3("GeneratingDungeonLevel",fsDL.CStr(),fsGenLoopDL.CStr());
-    
+
     level* NewLevel=NULL;
     cbitmap* EnterImage=NULL;
     for(int i=0;i<iRetryMax;i++){
       try{
         if(!genericException::ToggleGenNewLvl())ABORT("expecting gen lvl to become: true");
-        
+
         NewLevel = Level[Index] = new level;
         NewLevel->SetDungeon(this);
         NewLevel->SetIndex(Index);
@@ -123,11 +123,11 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
             game::SetEnterTextDisplacement(Displacement);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nThis may take some time, please wait."),
-                             Displacement, WHITE, false, 
+                             Displacement, WHITE, false,
                              true, &game::BusyAnimation);
             game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
                              + CONST_S("...\n\nPress any key to continue."),
-                             Displacement, WHITE, game::GetAutoPlayMode()<2, 
+                             Displacement, WHITE, game::GetAutoPlayMode()<2,
                              false, &game::BusyAnimation);
             game::SetEnterImage(0);
             delete EnterImage;
@@ -158,7 +158,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
         //TODO it is not working well, memory usage keeps increasing...
         if(NewLevel  ){delete NewLevel  ;NewLevel=NULL;}
         if(EnterImage){delete EnterImage;EnterImage=NULL;}
-        
+
         //retry
       }
     } //for()
@@ -210,10 +210,6 @@ void dungeon::PrepareMusic(int Index)
      }
      audio::SetPlaybackStatus(audio::PLAYING);
   }
-
-
-
-
 }
 
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)
@@ -312,7 +308,7 @@ inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 
 /**
  * The wrong luminance saved to a lsquare problem
- * may happen after craft/split eg.: a blue crystal stone, 
+ * may happen after craft/split e.g.: a blue crystal stone,
  * then you save the game and re-load it and the luminance would be still there.
  * TODO this workaround will not be necessary when the problem is fixed on it's origin
  */
@@ -333,7 +329,7 @@ level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
   Level[Number]->SetLevelScript(GetLevelScript(Number));
   PrepareMusic(Number);
   WorkaroundFixLuminance(Level[Number]);
-    
+
   return Level[Number];
 }
 

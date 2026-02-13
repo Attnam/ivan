@@ -227,7 +227,6 @@ decoration
     CanBeDestroyed = true;
     DigMessage = "You ruthlessly chop the beautiful tree down.";
     MainMaterialConfig == GOLD;
-    ShowMaterial = false;
     MaterialColorB = rgb16(224, 224, 0);
     Adjective = "holy";
     NameSingular = "tree";
@@ -466,7 +465,6 @@ decoration
     MaterialColorB = rgb16(0, 150, 0);
     NameSingular = "oak tree";
     BitmapPos = 32, 336;
-    ShowMaterial = true;
     HPModifier = 25;
     IsAlwaysTransparent = false;
   }
@@ -962,7 +960,6 @@ sign
 {
   DigMessage = "You smash the sign to tiny bits.";
   MainMaterialConfig == BALSA_WOOD;
-  MaterialColorB = rgb16(200,200,200);
   /* Uses own postfix */
   NameSingular = "sign";
   BitmapPos = 16, 336;
@@ -1035,7 +1032,6 @@ barwall
   NameSingular = "bars";
   BitmapPos = 16, 112;
   HPModifier = 25;
-  ShowThingsUnder = true;
   AttachedGod = LEGIFER;
 
   Config BROKEN_BARWALL;

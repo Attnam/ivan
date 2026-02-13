@@ -874,9 +874,9 @@ truth game::Init(cfestring& loadBaseName)
       DefaultDetectMaterial.Empty();
       Player->GetStack()->AddItem(encryptedscroll::Spawn());
 
-      if(!ivanconfig::GetNoPet())
+      if(ivanconfig::GetPet())
       {
-        character* Doggie = dog::Spawn();
+        character* Doggie = dog::Spawn(IsSamhain() ? SKELETON_DOG : 0);
         Doggie->SetTeam(GetTeam(0));
         GetWorldMap()->GetPlayerGroup().push_back(Doggie);
         Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
@@ -908,6 +908,8 @@ truth game::Init(cfestring& loadBaseName)
         Player->GetStack()->AddItem(Present);
         ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
       }
+      if(IsSamhain())
+        ADD_MESSAGE("%s looks a little under the weather.", ivanconfig::GetDefaultPetName().CStr());
 
       /* Set off the worldmap music */
       audio::SetPlaybackStatus(0);
@@ -5770,7 +5772,7 @@ void game::LoadCustomCommandKeys()
   static festring fsFile = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
   FILE *fl = fopen(fsFile.CStr(), "rt");
   if(!fl)return;
-  
+
   festring Line;
   festring fsMatch;
   festring fsPostFix="\"=0x";
@@ -5787,7 +5789,7 @@ void game::LoadCustomCommandKeys()
         break;
       }
     }
-    
+
     int iVal;
     for(int c=0;c<8;c++){
       fsMatch.Empty();
@@ -5796,9 +5798,9 @@ void game::LoadCustomCommandKeys()
         game::MoveCustomCommandKey[c]=HexToInt(Line);
         break;
       }
-    }  
+    }
   }
-  
+
   fclose(fl);
 }
 
@@ -5824,7 +5826,7 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
   //TODO these SYSTEM messages messes the gameplay message log... but is better than a popup?
   bool bValid=true;
   festring fsDesc;
-  
+
   // conflicts check
   if(bValid){
     command *cmd;
@@ -5845,13 +5847,13 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
         bValid=false;
         break;
       }
-    }  
+    }
   }
   if(!bValid){
     ADD_MESSAGE("SYSTEM: conflicting key '%s'(code is %d or 0x%04X) with command \"%s\", retry...",
       ToCharIfPossible(iNewKey).CStr(),iNewKey,iNewKey,fsDesc.CStr());
   }
-  
+
   // general invalid key codes
   if(bValid){
     if(iNewKey<0x20){
@@ -5859,7 +5861,7 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
       bValid=false;
     }
   }
-  
+
   return bValid;
 }
 
@@ -5873,33 +5875,33 @@ festring IntToHexStr(int i)
 
 festring game::ToCharIfPossible(int i)
 {
-  switch(i){ // these are above 0xFF 
+  switch(i){ // these are above 0xFF
     //TODO complete this list, if has no #define, use the hexa directly.
-    case KEY_UP: 
+    case KEY_UP:
       return "Up";
-    case KEY_DOWN: 
+    case KEY_DOWN:
       return "Down";
-    case KEY_RIGHT: 
+    case KEY_RIGHT:
       return "Right";
-    case KEY_LEFT: 
+    case KEY_LEFT:
       return "Left";
-    case KEY_HOME: 
+    case KEY_HOME:
       return "Home";
-    case KEY_END: 
+    case KEY_END:
       return "End";
-    case KEY_PAGE_DOWN: 
+    case KEY_PAGE_DOWN:
       return "PgDn";
-    case KEY_PAGE_UP: 
+    case KEY_PAGE_UP:
       return "PgUp";
     case KEY_DELETE:
       return "Del";
     case KEY_INSERT:
       return "Ins";
   }
-  
+
   if(i>=0 && i<=0xFF) //these are mapped at fonts gfx files
     return festring()+(char)i;
-  
+
   return IntToHexStr(i);
 }
 
@@ -5911,12 +5913,12 @@ void WriteCustomKeyBindingsCfgFile(FILE *fl,festring fsDesc,int iKey){
 /**
  * Command's (and movement keys) descriptions are used as identifiers at the config file.
  * These descriptions shall not clash and preferably should not be changed.
- * @return 
+ * @return
  */
 truth game::ConfigureCustomKeys()
 {
   game::LoadCustomCommandKeys(); //in case there is anything already set
-  
+
   felist fel(CONST_S("Configure custom keys:"));
   bool bRet=true;
   command* cmd;
@@ -5926,16 +5928,16 @@ truth game::ConfigureCustomKeys()
     bool bWizIni=false;
     festring fsEntry;
     for(int c = 1; (cmd=commandsystem::GetCommand(c)); ++c){
-      fsEntry=cmd->GetDescription(); 
+      fsEntry=cmd->GetDescription();
       fsEntry.Resize(60);
       fsEntry<<"'"<<ToCharIfPossible(cmd->GetKey())<<"' ";
       fsEntry<<IntToHexStr(cmd->GetKey());
-      
+
       if(!bWizIni && cmd->IsWizardModeFunction()){
         fel.AddEntry("Wizard mode keys:", DARK_GRAY, 20, NO_IMAGE, false);
         bWizIni=true;
       }
-      
+
       fel.AddEntry(fsEntry, LIGHT_GRAY, 0, NO_IMAGE, true);
       iMoveKeyStart++;
     }
@@ -5955,7 +5957,7 @@ truth game::ConfigureCustomKeys()
       bRet=false;
       break;
     }
-    
+
     bool bIsMoveKeys = Select >= iMoveKeyStart;
     int iMvKeyIndex = bIsMoveKeys ? Select-iMoveKeyStart : -1;
     int iCmdKeyIndex = bIsMoveKeys ? -1 : Select+1;
@@ -5965,7 +5967,7 @@ truth game::ConfigureCustomKeys()
     while(true){
       cmd=NULL;
       festring fsAsk = "Press a key to assign to the command \"";
-      
+
       if(bIsMoveKeys){
         fsAsk<<GetMoveKeyDesc(iMvKeyIndex)<<"\"";
         fsAsk<<fsC<<ToCharIfPossible(game::MoveCustomCommandKey[iMvKeyIndex]);
@@ -5977,7 +5979,7 @@ truth game::ConfigureCustomKeys()
       fsAsk<<"' ";
       fsAsk<<IntToHexStr( bIsMoveKeys ? game::MoveCustomCommandKey[iMvKeyIndex] : cmd->GetKey());
       fsAsk<<")";
-        
+
       iNewKey=game::AskForKeyPress(fsAsk);
       if(iNewKey==KEY_ESC){bIgnore=true;break;}
 
@@ -5990,23 +5992,23 @@ truth game::ConfigureCustomKeys()
       }
     }
     if(bIgnore)continue;
-    
+
     if(!bRet)break;
-    
+
     if(bIsMoveKeys)
       game::MoveCustomCommandKey[iMvKeyIndex]=iNewKey;
     else
       commandsystem::GetCommand(iCmdKeyIndex)->SetCustomKey(iNewKey);
   }
-  
+
   festring fsFl = GetUserDataDir() + CUSTOM_KEYS_FILENAME;
-  
+
   // backup existing
   festring fsFlBkp=fsFl+".bkp";
   std::ifstream  src(fsFl.CStr()   , std::ios::binary);
   std::ofstream  dst(fsFlBkp.CStr(), std::ios::binary);
   dst << src.rdbuf();
-  
+
   // write a new in full
   FILE *fl = fopen(fsFl.CStr(), "wt"); //"a");
   festring fsWriteLine;
@@ -6016,7 +6018,7 @@ truth game::ConfigureCustomKeys()
   for(int c=0;c<8;c++)
     WriteCustomKeyBindingsCfgFile(fl,GetMoveKeyDesc(c),game::MoveCustomCommandKey[c]);
   fclose(fl);
-  
+
   if(bRet)game::LoadCustomCommandKeys(); //this here is more to validate if all went ok
   return bRet;
 }
@@ -6040,7 +6042,7 @@ void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
       pa=game::MoveAbnormalCommandKey; Key=Key2; break;
     case DIR_HACK:
       pa=game::MoveNetHackCommandKey; Key=Key3; break;
-/*TODO case DIR_CUSTOM: 
+/*TODO case DIR_CUSTOM:
          pa=game::MoveCustomCommandKey; Key=???; break; */
     }
 
@@ -6057,7 +6059,7 @@ int game::GetMoveCommandKey(int I)
 {
   if(ivanconfig::IsSetupCustomKeys())
     return MoveCustomCommandKey[I];
-  
+
   switch(ivanconfig::GetDirectionKeyMap())
   {
   case DIR_NORM:
@@ -6106,11 +6108,27 @@ truth game::TweraifIsFree()
   return true;
 }
 
-truth game::IsXMas() // returns true if date is christmaseve or day
+// FIXME:
+//  The time related functions such as time fill data into a tm struct or char array in shared memory and then
+//  returns a pointer to that memory. If the function is called from multiple places in the same program, and
+//  especially if it is called from multiple threads in the same program, then the calls will overwrite each other's
+//  data. Possibly replace calls to localtime with localtime_r. With _r, the application code manages allocation
+//  of the tm struct. That way, separate calls to the function can use their own storage.
+//  Unfortunately, localtime_r was only added in C23.
+
+truth game::IsXMas() // returns true if date is Christmas Eve or Day.
 {
   time_t Time = time(0);
   struct tm* TM = localtime(&Time);
   return (TM->tm_mon == 11 && (TM->tm_mday == 24 || TM->tm_mday == 25));
+}
+
+truth game::IsSamhain()
+{
+  time_t Time = time(0);
+  struct tm* TM = localtime(&Time);
+  // Celebrations of Samhain begin on the evening of 31st October and go through 1st November.
+  return (TM->tm_mon == 9 && TM->tm_mday == 31) || (TM->tm_mon == 10 && TM->tm_mday == 1);
 }
 
 int game::AddToItemDrawVector(const itemvector& What)
@@ -7089,4 +7107,24 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
 
   if(Buffer == DOUBLE_BUFFER)
     graphics::BlitDBToScreen();
+}
+
+bool game::OpposedCheck(int first, int second, int cap)
+{
+  /* Opposed random check
+   *
+   * Takes two numbers and rolls a percentage die against a weighted chance
+   * based on these two numbers, returning whether the first number was
+   * successful in the roll. Same numbers will always have 50/50 chance, but
+   * different numbers will always be fit on a 0% to 100% chance of success for
+   * the first.
+   *
+   * Eg. first = 25, second = 50. There is a 33% chance that first will be
+   * successful and this method will return true.
+   *
+   * Can also be capped, which sets both min and max percentage. The default
+   * cap of 5 will result in chances between 5% and 95%, even if the numbers
+   * would otherwise have worse/better chances.
+   */
+  return RAND_N(100) < std::max(cap, std::min(100 - cap, (first * 100) / (first + second)));
 }
