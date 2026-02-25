@@ -530,7 +530,7 @@ void item::AddName(festring& Name, int Case) const
 {
   object::AddName(Name,Case);
 
-  if(label.GetSize())
+  if(!(Case&UNLABELED) && label.GetSize())
     Name << " inscribed " << label;
 }
 

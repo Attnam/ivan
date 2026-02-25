@@ -182,6 +182,8 @@ class game
   static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
+  static cchar* StoreMatchNameKey(item* it,bool bUnarticled=false);
+  static void AutoStoreItemInContainer(item* itToStore,character* C);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();
@@ -393,7 +395,7 @@ class game
   static bool ToggleShowMapNotes();
   static bool CheckAddAutoMapNote(square* =NULL);
   static int CheckAutoPickup(square* sqr = NULL);
-  static void UpdateAutoPickUpMatching();
+  static void UpdateAutoPickUpRegex();
   static int RotateMapNotes();
   static char MapNoteToken();
   static bool IsAutoPickupMatch(cfestring fsName);

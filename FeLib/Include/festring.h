@@ -15,6 +15,7 @@
 
 #include <climits>
 #include <vector>
+#include <pcre.h>
 
 #include "felibdef.h"
 
@@ -119,6 +120,7 @@ class festring
   void ExtractWord(festring&);
   long GetCheckSum() const;
   void EnsureOwnsData(bool = false);
+  static pcre* CompilePCRE(pcre *pcreExistingRegexWorker, cfestring &fsPattern, festring *pfsErrorMsg=NULL);
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
