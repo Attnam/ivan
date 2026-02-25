@@ -675,6 +675,11 @@ void fluid::Destroy()
   SendToHell();
 }
 
+int fluid::GetTrapType() const 
+{ 
+  return Liquid->GetType() | FLUID_TRAP; 
+}
+
 truth fluid::UseImage() const
 {
   return !(Flags & FLUID_INSIDE)

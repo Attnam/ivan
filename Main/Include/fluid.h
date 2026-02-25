@@ -20,6 +20,8 @@ class bitmap;
 
 typedef truth (rawbitmap::*pixelpredicate)(v2) const;
 
+class liquid;
+
 class fluid : public entity
 {
  public:
@@ -56,7 +58,7 @@ class fluid : public entity
   cfestring& GetLocationName() const { return LocationName; }
   truth IsInside() const { return Flags & FLUID_INSIDE; }
   truth UseImage() const;
-  virtual int GetTrapType() const { return Liquid->GetType() | FLUID_TRAP; }
+  virtual int GetTrapType() const;
   virtual ulong GetTrapID() const { return TrapData.TrapID; }
   virtual ulong GetVictimID() const { return TrapData.VictimID; }
   virtual void AddTrapName(festring&, int) const;

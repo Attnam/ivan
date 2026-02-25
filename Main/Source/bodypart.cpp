@@ -13,6 +13,7 @@
 /* Compiled through itemset.cpp */
 
 #include "dbgmsgproj.h"
+#include "curseddeveloper.h"
 
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
@@ -291,7 +292,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
         else
           ADD_MESSAGE("Your %s is in very bad condition.", GetBodyPartName().CStr());
 
-        if(Master->BodyPartIsVital(GetBodyPartIndex()))
+        if(Master->BodyPartIsVital(GetBodyPartIndex()) && !curseddeveloper::IsCursedDeveloper())
           game::AskForKeyPress(CONST_S("Vital bodypart in serious danger! [press any key to continue]"));
       }
       else if(IsBadlyHurt() && !WasBadlyHurt)
@@ -301,7 +302,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
         else
           ADD_MESSAGE("Your %s is in bad condition.", GetBodyPartName().CStr());
 
-        if(Master->BodyPartIsVital(GetBodyPartIndex()))
+        if(Master->BodyPartIsVital(GetBodyPartIndex()) && !curseddeveloper::IsCursedDeveloper())
           game::AskForKeyPress(CONST_S("Vital bodypart in danger! [press any key to continue]"));
       }
     }

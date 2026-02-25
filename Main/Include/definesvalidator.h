@@ -9473,10 +9473,10 @@ class definesvalidator{
 
   
 #ifdef WEAPON_SKILL_CATEGORIES // DO NOT MODIFY!
-  bsA = 11;
+  bsA = 12;
   bsB = WEAPON_SKILL_CATEGORIES;
   if(bsA!=bsB)
-    ssErrors << "Defined WEAPON_SKILL_CATEGORIES with value 11 from .dat file mismatches hardcoded c++ define value of " << WEAPON_SKILL_CATEGORIES << "!" << std::endl;
+    ssErrors << "Defined WEAPON_SKILL_CATEGORIES with value 12 from .dat file mismatches hardcoded c++ define value of " << WEAPON_SKILL_CATEGORIES << "!" << std::endl;
 #endif 
 
   
