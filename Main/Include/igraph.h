@@ -122,6 +122,7 @@ class igraph
   static void CreateBackGround(int);
   static bitmap* GenerateScarBitmap(int, int, int);
   static cbitmap* GetSmileyGraphic() { return Graphic[GR_SMILEY]; }
+  static void AddOutlinesIfNeeded();
  private:
   static void EditBodyPartTile(rawbitmap*, rawbitmap*, v2, int);
   static v2 RotateTile(rawbitmap*, rawbitmap*, v2, v2, int);
