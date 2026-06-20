@@ -1024,9 +1024,9 @@ truth commandsystem::ShowKeyLayout(character* Who)
   }
 
   game::SetStandardListAttributes(List);
-  List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
+  if(Who) List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
   int res = List.Draw();
-  if(res >= 0 && res < keys.size()) {
+  if(Who && res >= 0 && res < keys.size()) {
     bool HasActed = false, ValidKeyPressed = false;
     Who->PerformPlayerCommand(keys[res], HasActed, ValidKeyPressed);
     return HasActed;
