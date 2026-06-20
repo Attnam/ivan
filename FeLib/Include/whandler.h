@@ -86,13 +86,13 @@ class globalwindowhandler
 #endif
 
   const static int iRestWaitKey;
+  static void AddKeyToBuffer(int KeyPressed);
 
  private:
 #ifdef USE_SDL
   static int ChkCtrlKey(SDL_Event* Event);
   static void ProcessMessage(SDL_Event*);
   static void ProcessKeyDownMessage(SDL_Event* Event);
-  static void AddKeyToBuffer(int KeyPressed);
   static std::vector<int> KeyBuffer;
   static truth (*QuitMessageHandler)();
   static bool (*FunctionKeyHandler)(SDL_Keycode);

@@ -966,8 +966,8 @@ truth commandsystem::ShowKeyLayout(character*)
                                       << "commands are only accessible in wizard mode. Note that the game "
                                       << "distinguishes between lowercase and uppercase letters, so if you are "
                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
-     List.AddEntry(CONST_S("4 6        or use arrow keys and"), LIGHT_GRAY);
-     List.AddEntry(CONST_S("123        Home, End, PgUp, PgDn"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("4 6        or use arrow keys and Home, End, PgUp, PgDn"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("123        you can also use Left/Right + Shift/Ctrl for diagonals"), LIGHT_GRAY);
      break;
    }
    case DIR_ALT: // Alternative

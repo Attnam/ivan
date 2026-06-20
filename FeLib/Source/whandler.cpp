@@ -630,6 +630,15 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     return;
   }else
   if(Event->key.keysym.mod & KMOD_SHIFT){
+    switch(Event->key.keysym.sym)
+    {
+    case SDLK_LEFT:
+      AddKeyToBuffer(KEY_HOME + 0xE000);
+      break;
+    case SDLK_RIGHT:
+      AddKeyToBuffer(KEY_PAGE_UP + 0xE000);
+      break;
+    }
     return;
   }
 
