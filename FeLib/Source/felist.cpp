@@ -715,6 +715,21 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       break;
     }
 
+    if((Flags & SELECTABLE) && (Pressed >= KEY_CONTROLLER_DIRECTION + 1 && Pressed <= KEY_CONTROLLER_DIRECTION + 9))
+    {
+      auto p = PageBegin;
+      Selected = Selected + Pressed - KEY_CONTROLLER_A;
+      if(Selected > Selectables - 1) Selected = Selectables - 1;
+      if(Selected < 0) Selected = 0;
+      while(Selected < PageBegin && PageLength) PageBegin -= PageLength;
+      while(Selected >= PageBegin + PageLength && PageLength) PageBegin += PageLength;
+
+      if(p != PageBegin) BackGround.FastBlit(Buffer);
+      else JustRedrawEverythingOnce = true;
+
+      continue;
+    }
+
     if(bApplyNewFilter){DBGLN;
       break;
     }
