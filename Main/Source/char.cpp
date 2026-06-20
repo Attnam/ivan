@@ -3654,6 +3654,10 @@ truth character::AutoPlayAICommand(int& rKey)
 void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPressed)
 {
   auto MoveByVector = [&] (v2 Dir) {
+    if(Dir == v2(0, 0)){
+      Key = '.';
+      return;
+    }
     bool bWaitNeutralMove=false;
     HasActed = TryMove(ApplyStateModification(Dir), true, game::PlayerIsRunning(), &bWaitNeutralMove);
     if(HasActed){
