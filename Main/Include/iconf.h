@@ -73,7 +73,7 @@ class ivanconfig
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
   static truth IsAllowMouseOnFelist(){ return AllowMouseOnFelist.Value; }
-  static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
+  static truth IsOutlinedGfx() { return OutlinedGfx.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetSfxVolume() { return SfxVolume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
@@ -243,7 +243,6 @@ class ivanconfig
   static int iStartingFontGfx;
 
   static truthoption   OutlinedGfx;
-  static bool bStartingOutlinedGfx;
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
