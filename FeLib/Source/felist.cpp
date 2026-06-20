@@ -306,7 +306,7 @@ uint felist::Draw()
 
   ApplyFilter();
 
-  if(Flags & SELECTABLE){
+  if(Flags & SELECTABLE && !(Flags & DONT_SHOW_KEYS)){
     if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
   }else{
     for(int i=0;i<Entry.size();i++)
@@ -634,7 +634,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(bJustRefreshOnce)
       continue;
 
-    if((Flags & SELECTABLE) && Pressed > 64 // 65='A' 90='Z'
+    if((Flags & SELECTABLE) && !(Flags & DONT_SHOW_KEYS) && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
     {DBGLN;
@@ -643,7 +643,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       break;
     }
 
-    if((Flags & SELECTABLE) && Pressed > 96 // 97='a' 122='z'
+    if((Flags & SELECTABLE) && !(Flags & DONT_SHOW_KEYS) && Pressed > 96 // 97='a' 122='z'
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
     {DBGLN;
@@ -861,7 +861,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
     uint Marginal = Entry[c]->Marginal;
 
     bool bIsSelectable = (Flags & SELECTABLE) && Entry[c]->Selectable;
-    if(bIsSelectable){
+    if(bIsSelectable && !(Flags & DONT_SHOW_KEYS)){
       Str << char('A' + (i - PageBegin)) << ": ";
       Marginal += 3;
     }

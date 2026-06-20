@@ -218,6 +218,7 @@ inline int GetMinColor24(col24 Color)
 #define BLIT_AFTERWARDS 4
 #define DRAW_BACKGROUND_AFTERWARDS 8
 #define FADE 16
+#define DONT_SHOW_KEYS 32
 
 /* felist errors */
 

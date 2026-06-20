@@ -946,7 +946,7 @@ truth commandsystem::Dip(character* Char)
   return false;
 }
 
-truth commandsystem::ShowKeyLayout(character*)
+truth commandsystem::ShowKeyLayout(character* Who)
 {
   felist List(CONST_S("Keyboard Layout"));
   List.AddDescription(CONST_S(""));
@@ -961,38 +961,40 @@ truth commandsystem::ShowKeyLayout(character*)
   {
    case DIR_NORM: // Normal
    {
-     List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
                                       << "commands are only accessible in wizard mode. Note that the game "
                                       << "distinguishes between lowercase and uppercase letters, so if you are "
                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
-     List.AddEntry(CONST_S("4 6        or use arrow keys and Home, End, PgUp, PgDn"), LIGHT_GRAY);
-     List.AddEntry(CONST_S("123        you can also use Left/Right + Shift/Ctrl for diagonals"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("4 6        or use arrow keys and Home, End, PgUp, PgDn"), LIGHT_GRAY, 0, NO_IMAGE, false);
+     List.AddEntry(CONST_S("123        you can also use Left/Right + Shift/Ctrl for diagonals"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
    }
    case DIR_ALT: // Alternative
    {
-     List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
                                       << "commands are only accessible in wizard mode. Note that the game "
                                       << "distinguishes between lowercase and uppercase letters, so if you are "
                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
-     List.AddEntry(CONST_S("u o"), LIGHT_GRAY);
-     List.AddEntry(CONST_S("jkl"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("u o"), LIGHT_GRAY, 0, NO_IMAGE, false);
+     List.AddEntry(CONST_S("jkl"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
    }
    case DIR_HACK: // Nethack
    {
-     List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
                                       << "commands are only accessible in wizard mode. Note that the game "
                                       << "distinguishes between lowercase and uppercase letters, so if you are "
                                       << "experiencing troubles, first check whether you don't have active CapsLock.");
-     List.AddEntry(CONST_S("h l"), LIGHT_GRAY);
-     List.AddEntry(CONST_S("bjn"), LIGHT_GRAY);
+     List.AddEntry(CONST_S("h l"), LIGHT_GRAY, 0, NO_IMAGE, false);
+     List.AddEntry(CONST_S("bjn"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
    }
   }
+
+  std::vector<int> keys;
 
   for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
@@ -1000,14 +1002,15 @@ truth commandsystem::ShowKeyLayout(character*)
       Buffer.Empty();
       Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
       Buffer.Resize(10);
-      List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
+      List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
+      keys.push_back(GetCommand(c)->GetKey());
     }
 
   if(game::WizardModeIsActive())
   {
-    List.AddEntry(CONST_S(""), WHITE);
-    List.AddEntry(CONST_S("Wizard mode functions:"), WHITE);
-    List.AddEntry(CONST_S(""), WHITE);
+    List.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
+    List.AddEntry(CONST_S("Wizard mode functions:"), WHITE, 0, NO_IMAGE, false);
+    List.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
 
     for(int c = 1; GetCommand(c); ++c)
       if(GetCommand(c)->IsWizardModeFunction())
@@ -1015,12 +1018,20 @@ truth commandsystem::ShowKeyLayout(character*)
         Buffer.Empty();
         Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
         Buffer.Resize(10);
-        List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
+        List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
+        keys.push_back(GetCommand(c)->GetKey());
       }
   }
 
   game::SetStandardListAttributes(List);
-  List.Draw();
+  List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
+  int res = List.Draw();
+  if(res >= 0 && res < keys.size()) {
+    bool HasActed = false, ValidKeyPressed = false;
+    Who->PerformPlayerCommand(keys[res], HasActed, ValidKeyPressed);
+    return HasActed;
+  }
+
   return false;
 }
 
