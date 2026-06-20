@@ -1244,8 +1244,8 @@ truth game::TruthQuestion(cfestring& String, int DefaultAnswer, int OtherKeyForT
   else if(DefaultAnswer != REQUIRES_ANSWER)
     ABORT("Illegal TruthQuestion DefaultAnswer send!");
 
-  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
-  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
+  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 8, 'y', 'Y', 'n', 'N', OtherKeyForTrue, KEY_CONTROLLER_A, KEY_CONTROLLER_B, KEY_CONTROLLER_Y);
+  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue || FromKeyQuestion == KEY_CONTROLLER_A;
 }
 
 void game::DrawEverything()
@@ -4314,13 +4314,13 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     else
       GetCurrentArea()->GetSquare(CursorPos)->SendStrongNewDrawRequest();
 
-    if(Key == ' ' || Key == '.')
+    if(Key == ' ' || Key == '.' || Key == KEY_CONTROLLER_A)
     {
       Return = CursorPos;
       break;
     }
 
-    if(Key == KEY_ESC)
+    if(Key == KEY_ESC || Key == KEY_CONTROLLER_B)
     {
       Return = ERROR_V2;
       break;
@@ -4540,7 +4540,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
 
   switch(Key)
   {
-   case 'i':
+   case 'i': case KEY_CONTROLLER_X:
     if(!IsInWilderness())
     {
       if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPosSafely() || GetSeeWholeMapCheatMode()){
@@ -4557,7 +4557,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     }
 
     break;
-   case 'c':
+   case 'c': case KEY_CONTROLLER_Y:
     if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
     {
       character* Char = Square->GetCharacter();

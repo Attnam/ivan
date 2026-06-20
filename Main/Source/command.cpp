@@ -1082,7 +1082,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   }
 
   int Key = 0;
-  while(!(Key == KEY_ESC || Key == ' '))
+  while(!(Key == KEY_ESC || Key == ' ' || Key == KEY_CONTROLLER_B))
   {
     if(!bEngraveMapNote)
       Key = game::AskForKeyPress(CONST_S("Do you want to (.) engrave a square, or inscribe an (i)tem? ['.' or 'i', ESC exits]"));
@@ -1127,7 +1127,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       break;
     }
 
-    if(Key == '.')
+    if(Key == '.' || Key == KEY_CONTROLLER_A)
     {
       festring What;
 
@@ -1137,7 +1137,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       break;
     }
 
-    if(Key == 'i')
+    if(Key == 'i' || Key == KEY_CONTROLLER_Y)
     {
       if(!Char->GetStack()->GetItems())
       {
@@ -1745,11 +1745,13 @@ truth commandsystem::Go(character* Char)
     v2RouteTarget=v2(0,0);
 
   if(!v2RouteTarget.Is0()){
-    switch(game::KeyQuestion(CONST_S("Continue going thru the route? [y/n]"), KEY_ESC, 2, 'y', 'n')){
+    switch(game::KeyQuestion(CONST_S("Continue going thru the route? [y/n]"), KEY_ESC, 4, 'y', 'n', KEY_CONTROLLER_A, KEY_CONTROLLER_B)){
       case 'y':
+      case KEY_CONTROLLER_A:
         Dir = YOURSELF;
         break;
       case 'n':
+      case KEY_CONTROLLER_B:
         v2RouteTarget=v2(0,0);
         break;
       default:

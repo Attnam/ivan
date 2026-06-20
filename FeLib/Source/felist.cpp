@@ -624,7 +624,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     }
     DBGLN;
 
-    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
+    if(Pressed == KEY_ESC || Pressed == KEY_CONTROLLER_B) // this here grants will be preferred over everything else below
     {
       Return = ESCAPED;
       break;
@@ -707,7 +707,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       continue;
     }
 
-    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick))
+    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick || Pressed == KEY_CONTROLLER_A))
     {
       Return = Selected;
       if(!bLeftMouseButtonClick)
@@ -737,6 +737,9 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
     if(!bNav && Pressed == KEY_DOWN)bNav=true;
     if(!bNav && Pressed == KEY_UP)bNav=true;
+    if(!bNav && Pressed == KEY_CONTROLLER_X)bNav=true;
+    if(!bNav && Pressed == KEY_CONTROLLER_Y)bNav=true;
+
 
     if(Pressed == KEY_SPACE) //to work stictly as on the help info
       if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
@@ -751,7 +754,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       int iDir = 1;
       if(bInvM)
         iDir *= -1;
-      if(Pressed == KEY_PAGE_UP || Pressed == KEY_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
+      if(Pressed == KEY_PAGE_UP || Pressed == KEY_UP || Pressed == KEY_CONTROLLER_X) //TODO confirm that this inverts the INVERSE_MODE behavior
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
