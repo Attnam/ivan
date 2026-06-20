@@ -3699,6 +3699,12 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
 
     ValidKeyPressed = true;
     }
+
+  if(Key == KEY_CONTROLLER_Y) {
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    HasActed = commandsystem::ShowKeyLayout(this);
+    }
 }
 
 void character::GetPlayerCommand()
