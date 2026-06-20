@@ -205,6 +205,12 @@ inline int GetMinColor24(col24 Color)
 #define KEY_SPACE ' '
 #define KEY_NUMPAD_5 2
 
+#define KEY_CONTROLLER_DIRECTION 0x200 /* 1 to 9 is added, similar to a numpad */
+#define KEY_CONTROLLER_A         0x205
+#define KEY_CONTROLLER_B         0x210
+#define KEY_CONTROLLER_X         0x211
+#define KEY_CONTROLLER_Y         0x212
+
 #define NO_FLAME 0xFFFF
 
 #define SELECTABLE 1

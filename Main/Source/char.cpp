@@ -3722,21 +3722,26 @@ void character::GetPlayerCommand()
 
     if(!HasActed){
 
+      auto MoveByVector = [&] (v2 Dir) {
+        bool bWaitNeutralMove=false;
+        HasActed = TryMove(ApplyStateModification(Dir), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+        if(HasActed){
+          game::CheckAddAutoMapNote();
+          game::CheckAutoPickup();
+        }
+        if(!HasActed && bWaitNeutralMove){
+          //cant access.. HasActed = commandsystem::NOP(this);
+          Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
+        }
+        ValidKeyPressed = true;
+        };
+
       for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
         if(Key == game::GetMoveCommandKey(c))
-        {
-          bool bWaitNeutralMove=false;
-          HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
-          if(HasActed){
-            game::CheckAddAutoMapNote();
-            game::CheckAutoPickup();
-          }
-          if(!HasActed && bWaitNeutralMove){
-            //cant access.. HasActed = commandsystem::NOP(this);
-            Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
-          }
-          ValidKeyPressed = true;
-        }
+          MoveByVector(game::GetMoveVector(c));
+
+      if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
+        MoveByVector(game::GetDirectionVectorForKey(Key));
 
       for(c = 1; commandsystem::GetCommand(c); ++c)
         if(Key == commandsystem::GetCommand(c)->GetKey())
