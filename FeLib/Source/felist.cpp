@@ -735,6 +735,8 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(!bNav && Pressed == KEY_PAGE_UP)bNav=true;
     if(!bNav && Pressed == KEY_HOME)bNav=true;
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
+    if(!bNav && Pressed == KEY_DOWN)bNav=true;
+    if(!bNav && Pressed == KEY_UP)bNav=true;
 
     if(Pressed == KEY_SPACE) //to work stictly as on the help info
       if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
@@ -749,7 +751,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       int iDir = 1;
       if(bInvM)
         iDir *= -1;
-      if(Pressed == KEY_PAGE_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
+      if(Pressed == KEY_PAGE_UP || Pressed == KEY_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
