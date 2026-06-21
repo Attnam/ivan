@@ -3651,6 +3651,62 @@ truth character::AutoPlayAICommand(int& rKey)
   return true;
 }
 
+void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPressed)
+{
+  auto MoveByVector = [&] (v2 Dir) {
+    if(Dir == v2(0, 0)){
+      Key = '.';
+      return;
+    }
+    bool bWaitNeutralMove=false;
+    HasActed = TryMove(ApplyStateModification(Dir), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+    if(HasActed){
+      game::CheckAddAutoMapNote();
+      game::CheckAutoPickup();
+    }
+    if(!HasActed && bWaitNeutralMove){
+      //cant access.. HasActed = commandsystem::NOP(this);
+      Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
+    }
+    ValidKeyPressed = true;
+    };
+
+  int c;
+  for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+    if(Key == game::GetMoveCommandKey(c))
+      MoveByVector(game::GetMoveVector(c));
+
+  if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
+    MoveByVector(game::GetDirectionVectorForKey(Key));
+
+  if(ValidKeyPressed) return;
+
+  for(c = 1; commandsystem::GetCommand(c); ++c)
+    if(Key == commandsystem::GetCommand(c)->GetKey())
+    {
+      if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
+        ADD_MESSAGE("This function cannot be used while in wilderness.");
+      else
+        if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
+          ADD_MESSAGE("Activate wizardmode to use this function.");
+        else{
+          game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
+          game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
+          HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+          game::RegionListItemEnable(false);
+          game::RegionSilhouetteEnable(false);
+        }
+
+    ValidKeyPressed = true;
+    }
+
+  if(Key == KEY_CONTROLLER_Y) {
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    HasActed = commandsystem::ShowKeyLayout(this);
+    }
+}
+
 void character::GetPlayerCommand()
 {
   truth HasActed = false;
@@ -3692,7 +3748,6 @@ void character::GetPlayerCommand()
       msgsystem::ThyMessagesAreNowOld();
 
     truth ValidKeyPressed = false;
-    int c;
 
 #ifdef WIZARD
     if(IsPlayerAutoPlay()){
@@ -3720,45 +3775,8 @@ void character::GetPlayerCommand()
     }
 #endif
 
-    if(!HasActed){
-
-      for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-        if(Key == game::GetMoveCommandKey(c))
-        {
-          bool bWaitNeutralMove=false;
-          HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
-          if(HasActed){
-            game::CheckAddAutoMapNote();
-            game::CheckAutoPickup();
-          }
-          if(!HasActed && bWaitNeutralMove){
-            //cant access.. HasActed = commandsystem::NOP(this);
-            Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
-          }
-          ValidKeyPressed = true;
-        }
-
-      for(c = 1; commandsystem::GetCommand(c); ++c)
-        if(Key == commandsystem::GetCommand(c)->GetKey())
-        {
-          if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
-            ADD_MESSAGE("This function cannot be used while in wilderness.");
-          else
-            if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
-              ADD_MESSAGE("Activate wizardmode to use this function.");
-            else{
-              game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
-              game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
-              HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
-              game::RegionListItemEnable(false);
-              game::RegionSilhouetteEnable(false);
-            }
-
-          ValidKeyPressed = true;
-          break;
-        }
-
-    }
+    if(!HasActed)
+      PerformPlayerCommand(Key, HasActed, ValidKeyPressed);
 
     if(!ValidKeyPressed)
       ADD_MESSAGE("Unknown key. Press '?' for a list of commands.");

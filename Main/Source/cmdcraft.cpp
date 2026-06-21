@@ -3199,10 +3199,12 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     }
     if(sel==0 && craftcore::HasSuspended()){
       int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER or (c)ancel?"),
-        KEY_ESC, 3, 'r', 'c', KEY_ENTER);
-      if(key==KEY_ESC)return false;
+        KEY_ESC, 6, 'r', 'c', KEY_ENTER, KEY_CONTROLLER_A, KEY_CONTROLLER_Y, KEY_CONTROLLER_B);
+      if(key==KEY_ESC || key == KEY_CONTROLLER_B)return false;
 
       if(key==KEY_ENTER)key='r';
+      if(key == KEY_CONTROLLER_A) key = 'r';
+      if(key == KEY_CONTROLLER_Y) key = 'c';
 
       felist LSusp("Suspended crafting actions:",WHITE);
       game::SetStandardListAttributes(LSusp);

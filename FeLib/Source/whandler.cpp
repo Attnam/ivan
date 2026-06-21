@@ -48,6 +48,9 @@ truth globalwindowhandler::playInBackground=false;
 festring globalwindowhandler::ScrshotDirectoryName = "";
 truth bLastSDLkeyEventIsKeyUp=false;
 
+std::vector<SDL_GameController*> globalwindowhandler::controllers;
+v2 globalwindowhandler::controller_direction;
+
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
   if(Controls == MAX_CONTROLS)
@@ -630,6 +633,15 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     return;
   }else
   if(Event->key.keysym.mod & KMOD_SHIFT){
+    switch(Event->key.keysym.sym)
+    {
+    case SDLK_LEFT:
+      AddKeyToBuffer(KEY_HOME + 0xE000);
+      break;
+    case SDLK_RIGHT:
+      AddKeyToBuffer(KEY_PAGE_UP + 0xE000);
+      break;
+    }
     return;
   }
 
@@ -795,6 +807,49 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
    case SDL_TEXTINPUT: DBG2(Event->key.keysym.sym,Event->text.text[0]);
      AddKeyToBuffer(Event->text.text[0]);
      break;
+
+   case SDL_CONTROLLERDEVICEADDED:
+     controllers.push_back(SDL_GameControllerOpen(Event->cdevice.which));
+     break;
+
+   case SDL_CONTROLLERDEVICEREMOVED:
+     for(auto& c: controllers) if(SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(c)) == Event->cdevice.which){
+       SDL_GameControllerClose(c);
+       c = nullptr;
+       std::swap(c, controllers.back());
+     }
+     if(controllers.size() && controllers.back() == nullptr)
+       controllers.pop_back();
+     break;
+
+  case SDL_CONTROLLERAXISMOTION:
+     controller_direction = v2(0, 0);
+     for(auto c: controllers) {
+       auto x = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_LEFTX);
+       if(x < -10000) controller_direction.X = -1;
+       if(x >  10000) controller_direction.X = +1;
+       x = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_RIGHTX);
+       if(x < -10000) controller_direction.X = -1;
+       if(x >  10000) controller_direction.X = +1;
+       auto y = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_LEFTY);
+       if(y < -10000) controller_direction.Y = -1;
+       if(y >  10000) controller_direction.Y = +1;
+       y = SDL_GameControllerGetAxis(c, SDL_CONTROLLER_AXIS_RIGHTY);
+       if(y < -10000) controller_direction.Y = -1;
+       if(y >  10000) controller_direction.Y = +1;
+       }
+     break;
+
+  case SDL_CONTROLLERBUTTONDOWN:
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) AddKeyToBuffer(0xE000 + KEY_UP);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN) AddKeyToBuffer(0xE000 + KEY_DOWN);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT) AddKeyToBuffer(0xE000 + KEY_LEFT);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) AddKeyToBuffer(0xE000 + KEY_RIGHT);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_A) AddKeyToBuffer(0xE000 + KEY_CONTROLLER_A + 3 * controller_direction.Y + controller_direction.X);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_B) AddKeyToBuffer(0xE000 + KEY_CONTROLLER_B);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_X) AddKeyToBuffer(0xE000 + KEY_CONTROLLER_X);
+    if(Event->cbutton.button == SDL_CONTROLLER_BUTTON_Y) AddKeyToBuffer(0xE000 + KEY_CONTROLLER_Y);
+    break;
 #endif
 
    case SDL_KEYUP: DBGLN;

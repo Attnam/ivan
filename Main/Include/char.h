@@ -1193,6 +1193,7 @@ class character : public entity, public id
   festring GetHitPointDescription() const;
   truth WillGetTurnSoon() const;
   virtual void SetFeedingSumo(truth What) { return; }
+  void PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPressed);
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

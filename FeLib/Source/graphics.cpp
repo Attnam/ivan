@@ -117,6 +117,7 @@ void graphics::Init()
       ABORT("Can't initialize SDL.");
 #if SDL_MAJOR_VERSION == 2
   SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+  SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 #endif
 #endif
 

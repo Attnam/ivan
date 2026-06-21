@@ -326,6 +326,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       break;
 
      case 0x00D:
+     case KEY_CONTROLLER_A:
       bReady = true;
       break;
 

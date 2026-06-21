@@ -86,13 +86,28 @@ class globalwindowhandler
 #endif
 
   const static int iRestWaitKey;
+  static void AddKeyToBuffer(int KeyPressed);
+
+  static bool ControllerEnabled() {
+    #if SDL_MAJOR_VERSION == 2
+    return controllers.size() > 0;
+    #else
+    return false;
+    #endif
+    }
+  static v2 GetControllerDirection() {
+    #if SDL_MAJOR_VERSION == 2
+    return controller_direction;
+    #else
+    return v2(0, 0);
+    #endif
+    }
 
  private:
 #ifdef USE_SDL
   static int ChkCtrlKey(SDL_Event* Event);
   static void ProcessMessage(SDL_Event*);
   static void ProcessKeyDownMessage(SDL_Event* Event);
-  static void AddKeyToBuffer(int KeyPressed);
   static std::vector<int> KeyBuffer;
   static truth (*QuitMessageHandler)();
   static bool (*FunctionKeyHandler)(SDL_Keycode);
@@ -104,6 +119,11 @@ class globalwindowhandler
   static truth ControlLoopsEnabled;
   static truth playInBackground;
   static festring ScrshotDirectoryName;
+
+#if SDL_MAJOR_VERSION == 2
+  static std::vector<SDL_GameController*> controllers;
+  static v2 controller_direction;
+#endif
 };
 
 #endif

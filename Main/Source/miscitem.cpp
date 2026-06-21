@@ -1388,14 +1388,16 @@ truth itemcontainer::Open(character* Opener)
                               "(p)ut something in this container? [t,p]");
   truth Success;
 
-  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
+  switch(game::KeyQuestion(Question, KEY_ESC, 10, 't', 'p', 'T', 'P', KEY_ESC, KEY_CONTROLLER_A, KEY_CONTROLLER_Y, KEY_CONTROLLER_B))
   {
    case 't':
    case 'T':
+   case KEY_CONTROLLER_A:
     Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
     break;
    case 'p':
    case 'P':
+   case KEY_CONTROLLER_Y:
     Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), GetID());
     break;
    default:
