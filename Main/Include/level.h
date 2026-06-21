@@ -37,6 +37,7 @@ class material;
 class team;
 struct node;
 struct emitter;
+struct blitdata;
 template <class type> struct fearray;
 
 struct nodepointerstorer
@@ -197,6 +198,7 @@ class level : public area
   void Explosion(character*, cfestring&, v2, int, truth = true, truth = false);
   truth CollectCreatures(charactervector&, character*, truth);
   void ApplyLSquareScript(const squarescript*);
+  virtual void Draw3(int x, int y, truth esp, blitdata &BlitData) const;
   void DrawHitEffects(cint XMin,cint XMax,cint YMin,cint YMax) const;
   virtual void Draw(truth) const;
   v2 GetEntryPos(ccharacter*, int) const;

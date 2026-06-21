@@ -195,6 +195,10 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
+
+int game::Mode3Facing;
+const v2 game::FacingVector[] = { v2(1,0), v2(1,1), v2(0,1), v2(-1,1), v2(-1,0), v2(-1,-1), v2(0,-1), v2(1,-1) };
+
 int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
@@ -2956,6 +2960,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       GetWorldMap()->UpdateLOS();
   }
 
+  if(!ivanconfig::GetMode3())
   if(OnScreen(CursorPos))
   {
     if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || GetSeeWholeMapCheatMode())
@@ -2980,7 +2985,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   if(!AnimationDraw)
     msgsystem::Draw();
 
-  if(!bXBRZandFelist && OnScreen(CursorPos))
+  if(!bXBRZandFelist && OnScreen(CursorPos) && !ivanconfig::GetMode3())
   {
     v2 ScreenCoord = CalculateScreenCoordinates(CursorPos);
     blitdata B = { DOUBLE_BUFFER,
@@ -3011,7 +3016,15 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     igraph::DrawCursor(ScreenCoord, CursorData);
   }
 
-  if(!bXBRZandFelist && Player->IsEnabled())
+  if((ivanconfig::GetMode3() && CursorPos != v2(-1,-1)) || OnScreen(CursorPos))
+  {
+    igraph::defx = CursorPos.X;
+    igraph::defy = CursorPos.Y;
+    v2 ScreenCoordinates = CalculateScreenCoordinates(CursorPos);
+    igraph::DrawCursor(ScreenCoordinates, CursorData);
+  }
+
+  if(!bXBRZandFelist && Player->IsEnabled() && !ivanconfig::GetMode3())
   {
     if(Player->IsSmall())
     {
@@ -3059,6 +3072,31 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
           }
         }
       }
+    }
+  }
+
+  if(ivanconfig::GetMode3() && !IsInWilderness())
+  {
+    for(int c = 0; c < Player->GetBodyParts(); ++c)
+    {
+      arm* Arm = dynamic_cast<arm*> (Player->GetBodyPart(c));
+
+      if(!Arm) continue;
+
+      item* Wpn = Arm->GetWielded();
+      if(!Wpn) continue;
+
+      igraph::defx = Arm->IsRightArm() ? 1 : -1;
+      igraph::defy = -1;
+      blitdata BlitData = { DOUBLE_BUFFER,
+        { 0, 0 },
+        { 0, 0 },
+        { TILE_SIZE, TILE_SIZE },
+        { ivanconfig::GetContrastLuminance() },
+        TRANSPARENT_COLOR,
+        ALLOW_ANIMATE | ALLOW_ALPHA | DO_BLIT3 };
+
+      Wpn->Draw(BlitData);
     }
   }
 
@@ -3702,11 +3740,43 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
   return PathAndBaseSaveName;
 }
 
+int MoveToFacing(int d) {
+  for(int k=0; k<8; k++)
+    if(game::GetFacingVector(k) == game::GetMoveVector(d))
+      return k;
+  return DIR_ERROR;
+}
+
+int FacingToMove(int d) {
+  for(int k=0; k<8; k++)
+    if(game::GetFacingVector(d) == game::GetMoveVector(k))
+      return k;
+  return DIR_ERROR;
+}
+
+int game::GetFacing()
+{
+  if(IsInWilderness()) return 0;
+  if(ivanconfig::Mode3FPP()) return MoveToFacing(Mode3Facing)+2;
+  if(ivanconfig::Mode3Iso()) return 7;
+  return 0;
+}
+
+int game::AdjustForFacing(int f)
+{
+  return FacingToMove((MoveToFacing(f)+GetFacing())&7);
+}
+
+int game::UnadjustForFacing(int f)
+{
+  return FacingToMove((MoveToFacing(f)-GetFacing())&7);
+}
+
 int game::GetMoveCommandKeyBetweenPoints(v2 A, v2 B)
 {
   for(int c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if((A + GetMoveVector(c)) == B)
-      return GetMoveCommandKey(c);
+      return GetMoveCommandKey(UnadjustForFacing(c));
 
   return DIR_ERROR;
 }
@@ -3731,7 +3801,7 @@ v2 game::GetDirectionVectorForKey(int Key)
 
   for(int c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if(Key == GetMoveCommandKey(c))
-      return GetMoveVector(c);
+      return GetMoveVector(AdjustForFacing(c));
 
   if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
     {
@@ -3794,7 +3864,7 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
 
     for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == GetMoveCommandKey(c))
-        return c;
+        return AdjustForFacing(c);
 
     if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
       {

@@ -3674,11 +3674,38 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
 
   int c;
   for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-    if(Key == game::GetMoveCommandKey(c))
-      MoveByVector(game::GetMoveVector(c));
+    if(Key == game::GetMoveCommandKey(c)){
+
+      if(ivanconfig::Mode3FPP() && !game::IsInWilderness())
+      {
+        if(c == 3){
+          game::SetFacing(game::AdjustForFacing(0));
+          ValidKeyPressed = true;
+        }
+        if(c == 4){
+          game::SetFacing(game::AdjustForFacing(2));
+          ValidKeyPressed = true;
+        }
+      }
+
+      if(!ValidKeyPressed){
+        int d = game::AdjustForFacing(c);
+        if(!ivanconfig::Mode3FPP()) game::SetFacing(d);
+        MoveByVector(game::GetMoveVector(d));
+      }
+    }
 
   if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
-    MoveByVector(game::GetDirectionVectorForKey(Key));
+  {
+    if(ivanconfig::GetMode3())
+    {
+      auto v = game::GetDirectionVectorForKey(Key);
+      for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+        if(game::GetMoveVector(c) == v)
+          MoveByVector(game::GetMoveVector(game::AdjustForFacing(c)));
+    }
+    else MoveByVector(game::GetDirectionVectorForKey(Key));
+  }
 
   if(ValidKeyPressed) return;
 
@@ -7423,30 +7450,32 @@ void character::Draw(blitdata& BlitData) const
   BlitData.Src.Y = 16;
   cint SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
 
+  const bitmap *b = (bitmap*) igraph::GetSymbolGraphic();
+
   if(GetTeam() == PLAYER->GetTeam() && !IsPlayer()
      && SquareIndex == GetTameSymbolSquareIndex())
   {
     BlitData.Src.X = 32;
-    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(b, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 
   if(IsFlying() && SquareIndex == GetFlySymbolSquareIndex())
   {
     BlitData.Src.X = 128;
-    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(b, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 
   if(IsSwimming() && SquareIndex == GetSwimmingSymbolSquareIndex())
   {
     BlitData.Src.X = 240;
-    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(b, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 
   if(GetAction() && GetAction()->IsUnconsciousness()
      && SquareIndex == GetUnconsciousSymbolSquareIndex())
   {
     BlitData.Src.X = 224;
-    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(b, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 
   BlitData.Src.X = BlitData.Src.Y = 0;

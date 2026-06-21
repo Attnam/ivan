@@ -101,6 +101,7 @@ command* commandsystem::Command[] =
   new command(&Apply, "apply item", 'a', 'a', 'a', false),
   new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
   new command(&Zap, "zap a wand", 'z', 'z', 'z', false),
+  new command(&Mode3, "switch 3D mode", 'Z', 'Z', 'Z', true),
   new command(&Read, "read", 'r', 'r', 'r', false),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
@@ -1721,6 +1722,17 @@ truth commandsystem::ZapItem(character* Char, item* Item)
   {
     return false;
   }
+}
+
+truth commandsystem::Mode3(character*)
+{
+  ivanconfig::SwitchMode3();
+  if(ivanconfig::GetMode3())
+    ADD_MESSAGE("3D mode activated.");
+  else
+    ADD_MESSAGE("Map mode activated.");
+  game::GetCurrentArea()->SendNewDrawRequest();
+  return false;
 }
 
 truth commandsystem::Rest(character* Char)

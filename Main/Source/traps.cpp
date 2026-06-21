@@ -187,7 +187,7 @@ void web::AddTrapName(festring& String, int) const
 
 void web::Draw(blitdata& BlitData) const
 {
-  Picture->LuminanceMaskedBlit(BlitData);
+  igraph::Blit3(Picture, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_WALL | MF_OBJECT);
 }
 
 truth web::IsStuckToBodyPart(int I) const

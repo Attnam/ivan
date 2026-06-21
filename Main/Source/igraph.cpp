@@ -167,6 +167,9 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
   bitmap* CursorBitmap;
   int SrcX = 0;
 
+  if(ivanconfig::GetMode3() && !game::IsInWilderness())
+    BlitData.CustomData |= DO_BLIT3;
+
   if(CursorData & CURSOR_BIG)
   {
     CursorBitmap = BigCursor[CursorData&~CURSOR_FLAGS];
@@ -178,7 +181,7 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
 
   if(!(CursorData & (CURSOR_FLASH|CURSOR_TARGET)))
   {
-    CursorBitmap->LuminanceMaskedBlit(BlitData);
+    Blit3(CursorBitmap, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_WALL | MF_FLOOR | MF_CEIL);
     return;
   }
 
@@ -186,7 +189,7 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
   {
     int Tick = GET_TICK() & 31;
     CursorBitmap->FillAlpha(95 + 10 * abs(Tick - 16));
-    CursorBitmap->AlphaLuminanceBlit(BlitData);
+    Blit3(CursorBitmap, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_WALL | MF_FLOOR | MF_CEIL);
     return;
   }
 
@@ -195,11 +198,11 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
   int Base = Frame << 4;
   BlitData.Src.X = SrcX + (CursorData & CURSOR_BIG ? Base << 1 : Base);
   CursorBitmap->FillAlpha(255 - (Tick & 0xF) * 16);
-  CursorBitmap->AlphaLuminanceBlit(BlitData);
+  Blit3(CursorBitmap, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_WALL | MF_FLOOR | MF_CEIL);
   Base = ((Frame + 1) % 3) << 4;
   BlitData.Src.X = SrcX + (CursorData & CURSOR_BIG ? Base << 1 : Base);
   CursorBitmap->FillAlpha((Tick & 0xF) * 16);
-  CursorBitmap->AlphaLuminanceBlit(BlitData);
+  Blit3(CursorBitmap, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_WALL | MF_FLOOR | MF_CEIL);
 }
 
 tilemap::iterator igraph::AddUser(const graphicid& GI)
@@ -756,3 +759,479 @@ void igraph::AddOutlinesIfNeeded() {
   // RawGraphic[GR_HUMANOID]->Save("test-humanoid.png");
   // RawGraphic[GR_CHARACTER]->Save("test-character.png");
 }
+
+int NewRedLuminance, NewGreenLuminance, NewBlueLuminance;
+
+void setLum(blitdata& B, int mode) {
+  if(!(mode & MF_BLIT_LUMINANCE_MASKED))
+    NewRedLuminance = NewGreenLuminance = NewBlueLuminance = 0;
+  else {
+    NewRedLuminance = (B.Luminance >> 7 & 0x1F800) - 0x10000;
+    NewGreenLuminance = (B.Luminance >> 4 & 0xFE0) - 0x800;
+    NewBlueLuminance = (B.Luminance >> 2 & 0x3F) - 0x20;
+  }
+}
+
+struct fpoint4 {
+  int x, y, z, ax;
+  fpoint4() {}
+  fpoint4(int X, int Y, int Z, int AX=0) {x=X; y=Y; z=Z; ax=AX;}
+};
+
+fpoint4 operator + (fpoint4& a, fpoint4& b) {
+  return fpoint4(a.x+b.x, a.y+b.y, a.z+b.z, a.ax+b.ax);
+}
+
+struct fpoint {
+  bool ok;
+  float x;
+  float y;
+  fpoint() {ok = false;}
+  fpoint(fpoint4 i);
+};
+
+static inline float cross(fpoint a, fpoint b, int x, int y) {
+  return (x-a.x) * (b.y-a.y) - (b.x-a.x) * (y-a.y);
+}
+
+#include "char.h"
+
+int currEye, cc, currAY;
+
+fpoint::fpoint(fpoint4 i) {
+
+  int sx = game::GetScreenXSize();
+  int sy = game::GetScreenYSize();
+
+  if(igraph::defy == -1) {
+    y = (26 - i.x - i.y) / 2.0;
+    if(y <= 0) {ok = false; return;}
+    x = i.x - i.y;
+    x = igraph::defx * (16+x);
+    if(cc == 1) x -= 2;
+    if(cc == 2) x += 2;
+    x = sx*8 + sy*2*x/y;
+    y = sy*8 + sy*32/y;
+    x += sx * currEye / 10.0;
+    ok = true;
+    return;
+  }
+
+  float tx = i.x - PLAYER->GetPos().X * 64 - 32;
+  float ty = i.y - PLAYER->GetPos().Y * 64 - 32;
+
+  if(ivanconfig::Mode3FPP()) {
+
+    int fac = game::GetFacing();
+
+    float angle = fac * M_PI / 4;
+
+    float S = -sin(angle);
+    float C = cos(angle);
+
+    x = tx * C - ty * S + i.ax;
+    y = tx * S + ty * C + currAY;
+
+    if(cc == 1) x += 2;
+    if(cc == 2) x -= 2;
+
+    ok = y < -1e-6;
+    if(!ok) return;
+
+    float eyelevel = (PLAYER->GetSize() * 64) / 300.0;
+    if(eyelevel > 63) eyelevel = 63;
+
+    if(PLAYER -> IsFlying())
+      eyelevel = 48 + sin(GET_TICK()/16.0);
+
+    eyelevel = i.z - eyelevel;
+
+    if(PLAYER -> TemporaryStateIsActivated(CONFUSED)) {
+      float angle = GET_TICK() * M_PI / 64;
+      tx = x; ty = eyelevel;
+      S = -sin(angle);
+      C = cos(angle);
+      x = C * tx + S * ty;
+      eyelevel = -S * tx + C * ty;
+      }
+
+    x = sx * 8 - sy * 8 * x / y - 0.5;
+    x += sx * currEye / 10.0;
+    y = sy * 8 + sy * 8 * eyelevel / y - 0.5;
+  }
+  else {
+    x = tx - ty; y = tx + ty;
+    if(!ivanconfig::GetShowAllInIso()) x *= sqrt(3.0) / 2;
+    x = sx * 8 + x/2.0 + i.ax/2.0 - 0.5;
+    y = sy * 8 + y/4.0-i.z /2.0 - 0.5;
+    ok = true;
+  }
+}
+
+static inline col16 apply(col16 SrcCol, col16 DestCol, alpha Alpha) {
+  int Red   = (SrcCol & 0xF800) + NewRedLuminance;
+  int Green = (SrcCol & 0x7E0 ) + NewGreenLuminance;
+  int Blue  = (SrcCol & 0x1F  ) + NewBlueLuminance;
+
+  if(cc == 2)
+  {
+    Green += (Red >> 14) << 5;
+    Blue  += (Red >> 15);
+  }
+  if(cc == 1)
+    Red += ((Green >> 10) + (Blue >> 5)) << 11;
+
+  if(Red   >= 0) {if(Red   > 0xF800) Red   = 0xF800;} else Red   = 0;
+  if(Green >= 0) {if(Green > 0x7E0 ) Green = 0x7E0 ;} else Green = 0;
+  if(Blue  >= 0) {if(Blue  > 0x1F  ) Blue  = 0x1F  ;} else Blue  = 0;
+
+  int DestRed = (DestCol & 0xF800);
+  int DestGreen = (DestCol & 0x7E0);
+  int DestBlue = (DestCol & 0x1F);
+
+  if(cc != 2)
+    Red = (((Red - DestRed) * Alpha >> 8) + DestRed) & 0xF800;
+  else
+    Red = DestRed;
+  if(cc != 1)
+  {
+    Green = (((Green - DestGreen) * Alpha >> 8) + DestGreen) & 0x7E0;
+    Blue = ((Blue - DestBlue) * Alpha >> 8) + DestBlue;
+  }
+  else
+  {
+    Green = DestGreen;
+    Blue = DestBlue;
+  }
+  return Red | Green | Blue;
+}
+
+struct boundbox {
+  int xmin, ymin, xmax, ymax;
+  boundbox(fpoint bp[4]) {
+    int sx = game::GetScreenXSize();
+    int sy = game::GetScreenYSize();
+
+    xmin = sx*16; ymin = sy*16; xmax = 0; ymax = 0;
+
+    for(int k=0; k<4; k++) {
+      if(bp[k].x < xmin) xmin = int(floor(bp[k].x));
+      if(bp[k].x > xmax) xmax = int(ceil (bp[k].x));
+      if(bp[k].y < ymin) ymin = int(floor(bp[k].y));
+      if(bp[k].y > ymax) ymax = int(ceil (bp[k].y));
+    }
+
+    if(xmin < 0) xmin = 0; if(xmax >= sx*16) xmax = sx*16-1;
+    if(ymin < 0) ymin = 0; if(ymax >= sy*16) ymax = sy*16-1;
+  }
+};
+
+void fDrawRect(fpoint a, fpoint b, fpoint c, fpoint d, col16 SrcCol, alpha Alpha) {
+
+  fpoint p[4];
+  p[0] = a; p[1] = b; p[2] = c; p[3] = d;
+  if((!a.ok) || (!b.ok) || (!c.ok) || (!d.ok)) return;
+  boundbox bb(p);
+
+  for(int x=bb.xmin; x<=bb.xmax; x++) for(int y=bb.ymin; y<=bb.ymax; y++) {
+    if(cross(a,b,x,y) > -1e-6 &&
+       cross(b,c,x,y) > +1e-6 &&
+       cross(c,d,x,y) > +1e-6 &&
+       cross(d,a,x,y) > -1e-6
+       ) {
+
+      col16 DestCol = DOUBLE_BUFFER->GetPixel(16+x, 32+y);
+
+      DOUBLE_BUFFER->PutPixel(16+x, 32+y, apply(SrcCol, DestCol, Alpha));
+    }
+  }
+}
+
+#define SetCA \
+  col16 c = b->GetPixel(B.Src.X+px, B.Src.Y+py);    \
+  if(c == mask) continue;                           \
+  if(non != -1) { Alpha = (c == non) ? 192 : 256; } \
+  if((mode & MF_BLIT_ALPHA) && b->GetAlphaMap())    \
+    Alpha = b->GetAlpha(B.Src.X+px, B.Src.Y+py);    \
+
+#define RF2(x) (RF(x+1)?x+1:x)
+#define RF4(x) (RF(x+2)?RF2(x+2):RF2(x))
+#define RF8(x) (RF(x+4)?RF4(x+4):RF4(x))
+#define RF16(v) if(RF(8)) \
+  {if(RF(16)) continue; v = RF8(8);} else {if(!RF(0)) continue; v = RF8(0);}
+
+void tileRect(const bitmap *b, blitdata &B, int mode,
+  fpoint4 corner, fpoint4 dx, fpoint4 dy, bool mirror, int non) {
+
+  if(ivanconfig::GetAnaglyph() && (currEye == 0))
+  {
+    currEye = ivanconfig::GetAnaglyph(); cc = 1;
+    tileRect(b,B,mode,corner,dx,dy,mirror,non);
+    currEye = -ivanconfig::GetAnaglyph(); cc = 2;
+    tileRect(b,B,mode,corner,dx,dy,mirror,non);
+    currEye = 0; cc = 0;
+    return;
+  }
+  if(igraph::defy != -1) {
+    corner.x += igraph::defx * 64;
+    corner.y += igraph::defy * 64;
+  }
+  fpoint4 p[32][32];
+  fpoint pt[32][32];
+  p[0][0] = corner;
+  for(int py=0; py<16; py++) p[py+1][0] = p[py][0] + dy;
+  for(int py=0; py<=16; py++) {
+    for(int px=0; px<16; px++) p[py][px+1] = p[py][px] + dx;
+  }
+  for(int py=0; py<=16; py++) {
+    pt[py][0]  = fpoint(p[py][0]);
+    pt[py][16] = fpoint(p[py][16]);
+    pt[0][py]  = fpoint(p[0][py]);
+    pt[16][py] = fpoint(p[16][py]);
+  }
+  int Alpha = 256;
+  int mask = B.MaskColor;
+  if((!pt[0][0].ok) && (!pt[0][16].ok) && (!pt[16][0].ok) && (!pt[16][16].ok))
+    return;
+  if(pt[0][0].ok && pt[0][16].ok && pt[16][0].ok && pt[16][16].ok) {
+    fpoint p[4];
+    p[0] = pt[0][0]; p[1] = pt[0][16]; p[2] = pt[16][0]; p[3] = pt[16][16];
+    boundbox bb(p);
+    for(int x=bb.xmin; x<=bb.xmax; x++) for(int y=bb.ymin; y<=bb.ymax; y++) {
+      int px, py;
+      if(mirror) {
+#define RF(c) (cross(pt[0][c], pt[16][c], x,y) > -1e-6)
+        RF16(px);
+#undef RF
+#define RF(c) (cross(pt[c][0], pt[c][16], x,y) < -1e-6)
+        RF16(py);
+#undef RF
+      }
+      else {
+#define RF(c) (cross(pt[0][c], pt[16][c], x,y) < -1e-6)
+        RF16(px);
+#undef RF
+#define RF(c) (cross(pt[c][0], pt[c][16], x,y) > -1e-6)
+        RF16(py);
+#undef RF
+      }
+      SetCA;
+      col16 DestCol = DOUBLE_BUFFER->GetPixel(16+x, 32+y);
+      DOUBLE_BUFFER->PutPixel(16+x, 32+y, apply(c, DestCol, Alpha));
+    }
+  }
+  else {
+    for(int px=1; px<16; px++) for(int py=1; py<16; py++)
+      pt[py][px] = fpoint(p[py][px]);
+    for(int px=0; px<16; px++) for(int py=0; py<16; py++) {
+      SetCA;
+      if(mirror)
+        fDrawRect(pt[py][px], pt[py+1][px], pt[py+1][px+1], pt[py][px+1], c,Alpha);
+      else
+        fDrawRect(pt[py][px], pt[py][px+1], pt[py+1][px+1], pt[py+1][px], c,Alpha);
+    }
+  }
+}
+
+void tileObject(const bitmap *b, blitdata &B, int mode);
+
+void tileFloor(const bitmap *b, blitdata &B, int mode) {
+  tileRect(b, B, mode,
+    fpoint4(0,0,0), fpoint4(4,0,0), fpoint4(0,4,0), true, -1
+  );
+}
+
+void tileTable(const bitmap *b, blitdata &B, int mode) {
+  tileRect(b, B, mode,
+    fpoint4(0,0,16), fpoint4(4,0,0), fpoint4(0,4,0), true, -1
+  );
+}
+
+void tileCeil(const bitmap *b, blitdata &B, int mode) {
+  tileRect(b, B, mode,
+    fpoint4(0,0,64), fpoint4(4,0,0), fpoint4(0,4,0), false, -1
+  );
+}
+
+void tileWalls(const bitmap *b, blitdata &B, int mode) {
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(64,0,64), fpoint4(-4,0,0), fpoint4(0,0,-4), true, -1
+  );
+  tileRect(b, B, mode,
+    fpoint4(64,64,64), fpoint4(0,-4,0), fpoint4(0,0,-4), true, -1
+  );
+  tileRect(b, B, mode,
+    fpoint4(0,64,64), fpoint4(4,0,0), fpoint4(0,0,-4), true, -1
+  );
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(0,0,64), fpoint4(0,4,0), fpoint4(0,0,-4), true, -1
+  );
+  if(ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(0,0,64), fpoint4(4,0,0), fpoint4(0,4,0), true, -1
+  );
+}
+
+void tileWindow(const bitmap *b, blitdata &B, int mode) {
+  int cw = b->GetPixel(8,8);
+  if(ivanconfig::Mode3Iso()) cw = -1;
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(64,0,64), fpoint4(-4,0,0), fpoint4(0,0,-4), true, cw
+  );
+  tileRect(b, B, mode,
+    fpoint4(64,64,64), fpoint4(0,-4,0), fpoint4(0,0,-4), true, cw
+  );
+  tileRect(b, B, mode,
+    fpoint4(0,64,64), fpoint4(4,0,0), fpoint4(0,0,-4), true, cw
+  );
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(0,0,64), fpoint4(0,4,0), fpoint4(0,0,-4), true, cw
+  );
+  if(ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(0,0,64), fpoint4(4,0,0), fpoint4(0,4,0), true, -1
+  );
+}
+
+void tileLowWalls(const bitmap *b, blitdata &B, int mode) {
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(64,0,16), fpoint4(-4,0,0), fpoint4(0,0,-1), true, -1
+  );
+  tileRect(b, B, mode,
+    fpoint4(64,64,16), fpoint4(0,-4,0), fpoint4(0,0,-1), true, -1
+  );
+  tileRect(b, B, mode,
+    fpoint4(0,64,16), fpoint4(4,0,0), fpoint4(0,0,-1), true, -1
+  );
+  if(!ivanconfig::Mode3Iso())
+  tileRect(b, B, mode,
+    fpoint4(0,0,16), fpoint4(0,4,0), fpoint4(0,0,-1), true, -1
+  );
+}
+
+void tileObject(const bitmap *b, blitdata &B, int mode) {
+  currAY = 24;
+  tileRect(b, B, mode,
+    fpoint4(32,32,64,-32), fpoint4(0,0,0,4), fpoint4(0,0,-4), true, -1
+  );
+  currAY = 0;
+}
+
+void tileLarge(const bitmap *b, blitdata &B, int mode) {
+  int i = B.CustomData & SQUARE_INDEX_MASK;
+  int cx = 1-i&1, cy = 1-(i>>1)&1;
+  if(ivanconfig::Mode3Iso()) {
+    tileRect(b, B, mode,
+      fpoint4(cx*64,cy*64,64+cy*64,-cx*64), fpoint4(0,0,0,4), fpoint4(0,0,-4), true, -1
+    );
+    return;
+  }
+  currAY = 64;
+  tileRect(b, B, mode,
+    fpoint4(cx*64,cy*64,32+cy*32,-cx*48), fpoint4(0,0,0,3), fpoint4(0,0,-2), true, -1
+  );
+  currAY = 0;
+}
+
+void tileOnFloor(const bitmap *b, blitdata &B, int mode) {
+  int m = B.CustomData & SQUARE_INDEX_MASK;
+  if(m)
+  {
+  if(m == 1+DOWN)
+  tileRect(b, B, mode,
+    fpoint4(0,0,48), fpoint4(4,0,0), fpoint4(0,0,-4), true, -1
+  );
+  if(m == 1+LEFT)
+  tileRect(b, B, mode,
+    fpoint4(64,0,-16), fpoint4(0,0,4), fpoint4(0,4,0), true, -1
+  );
+  if(m == 1+UP)
+  tileRect(b, B, mode,
+    fpoint4(0,64,-16), fpoint4(4,0,0), fpoint4(0,0,4), true, -1
+  );
+  if(m == 1+RIGHT)
+  tileRect(b, B, mode,
+    fpoint4(0,0,48), fpoint4(0,0,-4), fpoint4(0,4,0), true, -1
+  );
+  return;
+  }
+  if(ivanconfig::Mode3Iso()) {
+    tileObject(b, B, mode);
+    return;
+  }
+
+  for(int y=15; y>=0; y--)
+  for(int x=0; x<16; x++)
+  if(b->GetPixel(x,y) != B.MaskColor)
+  {
+    currAY = 12;
+    tileRect(b, B, mode,
+      fpoint4(32,32,2*y+2,-16), fpoint4(0,0,0,2), fpoint4(0,0,-2), true, -1
+    );
+    currAY = 0;
+    return;
+  }
+}
+
+void igraph::fDrawRainPixel(v2 p, col16 c) {
+  NewRedLuminance = NewGreenLuminance = NewBlueLuminance = 0;
+  fDrawRect(
+    fpoint(fpoint4(defx*64+32, defy*64+32, 64-p.Y*4, p.X*4-32)),
+    fpoint(fpoint4(defx*64+32, defy*64+32, 60-p.Y*4, p.X*4-32)),
+    fpoint(fpoint4(defx*64+32, defy*64+32, 60-p.Y*4, p.X*4-28)),
+    fpoint(fpoint4(defx*64+32, defy*64+32, 64-p.Y*4, p.X*4-28)),
+    c,255
+    );
+  }
+
+int igraph::defx;
+int igraph::defy;
+truth igraph::noCeiling;
+
+#include <message.h>
+
+void igraph::Blit3(const bitmap *b, blitdata &B, int mode) {
+
+  if(!(B.CustomData & DO_BLIT3)) switch(mode & MF_BLIT_FLAGS) {
+    case MF_BLIT_ALPHA_PRIORITY: b->AlphaPriorityBlit(B); return;
+    case MF_BLIT_ALPHA_LUMINANCE: b->AlphaLuminanceBlit(B); return;
+    case MF_BLIT_MASKED_PRIORITY: b->MaskedPriorityBlit(B); return;
+    case MF_BLIT_LUMINANCE_MASKED: b->LuminanceMaskedBlit(B); return;
+    default:
+      ADD_MESSAGE("Unknown flag %d.\n", mode);
+      ivanconfig::SwitchMode3();
+    }
+  setLum(B, mode);
+
+  if(defy == -1)
+  {
+    truth tr = defx != -1;
+    if(b->GetPixel(12,12) != B.MaskColor)
+    tileRect(b, B, mode,
+      fpoint4(0,0,0), fpoint4(1,0,0), fpoint4(0,1,0), tr, -1
+    );
+    else
+    tileRect(b, B, mode,
+      fpoint4(15,0,0), fpoint4(-1,0,0), fpoint4(0,1,0), !tr, -1
+    );
+    return;
+  }
+
+  currEye = 0;
+
+  if(mode & MF_FLOOR)   tileFloor   (b, B, mode);
+  if(mode & MF_CEIL)    tileCeil    (b, B, mode);
+  if(mode & MF_OBJECT)  tileObject  (b, B, mode);
+  if(mode & MF_STAIR)   if(ivanconfig::Mode3Iso()) tileObject  (b, B, mode);
+  if(mode & MF_ONFLOOR) tileOnFloor (b, B, mode);
+  if(mode & MF_WALL)    tileWalls   (b, B, mode);
+  if(mode & MF_LOWWALL) tileLowWalls(b, B, mode);
+  if(mode & MF_TABLE)   tileTable   (b, B, mode);
+  if(mode & MF_WINDOW)  tileWindow  (b, B, mode);
+  if(mode & MF_LARGE)   tileLarge   (b, B, mode);
+  }

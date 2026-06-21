@@ -115,7 +115,8 @@ void altar::Draw(blitdata& BlitData) const
 {
   olterrain::Draw(BlitData);
   BlitData.Src.X = GetConfig() << 4;
-  igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+  bitmap *b = (bitmap*) igraph::GetSymbolGraphic();
+  igraph::Blit3(b, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_TABLE);
   BlitData.Src.X = BlitData.Src.Y = 0;
 }
 
