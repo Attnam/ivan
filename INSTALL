@@ -19,7 +19,8 @@ cd build
 cmake ..  # ".." refers to the parent directory of "build"
 make
 make install
-Note: This will make changes to /usr/bin, and you have to either run "sudo make install" instead, or log in as root.  
+
+Note: This will make changes to /usr/bin, and you have to either run "sudo make install" instead, or log in as root.
 Note: Wizard Mode is disabled by default. To enable it run:
 
 mkdir build
@@ -40,19 +41,19 @@ like this: CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP"
 
 Under DOS:
 
-If you have DJGPP 2.03+ and gcc 2.952+
-installed, type:
+If you have DJGPP 2.03+ and gcc 2.952+ installed, type:
 
 make -f ivandj.mak
 
 --------------------------------------
 
-Under Windows - Microsoft Visual Studio 2017 (or better):
+Under Windows - Microsoft Visual Studio 2022:
 
-You will need to install the C++ tools with CMake support, along with Git integrations from the Visual Studio Installer. 
-We will not be using Visual Studio in the traditional way with everything squished into a solution file. 
-Instead we will use Visual Studio to open a repo folder with a top-level CMakeLists.txt, in conjunction with a CMakeSettings.json file to create the cmake build files.
-Then we will use msvc to compile ivan.exe, with the help of libraries we install from vcpkg using Powershell (PS). 
+You will need to install the C++ tools with CMake support, along with Git integrations from the Visual Studio Installer.
+We will not be using Visual Studio in the traditional way with everything squished into a solution file.
+Instead we will use Visual Studio to open a repo folder with a top-level CMakeLists.txt, in conjunction with
+a CMakeSettings.json file to create the cmake build files.
+Then we will use msvc to compile ivan.exe, with the help of libraries we install from vcpkg using Powershell (PS).
 
 Install vcpkg and install the needed libraries using Powershell:
 Here is a condensed summary of applicable instructions from https://github.com/microsoft/vcpkg
@@ -76,7 +77,7 @@ zlib:x86-windows                                   1.2.11-5         A compressio
 
 Clone attnam/ivan into a directory (for example C:\Users\yourname\source\repos\ivan)
 
-Open Microsoft Visual Studio (2017)
+Open Microsoft Visual Studio 2022
 
 Go File->Open Folder
 
@@ -84,7 +85,8 @@ Select C:\Users\yourname\source\repos\ivan
 
 Some stuff will happen automatically. The CMakeSettings.json file will be found, and the CMake cache will be generated.
 
-Next to the green "play" button is some text (Select Startup Item...) in a gray dropdown menu. Select "ivan.exe (Install) (ivan\ivan.exe)".
+Next to the green "play" button is some text (Select Startup Item...) in a gray dropdown menu.
+Select "ivan.exe (Install) (ivan\ivan.exe)".
 
 "Build" will appear in the menu next to "CMake". Click Build->ivan.exe (Install) (ivan\ivan.exe) F7
 
@@ -93,6 +95,14 @@ This will build ivan.exe and install all the components, automatically copying t
 The build folder is located in C:\Users\yourname\CMakeBuilds\some-long-code-here-abcdef123456\install\x86-Release\ivan
 Go there and hit ivan.exe, and you're playing IVAN built using Microsoft Visual Studio!!!
 
+--------------------------------------
+
+Under Windows - Microsoft Visual Studio OTHER THAN 2022:
+
+Instructions are the same as for Microsoft Visual Studio 2022, except that you must open CMakeSettings.json
+in the project folder and change the generator to your version of VS. For example:
+
+  "generator": "Visual Studio 15 2017"
 
 --------------------------------------
 
@@ -136,11 +146,13 @@ Follow instructions on the page to install correctly.
 
 Run MSYS2.exe from either the "-msys64" or "-msys32" folder, depending on your system, and type these commands
 $ pacman -Syu
-Proceed with installation (option Y), then exit by closing the terminal window. The terminal window will crash and burn eventually but may take some time to do so.
+Proceed with installation (option Y), then exit by closing the terminal window.
+The terminal window will crash and burn eventually but may take some time to do so.
 
 Run MSYS2.exe again:
 $ pacman -Su
-proceed with installation (option Y). This will take a long time to download all the packages, depending on your download speed
+Proceed with installation (option Y).
+This will take a long time to download all the packages, depending on your download speed.
 
 $ pacman -S git
 Proceed with installation (option Y) etcetera
@@ -159,10 +171,11 @@ $ pacman -S mingw-w64-i686-SDL2_mixer
 
 $ pacman -S mingw-w64-i686-pkg-config
 
-Now the MSYS2 build system is installed, you only need to follow the instructions below to keep IVAN up to date
+Now the MSYS2 build system is installed, you only need to follow the instructions below to keep IVAN up to date.
 
 Create an empty folder in \ivan\ called msys2
-run MinGW32.exe (from your "-msys64" or "-msys32" folder, whichever is applicable) and change directory to your newly created \ivan\msys2\ folder
+Run MinGW32.exe (from your "-msys64" or "-msys32" folder, whichever is applicable) and change directory to your
+newly created \ivan\msys2\ folder.
 
 In MinGW32.exe type the following commands, respecting the direction of the slashes:
 $ cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=C:/ivan/inst_msys2
@@ -170,7 +183,8 @@ $ make -j4 install
 
 Navigate to \ivan\inst_msys2\ivan and you will find the ivan.exe executable!
 
-You will probably need to copy a bunch of DLLs into the directory where ivan.exe is located. These may include the following, likely not an exhaustive list, but they can be found under for example C:\-msys64\mingw32\bin:
+You will probably need to copy a bunch of DLLs into the directory where ivan.exe is located. These may include
+the following, likely not an exhaustive list, but they can be found under for example C:\-msys64\mingw32\bin:
 libpng16-16.dll
 libstdc++-6.dll
 libwinpthread-1.dll
@@ -180,7 +194,9 @@ libSDL2_mixer-2-0-0.dll
 libmad-0.dll
 
 
-Use dependencywalker if you need to check for missing libraries, and if you get the message: "error cannot find entrypoint inflateValidate (in dll libpng16-16.dll)" then you need to include zlib1.dll
+Use dependencywalker if you need to check for missing libraries, and if you get the message:
+  "error cannot find entrypoint inflateValidate (in dll libpng16-16.dll)"
+then you need to include zlib1.dll
 
 --------------------------------------
 

@@ -72,7 +72,18 @@ install_name_tool -change "${libpng}" @loader_path/../Frameworks/libpng.dylib "$
 #  zip -9 -r --symlinks "${ZIP_FILE}" "${GAME_DIR}"
 #fi
 
+# Workaround resource busy bug on github on MacOS 13
+# https://github.com/actions/runner-images/issues/7522
+# Reference to solution here: https://github.com/actions/runner-images/issues/7522#issuecomment-2530703890
+# And actual code solution here: https://github.com/fredowski/osxbundler/commit/67d668c579d76426e780370eaf6d02858be89180
+i=0
+until
 # for a compact dmg file
 hdiutil create -fs HFSX -fsargs '-c c=64,a=16,e=16' \
                -format UDZO -imagekey zlib-level=9 \
                -volname "${FILENAME}" -srcfolder "${GAME_DIR}" "${DMG_FILE}"
+do
+if [ $i -eq 10 ]; then exit 1; fi
+i=$((i+1))
+sleep 1
+done

@@ -62,12 +62,6 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-  if(ivanconfig::IsStartingOutlinedGfx()){
-    RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
-    RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
-    RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
-  }
-
   static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
@@ -676,4 +670,89 @@ bitmap* igraph::GenerateScarBitmap(int BodyPart, int Severity, int Color)
   }
   Scar->DrawLine(StartPos, EndPos, Color);
   return Scar;
+}
+
+void igraph::AddOutlinesIfNeeded() {
+  static bool CurrentlyOutlined = false;
+  if(ivanconfig::IsOutlinedGfx() == CurrentlyOutlined) return;
+  CurrentlyOutlined = ivanconfig::IsOutlinedGfx();
+
+  for(auto& g: {GR_CHARACTER, GR_ITEM, GR_HUMANOID})
+  {
+    auto& img = RawGraphic[g];
+    delete img;
+    img = new rawbitmap(game::GetDataDir() + RawGraphicFileName[g]);
+    if(!CurrentlyOutlined) continue;
+
+    for(int y=0; y<img->GetSize().Y-15; y+=16)
+    for(int x=0; x<img->GetSize().X-15; x+=16)
+    {
+
+      int S = 16;
+
+      auto large_at = [&] (int x1, int y1)
+      {
+        if(x == x1 && y == y1) S = 32;
+        else if((x == x1 || x == x1+16) && (y == y1 || y == y1+16)) S = 0;
+      };
+
+      int large_size = (x % 32 == 0 && y % 32 == 0) ? 32 : 0;
+
+      if(g == GR_ITEM)
+      {
+        // do not add outlines to lights
+        if(x == 0 && y == 192) S = 0;
+        if(x == 0 && y == 256) S = 0;
+        if(x == 0 && y == 112) S = 0; // protect the Holy Banana
+        // large corpse
+        large_at(48, 0);
+      }
+
+      if(g == GR_HUMANOID)
+      {
+        // do not add outlines to lights
+        if(x == 160 && y == 160) S = 0;
+      }
+
+
+      if(g == GR_CHARACTER)
+      {
+        // paperdolls
+        if(y >= 64 && x < 128) S = 0;
+        // large creatures here
+        if(y >= 64 && x >= 128 && x < 320) S = large_size;
+        // except here
+        if(y >= 96 && y < 128 && x >= 256 && x < 320) S = 16;
+        // more large creatures here
+        if(y >= 32 && y < 64 && x >= 256 && x < 320) S = large_size;
+        if(y >= 32 && y < 64 && x >= 0 && x < 64) S = large_size;
+        // great picture here
+        if(y >= 32 && x >= 320) S = 0;
+        large_at(560, 16);
+      }
+
+      auto xy = v2(x, y);
+      for(int x=0; x<S; x++)
+      for(int y=0; y<S; y++)
+       {
+        auto m = img->GetPixel(v2(xy.X+x, xy.Y+y));
+        if(m != TRANSPARENT_PALETTE_INDEX && m != 0) {
+          auto f = [&] (bool b, v2 adj)
+          {
+            if(b) img->PutPixel(v2(xy.X+x, xy.Y+y), 0);
+            else if(img->GetPixel(adj) == TRANSPARENT_PALETTE_INDEX) img->PutPixel(adj, 0);
+          };
+          f(x == 0, v2(xy.X+x-1, xy.Y+y));
+          f(y == 0, v2(xy.X+x, xy.Y+y-1));
+          f(x == S-1, v2(xy.X+x+1, xy.Y+y));
+          f(y == S-1, v2(xy.X+x, xy.Y+y+1));
+        }
+      }
+    }
+  }
+
+  // uncomment if you want to debug this
+  // RawGraphic[GR_ITEM]->Save("test-item.png");
+  // RawGraphic[GR_HUMANOID]->Save("test-humanoid.png");
+  // RawGraphic[GR_CHARACTER]->Save("test-character.png");
 }

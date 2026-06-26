@@ -1237,14 +1237,16 @@ truth olterraincontainer::Open(character* Opener)
 
   switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or "
                                    "(p)ut something in this container? [t,p]"),
-                           KEY_ESC, 3, 't', 'p', KEY_ESC))
+                           KEY_ESC, 8, 't', 'p', 'T', 'P', KEY_CONTROLLER_A, KEY_CONTROLLER_Y, KEY_CONTROLLER_B, KEY_ESC))
   {
    case 't':
    case 'T':
+   case KEY_CONTROLLER_A:
     Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
     break;
    case 'p':
    case 'P':
+   case KEY_CONTROLLER_Y:
     Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), 0);
     break;
    default:

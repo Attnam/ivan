@@ -264,6 +264,12 @@ bool specialkeys::ControlKeyHandler(SDL_Keycode key)
   case SDLK_DELETE:
     Request=ClearStringInput;
     return true;
+  case SDLK_LEFT:
+    globalwindowhandler::AddKeyToBuffer(KEY_END + 0xE000);
+    break;
+  case SDLK_RIGHT:
+    globalwindowhandler::AddKeyToBuffer(KEY_PAGE_DOWN + 0xE000);
+    break;
   default:
     ckhmap::iterator Iterator = CkhMap.find(key);
     if(Iterator != CkhMap.end()){

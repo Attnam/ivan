@@ -181,6 +181,7 @@ int main(int argc, char** argv)
     switch(Select)
     {
      case 0:
+      igraph::AddOutlinesIfNeeded();
       if(game::Init())
       {
         igraph::UnLoadMenu();
@@ -200,6 +201,7 @@ int main(int argc, char** argv)
         {
           LoadName.Resize(LoadName.GetSize() - 4); // - ".sav"
 
+          igraph::AddOutlinesIfNeeded();
           if(game::Init(LoadName))
           {
             igraph::UnLoadMenu();

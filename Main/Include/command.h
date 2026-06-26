@@ -50,6 +50,7 @@ class commandsystem
   static void LoadSwapWeapons(inputfile& SaveFile);
   static void ClearSwapWeapons();
   static std::vector<v2> GetRouteGoOnCopy();
+  static truth ShowKeyLayout(character*);
  private:
   static truth Apply(character*);
   static truth ApplyWork(character* Char,item* itOverride=NULL);
@@ -79,7 +80,6 @@ class commandsystem
   static truth Read(character*);
   static truth Save(character*);
   static truth ShowInventory(character*);
-  static truth ShowKeyLayout(character*);
   static truth ShowWeaponSkills(character*);
   static truth Talk(character*);
   static truth Throw(character*);

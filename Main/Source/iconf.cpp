@@ -392,7 +392,7 @@ truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "Add a game turn number to each action described in the message log.",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
-                                          "* Use outlined graphics",
+                                          "Use outlined graphics",
                                           "The game graphics will be outlined in black for better differentiation.",
                                           false);
 
@@ -1216,7 +1216,6 @@ int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
 int  ivanconfig::iStartingFontGfx=-1;
-bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
   festring fsCategory;
@@ -1336,7 +1335,6 @@ void ivanconfig::Initialize()
   iStartingWindowHeight = WindowHeight.Value;
   iStartingDungeonGfxScale = DungeonGfxScale.Value;
   iStartingFontGfx = FontGfx.Value;
-  bStartingOutlinedGfx = OutlinedGfx.Value;
 
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);

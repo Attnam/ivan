@@ -306,7 +306,7 @@ uint felist::Draw()
 
   ApplyFilter();
 
-  if(Flags & SELECTABLE){
+  if(Flags & SELECTABLE && !(Flags & DONT_SHOW_KEYS)){
     if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
   }else{
     for(int i=0;i<Entry.size();i++)
@@ -624,7 +624,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     }
     DBGLN;
 
-    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
+    if(Pressed == KEY_ESC || Pressed == KEY_CONTROLLER_B) // this here grants will be preferred over everything else below
     {
       Return = ESCAPED;
       break;
@@ -634,7 +634,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(bJustRefreshOnce)
       continue;
 
-    if((Flags & SELECTABLE) && Pressed > 64 // 65='A' 90='Z'
+    if((Flags & SELECTABLE) && !(Flags & DONT_SHOW_KEYS) && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
     {DBGLN;
@@ -643,7 +643,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       break;
     }
 
-    if((Flags & SELECTABLE) && Pressed > 96 // 97='a' 122='z'
+    if((Flags & SELECTABLE) && !(Flags & DONT_SHOW_KEYS) && Pressed > 96 // 97='a' 122='z'
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
     {DBGLN;
@@ -707,12 +707,27 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       continue;
     }
 
-    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick))
+    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick || Pressed == KEY_CONTROLLER_A))
     {
       Return = Selected;
       if(!bLeftMouseButtonClick)
         bWaitKeyUp=true;
       break;
+    }
+
+    if((Flags & SELECTABLE) && (Pressed >= KEY_CONTROLLER_DIRECTION + 1 && Pressed <= KEY_CONTROLLER_DIRECTION + 9))
+    {
+      auto p = PageBegin;
+      Selected = Selected + Pressed - KEY_CONTROLLER_A;
+      if(Selected > Selectables - 1) Selected = Selectables - 1;
+      if(Selected < 0) Selected = 0;
+      while(Selected < PageBegin && PageLength) PageBegin -= PageLength;
+      while(Selected >= PageBegin + PageLength && PageLength) PageBegin += PageLength;
+
+      if(p != PageBegin) BackGround.FastBlit(Buffer);
+      else JustRedrawEverythingOnce = true;
+
+      continue;
     }
 
     if(bApplyNewFilter){DBGLN;
@@ -735,6 +750,11 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(!bNav && Pressed == KEY_PAGE_UP)bNav=true;
     if(!bNav && Pressed == KEY_HOME)bNav=true;
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
+    if(!bNav && Pressed == KEY_DOWN)bNav=true;
+    if(!bNav && Pressed == KEY_UP)bNav=true;
+    if(!bNav && Pressed == KEY_CONTROLLER_X)bNav=true;
+    if(!bNav && Pressed == KEY_CONTROLLER_Y)bNav=true;
+
 
     if(Pressed == KEY_SPACE) //to work stictly as on the help info
       if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
@@ -749,7 +769,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       int iDir = 1;
       if(bInvM)
         iDir *= -1;
-      if(Pressed == KEY_PAGE_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
+      if(Pressed == KEY_PAGE_UP || Pressed == KEY_UP || Pressed == KEY_CONTROLLER_X) //TODO confirm that this inverts the INVERSE_MODE behavior
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
@@ -859,7 +879,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
     uint Marginal = Entry[c]->Marginal;
 
     bool bIsSelectable = (Flags & SELECTABLE) && Entry[c]->Selectable;
-    if(bIsSelectable){
+    if(bIsSelectable && !(Flags & DONT_SHOW_KEYS)){
       Str << char('A' + (i - PageBegin)) << ": ";
       Marginal += 3;
     }

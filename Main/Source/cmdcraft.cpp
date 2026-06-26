@@ -399,11 +399,6 @@ void recipedata::Load(inputfile& SaveFile)
 
     ;
 
-  if(game::GetCurrentSavefileVersion() >= 135){
-    SaveFile >> bTailoringMode;
-    SaveFile >> v2TailoringWorkbenchLocation;
-  }
-
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
   rc.integrityCheck();
@@ -3062,7 +3057,7 @@ void updateCraftDesc(){
   float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
   festring fsSkill="Crafting Proficiency: ";  // It's actually different from skills, so don't call it a skill.
   static char cSkill[20];
-  sprintf(cSkill, "%.1f",fSkill);
+  snprintf(cSkill, sizeof(cSkill), "%.1f",fSkill);
   fsSkill<<cSkill;
 
   festring fsDesc=fsSkill;
@@ -3204,10 +3199,12 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     }
     if(sel==0 && craftcore::HasSuspended()){
       int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER or (c)ancel?"),
-        KEY_ESC, 3, 'r', 'c', KEY_ENTER);
-      if(key==KEY_ESC)return false;
+        KEY_ESC, 6, 'r', 'c', KEY_ENTER, KEY_CONTROLLER_A, KEY_CONTROLLER_Y, KEY_CONTROLLER_B);
+      if(key==KEY_ESC || key == KEY_CONTROLLER_B)return false;
 
       if(key==KEY_ENTER)key='r';
+      if(key == KEY_CONTROLLER_A) key = 'r';
+      if(key == KEY_CONTROLLER_Y) key = 'c';
 
       felist LSusp("Suspended crafting actions:",WHITE);
       game::SetStandardListAttributes(LSusp);

@@ -164,9 +164,10 @@ truth feline::Catches(item* Thingy)
         if(CanBeSeenByPlayer())
           ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-        if(PLAYER->GetRelativeDanger(this, true) > 0.1)
+        if(PLAYER->GetRelativeDanger(this, true) > 0.1) {
           ChangeTeam(PLAYER->GetTeam());
           ADD_MESSAGE("%s seems to be much more friendly towards you.", CHAR_NAME(DEFINITE));
+        }
       }
     }
     else if(IsPlayer())

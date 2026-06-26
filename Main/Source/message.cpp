@@ -52,7 +52,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
 
   va_list AP;
   va_start(AP, Format);
-  vsprintf(Message, Format, AP);
+  vsnprintf(Message, sizeof(Message), Format, AP);
   va_end(AP);
 
   festring Buffer(Message);

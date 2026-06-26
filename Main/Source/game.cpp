@@ -372,7 +372,7 @@ void game::InitScript()
     for (int f = 0; f <= 99; f++) //additional dungeon files
     {
       char bnum[32];
-      sprintf(bnum, "Script/dungeon_%02d.dat", f);
+      snprintf(bnum, sizeof(bnum), "Script/dungeon_%02d.dat", f);
       inputfile ifl(game::GetDataDir()+bnum, &game::GetGlobalValueMap(), false);
       if (ifl.IsOpen())
       {
@@ -1245,8 +1245,8 @@ truth game::TruthQuestion(cfestring& String, int DefaultAnswer, int OtherKeyForT
   else if(DefaultAnswer != REQUIRES_ANSWER)
     ABORT("Illegal TruthQuestion DefaultAnswer send!");
 
-  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
-  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
+  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 8, 'y', 'Y', 'n', 'N', OtherKeyForTrue, KEY_CONTROLLER_A, KEY_CONTROLLER_B, KEY_CONTROLLER_Y);
+  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue || FromKeyQuestion == KEY_CONTROLLER_A;
 }
 
 void game::DrawEverything()
@@ -3022,6 +3022,17 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
         if(!DoZoom())UpdatePosAroundForXBRZ(Pos);
       }
+
+      if(globalwindowhandler::ControllerEnabled())
+      {
+        auto Pos1 = Pos + globalwindowhandler::GetControllerDirection();
+        if(OnScreen(Pos1))
+        {
+          v2 ScreenCoord1 = CalculateScreenCoordinates(Pos1);
+          igraph::DrawCursor(ScreenCoord1, Player->GetCursorData());
+          if(!DoZoom())UpdatePosAroundForXBRZ(Pos1);
+        }
+      }
     }
     else
     {
@@ -3034,6 +3045,17 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
           v2 ScreenCoord = CalculateScreenCoordinates(Pos);
           igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
           if(!DoZoom())UpdatePosAroundForXBRZ(Pos);
+        }
+
+        if(globalwindowhandler::ControllerEnabled())
+        {
+          auto Pos1 = Pos + globalwindowhandler::GetControllerDirection();
+          if(OnScreen(Pos1))
+          {
+            v2 ScreenCoord1 = CalculateScreenCoordinates(Pos1);
+            igraph::DrawCursor(ScreenCoord1, Player->GetCursorData()|CURSOR_BIG);
+            if(!DoZoom())UpdatePosAroundForXBRZ(Pos1);
+          }
         }
       }
     }
@@ -3710,6 +3732,12 @@ v2 game::GetDirectionVectorForKey(int Key)
     if(Key == GetMoveCommandKey(c))
       return GetMoveVector(c);
 
+  if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
+    {
+      int tmp = Key - KEY_CONTROLLER_DIRECTION - 1;
+      return v2((tmp % 3) - 1, (tmp / 3) - 1);
+    }
+
   return ERROR_V2;
 }
 
@@ -3766,6 +3794,14 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
     for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == GetMoveCommandKey(c))
         return c;
+
+    if(Key >= KEY_CONTROLLER_DIRECTION + 1 && Key <= KEY_CONTROLLER_DIRECTION + 9)
+      {
+        v2 Dir = GetDirectionVectorForKey(Key);
+        for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+          if(GetMoveVector(c) == Dir)
+           return c;
+      }
 
     if(Key==keyChoseDefaultDir)
       return defaultDir;
@@ -4285,13 +4321,13 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     else
       GetCurrentArea()->GetSquare(CursorPos)->SendStrongNewDrawRequest();
 
-    if(Key == ' ' || Key == '.')
+    if(Key == ' ' || Key == '.' || Key == KEY_CONTROLLER_A)
     {
       Return = CursorPos;
       break;
     }
 
-    if(Key == KEY_ESC)
+    if(Key == KEY_ESC || Key == KEY_CONTROLLER_B)
     {
       Return = ERROR_V2;
       break;
@@ -4511,7 +4547,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
 
   switch(Key)
   {
-   case 'i':
+   case 'i': case KEY_CONTROLLER_X:
     if(!IsInWilderness())
     {
       if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPosSafely() || GetSeeWholeMapCheatMode()){
@@ -4528,7 +4564,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     }
 
     break;
-   case 'c':
+   case 'c': case KEY_CONTROLLER_Y:
     if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
     {
       character* Char = Square->GetCharacter();
@@ -5873,7 +5909,7 @@ truth game::ValidateCustomCmdKey(int iNewKey, int iIgnoreIndex, bool bMoveKeys)
 festring IntToHexStr(int i)
 {
   static char hexbuf[100];
-  sprintf(hexbuf, "0x%04X", i);
+  snprintf(hexbuf, sizeof(hexbuf), "0x%04X", i);
   festring fs;fs=hexbuf;
   return fs;
 }

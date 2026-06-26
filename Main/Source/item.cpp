@@ -869,7 +869,7 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
       Entry << " " << GetVolume() * Amount << "cm3"; //the item can be seen therefore it's volume guessed already
       if(GetSecondaryMaterial()==NULL){ //simple items like ingots sticks etc
         static char density[20];
-        sprintf(density, "%.1f", GetWeight()/(float)GetVolume());
+        snprintf(density, sizeof(density), "%.1f", GetWeight()/(float)GetVolume());
         Entry << " " << density << "g/cm3"; //the item can be seen and weighted already so this just helps avoiding having to mentally calc density for every item
         if(game::WizardModeIsActive()) //TODO || Char-> possess item <materialmanual*>
           Entry << " " << GetStrengthValue() << "str"; //this is special info tho.
