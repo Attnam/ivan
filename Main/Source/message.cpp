@@ -16,7 +16,6 @@
 
 #include <cstdarg>
 #include <cctype>
-#include <pcre.h>
 
 #include "iconf.h"
 #include "message.h"
