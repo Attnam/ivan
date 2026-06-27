@@ -125,6 +125,11 @@ class commandsystem
   static truth ToggleRunning(character*);
   static truth IssueCommand(character*);
   static command* Command[];
+
+  static truth ThrowItem(character*, item*);
+  static truth ZapItem(character*, item*);
+  static truth OfferItem(character*, item*);
+  static truth DropItems(character*, std::vector<item*>&);
 };
 
 #endif
