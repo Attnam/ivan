@@ -85,6 +85,7 @@ class felist
   static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
   void ClearFilter();
+  void SetAlternateKeyList(std::vector<int> What) { AlternateKeyList = What; }
  private:
   void PrepareToReturn();
   void ApplyFilter();
@@ -115,6 +116,7 @@ class felist
   static col16 colSelectedBkg;
   v2 v2OriginalPos;
   static v2 v2DefaultEntryImageSize;
+  std::vector<int> AlternateKeyList;
 };
 
 #endif
