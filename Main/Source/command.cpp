@@ -994,7 +994,7 @@ truth commandsystem::ShowKeyLayout(character* Who)
    }
   }
 
-  std::vector<int> keys;
+  std::vector<int> Keys;
 
   for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
@@ -1003,7 +1003,7 @@ truth commandsystem::ShowKeyLayout(character* Who)
       Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
-      keys.push_back(GetCommand(c)->GetKey());
+      Keys.push_back(GetCommand(c)->GetKey());
     }
 
   if(game::WizardModeIsActive())
@@ -1019,16 +1019,17 @@ truth commandsystem::ShowKeyLayout(character* Who)
         Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
         Buffer.Resize(10);
         List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
-        keys.push_back(GetCommand(c)->GetKey());
+        Keys.push_back(GetCommand(c)->GetKey());
       }
   }
 
   game::SetStandardListAttributes(List);
+  List.SetAlternateKeyList(Keys);
   if(Who) List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
-  int res = List.Draw();
-  if(Who && res >= 0 && res < keys.size()) {
+  int Result = List.Draw();
+  if(Who && Result >= 0 && Result < Keys.size()) {
     bool HasActed = false, ValidKeyPressed = false;
-    Who->PerformPlayerCommand(keys[res], HasActed, ValidKeyPressed);
+    Who->PerformPlayerCommand(Keys[Result], HasActed, ValidKeyPressed);
     return HasActed;
   }
 
