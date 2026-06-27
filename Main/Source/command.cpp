@@ -10,6 +10,8 @@
  *
  */
 
+#include <functional>
+
 #include "actions.h"
 #include "bitmap.h"
 #include "char.h"
@@ -510,35 +512,7 @@ truth commandsystem::Drop(character* Char)
     if(ToDrop.empty())
       break;
 
-    if(game::IsInWilderness())
-    {
-      for(uint c = 0; c < ToDrop.size(); ++c)
-      {
-        if(game::TruthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
-                               + " again! [y/N]"))
-        {
-
-          ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
-          ToDrop[c]->RemoveFromSlot();
-          ToDrop[c]->SendToHell();
-        }
-      }
-    }
-    else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
-    {
-      ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).CStr());
-      for(uint c = 0; c < ToDrop.size(); ++c)
-      {
-        ToDrop[c]->MoveTo(Char->GetStackUnder());
-        if(ivanconfig::IsAutoPickupThrownItems()){
-          ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
-          if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
-            ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
-          }
-        }
-      }
-      Success = true;
-    }
+    Success |= DropItems(Char, ToDrop);
   }
 
   if(Success)
@@ -547,6 +521,40 @@ truth commandsystem::Drop(character* Char)
     return true;
   }
 
+  return false;
+}
+
+truth commandsystem::DropItems(character* Char, itemvector& ToDrop)
+{
+  if(game::IsInWilderness())
+  {
+    for(uint c = 0; c < ToDrop.size(); ++c)
+    {
+      if(game::TruthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
+                             + " again! [y/N]"))
+      {
+
+        ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
+        ToDrop[c]->RemoveFromSlot();
+        ToDrop[c]->SendToHell();
+      }
+    }
+  }
+  else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
+  {
+    ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).CStr());
+    for(uint c = 0; c < ToDrop.size(); ++c)
+    {
+      ToDrop[c]->MoveTo(Char->GetStackUnder());
+      if(ivanconfig::IsAutoPickupThrownItems()){
+        ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
+        if(game::IsAutoPickupMatch(ToDrop[c]->GetName(DEFINITE))){
+          ToDrop[c]->SetTag('d'); //intentionally dropped: this will let user decide specific items to NOT auto-pickup regex matching
+        }
+      }
+    }
+    return true;
+  }
   return false;
 }
 
@@ -636,6 +644,164 @@ truth commandsystem::ShowInventory(character* Char)
   Title << "g)";
 
   Char->GetStack()->DrawContents(WhichItem, Char, Title, REMEMBER_SELECTED);
+
+  if(WhichItem.empty()) return false;
+  auto Item = WhichItem[0];
+
+  using action = std::function<bool()>;
+
+  std::vector<int> Keys;
+  std::vector<action> Actions;
+
+  festring Entry;
+  Item->AddInventoryEntry(Char, Entry, WhichItem.size(), 0);
+
+  felist List(Entry);
+
+  game::SetStandardListAttributes(List);
+  List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
+
+  int ImageKey = game::AddToItemDrawVector(WhichItem);
+  List.SetEntryDrawer(game::ItemEntryDrawer);
+  List.AddEntry(Item->GetDescriptiveInfo(), LIGHT_GRAY, 0, ImageKey, false);
+  List.AddEntry("", LIGHT_GRAY, 0, NO_IMAGE, false);
+
+  auto add = [&] (truth (*LinkedFunction)(character*), cchar* Description, action Command)
+  {
+    int Key = 0;
+    int Index = 0;
+    for(int c = 1; GetCommand(c); ++c) if(GetCommand(c)->GetLinkedFunction() == LinkedFunction)
+    {
+      Key = GetCommand(c)->GetKey();
+      Index = c;
+    }
+
+    festring Buffer;
+    if(Key) Buffer << game::ToCharIfPossible(Key) << ": ";
+    if(Description[0] == 0)
+      Buffer << GetCommand(Index)->GetDescription();
+    else
+      Buffer << Description;
+
+    List.AddEntry(Buffer, LIGHT_GRAY, 0, NO_IMAGE, true);
+    Keys.push_back(Key);
+    Actions.push_back(Command);
+  };
+
+  /* special location */
+
+  /* special items */
+  if(Char->UsesNutrition() && Item->IsDrinkable(Char)) {
+    add(&Drink, "", [&] { return Char->ConsumeItem(Item, "drinking", false); });
+    add(&Taste, "", [&] { return Char->ConsumeItem(Item, "sipping", true); });
+  }
+
+  if(Char->UsesNutrition() && Item->IsEatable(Char)) {
+    add(&Eat, "", [&] { return Char->ConsumeItem(Item, "eating", false); });
+  }
+
+  if(Char->CheckZap() && Item->IsZappable(Char))
+    add(&Zap, "", [&] { return ZapItem(Char, Item); });
+
+  if((Char->CanRead() || game::GetSeeWholeMapCheatMode()) && Item->IsReadable(Char))
+    add(&Read, "", [&] { return Char->ReadItem(Item); });
+
+  lsquare* Square = Char->GetLSquareUnder();
+  if(Char->CheckOffer() && Square->GetOLTerrain() && Square->GetOLTerrain()->AcceptsOffers())
+    add(&Offer, "", [&] { return OfferItem(Char, Item); });
+
+  /* note: this has to be outside of Char->CanUseEquipment() to make '&' captures work */
+  auto equipper = [&] (int Chosen) {
+    item* OldEquipment = Char->GetEquipment(Chosen);
+    if(OldEquipment) {
+      if(!OldEquipment->CanBeUnEquipped(Chosen))
+      {
+        ADD_MESSAGE("You fail to unequip %s.", OldEquipment->CHAR_NAME(DEFINITE));
+        return false;
+      }
+      ADD_MESSAGE("You unequip %s.", OldEquipment->CHAR_NAME(DEFINITE));
+      OldEquipment->MoveTo(Char->GetStack());
+    }
+    if(!Item->CanBeEquipped(Chosen))
+    {
+      ADD_MESSAGE("You fail to equip %s.", Item->CHAR_NAME(DEFINITE));
+      return false;
+    }
+    Item->RemoveFromSlot();
+    Char->SetEquipment(Chosen, Item);
+    if(Char->CheckIfEquipmentIsNotUsable(Chosen))
+      Item->MoveTo(Char->GetStack()); // small bug?
+    ADD_MESSAGE("You equip %s.", Item->CHAR_NAME(DEFINITE));
+    return true;
+  };
+
+  auto equipper2 = [&] (int Right, int Left) {
+    if(WhichItem.size() >= 2) {
+      truth right = equipper(Right);
+      if(right) {
+        Item = WhichItem[1];
+        equipper(Left);
+      }
+      return right;
+    }
+    int kq = game::KeyQuestion("(r)ight or (l)eft?", KEY_ESC, 11, 'r', 'R', 'l', 'L', KEY_CONTROLLER_A-1, KEY_CONTROLLER_A+1, KEY_LEFT, KEY_RIGHT, KEY_CONTROLLER_X, KEY_CONTROLLER_A, KEY_CONTROLLER_B);
+    switch(kq) {
+      case 'l':
+      case 'L':
+      case KEY_CONTROLLER_A-1:
+      case KEY_CONTROLLER_A:
+      case KEY_LEFT:
+        return equipper(Left);
+      case 'r':
+      case 'R':
+      case KEY_CONTROLLER_A+1:
+      case KEY_CONTROLLER_B:
+      case KEY_RIGHT:
+        return equipper(Right);
+      default:
+        return false;
+    }
+  };
+
+  if(Char->CanUseEquipment())
+  {
+    if(Item->IsHelmet(Char)) add(&EquipmentScreen, "wear", [&] { return equipper(HELMET_INDEX); });
+    if(Item->IsCloak(Char)) add(&EquipmentScreen, "wear", [&] { return equipper(CLOAK_INDEX); });
+    if(Item->IsAmulet(Char)) add(&EquipmentScreen, "wear", [&] { return equipper(AMULET_INDEX); });
+    if(Item->IsBodyArmor(Char)) add(&EquipmentScreen, "wear", [&] { return equipper(BODY_ARMOR_INDEX); });
+    if(Item->IsBelt(Char)) add(&EquipmentScreen, "wear", [&] { return equipper(BELT_INDEX); });
+
+    if(Item->IsRing(Char)) add(&EquipmentScreen, "wear", [&] { return equipper2(RIGHT_RING_INDEX, LEFT_RING_INDEX); });
+    if(Item->IsGauntlet(Char)) add(&EquipmentScreen, "wear", [&] { return equipper2(RIGHT_GAUNTLET_INDEX, LEFT_GAUNTLET_INDEX); });
+    if(Item->IsBoot(Char)) add(&EquipmentScreen, "wear", [&] { return equipper2(RIGHT_BOOT_INDEX, LEFT_BOOT_INDEX); });
+
+    add(&WieldInLeftArm, "", [&] { return equipper(LEFT_WIELDED_INDEX); });
+    add(&WieldInRightArm, "", [&] { return equipper(RIGHT_WIELDED_INDEX); });
+  }
+
+  add(&WhatToEngrave, "inscribe", [&] {
+    festring What = Item->GetLabel();
+    if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+          for(int i=0;i<WhichItem.size();i++)
+            WhichItem[i]->SetLabel(What);
+    return false;
+    });
+
+  if(Char->CheckThrow()) add(&Throw, "", [&] {
+    return ThrowItem(Char, Item);
+  });
+
+  add(&Drop, "", [&] {
+    truth Success = DropItems(Char, WhichItem);
+    if(Success) Char->DexterityAction(2);
+    return Success;
+  });
+
+  List.SetAlternateKeyList(Keys);
+  int Result = List.Draw();
+  if(Result >= 0 && Result < Keys.size()) {
+    return Actions[Result]();
+  }
   return false;
 }
 
@@ -994,7 +1160,7 @@ truth commandsystem::ShowKeyLayout(character* Who)
    }
   }
 
-  std::vector<int> keys;
+  std::vector<int> Keys;
 
   for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
@@ -1003,7 +1169,7 @@ truth commandsystem::ShowKeyLayout(character* Who)
       Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
       Buffer.Resize(10);
       List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
-      keys.push_back(GetCommand(c)->GetKey());
+      Keys.push_back(GetCommand(c)->GetKey());
     }
 
   if(game::WizardModeIsActive())
@@ -1019,16 +1185,17 @@ truth commandsystem::ShowKeyLayout(character* Who)
         Buffer << game::ToCharIfPossible(GetCommand(c)->GetKey());
         Buffer.Resize(10);
         List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY, 0, NO_IMAGE, true);
-        keys.push_back(GetCommand(c)->GetKey());
+        Keys.push_back(GetCommand(c)->GetKey());
       }
   }
 
   game::SetStandardListAttributes(List);
+  List.SetAlternateKeyList(Keys);
   if(Who) List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
-  int res = List.Draw();
-  if(Who && res >= 0 && res < keys.size()) {
+  int Result = List.Draw();
+  if(Who && Result >= 0 && Result < Keys.size()) {
     bool HasActed = false, ValidKeyPressed = false;
-    Who->PerformPlayerCommand(keys[res], HasActed, ValidKeyPressed);
+    Who->PerformPlayerCommand(Keys[Result], HasActed, ValidKeyPressed);
     return HasActed;
   }
 
@@ -1336,15 +1503,7 @@ truth commandsystem::Offer(character* Char)
 
     if(Item)
     {
-      if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
-      {
-        Item->RemoveFromSlot();
-        Item->SendToHell();
-        Char->DexterityAction(5); /** C **/
-        return true;
-      }
-      else
-        return false;
+      return OfferItem(Char, Item);
     }
     else
       return false;
@@ -1353,6 +1512,20 @@ truth commandsystem::Offer(character* Char)
     ADD_MESSAGE("There isn't any altar here!");
 
   return false;
+}
+
+truth commandsystem::OfferItem(character* Char, item* Item)
+{
+  lsquare* Square = Char->GetLSquareUnder();
+  if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
+  {
+    Item->RemoveFromSlot();
+    Item->SendToHell();
+    Char->DexterityAction(5); /** C **/
+    return true;
+  }
+  else
+    return false;
 }
 
 truth commandsystem::DrawMessageHistory(character*)
@@ -1379,31 +1552,36 @@ truth commandsystem::Throw(character* Char)
 
   if(Item)
   {
-    static int iPreviousDirChosen = DIR_ERROR;
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
-                                                 "[press a direction key or Enter]"), false, false, KEY_ENTER, iPreviousDirChosen);
-
-    if(Answer == DIR_ERROR){
-      return false;
-    }
-
-    iPreviousDirChosen = Answer;
-
-    Char->ThrowItem(Answer, Item);
-    Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
-    Char->EditExperience(DEXTERITY, 75, 1 << 8);
-    Char->EditExperience(PERCEPTION, 75, 1 << 8);
-    Char->EditNP(-50);
-    Char->DexterityAction(5);
-    if(ivanconfig::IsAutoPickupThrownItems())
-      if(Item->IsWeapon(PLAYER)) //TODO never made much sense auto-picking up other things than weapons, but this could be optional
-        Item->SetTag('t');
-    return true;
+    return ThrowItem(Char, Item);
   }
   else
   {
     return false;
   }
+}
+
+truth commandsystem::ThrowItem(character* Char, item* Item)
+{
+  static int iPreviousDirChosen = DIR_ERROR;
+  int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
+                                               "[press a direction key or Enter]"), false, false, KEY_ENTER, iPreviousDirChosen);
+
+  if(Answer == DIR_ERROR){
+    return false;
+  }
+
+  iPreviousDirChosen = Answer;
+
+  Char->ThrowItem(Answer, Item);
+  Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
+  Char->EditExperience(DEXTERITY, 75, 1 << 8);
+  Char->EditExperience(PERCEPTION, 75, 1 << 8);
+  Char->EditNP(-50);
+  Char->DexterityAction(5);
+  if(ivanconfig::IsAutoPickupThrownItems())
+    if(Item->IsWeapon(PLAYER)) //TODO never made much sense auto-picking up other things than weapons, but this could be optional
+      Item->SetTag('t');
+  return true;
 }
 
 ulong itLastApplyID=0; //save it?
@@ -1514,22 +1692,27 @@ truth commandsystem::Zap(character* Char)
 
   if(Item)
   {
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
-                                                 "[press a direction key or '.']"), false, true);
+    return ZapItem(Char, Item);
+  }
+  else
+  {
+    return false;
+  }
+}
 
-    if(Answer == DIR_ERROR){
-      return false;
-    }
+truth commandsystem::ZapItem(character* Char, item* Item)
+{
+  int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
+                                               "[press a direction key or '.']"), false, true);
 
-    if(Item->Zap(Char, Char->GetPos(), Answer))
-    {
-      Char->EditAP(-100000 / APBonus(Char->GetAttribute(PERCEPTION)));
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+  if(Answer == DIR_ERROR){
+    return false;
+  }
+
+  if(Item->Zap(Char, Char->GetPos(), Answer))
+  {
+    Char->EditAP(-100000 / APBonus(Char->GetAttribute(PERCEPTION)));
+    return true;
   }
   else
   {

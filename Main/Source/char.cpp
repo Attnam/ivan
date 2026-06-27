@@ -9420,36 +9420,45 @@ void character::ShowAdventureInfo() const
 void character::ShowAdventureInfoAlt() const
 {
   while(true) {
+    felist List(CONST_S("What do you want to see?"));
+    List.AddEntry("n = nothing", LIGHT_GRAY, 0, NO_IMAGE, true);
+    List.AddEntry("i = inventory", LIGHT_GRAY, 0, NO_IMAGE, true);
+    List.AddEntry("m = message history", LIGHT_GRAY, 0, NO_IMAGE, true);
+    List.AddEntry("k = kill list", LIGHT_GRAY, 0, NO_IMAGE, true);
+    List.AddEntry("s = stats", LIGHT_GRAY, 0, NO_IMAGE, true);
+    List.AddEntry("l = look around", LIGHT_GRAY, 0, NO_IMAGE, true);
+    std::vector<int> Keys = {'n', 'i', 'm', 'k', 's', 'l'};
 #ifdef WIZARD
-    int Answer =
-     game::KeyQuestion(
-       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (s)tats, (l)ook around or (n)othing?"), // ESC implicit
-         'z', 13, 'i','I', 'm','M', 'k','K', 's', 'S', 'l','L', 'x','X', 'n','N', KEY_ESC); //default answer 'z' is ignored
-#else
-    int Answer =
-     game::KeyQuestion(
-       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (s)tats, (l)ook around or (n)othing?"), // ESC implicit
-         'z', 11, 'i','I', 'm','M', 'k','K', 's', 'S', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+    if(game::WizardModeIsActive()) {
+      Keys.push_back('x');
+      List.AddEntry("x = look around (wizard mode)", LIGHT_GRAY, 0, NO_IMAGE, true);
+    }
 #endif
-
-    if(Answer == 'i' || Answer == 'I'){
-      inventoryInfo(this);
-    }else if(Answer == 'm' || Answer == 'M'){
-      msgsystem::DrawMessageHistory();
-    }else if(Answer == 'k' || Answer == 'K'){
-      game::DisplayMassacreLists();
-#ifdef WIZARD
-    }else if(Answer == 'l' || Answer == 'L' || Answer == 'x' || Answer == 'X'){
-      commandsystem::PlayerDiedLookMode(Answer == 'x' || Answer == 'X');
-#else
-    }else if(Answer == 'l' || Answer == 'L'){
-      commandsystem::PlayerDiedLookMode();
-#endif
-}else if(Answer == 's' || Answer == 'S'){
-  DisplayStethoscopeInfo(NULL);
-  commandsystem::PlayerDiedWeaponSkills();
-}else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
-      return;
+    game::SetStandardListAttributes(List);
+    List.SetAlternateKeyList(Keys);
+    List.AddFlags(SELECTABLE | DONT_SHOW_KEYS);
+    int Result = List.Draw();
+    switch(Result) {
+      case 1:
+        inventoryInfo(this);
+        break;
+      case 2:
+        msgsystem::DrawMessageHistory();
+        break;
+      case 3:
+        game::DisplayMassacreLists();
+        break;
+      case 4:
+        DisplayStethoscopeInfo(NULL);
+        commandsystem::PlayerDiedWeaponSkills();
+        break;
+      case 5:
+        commandsystem::PlayerDiedLookMode();
+        break;
+      case 6:
+        commandsystem::PlayerDiedLookMode(true);
+        break;
+      default: return;
     }
   }
 }

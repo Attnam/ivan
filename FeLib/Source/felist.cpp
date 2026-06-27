@@ -634,6 +634,15 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     if(bJustRefreshOnce)
       continue;
 
+    truth Found = false;
+    for(int i=0; i<int(AlternateKeyList.size()); i++) if(AlternateKeyList[i] == Pressed)
+    {
+      Return = i;
+      bWaitKeyUp=true;
+      Found = true;
+    }
+    if(Found) break;
+
     if((Flags & SELECTABLE) && !(Flags & DONT_SHOW_KEYS) && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
