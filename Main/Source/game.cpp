@@ -4271,6 +4271,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   SetDoZoom(Zoom);
   v2 Return;
   CursorData = RED_CURSOR;
+  auto OrigCursorPos = CursorPos;
 
   if(Handler)
     Handler(CursorPos);
@@ -4324,6 +4325,40 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     {
       Return = ERROR_V2;
       break;
+    }
+
+    if(Key == '<' || Key == '>') {
+      std::vector<v2> StairPositions;
+      if(GetCurrentLevel())
+      for(int y=0; y<GetCurrentArea()->GetYSize(); y++)
+      for(int x=0; x<GetCurrentArea()->GetXSize(); x++) {
+        v2 Pos(x, y);
+        lsquare* Square = GetCurrentLevel()->GetLSquare(Pos);
+        if(!Square->HasBeenSeen()) continue;
+        olterrain *olt = Square->GetOLTerrain();
+        if(!olt) continue;
+        if(!(Key == '<' ? olt->IsUpLink() : olt->IsDownLink())) continue;
+        StairPositions.push_back(Pos);
+      }
+      if(StairPositions.empty()) {
+        ADD_MESSAGE("No stairway known in this direction.");
+      }
+      else {
+        std::sort(StairPositions.begin(), StairPositions.end(), [&] (v2 a, v2 b) {
+          return std::make_pair((a-OrigCursorPos).GetLengthSquare(), a) < std::make_pair((b-OrigCursorPos).GetLengthSquare(), b);
+        });
+        int s = StairPositions.size();
+        bool Found = false;
+        for(int i=0; i<s; i++) if(StairPositions[i] == CursorPos)
+        {
+          CursorPos = StairPositions[(i+1)%s];
+          Found = true;
+          break;
+        }
+        if(!Found) CursorPos = StairPositions[0];
+        if(Handler)
+          Handler(CursorPos);
+      }
     }
 
     v2 DirectionVector = GetDirectionVectorForKey(Key);

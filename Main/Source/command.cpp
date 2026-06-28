@@ -1846,7 +1846,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
 
               festring fsMsg = pv2ChoseLocation!=NULL ? "Choose a location." :
                 "Where do you wish to add a map note?";
-              fsMsg<<" [direction keys move cursor, space accepts]";
+              fsMsg<<" [direction keys move cursor, space accepts, </> stairs]";
 
               v2 start;
               if(pv2ChoseLocation!=NULL){
