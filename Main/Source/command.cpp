@@ -1844,7 +1844,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
             if(noteAddPos==Char->GetPos()){
               game::RefreshDrawMapOverlay();
 
-              festring fsMsg = pv2ChoseLocation!=NULL ? "Chose a location." :
+              festring fsMsg = pv2ChoseLocation!=NULL ? "Choose a location." :
                 "Where do you wish to add a map note?";
               fsMsg<<" [direction keys move cursor, space accepts]";
 
