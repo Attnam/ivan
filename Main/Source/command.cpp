@@ -1935,8 +1935,8 @@ truth commandsystem::Go(character* Char)
     Key = GET_KEY();
     igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
-    if(Key == KEY_ESC) return false;
-    if(Key == 'x' || Key == KEY_CONTROLLER_X) {
+    if(Key == KEY_ESC || Key == KEY_CONTROLLER_X) return false;
+    if(Key == 'x' || Key == KEY_CONTROLLER_Y) {
       if(!game::IsInWilderness())
       {
         autoexplore* Go = autoexplore::Spawn(Char);
