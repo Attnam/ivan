@@ -4260,6 +4260,25 @@ int game::AskForKeyPress(cfestring& Topic)
   return Key;
 }
 
+/* Key is '<' or '>' */
+std::vector<v2> game::ListFeaturesOnLevel(v2 CursorPos, int Key)
+{
+  auto Level = GetCurrentLevel();
+  if(!Level) return {};
+  std::vector<v2> Positions;
+  for(int y=0; y<GetCurrentArea()->GetYSize(); y++)
+  for(int x=0; x<GetCurrentArea()->GetXSize(); x++) {
+    v2 Pos(x, y);
+    lsquare* Square = GetCurrentLevel()->GetLSquare(Pos);
+    if(!Square->HasBeenSeen()) continue;
+    olterrain *olt = Square->GetOLTerrain();
+    if(!olt) continue;
+    if(!(Key == '<' ? olt->IsUpLink() : olt->IsDownLink())) continue;
+    Positions.push_back(Pos);
+  }
+  return Positions;
+}
+
 /* Handler is called when the key has been identified as a movement key
  * KeyHandler is called when the key has NOT been identified as a movement key
  * Both can be deactivated by passing 0 as parameter */
@@ -4328,18 +4347,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     }
 
     if(Key == '<' || Key == '>') {
-      std::vector<v2> StairPositions;
-      if(GetCurrentLevel())
-      for(int y=0; y<GetCurrentArea()->GetYSize(); y++)
-      for(int x=0; x<GetCurrentArea()->GetXSize(); x++) {
-        v2 Pos(x, y);
-        lsquare* Square = GetCurrentLevel()->GetLSquare(Pos);
-        if(!Square->HasBeenSeen()) continue;
-        olterrain *olt = Square->GetOLTerrain();
-        if(!olt) continue;
-        if(!(Key == '<' ? olt->IsUpLink() : olt->IsDownLink())) continue;
-        StairPositions.push_back(Pos);
-      }
+      std::vector<v2> StairPositions = ListFeaturesOnLevel(CursorPos, Key);
       if(StairPositions.empty()) {
         ADD_MESSAGE("No stairway known in this direction.");
       }

@@ -13,6 +13,7 @@
 /* Compiled through levelset.cpp */
 
 #include "dbgmsgproj.h"
+#include <actions.h>
 
 lsquare*** eyecontroller::Map;
 
@@ -1264,6 +1265,10 @@ truth lsquare::TryKey(item* Key, character* Applier)
 
 void lsquare::SignalSeen(ulong Tick)
 {
+  if(!Memorized)
+  {
+    autoexplore::AddToNewlySeen(this);
+  }
   if(LastSeen < Tick - 2)
     Flags |= STRONG_NEW_DRAW_REQUEST;
 

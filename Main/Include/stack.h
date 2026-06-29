@@ -159,9 +159,9 @@ class stack
   static void SetStandardPageLength(uint l){ StandardPageLength = l; };
   static uint GetStandardPageLength(){ return StandardPageLength; };
   static uint GetDefaultPageLength(){ return 12; };
+  void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;
  private:
   void RemoveElement(stackslot*);
-  void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;
   int SearchChosen(itemvector&, ccharacter*, int, int, int, int, sorter = 0) const;
   static truth AllowDamage(int, int);
   static int Selected;

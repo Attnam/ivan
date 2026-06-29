@@ -14,6 +14,7 @@
 
 #include "actions.h"
 #include "bitmap.h"
+#include "rawbit.h"
 #include "char.h"
 #include "command.h"
 #include "confdef.h"
@@ -1919,91 +1920,109 @@ std::vector<v2> commandsystem::GetRouteGoOnCopy(){
 
 truth commandsystem::Go(character* Char)
 {
-  int Dir = DIR_ERROR;
-
+  int Key;
   if(LevelRouteGoOn!=Char->GetLevel())
     v2RouteTarget=v2(0,0);
 
   if(Char->GetPos()==v2RouteTarget) //TODO is near by 1 dist (2 or more may have a wall in-between)
     v2RouteTarget=v2(0,0);
 
-  if(!v2RouteTarget.Is0()){
-    switch(game::KeyQuestion(CONST_S("Continue going thru the route? [y/n]"), KEY_ESC, 4, 'y', 'n', KEY_CONTROLLER_A, KEY_CONTROLLER_B)){
-      case 'y':
-      case KEY_CONTROLLER_A:
-        Dir = YOURSELF;
-        break;
-      case 'n':
-      case KEY_CONTROLLER_B:
-        v2RouteTarget=v2(0,0);
-        break;
-      default:
-        return false;
-    }
-  }
+  while(true) {
+    festring options = "Press a direction key to fast-walk, '.'/'<'/'>' to route, 'x' to autoexplore";
+    if(!v2RouteTarget.Is0()) options << ", 'g' to continue";
 
-  if(Dir == DIR_ERROR)
-    Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key or '.' for map route]"), false, true);
+    FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", options.CStr());
+    Key = GET_KEY();
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
-  if(Dir == DIR_ERROR)
-    return false;
-
-  RouteGoOn.clear();
-  if(Dir == YOURSELF){
-    if(v2RouteTarget.Is0())
-      if(!ShowMapWork(Char,&v2RouteTarget)){
-        v2RouteTarget=v2(0,0);
-        return false;
-      }
-
-    if(Char->GetPos()==v2RouteTarget){
-      v2RouteTarget=v2(0,0);
-      return false;
-    }
-
-    std::set<v2> Illegal;
-    node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), v2RouteTarget, Illegal, 0, Char);
-    if(Node){
-      RouteGoOn.clear();
-      while(Node->Last)
+    if(Key == KEY_ESC) return false;
+    if(Key == 'x' || Key == KEY_CONTROLLER_X) {
+      if(!game::IsInWilderness())
       {
-        RouteGoOn.push_back(Node->Pos);
-        Node = Node->Last;
+        autoexplore* Go = autoexplore::Spawn(Char);
+        Char->SetAction(Go);
+        Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+        Go->Handle();
+        if(!Char->GetAction())
+        {
+          ADD_MESSAGE("Nothing left to explore safely.");
+          return false;
+        }
+        return true;
+      }
+      else {
+        ADD_MESSAGE("Not available in the wilderness.");
+        return false;
       }
     }
-  }
+    if(Key == '.' || Key == '>' || Key == '<' || Key == 'g' || Key == KEY_CONTROLLER_A || Key == KEY_CONTROLLER_B) {
+      if(Key != 'g' && Key != KEY_CONTROLLER_B) {
+        v2 Pos = Char->GetPos();
 
-  if(Dir == YOURSELF && RouteGoOn.size()==0){
-    v2RouteTarget=v2(0,0);
-    return false;
-  }
+        if(Key != '.' && Key != KEY_CONTROLLER_A) {
+          auto Pos2 = game::ListFeaturesOnLevel(Pos, Key);
+          if(Pos2.empty()) ADD_MESSAGE("No stairway known in this direction.");
+          else Pos = Pos2[0];
+        }
+        v2RouteTarget = Pos;
+        if(!ShowMapWork(Char,&v2RouteTarget)){
+          v2RouteTarget=v2(0,0);
+          return false;
+        }
+      }
 
-  go* Go = go::Spawn(Char);
-  if(Dir == YOURSELF){
-    Go->SetRoute(RouteGoOn);
-    Go->SetDirectionFromRoute();
-    Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
-    LevelRouteGoOn=Char->GetLevel();
-  }else{
-    Go->SetDirection(Dir);
+      if(Char->GetPos()==v2RouteTarget){
+        v2RouteTarget=v2(0,0);
+        return false;
+      }
 
-    int OKDirectionsCounter = 0;
+      std::set<v2> Illegal;
 
-    for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
-    {
-      lsquare* Square = Char->GetNeighbourLSquare(d);
+      node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), v2RouteTarget, Illegal, 0, Char);
+      if(Node){
+        RouteGoOn.clear();
+        while(Node->Last)
+        {
+          RouteGoOn.push_back(Node->Pos);
+          Node = Node->Last;
+        }
 
-      if(Square && Char->CanMoveOn(Square))
-        ++OKDirectionsCounter;
+      go* Go = go::Spawn(Char);
+      Go->SetRoute(RouteGoOn);
+      Go->SetDirectionFromRoute();
+      Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
+      LevelRouteGoOn=Char->GetLevel();
+
+      Char->SetAction(Go);
+      Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+      Char->GoOn(Go, true);
+      return truth(Char->GetAction());
+      }
     }
+    v2 Dir = game::GetDirectionVectorForKey(Key);
+    if(Dir != ERROR_V2)
+    {
+      go* Go = go::Spawn(Char);
+      Go->SetDirection(game::GetDirectionForVector(Dir));
 
-    Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+      int OKDirectionsCounter = 0;
+
+      for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
+      {
+        lsquare* Square = Char->GetNeighbourLSquare(d);
+
+        if(Square && Char->CanMoveOn(Square))
+          ++OKDirectionsCounter;
+      }
+
+      Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+
+      Char->SetAction(Go);
+      Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+      Char->GoOn(Go, true);
+      return truth(Char->GetAction());
+    }
   }
-
-  Char->SetAction(Go);
-  Char->EditAP(Char->GetStateAPGain(100)); // gum solution
-  Char->GoOn(Go, true);
-  return truth(Char->GetAction());
 }
 
 truth commandsystem::ShowConfigScreen(character*)

@@ -15,6 +15,7 @@
 #include "confdef.h"
 #include "human.h"
 #include "dbgmsgproj.h"
+#include "felist.h"
 
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
 cchar* unconsciousness::GetDescription() const { return "unconscious"; }
@@ -25,6 +26,7 @@ cchar* craft::GetDescription() const { return "crafting"; }
 cchar* dig::GetDescription() const { return "digging"; }
 cchar* go::GetDescription() const { return "going"; }
 cchar* study::GetDescription() const { return "reading"; }
+cchar* autoexplore::GetDescription() const { return "auto-exploring"; }
 
 void unconsciousness::Save(outputfile& SaveFile) const
 {
@@ -680,4 +682,70 @@ void unconsciousness::RaiseCounterTo(int What)
 {
   if(Counter < What)
     Counter = What;
+}
+
+std::vector<lsquare*>* autoexplore::NewlySeen;
+
+void autoexplore::Handle()
+{
+  std::set<v2> Visited;
+  /* .second is the first move direction */
+  std::vector<std::pair<v2, int>> BFS;
+  static int TryOrder[8] = { 1, 3, 4, 6, 0, 2, 5, 7 }; /* copied from level.cpp */
+  auto visit = [&] (v2 Pos, int Dir) {
+    if(Visited.count(Pos)) return;
+    Visited.insert(Pos);
+    BFS.emplace_back(Pos, Dir);
+  };
+
+  NewlySeen = new std::vector<lsquare*>();
+
+  for(int d=0; d<8; ++d) visit(Actor->GetPos() + game::GetMoveVector(TryOrder[d]), d);
+  for(int i=0; i<int(BFS.size()); i++)
+  {
+    v2 Pos = BFS[i].first;
+    int Dir = BFS[i].second;
+    lsquare *Square = game::GetCurrentLevel()->GetLSquare(Pos);
+    if(!Square->HasBeenSeen()) {
+      if(!Actor->TryMove(game::GetMoveVector(TryOrder[Dir]), true, game::PlayerIsRunning())){
+        Terminate(false);
+      }
+      else {
+        felist DiscoveredItems("Discovered things:");
+        bool Found = false;
+        for(auto Square: *NewlySeen)
+        {
+          auto Terrain = Square->GetOLTerrain();
+          if(Terrain && (Terrain->IsFountainWithWater() || Terrain->IsUpLink() || Terrain->IsDownLink() || Terrain->AcceptsOffers()))
+          {
+            DiscoveredItems.AddEntry(Terrain->GetName(INDEFINITE), LIGHT_GRAY, 0, NO_IMAGE, true);
+            Found = true;
+          }
+          auto Stack = Square->GetStack();
+          if(!Stack || !Stack->GetItems()) continue;
+          Found = true;
+          Square->GetStack()->AddContentsToList(DiscoveredItems, Actor, "", 0, CENTER, nullptr);
+        }
+        // todo: - already seen items are relisted, - let 'go' still have the old functionality, - travel to discovered item?
+        if(Found)
+        {
+          game::SetStandardListAttributes(DiscoveredItems);
+          DiscoveredItems.SetPageLength(stack::GetStandardPageLength());
+          DiscoveredItems.AddFlags(SELECTABLE);
+          printf("DiscoveredItems last index = %d\n", DiscoveredItems.GetLastEntryIndex());
+          int Chosen = DiscoveredItems.Draw();
+          if(!(Chosen & FELIST_ERROR_BIT)) Terminate(true);
+        }
+      }
+      delete NewlySeen;
+      NewlySeen = nullptr;
+      return;
+    }
+    if(!Actor->CanTheoreticallyMoveOn(Square))
+      continue;
+    for(int d=0; d<8; ++d) visit(Pos + game::GetMoveVector(TryOrder[d]), Dir);
+  }
+  Terminate(true);
+  delete NewlySeen;
+  NewlySeen = nullptr;
 }
