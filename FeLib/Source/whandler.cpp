@@ -295,7 +295,7 @@ void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedK
 {
   if(iTimeoutMillis<0)ABORT("invalid negative timeout %d",iTimeoutMillis);
 
-  iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
+  iTimeoutDelay = iTimeoutMillis;
   if(iTimeoutDelay>0 && iTimeoutDelay<10)iTimeoutDelay=10; // we are unable to issue commands if it is too low TODO could be less than 10ms?
 
   iTimeoutDefaultKey=iDefaultReturnedKey;
@@ -308,9 +308,9 @@ void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
     if(!KeyBuffer.empty()){ DBG2(KeyBuffer.size(),KeyBuffer[0]); // user pressed some key
-      keyTimeoutRequestedAt=clock(); // resets reference time to wait from
+      keyTimeoutRequestedAt=SDL_GetTicks(); // resets reference time to wait from
     }else{ DBG2(keyTimeoutRequestedAt,iTimeoutDelay);
-      if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
+      if( SDL_GetTicks() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
         KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
     }
   }
@@ -369,7 +369,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     MouseBuffer = {};
   }
 
-  keyTimeoutRequestedAt=clock();
+  keyTimeoutRequestedAt=SDL_GetTicks();
   int iDelayMS=iDefaultDelayMS;
   for(;;){
     CheckKeyTimeout();
