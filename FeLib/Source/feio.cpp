@@ -220,7 +220,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
     }
 #endif
 
-    clock_t StartTime = clock();
+    auto StartTime = globalwindowhandler::GetClock();
     sCopyOfMS = Topic;
     int i;
 
@@ -298,7 +298,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       Backup.LuminanceMaskedBlit(BlitData);
       Buffer.SimpleAlphaBlit(DOUBLE_BUFFER, c++ * 50, 0);
       graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
+      globalwindowhandler::WaitUntil(StartTime + 50);
       k = READ_KEY();
     }
     else

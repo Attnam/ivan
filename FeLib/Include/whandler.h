@@ -106,6 +106,13 @@ class globalwindowhandler
     #endif
     }
 
+  static ulong GetClock()
+  {
+    return SDL_GetTicks();
+  }
+
+  static void WaitUntil(ulong t);
+
  private:
 #ifdef USE_SDL
   static int ChkCtrlKey(SDL_Event* Event);

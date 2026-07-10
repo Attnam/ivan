@@ -1204,7 +1204,7 @@ void lsquare::DrawParticles(long Color, truth DrawHere)
      || Color == TRANSPARENT_COLOR)
     return;
 
-  clock_t StartTime = clock();
+  auto StartTime = globalwindowhandler::GetClock();
 
   if(DrawHere)
     game::DrawEverythingNoBlit();
@@ -1222,7 +1222,7 @@ void lsquare::DrawParticles(long Color, truth DrawHere)
   if(DrawHere)
   {
     graphics::BlitDBToScreen();
-    while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
+    globalwindowhandler::WaitUntil(StartTime + 20);
   }
 }
 
@@ -1434,7 +1434,7 @@ v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere
      default: return StartPos;
     }
 
-  clock_t StartTime = clock();
+  auto StartTime = globalwindowhandler::GetClock();
   bitmap Empty(TILE_V2, TRANSPARENT_COLOR);
   Empty.ActivateFastFlag();
 
@@ -1486,7 +1486,7 @@ v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere
   if(DrawHere)
   {
     graphics::BlitDBToScreen();
-    while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
+    globalwindowhandler::WaitUntil(StartTime + 20);
   }
 
   return StartPos;

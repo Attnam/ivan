@@ -197,7 +197,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
     }
     else
     {
-      clock_t StartTime = clock();
+      auto StartTime = globalwindowhandler::GetClock();
       Pos += DirVector;
       RemoveFromSlot();
       JustHit->GetStack()->AddItem(this, false);
@@ -220,8 +220,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
           break;
       }
 
-      if(Draw)
-        while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+      if(Draw) globalwindowhandler::WaitUntil(StartTime + fFlyDelay * 1000);
 
       if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){
         if(iRotateTimes==1){
@@ -230,14 +229,14 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
           for(int i=0;i<(iRotateTimes-1);i++){
             iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1;
             if(Draw){
-              StartTime = clock();
+              // auto StartTime = globalwindowhandler::GetClock();
               RemoveFromSlot();JustHit->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square to redraw...
               game::DrawEverything();
               if(bLowerRotationsPerSqr){
                 iRotateTimes--;
                 if(iRotateTimes<1)iRotateTimes=1;
               }
-              //while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+              // globalwindowhandler::WaitUntil(StartTime + fFlyDelay * 1000);
             }
           }
         }
