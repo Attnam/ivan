@@ -1135,8 +1135,10 @@ void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
 void ivanconfig::UseExtraMenuGraphicsChanger(truthoption* O, truth What)
 {
   if(O!=NULL)O->Value = What;
+  /* This makes no sense. No idea what was supposed to be here, so I leave it commented out
   felist::SetAllowMouse(What);
   graphics::SetAllowMouseInFullScreen(What);
+  */
 }
 
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
