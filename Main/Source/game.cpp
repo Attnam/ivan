@@ -4297,13 +4297,6 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
 
   bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
 
-  /**
-   * using the min millis value grants mouse will be updated most often possible
-   * default key -1 just to be ignored
-   */
-  if(bMapNotesMode)
-    globalwindowhandler::SetKeyTimeout(100,-1);
-
   bPositionQuestionMode=true;
   v2 v2PreviousClick=v2(0,0);
   for(;;)
@@ -4311,19 +4304,6 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
     if(bMapNotesMode){
-      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
-      if(lsqrMapNote){
-        mouseclick mc = globalwindowhandler::ConsumeMouseEvent();
-        if(mc.btn==1){
-          CursorPos = lsqrMapNote->GetPos();
-          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
-            Return =  CursorPos;
-            break;
-          }
-          v2PreviousClick = CursorPos;
-        }
-      }
-
       CheckAddAutoMapNote(Square);
     }
 
@@ -4366,6 +4346,22 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
         if(!Found) CursorPos = StairPositions[0];
         if(Handler)
           Handler(CursorPos);
+      }
+    }
+
+    if(Key == KEY_MOUSE_EVENT && bMapNotesMode)
+    {
+      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
+      if(lsqrMapNote){
+        mouseclick mc = globalwindowhandler::GetLastMouseEvent();
+        if(mc.btn==1){
+          CursorPos = lsqrMapNote->GetPos();
+          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
+            Return = CursorPos;
+            break;
+          }
+          v2PreviousClick = CursorPos;
+        }
       }
     }
 
@@ -4424,9 +4420,6 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       UpdateCameraY(ppos.Y);
     }
   }
-
-  if(bMapNotesMode)
-    globalwindowhandler::ResetKeyTimeout();
 
   return Return;
 }
@@ -5656,8 +5649,6 @@ void game::AutoPlayModeApply(){
      */
     iTimeout/=2;
   }
-
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 
 void game::IncAutoPlayMode() {

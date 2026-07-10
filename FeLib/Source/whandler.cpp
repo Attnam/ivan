@@ -51,6 +51,9 @@ truth bLastSDLkeyEventIsKeyUp=false;
 std::vector<SDL_GameController*> globalwindowhandler::controllers;
 v2 globalwindowhandler::controller_direction;
 
+std::queue<mouseclick> globalwindowhandler::MouseBuffer;
+mouseclick globalwindowhandler::LastMouseEvent;
+
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
   if(Controls == MAX_CONTROLS)
@@ -363,6 +366,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
   {
     PollEvents(&Event);
     KeyBuffer.clear();
+    MouseBuffer = {};
   }
 
   keyTimeoutRequestedAt=clock();
@@ -380,6 +384,12 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
       if(Key && Key < 0x81)
         return Key;
+    }
+    else if(!MouseBuffer.empty())
+    {
+      LastMouseEvent = MouseBuffer.front();
+      MouseBuffer.pop();
+      return KEY_MOUSE_EVENT;
     }
     else
     {
@@ -553,20 +563,6 @@ bool globalwindowhandler::IsMouseAtRect(v2 v2TopLeft, v2 v2BorderOrBottomRigh, b
     v2MP.Y > v2TopLeft.Y     &&
     v2MP.X < v2BottomRight.X &&
     v2MP.Y < v2BottomRight.Y    ;
-}
-
-mouseclick mc;
-mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
-{
-  mouseclick mcR;
-  if(mc.btn!=-1 || mc.wheelY!=0)
-    mcR=mc;
-
-  mc.btn=-1;
-  mc.pos=v2();
-  mc.wheelY=0;
-
-  return mcR;
 }
 
 int globalwindowhandler::ChkCtrlKey(SDL_Event* Event)
@@ -758,6 +754,11 @@ void globalwindowhandler::AddKeyToBuffer(int KeyPressed)
     KeyBuffer.push_back(KeyPressed);
 }
 
+void globalwindowhandler::BufferMouseEvent(mouseclick mc)
+{
+  MouseBuffer.push(mc);
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   Uint32 type;
@@ -793,15 +794,30 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
    case SDL_MOUSEBUTTONUP:
      if(Event->button.button==1 && Event->button.clicks>0){
+       mouseclick mc;
        mc.btn = 1;
        mc.pos.X=Event->button.x;
        mc.pos.Y=Event->button.y;
+       mc.wheelY = 0;
+       BufferMouseEvent(mc);
      }
      break;
 
-   case SDL_MOUSEWHEEL:
+   case SDL_MOUSEWHEEL: {
+     mouseclick mc;
      mc.wheelY = Event->wheel.y;
+     BufferMouseEvent(mc);
      break;
+   }
+
+   case SDL_MOUSEMOTION: {
+     mouseclick mc;
+     mc.IsMotion = true;
+     mc.pos.X=Event->motion.x;
+     mc.pos.Y=Event->motion.y;
+     BufferMouseEvent(mc);
+     break;
+   }
 
 #if SDL_MAJOR_VERSION == 2 //BEFORE key up or down
    case SDL_TEXTINPUT: DBG2(Event->key.keysym.sym,Event->text.text[0]);

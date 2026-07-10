@@ -22,6 +22,8 @@
 #include <ctime>
 #endif
 
+#include <queue>
+
 #include "felibdef.h"
 #include "festring.h"
 
@@ -35,6 +37,7 @@ struct mouseclick{
  int btn=-1;
  v2 pos;
  int wheelY=0;
+ truth IsMotion=false;
 };
 
 class globalwindowhandler
@@ -47,7 +50,7 @@ class globalwindowhandler
   static void ResumeKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
-  static mouseclick ConsumeMouseEvent();
+  static mouseclick GetLastMouseEvent() { return LastMouseEvent; } // after GetKey() returns KEY_MOUSE_EVENT
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
@@ -119,7 +122,9 @@ class globalwindowhandler
   static truth ControlLoopsEnabled;
   static truth playInBackground;
   static festring ScrshotDirectoryName;
-
+  static void BufferMouseEvent(mouseclick mc);
+  static std::queue<mouseclick> MouseBuffer;
+  static mouseclick LastMouseEvent;
 #if SDL_MAJOR_VERSION == 2
   static std::vector<SDL_GameController*> controllers;
   static v2 controller_direction;

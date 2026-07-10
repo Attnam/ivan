@@ -210,6 +210,7 @@ inline int GetMinColor24(col24 Color)
 #define KEY_CONTROLLER_B         0x210
 #define KEY_CONTROLLER_X         0x211
 #define KEY_CONTROLLER_Y         0x212
+#define KEY_MOUSE_EVENT          0x220
 
 #define NO_FLAME 0xFFFF
 
