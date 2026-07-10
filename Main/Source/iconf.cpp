@@ -135,7 +135,7 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
                                           "Enable mouse cursor on lists",
                                           "",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &AllowMouseOnFelistChanger);
