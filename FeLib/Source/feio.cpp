@@ -330,6 +330,22 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       bReady = true;
       break;
 
+     case KEY_MOUSE_EVENT: {
+        mouseclick mc = globalwindowhandler::GetLastMouseEvent();
+        if(mc.IsMotion)
+        {
+          v2 MPos = mc.pos / graphics::GetScale();
+          int yzero = Pos.Y - CountChars('\r', sMS) * 25;
+          if(MPos.Y > yzero && MPos.Y < yzero + 50 * CountChars('\r', sMS))
+            iSelected = (MPos.Y - yzero) / 50;
+        }
+        else if(mc.btn > 0)
+        {
+          bReady = true;
+        }
+      break;
+     }
+
      default:
       if(k > 0x30 && k < 0x31 + CountChars('\r', sMS)){
         bMenuIsActive=false;
