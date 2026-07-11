@@ -7233,7 +7233,15 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
 
 v2 game::ScreenCoordinatesToPos(v2 Pos)
 {
-  return v2((Pos.X >> 4) + Camera.X - 1, (Pos.Y >> 4) + Camera.Y - 2);
+  Pos.X >>= 4;
+  Pos.Y >>= 4;
+  Pos.X -= 1;
+  Pos.Y -= 2;
+  auto scale = ivanconfig::GetStartingDungeonGfxScale();
+  auto gdiv = [&] (int a, int b) { if(a >= 0) return a/b; else return (a-b-1)/b; };
+  Pos.X = gdiv(Pos.X, scale);
+  Pos.Y = gdiv(Pos.Y, scale);
+  return Pos + Camera;
 }
 
 truth game::PosCurrentlyOnScreen(v2 Pos)
