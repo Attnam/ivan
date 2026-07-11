@@ -3705,6 +3705,30 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     game::RegionSilhouetteEnable(false);
     HasActed = commandsystem::ShowKeyLayout(this);
     }
+
+  if(Key == KEY_MOUSE_EVENT) {
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    auto mc = globalwindowhandler::GetLastMouseEvent();
+    if(mc.btn > 0) {
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto w = humanoid::GetSilhouetteWhere();
+      auto h = AsHumanoid();
+      if(h) {
+        cint Equipments = GetEquipments();
+        for(int c=0; c<Equipments; c++) if(globalwindowhandler::IsMouseAtRect(w + h->GetEquipmentPanelPos(c), TILE_V2, true, MPos)) {
+          HasActed = TryToChangeEquipment(GetStack(), NULL, c);
+          ValidKeyPressed = true;
+         }
+      }
+      if(!ValidKeyPressed && globalwindowhandler::IsMouseAtRect(w, SILHOUETTE_SIZE, true, MPos))
+      {
+          HasActed = commandsystem::ShowKeyLayout(this);
+          ValidKeyPressed = true;
+      }
+    }
+  ValidKeyPressed = true;
+  }
 }
 
 void character::GetPlayerCommand()
