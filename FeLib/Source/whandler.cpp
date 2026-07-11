@@ -808,8 +808,12 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
    case SDL_MOUSEWHEEL: {
      mouseclick mc;
      mc.wheelY = Event->wheel.y;
+#if SDL_VERSION_ATLEAST(2, 26, 0)
      mc.pos.X = Event->wheel.mouseX;
      mc.pos.Y = Event->wheel.mouseY;
+#else
+     SDL_GetMouseState(&mc.pos.X,&mc.pos.Y);
+#endif
      BufferMouseEvent(mc);
      break;
    }
