@@ -1798,6 +1798,11 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
   festring fsHelp;fsHelp<<
     "[Map Help:]\n"
     " F1 - show this message\n"
+    " t - toggle map notes\n"
+    " e - edit/add map note\n"
+    " l - look mode\n"
+    " r - rotate map notes\n"
+    " d - delete map note\n"
     " Map notes containing '!' or '!!' will be highlighted.\n"
     " Position mouse cursor over a map note to edit or delete it.\n"
     " In look mode, clicking on a map note will navigate to that location.\n";
@@ -1816,8 +1821,8 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
         if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. [press F1 for help]"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
-            KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
+          key = game::KeyQuestion(CONST_S("Cartography notes action [press F1 for help]"),
+            KEY_ESC, 6, 't', 'l', 'r', 'd', 'e', KEY_SPECIAL);
 
         if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
           specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fsHelp);
