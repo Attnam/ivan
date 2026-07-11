@@ -26,6 +26,7 @@
 #include "hiteffect.h" //TODO move to charsset.cpp?
 #include "lterras.h"
 #include "gods.h"
+#include "specialkeys.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -3704,7 +3705,16 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
     HasActed = commandsystem::ShowKeyLayout(this);
-    }
+    ValidKeyPressed = true;
+  }
+
+  if(Key == KEY_SPECIAL && specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)) {
+    specialkeys::ClearRequest();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    HasActed = commandsystem::ShowKeyLayout(this);
+    ValidKeyPressed = true;
+  }
 
   if(Key == KEY_MOUSE_EVENT) {
     game::RegionListItemEnable(false);
