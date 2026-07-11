@@ -43,6 +43,7 @@
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
+#include "specialkeys.h"
 
 #include "dbgmsgproj.h"
 
