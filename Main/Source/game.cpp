@@ -3800,6 +3800,25 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
     if(Key==keyChoseDefaultDir)
       return defaultDir;
 
+    if(Key == KEY_MOUSE_EVENT) {
+      auto mc = globalwindowhandler::GetLastMouseEvent();
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(mc.btn == 1 && game::PosCurrentlyOnScreen(TPos)) {
+        auto v = TPos - PLAYER->GetPos();
+        int mul = std::max(abs(v.X), abs(v.Y));
+        if(mc.btn == 1)
+        {
+          for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+            if(GetMoveVector(c) * mul == v)
+              return c;
+          ADD_MESSAGE("Only cardinal or diagonal directions allowed.");
+          continue;
+        }
+      }
+      if(mc.IsMotion) continue;
+    }
+
     if(!RequireAnswer)
       return DIR_ERROR;
   }
