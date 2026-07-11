@@ -572,7 +572,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
         {
           Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
         }
-        else if(mc.btn > 0)
+        else if(mc.btn == 1)
         {
           v2 v2MousePos = mc.pos / graphics::GetScale();
           uint iSel = GetMouseSelectedEntry(v2MousePos);
@@ -581,6 +581,11 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
             Selected = iSel;
             Pressed = KEY_CONTROLLER_A; // just to simplify it
           }
+        }
+        else if(mc.btn == 2)
+        {
+          Pressed = KEY_CONTROLLER_B;
+          Return = ESCAPED;
         }
       }
       break;
