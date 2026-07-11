@@ -1116,8 +1116,18 @@ truth commandsystem::Dip(character* Char)
 truth commandsystem::ShowKeyLayout(character* Who)
 {
   felist List(CONST_S("Keyboard Layout"));
+
   List.AddDescription(CONST_S(""));
+
+  List.AddDescription("IVAN uses most of the keyboard for command key bindings, though some ");
+  List.AddDescription("commands are only accessible in wizard mode. Note that the game ");
+  List.AddDescription("distinguishes between lowercase and uppercase letters, so if you are ");
+  List.AddDescription("experiencing troubles, first check whether you don't have active CapsLock.");
+
+  List.AddDescription(CONST_S(""));
+
   List.AddDescription(CONST_S("Key       Description"));
+  List.SetPageLength(24);
   festring Buffer;
 
   // Movement keys
@@ -1129,10 +1139,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_NORM: // Normal
    {
      List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("4 6        or use arrow keys and Home, End, PgUp, PgDn"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("123        you can also use Left/Right + Shift/Ctrl for diagonals"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
@@ -1140,10 +1146,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_ALT: // Alternative
    {
      List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("u o"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("jkl"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
@@ -1151,10 +1153,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_HACK: // Nethack
    {
      List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("h l"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("bjn"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
