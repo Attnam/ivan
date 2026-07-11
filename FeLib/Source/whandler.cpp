@@ -795,9 +795,9 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     return;
 
    case SDL_MOUSEBUTTONUP:
-     if(Event->button.button==1 && Event->button.clicks>0){
+     if(Event->button.clicks>0){
        mouseclick mc;
-       mc.btn = 1;
+       mc.btn = Event->button.button;
        mc.pos.X=Event->button.x;
        mc.pos.Y=Event->button.y;
        mc.wheelY = 0;
@@ -808,6 +808,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
    case SDL_MOUSEWHEEL: {
      mouseclick mc;
      mc.wheelY = Event->wheel.y;
+     mc.pos.X = Event->wheel.mouseX;
+     mc.pos.Y = Event->wheel.mouseY;
      BufferMouseEvent(mc);
      break;
    }
