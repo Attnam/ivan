@@ -4575,7 +4575,7 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
         break;
       }
 
-    if(!Return && DefaultAnswer != REQUIRES_ANSWER)
+    if(!Return && DefaultAnswer != REQUIRES_ANSWER && k != KEY_MOUSE_EVENT)
       Return = DefaultAnswer;
   }
 
