@@ -4324,10 +4324,38 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
         "space accepts\n"
         "ESC cancels\n"
         "< find upstairs\n"
-        "> find downstairs\n";
+        "> find downstairs\n"
+        "mouse wheel scrolls when the mouse is on the map edge";
       specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp, msg);
       BackGround.FastBlit(DOUBLE_BUFFER);
       continue;
+    }
+
+    if(Key == KEY_MOUSE_EVENT) {
+      auto mc = globalwindowhandler::GetLastMouseEvent();
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(game::PosCurrentlyOnScreen(TPos))
+      {
+        if(mc.IsMotion && TPos.X >= 0 && TPos.Y >= 0 && TPos.X < GetCurrentArea()->GetXSize() && TPos.Y < GetCurrentArea()->GetYSize())
+        {
+          CursorPos = TPos;
+          if(Handler) Handler(CursorPos);
+        }
+        if(mc.btn == 1) Key = KEY_CONTROLLER_A;
+        if(mc.btn == 2) Key = KEY_CONTROLLER_B;
+        if(mc.wheelY)
+        {
+           v2 Delta = v2(
+             TPos.X >= GetCamera().X + GetScreenXSize() - 3 ? 4 + TPos.X - GetCamera().X - GetScreenXSize() : TPos.X < GetCamera().X + 3 ? -(3 + GetCamera().X - TPos.X) : 0, 
+             TPos.Y >= GetCamera().Y + GetScreenYSize() - 3 ? 4 + TPos.Y - GetCamera().Y - GetScreenYSize() : TPos.Y < GetCamera().Y + 3 ? -(3 + GetCamera().Y - TPos.Y) : 0
+           );
+           Delta *= mc.wheelY;
+           Camera += Delta;
+
+           GetCurrentArea()->SendNewDrawRequest();
+        }
+      }
     }
 
     if(Key == ' ' || Key == '.' || Key == KEY_CONTROLLER_A)
@@ -4406,11 +4434,14 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       }
     }
 
-    if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
-      UpdateCameraX(CursorPos.X);
+    if(Key != KEY_MOUSE_EVENT)
+    {
+      if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
+        UpdateCameraX(CursorPos.X);
 
-    if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
-      UpdateCameraY(CursorPos.Y);
+      if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
+        UpdateCameraY(CursorPos.Y);
+    }
 
     FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CStr());
     SetCursorPos(CursorPos);
