@@ -1629,7 +1629,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
-  if(ivanconfig::GetStartingDungeonGfxScale()==1){
+  if(ivanconfig::GetStartingDungeonGfxScale()==1 && false){
     ADD_MESSAGE(cHugeMap);
     bDrawMapOverlayEnabled=false;
     return;
