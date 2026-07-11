@@ -68,6 +68,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "specialkeys.h"
 
 #include "dbgmsgproj.h"
 
@@ -4313,6 +4314,21 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, BLACK);
     else
       GetCurrentArea()->GetSquare(CursorPos)->SendStrongNewDrawRequest();
+
+    if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+      bitmap BackGround(RES);
+      BackGround.ActivateFastFlag();
+      DOUBLE_BUFFER->FastBlit(&BackGround);
+      festring msg =
+        "Direction keys move cursor\n"
+        "space accepts\n"
+        "ESC cancels\n"
+        "< find upstairs\n"
+        "> find downstairs\n";
+      specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp, msg);
+      BackGround.FastBlit(DOUBLE_BUFFER);
+      continue;
+    }
 
     if(Key == ' ' || Key == '.' || Key == KEY_CONTROLLER_A)
     {

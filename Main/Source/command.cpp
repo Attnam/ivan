@@ -1226,9 +1226,9 @@ truth commandsystem::Look(character* Char)
   }
 
   if(!game::IsInWilderness())
-    Msg = CONST_S("Direction keys move cursor; examine (i)tems or a (c)haracter; ESC exits.");
+    Msg = CONST_S("examine (i)tems or a (c)haracter [F1 - help]");
   else
-    Msg = CONST_S("Direction keys move cursor; examine a (c)haracter; ESC exits.");
+    Msg = CONST_S("examine a (c)haracter [F1 - help]");
 
   v2 pos = Char->GetPosSafely();
   if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
@@ -1847,7 +1847,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
 
               festring fsMsg = pv2ChoseLocation!=NULL ? "Choose a location." :
                 "Where do you wish to add a map note?";
-              fsMsg<<" [direction keys move cursor, space accepts, </> stairs]";
+              fsMsg<<" [F1 - help]";
 
               v2 start;
               if(pv2ChoseLocation!=NULL){

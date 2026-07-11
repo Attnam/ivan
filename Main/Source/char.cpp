@@ -4957,7 +4957,7 @@ void character::TeleportRandomly(truth Intentional)
     if(IsPlayer())
     {
       v2 Input = game::PositionQuestion(CONST_S("Where do you wish to teleport? "
-                                                "[direction keys move cursor, space accepts]"),
+                                                "[F1 - help]"),
                                         GetPos(), &game::TeleportHandler, 0, false);
 
       if(Input == ERROR_V2) // esc pressed
@@ -5097,7 +5097,7 @@ void character::DoDetecting()
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
     game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
-    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), GetPos(), 0, 0, false);
+    game::PositionQuestion(CONST_S("Detecting material [F1 - help]"), GetPos(), 0, 0, false);
     game::SetDrawMapOverlay(false);
     EditExperience(INTELLIGENCE, 30, 1 << 12);
   }
