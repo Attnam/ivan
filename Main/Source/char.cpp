@@ -3723,8 +3723,23 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
       }
       if(!ValidKeyPressed && globalwindowhandler::IsMouseAtRect(w, SILHOUETTE_SIZE, true, MPos))
       {
-          HasActed = commandsystem::ShowKeyLayout(this);
+        HasActed = commandsystem::ShowKeyLayout(this);
+        ValidKeyPressed = true;
+      }
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(game::PosCurrentlyOnScreen(TPos))
+      {
+        auto v = TPos - PLAYER->GetPos();
+        if(v.Is0()) {
+          commandsystem::NOP(this);
           ValidKeyPressed = true;
+          HasActed = true;
+        }
+        else if(v.IsAdjacent(ZERO_V2)) MoveByVector(v);
+        else {
+          ValidKeyPressed = true;
+          HasActed = commandsystem::SpawnRoute(this, TPos);
+        }
       }
     }
   ValidKeyPressed = true;

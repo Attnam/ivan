@@ -1931,6 +1931,32 @@ std::vector<v2> commandsystem::GetRouteGoOnCopy(){
   return RouteGoOn;
 }
 
+truth commandsystem::SpawnRoute(character* Char, v2 Pos)
+{
+  std::set<v2> Illegal;
+
+  node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), Pos, Illegal, 0, Char);
+  if(Node){
+    RouteGoOn.clear();
+    while(Node->Last)
+    {
+      RouteGoOn.push_back(Node->Pos);
+      Node = Node->Last;
+    }
+  }
+
+  go* Go = go::Spawn(Char);
+  Go->SetRoute(RouteGoOn);
+  Go->SetDirectionFromRoute();
+  Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
+  LevelRouteGoOn=Char->GetLevel();
+
+  Char->SetAction(Go);
+  Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+  Char->GoOn(Go, true);
+  return truth(Char->GetAction());
+}
+
 truth commandsystem::Go(character* Char)
 {
   int Key;
@@ -1990,28 +2016,7 @@ truth commandsystem::Go(character* Char)
         return false;
       }
 
-      std::set<v2> Illegal;
-
-      node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), v2RouteTarget, Illegal, 0, Char);
-      if(Node){
-        RouteGoOn.clear();
-        while(Node->Last)
-        {
-          RouteGoOn.push_back(Node->Pos);
-          Node = Node->Last;
-        }
-
-      go* Go = go::Spawn(Char);
-      Go->SetRoute(RouteGoOn);
-      Go->SetDirectionFromRoute();
-      Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
-      LevelRouteGoOn=Char->GetLevel();
-
-      Char->SetAction(Go);
-      Char->EditAP(Char->GetStateAPGain(100)); // gum solution
-      Char->GoOn(Go, true);
-      return truth(Char->GetAction());
-      }
+      return SpawnRoute(Char, v2RouteTarget);
     }
     v2 Dir = game::GetDirectionVectorForKey(Key);
     if(Dir != ERROR_V2)
