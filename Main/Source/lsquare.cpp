@@ -1196,10 +1196,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 
 void lsquare::DrawParticles(long Color, truth DrawHere)
 {
-  if(GetPos().X < game::GetCamera().X
-     || GetPos().Y < game::GetCamera().Y
-     || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
-     || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
+  if(!game::PosCurrentlyOnScreen(GetPos())
      || !CanBeSeenByPlayer(true)
      || Color == TRANSPARENT_COLOR)
     return;
@@ -1420,11 +1417,7 @@ void lsquare::AddItem(item* Item)
 
 v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere)
 {
-  if(GetPos().X < game::GetCamera().X
-     || GetPos().Y < game::GetCamera().Y
-     || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
-     || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
-     || !CanBeSeenByPlayer(true))
+  if(!game::PosCurrentlyOnScreen(GetPos()) || !CanBeSeenByPlayer(true))
     switch(Direction)
     {
      case NORTH: return v2(RAND() & 15, 15);

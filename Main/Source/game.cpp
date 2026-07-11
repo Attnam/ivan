@@ -7180,3 +7180,18 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
   if(Buffer == DOUBLE_BUFFER)
     graphics::BlitDBToScreen();
 }
+
+v2 game::ScreenCoordinatesToPos(v2 Pos)
+{
+  return v2((Pos.X >> 4) + Camera.X - 1, (Pos.Y >> 4) + Camera.Y - 2);
+}
+
+truth game::PosCurrentlyOnScreen(v2 Pos)
+{
+  return
+     Pos.X >= game::GetCamera().X
+  && Pos.Y >= game::GetCamera().Y
+  && Pos.X < game::GetCamera().X + game::GetScreenXSize()
+  && Pos.Y < game::GetCamera().Y + game::GetScreenYSize();
+}
+
