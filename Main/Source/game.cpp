@@ -4483,6 +4483,10 @@ void game::LookHandler(v2 CursorPos)
 
       if(LSquare->HasEngravings() && LSquare->IsTransparent())
       {
+        cchar* Text = LSquare->GetEngraved();
+
+        if(Text[0] == '#') ; // Prevent displaying map notes.
+        else
         if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
           LSquare->DisplayEngravedInfo(Msg);
         else
