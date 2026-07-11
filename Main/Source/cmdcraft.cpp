@@ -464,7 +464,7 @@ void recipecore::SetHumanoid(character* C){
   if(C==h)
     return;
 
-  humanoid* hNew = dynamic_cast<humanoid*>(C);
+  humanoid* hNew = C->AsHumanoid();
   if(hNew==NULL)
     ABORT("Only humanoids can craft C='%s' h='%s'",C->GetName(DEFINITE).CStr(),h==NULL?"NULL":h->GetName(DEFINITE).CStr());
 

@@ -335,7 +335,7 @@ void craft::Handle()
     if(MoveCraftTool && ActorLocal->GetMainWielded())
       ActorLocal->GetMainWielded()->MoveTo(ActorLocal->GetStack());
 
-    humanoid* h = dynamic_cast<humanoid*>(ActorLocal);
+    humanoid* h = ActorLocal->AsHumanoid();
     if(h){
       if(h->GetRightArm()){
         item* RightBackup = game::SearchItem(RightBackupID);
@@ -479,7 +479,7 @@ void dig::Handle()
       Terminate(true);
   }
 
-  humanoid* h = dynamic_cast<humanoid*>(Actor);
+  humanoid* h = Actor->AsHumanoid();
   if(StoppedDigging && h)
   {
     if(MoveDigger && h->GetMainWielded())

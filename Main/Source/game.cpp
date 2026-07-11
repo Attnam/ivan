@@ -2204,7 +2204,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
-  humanoid* h=dynamic_cast<humanoid*>(Player);
+  humanoid* h=Player->AsHumanoid();
   if(bOk && h==NULL)bOk=false; //TODO let it work with non humanoid forms
 //  if(bOk && Player->IsPolymorphed())bOk=false;
 

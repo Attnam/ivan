@@ -3035,7 +3035,7 @@ truth character::AutoPlayAIDropThings()
 
       if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
         static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
-        static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
+        static humanoid* h;h = AsHumanoid();DBGLN;
         DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
         if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
           dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
@@ -3079,7 +3079,7 @@ bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
 
 truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
-  static humanoid* h;h = dynamic_cast<humanoid*>(this);
+  static humanoid* h;h = AsHumanoid();
   if(h==NULL)return false;
 
   if(h->AutoPlayAIequip())
