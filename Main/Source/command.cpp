@@ -1977,8 +1977,9 @@ truth commandsystem::Go(character* Char)
           if(Pos2.empty()) ADD_MESSAGE("No stairway known in this direction.");
           else Pos = Pos2[0];
         }
-        v2RouteTarget = Pos;
-        if(!ShowMapWork(Char,&v2RouteTarget)){
+        v2RouteTarget = game::PositionQuestion("Choose a location [F1 - help]", Pos, NULL, NULL, true);
+
+        if(v2RouteTarget == ERROR_V2) {
           v2RouteTarget=v2(0,0);
           return false;
         }
