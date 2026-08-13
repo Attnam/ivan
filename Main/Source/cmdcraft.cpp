@@ -2432,7 +2432,7 @@ struct srpForgeItem : public recipe{
   virtual bool work(recipedata& rpd){DBGLN;
     // let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
-    item* itSpawn;
+    item* itSpawn = NULL;
 
     for(;;){
       festring Temp;
