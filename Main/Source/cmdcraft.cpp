@@ -2527,12 +2527,6 @@ struct srpForgeItem : public recipe{
        * cloth will be cut and sewed
        */
       if(!bMainMatOk){
-        askForEqualLumps(rpd);
-        if(!rpd.ingredientsIDs.empty()){
-          joinLumpsEqualToFirst(rpd);
-          rpd.ingredientsIDs.clear();
-        }
-
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
         CI.bMustBeTailorable = true;
