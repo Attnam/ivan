@@ -9419,6 +9419,8 @@ void character::ShowAdventureInfo() const
 
 void character::ShowAdventureInfoAlt() const
 {
+  game::GetCurrentArea()->SendNewDrawRequest();
+  game::DrawEverything();
   while(true) {
     felist List(CONST_S("What do you want to see?"));
     List.AddEntry("n = nothing", LIGHT_GRAY, 0, NO_IMAGE, true);
