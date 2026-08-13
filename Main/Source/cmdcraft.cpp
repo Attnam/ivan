@@ -3183,6 +3183,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     craftRecipes.AddFlags(SELECTABLE);
     craftRecipes.ClearFilter();
     updateCraftDesc();
+    craftRecipes.SetPageLength(11);
     sel = craftRecipes.Draw(); DBG1(sel);
 
     if(sel & FELIST_ERROR_BIT)
