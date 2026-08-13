@@ -872,6 +872,11 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
 
   uint c, i; // c == entry index, i == selectable index
 
+  uint AllSelectable = 0;
+  for(int c = 0; c < Entry.size(); c++)
+    if(Entry[c]->Selectable)
+      ++AllSelectable;
+
   for(c = 0, i = 0; i != PageBegin; ++c)
     if(Entry[c]->Selectable)
       ++i;
@@ -999,7 +1004,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
       if(bShowHelp){
         Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
         int iPg = (PageBegin/PageLength)+1;
-        int iPgTot = Entry.size()/PageLength + (Entry.size()%PageLength>0 ? 1 : 0);
+        int iPgTot = AllSelectable/PageLength + (AllSelectable%PageLength>0 ? 1 : 0);
         if(iPgTot==0)iPgTot=1;
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
                      "- Page %d/%d (Press F1 for help) -",iPg,iPgTot);
