@@ -2639,7 +2639,8 @@ struct srpForgeItem : public recipe{
     if(bReqS && !bAllowS)
       ABORT("item reqs secondary mat but doesnt allow it??? %s",itSpawn->GetName(DEFINITE).CStr());
 
-    if(rpd.bTailoringMode){
+    /* this is disabled for now, until actual 'sewing material' is added */
+    if(rpd.bTailoringMode && false){
       long lVolSewing = lVolM/100;
       if(lVolSewing==0)lVolSewing=1;
       int iSCfg=-1;
