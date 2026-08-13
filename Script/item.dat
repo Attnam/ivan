@@ -208,7 +208,7 @@ lump
 {
   DefaultSize = 10;
   Possibility = 400;
-  Category = FOOD;
+  Category = RAW_MATERIAL;
   DefaultMainVolume = 500;
   StrengthModifier = 75;
   BitmapPos = 16, 48;
@@ -3180,7 +3180,7 @@ stone
 {
   DefaultSize = 30;
   Possibility = 25;
-  Category = VALUABLE;
+  Category = RAW_MATERIAL;
   DefaultMainVolume = 100;
   StrengthModifier = 100;
   BitmapPos = 0, 48;
@@ -3213,6 +3213,7 @@ stone
 
   Config SOL_STONE;
   {
+    Category = VALUABLE;
     Possibility = 10;
     DefaultMainVolume = -417;
     NameSingular = "sol stone";
@@ -3231,6 +3232,7 @@ stone
     Possibility = 10;
     NameSingular = "ingot";
     IsValuable = true;
+    Category = RAW_MATERIAL;
     MainMaterialConfig = { 35,
                            VALPURIUM, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, SILVER,
                            MOON_SILVER, FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL,
@@ -6702,7 +6704,7 @@ stick
   DefaultSize = 50;
   Possibility = 0;
   WeaponCategory = BLUNT_WEAPONS;
-  Category = MISC;
+  Category = RAW_MATERIAL;
   DefaultMainVolume = 150;
   StrengthModifier = 75;
   BitmapPos = 80, 240;

@@ -312,6 +312,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define TOOL (1 << 15)
 #define VALUABLE (1 << 16)
 #define MISC (1 << 17)
+#define RAW_MATERIAL (1 << 18)
 
 #define GOOD 1
 #define NEUTRAL 2

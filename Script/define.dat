@@ -148,6 +148,7 @@
 #define TOOL (1 << 15)
 #define VALUABLE (1 << 16)
 #define MISC (1 << 17)
+#define RAW_MATERIAL (1 << 18)
 
 #define GOOD 1
 #define NEUTRAL 2

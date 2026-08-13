@@ -648,6 +648,7 @@ cchar* item::GetItemCategoryName(long Category) // convert to array
    case TOOL: return "Tools";
    case VALUABLE: return "Valuables";
    case MISC: return "Miscellaneous items";
+   case RAW_MATERIAL: return "Raw materials";
   }
 
   return "Warezzz";
