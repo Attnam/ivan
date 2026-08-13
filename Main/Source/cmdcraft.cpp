@@ -2092,10 +2092,10 @@ struct srpInspect : public recipe{
     material* matS = it0->GetSecondaryMaterial();
     festring fs;
     fs<<it0->GetName(DEFINITE)<<" is made of ";
-    if(matM)fs<<matM->GetName(UNARTICLED);
+    if(matM)fs<<matM->GetName(UNARTICLED) << " (" << matM->GetVolume() << "cm3)";
     if(matS){
       if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...
-      fs<<matS->GetName(UNARTICLED);
+      fs<<matS->GetName(UNARTICLED) << " (" << matS->GetVolume() << "cm3)";
     }
     fs<<".";
 
