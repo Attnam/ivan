@@ -2132,6 +2132,10 @@ truth commandsystem::Search(character* Char)
 
 truth commandsystem::ShowWorldSeed(character*)
 {
+  if(!game::GetWorldMap()) {
+    ADD_MESSAGE("World seed not currently available. Try in the world map.");
+    return false;
+    }
   int Seed = game::GetWorldMap()->GetWorldSeed();
   if(!Seed)
     ADD_MESSAGE("World seed is 0");
