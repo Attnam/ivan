@@ -1126,7 +1126,7 @@ struct recipe{
       if(CI.bOverridesQuestion)
         fsFullQ=fsQ;
       else{
-        fsFullQ = festring("What ingredient(s) will you use? (hit ESC for more options if available)");
+        fsFullQ = festring("What ingredient(s) will you use?");
         specialDesc = fsQ+" ["+reqVol+"cm3]";
       }
 
@@ -2519,6 +2519,55 @@ struct srpForgeItem : public recipe{
     bool bCanTailor = dynamic_cast<armor*>(itSpawn) &&
       !( dynamic_cast<helmet*>(itSpawn) ||
          dynamic_cast<shield*>(itSpawn)    );
+
+    festring help;
+    help << "You are now choosing ingredients for your " << itSpawn->GetNameSingular() << ".\n";
+
+    if(lVolS) help << "This item requires " << lVolM << " cm3 of your main material.\n It also requires " << lVolS << " cm3 of your secondary material.\n";
+    else help << "This item requires " << lVolM << " cm3 of your chosen material.\n";
+
+    if(bMustTailor)
+      help << "This item must be tailored.\n\n";
+
+    else if(bCanTailor)
+      help << "This item can be tailored, forged, carved, or crafted from wood or bones.\n\n";
+
+    else
+      help << "This item can be forged, carved, or crafted from wood or bones.\n\n";
+
+    if(bCanTailor || bMustTailor)
+      help << "To tailor, you need to be close to a tailoring bench, and select a lump of cloth.\n85% will be used, so you actually need " << (int)(lVolM / .85) << " cm3.\n\n";
+
+    if(lVolS && bMustTailor)
+      help << "The secondary material can be forged, carved, or crafted from wood or bones.\n100% is used.\n\n";
+
+    if(!bMustTailor || lVolS) {
+      help << "To forge, you need to be close to an anvil and see a forge.\n";
+      if(bMustTailor) help << "You need ingots.\n\n"; else help << "You need ingots. 100% will be used.\n\n";
+
+      if(bMustTailor)
+        help << "To carve, you need a stone.\n\n";
+      else
+        help << "To carve, you need a stone.\n75% of a stone will be used, so you actually need " << (int)(lVolM / .75) << " cm3.\n\n";
+
+      if(bIsItemContainer || bMustTailor)
+        help << "You can also craft from bones or sticks.\n\n";
+      else
+        help << "You can also craft from bones or sticks.\n50% will be used, so you actually need " << lVolM*2 << " cm3.\n\n";
+      }
+
+    if(lVolS && !bMustTailor)
+      help << "The secondary material also can be forged, carved, or crafted from wood or bones.\n100% is used.\n\n";
+
+    if(lVolS || !bMustTailor) {
+      help << "You will be asked about materials for the possible crafting methods in the order above.\n";
+      help << "If you want to use another crafting method, simply press ESC.\n";
+      }
+
+    game::TextScreen(help);
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverything();
+
     if(bMustTailor || bCanTailor){ // tailoring
       festring fsM("as MAIN material (cloth "); // only main can be cloth
       float fPerc = 0.85;
