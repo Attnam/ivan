@@ -110,6 +110,8 @@ class gwterrain : public wterrain, public gterrain
   virtual int GetWalkability() const;
   DATA_BASE_TRUTH(UsesLongArticle);
   DATA_BASE_VALUE(int, Priority);
+  virtual truth IsDipDestination() const { return false; }
+  virtual truth DipInto(item*, character*) { return false; }
  protected:
   std::pair<v2, int> Neighbour[8];
   virtual void InstallDataBase(int);

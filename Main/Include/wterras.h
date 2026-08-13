@@ -27,6 +27,8 @@ GWTERRAIN(ocean, gwterrain)
   virtual cchar* ScoreEntry() const;
   virtual truth IsFatalToStay() const { return true; }
   virtual int GetWalkability() const;
+  virtual truth IsDipDestination() const { return true; }
+  virtual truth DipInto(item*, character*);
 };
 
 GWTERRAIN(glacier, gwterrain)

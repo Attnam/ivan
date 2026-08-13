@@ -103,7 +103,7 @@ command* commandsystem::Command[] =
   new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
   new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
-  new command(&Dip, "dip into liquid", '!', '!', '!', false),
+  new command(&Dip, "dip into liquid", '!', '!', '!', true),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Search, "search", 's', 's', 's', false),
@@ -1058,9 +1058,12 @@ truth commandsystem::Dip(character* Char)
   truth HasDipDestination = Char->PossessesItem(&item::IsDipDestination);
   truth DipDestinationNear = false;
 
+  /* cannot dip into potions in wilderness, but can dip into seawater */
+  if(game::IsInWilderness()) HasDipDestination = false;
+
   for(int d = 0; d < 9; ++d)
   {
-    lsquare* Square = Char->GetNaturalNeighbourLSquare(d);
+    square* Square = Char->GetNaturalNeighbourSquare(d);
 
     if(Square && Square->IsDipDestination())
       DipDestinationNear = true;
@@ -1083,11 +1086,11 @@ truth commandsystem::Dip(character* Char)
                                         + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
-      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination()){
+      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearSquare(Pos)->IsDipDestination()){
         return false;
       }
 
-      bool b = Char->GetNearLSquare(Pos)->DipInto(Item, Char);
+      bool b = Char->GetNearSquare(Pos)->DipInto(Item, Char);
 
       return b;
     }

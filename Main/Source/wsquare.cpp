@@ -179,6 +179,27 @@ int wsquare::GetWalkability() const
           : GWTerrain->GetWalkability());
 }
 
+truth wsquare::IsDipDestination() const
+{
+  return GWTerrain->IsDipDestination();
+}
+
+truth wsquare::DipInto(item* Thingy, character* Dipper)
+{
+  if(IsDipDestination())
+  {
+    return GWTerrain->DipInto(Thingy, Dipper);
+  }
+  else
+  {
+    if(Dipper->IsPlayer())
+      ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHAR_NAME(DEFINITE));
+
+    return false;
+  }
+}
+
+
 truth wsquare::CanBeSeenByPlayer(truth) const
 {
   return LastSeen;

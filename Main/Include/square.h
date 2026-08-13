@@ -75,6 +75,8 @@ class square
   void RemoveFlags(ulong What) { Flags &= ~What; }
   virtual truth HasBeenSeen() const { return LastSeen; }
   virtual void SurviveEffect(character*);
+  virtual truth IsDipDestination() const { return false; }
+  virtual truth DipInto(item*, character*) = 0;
  protected:
   festring MemorizedDescription;
   area* AreaUnder;
