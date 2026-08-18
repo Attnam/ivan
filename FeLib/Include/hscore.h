@@ -18,12 +18,17 @@
 
 #include "festring.h"
 
+#ifdef PORTABLE_BUILD
+#define HIGH_SCORE_FILENAME "ivan-highscore.scores"
+#else
+
 #ifdef UNIX
 #define HIGH_SCORE_FILENAME "ivan-highscore.scores"
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
 #define HIGH_SCORE_FILENAME "HScore.dat"
+#endif
 #endif
 
 class festring;

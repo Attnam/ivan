@@ -286,9 +286,12 @@ class game
   static int GetMaxScreenXSize();
   static int GetMaxScreenYSize();
   static v2 CalculateScreenCoordinates(v2);
+  static truth PosCurrentlyOnScreen(v2);
+  static v2 ScreenCoordinatesToPos(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);
   static v2 PositionQuestion(cfestring&, v2, positionhandler = 0, positionkeyhandler = 0, truth = true);
+  static std::vector<v2> ListFeaturesOnLevel(v2 CursorPos, int Key);
   static void LookHandler(v2);
   static int AskForKeyPress(cfestring&);
   static bool IsQuestionMode();

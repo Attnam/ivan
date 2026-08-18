@@ -144,6 +144,16 @@ ACTION(go, action)
   std::vector<v2> RouteGoOn;
 };
 
+ACTION(autoexplore, action)
+{
+ public:
+  virtual void Handle();
+  virtual cchar* GetDescription() const;
+  static void AddToNewlySeen(lsquare *Square) { if(NewlySeen) NewlySeen->push_back(Square); }
+ private:
+  static std::vector<lsquare*>* NewlySeen;
+};
+
 ACTION(study, action)
 {
  public:

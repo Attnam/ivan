@@ -202,6 +202,7 @@ inline int GetMinColor24(col24 Color)
 #define KEY_PAGE_DOWN 0x151
 #define KEY_DELETE    0x152
 #define KEY_INSERT    0x153
+#define KEY_SPECIAL   0x15F
 #define KEY_SPACE ' '
 #define KEY_NUMPAD_5 2
 
@@ -210,6 +211,7 @@ inline int GetMinColor24(col24 Color)
 #define KEY_CONTROLLER_B         0x210
 #define KEY_CONTROLLER_X         0x211
 #define KEY_CONTROLLER_Y         0x212
+#define KEY_MOUSE_EVENT          0x220
 
 #define NO_FLAME 0xFFFF
 

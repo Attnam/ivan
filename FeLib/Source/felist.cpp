@@ -403,7 +403,6 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
     return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;DBGLN;
-  globalwindowhandler::SetKeyTimeout(10,'.'); //using the min millis value grants mouse will be updated most often possible
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -446,8 +445,6 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
   bool bClearKeyBufferOnce=false;
   bool bInvM = Flags & INVERSE_MODE;
   graphics::PrepareBeforeDrawingFelist();
-  v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
-  globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
   int iDrawCount=0;
   festring Filter=GetFilter();
   festring fsFilterApplyNew=Filter;
@@ -486,10 +483,7 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
      * this means if felist expects '.' to be pressed,
      * that will fail TODO so may be this should be configurable? just expose defaulting to '.'
      */
-    static uint DefaultAnswer='.';
-    uint Pressed=DefaultAnswer;
-    bool bLeftMouseButtonClick=false;
-    bool bMouseButtonClick=false;
+    uint Pressed=0;
     bool bJustRefreshOnce=false;
 
     for(;;){
@@ -546,67 +540,6 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
         break;
       }
 
-      /////////////////////////////////////////// MOUSE ///////////////////////////////////////
-      v2 v2MousePos = globalwindowhandler::GetMouseLocation();
-      v2MousePos/=graphics::GetScale();
-      mouseclick mc=globalwindowhandler::ConsumeMouseEvent();
-      static v2 v2MousePosFix;
-      ////////////////////////////// mouse click
-      if(bAllowMouseSelect && mc.btn!=-1){ DBG1(mc.btn);
-        switch(mc.btn){
-        case 1:
-          bLeftMouseButtonClick=true;
-          bMouseButtonClick=true;
-          break;
-        }
-
-        if(bMouseButtonClick){
-          /**
-           * when clicking the pos is correct/matches the visible cursor,
-           * this problem actually happens in fullscreen mode only
-           */
-          if(v2MousePos != mc.pos){
-            v2MousePosFix = v2MousePos - mc.pos;
-          }else
-            v2MousePosFix=v2();
-
-          uint iSel = GetMouseSelectedEntry(mc.pos); //make sure selected is the one at mouse pos no matter the highlight
-          if(iSel!=-1){
-            Selected=iSel;
-            break;
-          }
-        }
-      }
-      v2MousePos-=v2MousePosFix;
-
-      ////////////////////////////// mouse wheel scroll
-      if(bAllowMouseSelect && mc.wheelY!=0){
-        Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
-        break;
-      }
-
-      ////////////////////////////// mouse move/hover (to not be hindered by getkey timeout
-      static clock_t lastMouseMoveTime=clock(); //static as mouse is a global thing
-      if(bAllowMouseSelect && v2MousePosPrevious!=v2MousePos){ //DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
-        bool bSelChanged = false;
-
-        uint iSel = GetMouseSelectedEntry(v2MousePos);
-        if(iSel!=-1)
-          bSelChanged = Selected!=iSel;
-
-        v2MousePosPrevious=v2MousePos; //reset
-        lastMouseMoveTime=clock();
-
-        if(bSelChanged){
-          Selected = iSel; DBG1(iSel);
-          bJustRefreshOnce=true;
-          JustRedrawEverythingOnce=true;
-          break;
-        }
-      }
-//        if((Flags & ALLOW_MOUSE_SELECT) && (clock() - lastMouseMoveTime) < (0.5 * CLOCKS_PER_SEC)){
-//        }
-
       ///////////////////////////////////////// KEYBOARD /////////////////////////////////////
       ////////////////////////////// normal key press
       bool bClearKeyBuffer=false;
@@ -614,13 +547,48 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
         bClearKeyBuffer=true;
         bClearKeyBufferOnce=false;
       }DBGLN;
-      Pressed = GET_KEY(bClearKeyBuffer);DBG2(Pressed,DefaultAnswer); //see iTimeoutMillis above
+      Pressed = GET_KEY(bClearKeyBuffer);
 //      if(specialkeys::HasEvent()){DBGLN;
 //        bJustRefreshOnce=true;
 //        break;
 //      }
-      if(Pressed!=DefaultAnswer)
-        break;
+
+      if(Pressed == KEY_MOUSE_EVENT && bAllowMouseSelect)
+      {
+        mouseclick mc = globalwindowhandler::GetLastMouseEvent();
+        if(mc.IsMotion)
+        {
+          v2 v2MousePos = mc.pos / graphics::GetScale();
+          uint iSel = GetMouseSelectedEntry(v2MousePos);
+          if(iSel!=-1 && Selected!=iSel)
+          {
+            Selected = iSel;
+            // bJustRefreshOnce=true;
+            break;
+          }
+          JustRedrawEverythingOnce=true;
+        }
+        else if(mc.wheelY != 0)
+        {
+          Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
+        }
+        else if(mc.btn == 1)
+        {
+          v2 v2MousePos = mc.pos / graphics::GetScale();
+          uint iSel = GetMouseSelectedEntry(v2MousePos);
+          if(iSel != -1)
+          {
+            Selected = iSel;
+            Pressed = KEY_CONTROLLER_A; // just to simplify it
+          }
+        }
+        else if(mc.btn == 2)
+        {
+          Pressed = KEY_CONTROLLER_B;
+          Return = ESCAPED;
+        }
+      }
+      break;
     }
     DBGLN;
 
@@ -716,10 +684,10 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       continue;
     }
 
-    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick || Pressed == KEY_CONTROLLER_A))
+    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || Pressed == KEY_CONTROLLER_A))
     {
       Return = Selected;
-      if(!bLeftMouseButtonClick)
+      if(Pressed == KEY_ENTER)
         bWaitKeyUp=true;
       break;
     }
@@ -847,8 +815,6 @@ uint felist::DrawFiltered(bool& bJustExitTheList)
       if(WAIT_FOR_KEY_UP()) //TODO it is NOT waiting, why? that's the reason of `for(;;)` above...
         break;
   #endif
-
-  globalwindowhandler::ResetKeyTimeout();
 
   if(bApplyNewFilter){
     SetFilter(fsFilterApplyNew);

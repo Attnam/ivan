@@ -51,6 +51,9 @@ truth bLastSDLkeyEventIsKeyUp=false;
 std::vector<SDL_GameController*> globalwindowhandler::controllers;
 v2 globalwindowhandler::controller_direction;
 
+std::queue<mouseclick> globalwindowhandler::MouseBuffer;
+mouseclick globalwindowhandler::LastMouseEvent;
+
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
   if(Controls == MAX_CONTROLS)
@@ -292,7 +295,7 @@ void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedK
 {
   if(iTimeoutMillis<0)ABORT("invalid negative timeout %d",iTimeoutMillis);
 
-  iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
+  iTimeoutDelay = iTimeoutMillis;
   if(iTimeoutDelay>0 && iTimeoutDelay<10)iTimeoutDelay=10; // we are unable to issue commands if it is too low TODO could be less than 10ms?
 
   iTimeoutDefaultKey=iDefaultReturnedKey;
@@ -305,9 +308,9 @@ void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
     if(!KeyBuffer.empty()){ DBG2(KeyBuffer.size(),KeyBuffer[0]); // user pressed some key
-      keyTimeoutRequestedAt=clock(); // resets reference time to wait from
+      keyTimeoutRequestedAt=SDL_GetTicks(); // resets reference time to wait from
     }else{ DBG2(keyTimeoutRequestedAt,iTimeoutDelay);
-      if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
+      if( SDL_GetTicks() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
         KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
     }
   }
@@ -363,9 +366,10 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
   {
     PollEvents(&Event);
     KeyBuffer.clear();
+    MouseBuffer = {};
   }
 
-  keyTimeoutRequestedAt=clock();
+  keyTimeoutRequestedAt=SDL_GetTicks();
   int iDelayMS=iDefaultDelayMS;
   for(;;){
     CheckKeyTimeout();
@@ -380,6 +384,12 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
       if(Key && Key < 0x81)
         return Key;
+    }
+    else if(!MouseBuffer.empty())
+    {
+      LastMouseEvent = MouseBuffer.front();
+      MouseBuffer.pop();
+      return KEY_MOUSE_EVENT;
     }
     else
     {
@@ -555,20 +565,6 @@ bool globalwindowhandler::IsMouseAtRect(v2 v2TopLeft, v2 v2BorderOrBottomRigh, b
     v2MP.Y < v2BottomRight.Y    ;
 }
 
-mouseclick mc;
-mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
-{
-  mouseclick mcR;
-  if(mc.btn!=-1 || mc.wheelY!=0)
-    mcR=mc;
-
-  mc.btn=-1;
-  mc.pos=v2();
-  mc.wheelY=0;
-
-  return mcR;
-}
-
 int globalwindowhandler::ChkCtrlKey(SDL_Event* Event)
 {
   if(Event->key.keysym.mod & KMOD_CTRL){ //if CTRL is pressed, user expects something else than the normal key, therefore not permissive
@@ -620,6 +616,7 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
   if(Event->key.keysym.mod & KMOD_CTRL){ //TODO right control key is being ignored on lists for ctrl+f filter on the first try
     if(ControlKeyHandler!=NULL) //this one was completely externalized
       ControlKeyHandler(Event->key.keysym.sym);
+    AddKeyToBuffer(KEY_SPECIAL + 0xE000);
     return;
   }else
   if(Event->key.keysym.mod & KMOD_ALT){
@@ -655,7 +652,8 @@ void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
     case SDLK_F21:   case SDLK_F22:   case SDLK_F23:   case SDLK_F24:
       if(FunctionKeyHandler!=NULL)
         FunctionKeyHandler(Event->key.keysym.sym);
-      return; //no buffer
+      AddKeyToBuffer(KEY_SPECIAL + 0xE000);
+      return;
 
     case SDLK_SYSREQ:
     case SDLK_PRINTSCREEN:
@@ -758,6 +756,11 @@ void globalwindowhandler::AddKeyToBuffer(int KeyPressed)
     KeyBuffer.push_back(KeyPressed);
 }
 
+void globalwindowhandler::BufferMouseEvent(mouseclick mc)
+{
+  MouseBuffer.push(mc);
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   Uint32 type;
@@ -792,16 +795,37 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     return;
 
    case SDL_MOUSEBUTTONUP:
-     if(Event->button.button==1 && Event->button.clicks>0){
-       mc.btn = 1;
+     if(Event->button.clicks>0){
+       mouseclick mc;
+       mc.btn = Event->button.button;
        mc.pos.X=Event->button.x;
        mc.pos.Y=Event->button.y;
+       mc.wheelY = 0;
+       BufferMouseEvent(mc);
      }
      break;
 
-   case SDL_MOUSEWHEEL:
+   case SDL_MOUSEWHEEL: {
+     mouseclick mc;
      mc.wheelY = Event->wheel.y;
+#if SDL_VERSION_ATLEAST(2, 26, 0)
+     mc.pos.X = Event->wheel.mouseX;
+     mc.pos.Y = Event->wheel.mouseY;
+#else
+     SDL_GetMouseState(&mc.pos.X,&mc.pos.Y);
+#endif
+     BufferMouseEvent(mc);
      break;
+   }
+
+   case SDL_MOUSEMOTION: {
+     mouseclick mc;
+     mc.IsMotion = true;
+     mc.pos.X=Event->motion.x;
+     mc.pos.Y=Event->motion.y;
+     BufferMouseEvent(mc);
+     break;
+   }
 
 #if SDL_MAJOR_VERSION == 2 //BEFORE key up or down
    case SDL_TEXTINPUT: DBG2(Event->key.keysym.sym,Event->text.text[0]);
@@ -900,4 +924,9 @@ festring globalwindowhandler::ScrshotNameHandler()
   return ScrshotName;
 }
 
+void globalwindowhandler::WaitUntil(ulong t)
+{
+  ulong current = GetClock();
+  if(current < t) SDL_Delay(t - current);
+}
 #endif /* USE_SDL */

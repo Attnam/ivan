@@ -51,6 +51,8 @@ class commandsystem
   static void ClearSwapWeapons();
   static std::vector<v2> GetRouteGoOnCopy();
   static truth ShowKeyLayout(character*);
+  static truth NOP(character*);
+  static truth SpawnRoute(character* Char, v2 Pos);
  private:
   static truth Apply(character*);
   static truth ApplyWork(character* Char,item* itOverride=NULL);
@@ -70,7 +72,6 @@ class commandsystem
   static truth GoUp(character*);
   static truth Kick(character*);
   static truth Look(character*);
-  static truth NOP(character*);
   static truth Offer(character*);
   static truth Open(character*);
   static truth PickUp(character*);

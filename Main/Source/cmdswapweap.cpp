@@ -141,7 +141,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     return false;
   }
 
-  humanoid* h = dynamic_cast<humanoid*>(Char);DBGLN;
+  humanoid* h = Char->AsHumanoid();DBGLN;
+  if(!h) return false; // impossible, but to silence GitHub check
 
   itemvector iv;
   h->GetStack()->FillItemVector(iv);
@@ -351,7 +352,8 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     return false;
   }
 
-  humanoid* h = dynamic_cast<humanoid*>(Char); DBG2(iSwapCurrentIndex,vSWCfg.size());
+  humanoid* h = Char->AsHumanoid(); DBG2(iSwapCurrentIndex,vSWCfg.size());
+  if(!h) return false; // impossible, but to silence GitHub check
 
   item* wL = h->GetLeftWielded();
   item* wR = h->GetRightWielded();

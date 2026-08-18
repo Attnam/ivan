@@ -14,6 +14,7 @@
 
 #include "actions.h"
 #include "bitmap.h"
+#include "rawbit.h"
 #include "char.h"
 #include "command.h"
 #include "confdef.h"
@@ -42,6 +43,7 @@
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
+#include "specialkeys.h"
 
 #include "dbgmsgproj.h"
 
@@ -1118,8 +1120,18 @@ truth commandsystem::Dip(character* Char)
 truth commandsystem::ShowKeyLayout(character* Who)
 {
   felist List(CONST_S("Keyboard Layout"));
+
   List.AddDescription(CONST_S(""));
+
+  List.AddDescription("IVAN uses most of the keyboard for command key bindings, though some ");
+  List.AddDescription("commands are only accessible in wizard mode. Note that the game ");
+  List.AddDescription("distinguishes between lowercase and uppercase letters, so if you are ");
+  List.AddDescription("experiencing troubles, first check whether you don't have active CapsLock.");
+
+  List.AddDescription(CONST_S(""));
+
   List.AddDescription(CONST_S("Key       Description"));
+  List.SetPageLength(24);
   festring Buffer;
 
   // Movement keys
@@ -1131,10 +1143,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_NORM: // Normal
    {
      List.AddEntry(CONST_S("789       movement (normal)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("4 6        or use arrow keys and Home, End, PgUp, PgDn"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("123        you can also use Left/Right + Shift/Ctrl for diagonals"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
@@ -1142,10 +1150,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_ALT: // Alternative
    {
      List.AddEntry(CONST_S("789       movement (alternative)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("u o"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("jkl"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
@@ -1153,10 +1157,6 @@ truth commandsystem::ShowKeyLayout(character* Who)
    case DIR_HACK: // Nethack
    {
      List.AddEntry(CONST_S("yku       movement (NetHack)"), LIGHT_GRAY, 0, NO_IMAGE, false);
-     List.SetLastEntryHelp(festring() << "IVAN uses most of the keyboard for command key bindings, though some "
-                                      << "commands are only accessible in wizard mode. Note that the game "
-                                      << "distinguishes between lowercase and uppercase letters, so if you are "
-                                      << "experiencing troubles, first check whether you don't have active CapsLock.");
      List.AddEntry(CONST_S("h l"), LIGHT_GRAY, 0, NO_IMAGE, false);
      List.AddEntry(CONST_S("bjn"), LIGHT_GRAY, 0, NO_IMAGE, false);
      break;
@@ -1228,9 +1228,9 @@ truth commandsystem::Look(character* Char)
   }
 
   if(!game::IsInWilderness())
-    Msg = CONST_S("Direction keys move cursor; examine (i)tems or a (c)haracter; ESC exits.");
+    Msg = CONST_S("examine (i)tems or a (c)haracter [F1 - help]");
   else
-    Msg = CONST_S("Direction keys move cursor; examine a (c)haracter; ESC exits.");
+    Msg = CONST_S("examine a (c)haracter [F1 - help]");
 
   v2 pos = Char->GetPosSafely();
   if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
@@ -1802,9 +1802,18 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
   festring fsHelp;fsHelp<<
     "[Map Help:]\n"
     " F1 - show this message\n"
+    " t - toggle map notes\n"
+    " e - edit/add map note\n"
+    " l - look mode\n"
+    " r - rotate map notes\n"
+    " d - delete map note\n"
     " Map notes containing '!' or '!!' will be highlighted.\n"
     " Position mouse cursor over a map note to edit or delete it.\n"
     " In look mode, clicking on a map note will navigate to that location.\n";
+
+  bitmap BackGround(RES);
+  BackGround.ActivateFastFlag();
+  DOUBLE_BUFFER->FastBlit(&BackGround);
 
   if(bChoseLocationMode)
     if(!game::ToggleShowMapNotes())
@@ -1816,12 +1825,13 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
       while(true){
         v2 noteAddPos = Char->GetPos();
 
+        BackGround.FastBlit(DOUBLE_BUFFER);
         int key;
         if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. [press F1 for help]"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
-            KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
+          key = game::KeyQuestion(CONST_S("Cartography notes action [press F1 for help]"),
+            KEY_ESC, 6, 't', 'l', 'r', 'd', 'e', KEY_SPECIAL);
 
         if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
           specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fsHelp);
@@ -1844,12 +1854,13 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
               ADD_MESSAGE("Let me see my map notes...");
             continue;
           case 'l':
+            BackGround.FastBlit(DOUBLE_BUFFER);
             if(noteAddPos==Char->GetPos()){
               game::RefreshDrawMapOverlay();
 
-              festring fsMsg = pv2ChoseLocation!=NULL ? "Chose a location." :
+              festring fsMsg = pv2ChoseLocation!=NULL ? "Choose a location." :
                 "Where do you wish to add a map note?";
-              fsMsg<<" [direction keys move cursor, space accepts]";
+              fsMsg<<" [F1 - help]";
 
               v2 start;
               if(pv2ChoseLocation!=NULL){
@@ -1871,11 +1882,13 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
               noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
               if(noteAddPos==ERROR_V2){
                 game::ToggleDrawMapOverlay();
+                BackGround.FastBlit(DOUBLE_BUFFER);
                 return false; //continue;
               }
               if(pv2ChoseLocation!=NULL){
                 (*pv2ChoseLocation)=noteAddPos;
                 game::ToggleDrawMapOverlay();
+                BackGround.FastBlit(DOUBLE_BUFFER);
                 return (*pv2ChoseLocation) != Char->GetPos();
               }
             }
@@ -1899,6 +1912,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
     ADD_MESSAGE("You can't hold the map!");
   }
 
+  BackGround.FastBlit(DOUBLE_BUFFER);
   return true;
 }
 
@@ -1920,93 +1934,117 @@ std::vector<v2> commandsystem::GetRouteGoOnCopy(){
   return RouteGoOn;
 }
 
+truth commandsystem::SpawnRoute(character* Char, v2 Pos)
+{
+  std::set<v2> Illegal;
+
+  node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), Pos, Illegal, 0, Char);
+  if(Node){
+    RouteGoOn.clear();
+    while(Node->Last)
+    {
+      RouteGoOn.push_back(Node->Pos);
+      Node = Node->Last;
+    }
+  }
+
+  go* Go = go::Spawn(Char);
+  Go->SetRoute(RouteGoOn);
+  Go->SetDirectionFromRoute();
+  Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
+  LevelRouteGoOn=Char->GetLevel();
+
+  Char->SetAction(Go);
+  Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+  Char->GoOn(Go, true);
+  return truth(Char->GetAction());
+}
+
 truth commandsystem::Go(character* Char)
 {
-  int Dir = DIR_ERROR;
-
+  int Key;
   if(LevelRouteGoOn!=Char->GetLevel())
     v2RouteTarget=v2(0,0);
 
   if(Char->GetPos()==v2RouteTarget) //TODO is near by 1 dist (2 or more may have a wall in-between)
     v2RouteTarget=v2(0,0);
 
-  if(!v2RouteTarget.Is0()){
-    switch(game::KeyQuestion(CONST_S("Continue going thru the route? [y/n]"), KEY_ESC, 4, 'y', 'n', KEY_CONTROLLER_A, KEY_CONTROLLER_B)){
-      case 'y':
-      case KEY_CONTROLLER_A:
-        Dir = YOURSELF;
-        break;
-      case 'n':
-      case KEY_CONTROLLER_B:
-        v2RouteTarget=v2(0,0);
-        break;
-      default:
-        return false;
-    }
-  }
+  while(true) {
+    festring options = "Press a direction key to fast-walk, '.'/'<'/'>' to route, 'x' to autoexplore";
+    if(!v2RouteTarget.Is0()) options << ", 'g' to continue";
 
-  if(Dir == DIR_ERROR)
-    Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key or '.' for map route]"), false, true);
+    FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", options.CStr());
+    Key = GET_KEY();
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
-  if(Dir == DIR_ERROR)
-    return false;
-
-  RouteGoOn.clear();
-  if(Dir == YOURSELF){
-    if(v2RouteTarget.Is0())
-      if(!ShowMapWork(Char,&v2RouteTarget)){
-        v2RouteTarget=v2(0,0);
-        return false;
-      }
-
-    if(Char->GetPos()==v2RouteTarget){
-      v2RouteTarget=v2(0,0);
-      return false;
-    }
-
-    std::set<v2> Illegal;
-    node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), v2RouteTarget, Illegal, 0, Char);
-    if(Node){
-      RouteGoOn.clear();
-      while(Node->Last)
+    if(Key == KEY_ESC || Key == KEY_CONTROLLER_X) return false;
+    if(Key == 'x' || Key == KEY_CONTROLLER_Y) {
+      if(!game::IsInWilderness())
       {
-        RouteGoOn.push_back(Node->Pos);
-        Node = Node->Last;
+        autoexplore* Go = autoexplore::Spawn(Char);
+        Char->SetAction(Go);
+        Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+        Go->Handle();
+        if(!Char->GetAction())
+        {
+          ADD_MESSAGE("Nothing left to explore safely.");
+          return false;
+        }
+        return true;
+      }
+      else {
+        ADD_MESSAGE("Not available in the wilderness.");
+        return false;
       }
     }
-  }
+    if(Key == '.' || Key == '>' || Key == '<' || Key == 'g' || Key == KEY_CONTROLLER_A || Key == KEY_CONTROLLER_B) {
+      if(Key != 'g' && Key != KEY_CONTROLLER_B) {
+        v2 Pos = Char->GetPos();
 
-  if(Dir == YOURSELF && RouteGoOn.size()==0){
-    v2RouteTarget=v2(0,0);
-    return false;
-  }
+        if(Key != '.' && Key != KEY_CONTROLLER_A) {
+          auto Pos2 = game::ListFeaturesOnLevel(Pos, Key);
+          if(Pos2.empty()) ADD_MESSAGE("No stairway known in this direction.");
+          else Pos = Pos2[0];
+        }
+        v2RouteTarget = game::PositionQuestion("Choose a location [F1 - help]", Pos, NULL, NULL, true);
 
-  go* Go = go::Spawn(Char);
-  if(Dir == YOURSELF){
-    Go->SetRoute(RouteGoOn);
-    Go->SetDirectionFromRoute();
-    Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
-    LevelRouteGoOn=Char->GetLevel();
-  }else{
-    Go->SetDirection(Dir);
+        if(v2RouteTarget == ERROR_V2) {
+          v2RouteTarget=v2(0,0);
+          return false;
+        }
+      }
 
-    int OKDirectionsCounter = 0;
+      if(Char->GetPos()==v2RouteTarget){
+        v2RouteTarget=v2(0,0);
+        return false;
+      }
 
-    for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
-    {
-      lsquare* Square = Char->GetNeighbourLSquare(d);
-
-      if(Square && Char->CanMoveOn(Square))
-        ++OKDirectionsCounter;
+      return SpawnRoute(Char, v2RouteTarget);
     }
+    v2 Dir = game::GetDirectionVectorForKey(Key);
+    if(Dir != ERROR_V2)
+    {
+      go* Go = go::Spawn(Char);
+      Go->SetDirection(game::GetDirectionForVector(Dir));
 
-    Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+      int OKDirectionsCounter = 0;
+
+      for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
+      {
+        lsquare* Square = Char->GetNeighbourLSquare(d);
+
+        if(Square && Char->CanMoveOn(Square))
+          ++OKDirectionsCounter;
+      }
+
+      Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+
+      Char->SetAction(Go);
+      Char->EditAP(Char->GetStateAPGain(100)); // gum solution
+      Char->GoOn(Go, true);
+      return truth(Char->GetAction());
+    }
   }
-
-  Char->SetAction(Go);
-  Char->EditAP(Char->GetStateAPGain(100)); // gum solution
-  Char->GoOn(Go, true);
-  return truth(Char->GetAction());
 }
 
 truth commandsystem::ShowConfigScreen(character*)

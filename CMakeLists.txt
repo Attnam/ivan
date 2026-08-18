@@ -15,9 +15,11 @@ add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 option(BUILD_MAC_APP "Build standalone application for MacOS" OFF)
 option(USE_HOME_FOR_STATE_DIR "Statedir will be /.ivan/ in current user's homedir" OFF)
 option(WIZARD "Enable Wizard Mode" OFF)
+option(PORTABLE_BUILD "Keep game and user data in the directory IVAN is launched from" OFF)
 
 if(UNIX)
   add_definitions(-DUNIX)
+  if(NOT PORTABLE_BUILD)
   include(GNUInstallDirs)
 
   if(BUILD_MAC_APP)
@@ -36,6 +38,7 @@ if(UNIX)
               "If you have game data in \"${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan\","
               " please move them to \"$ENV{HOME}/.ivan\".")
     endif()
+  endif()
   endif()
 
 elseif(WIN32)
@@ -61,6 +64,10 @@ endif()
 
 if(WIZARD)
   add_definitions(-DWIZARD)
+endif()
+
+if(PORTABLE_BUILD)
+  add_definitions(-DPORTABLE_BUILD)
 endif()
 
 find_path(EXECINFO_INCLUDE_DIR NAMES execinfo.h)

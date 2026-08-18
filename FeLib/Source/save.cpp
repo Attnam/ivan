@@ -811,6 +811,9 @@ void MakePath(cfestring& Path)
 
 festring GetUserDataDir()
 {
+#ifdef PORTABLE_BUILD
+  return "./";
+#else
 #ifdef UNIX
   festring Dir;
 #ifdef MAC_APP
@@ -833,5 +836,6 @@ festring GetUserDataDir()
 
 #if defined(WIN32) || defined(__DJGPP__)
   return "./";
+#endif
 #endif
 }

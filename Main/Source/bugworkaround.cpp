@@ -428,7 +428,7 @@ character* bugfixdp::ValidatePlayerAt(square* sqr)
 
   if(vPF.size()>1){ // FIRST CHECK/FIX!
     festring fsMsg;
-    fsMsg << "Multiple player instances found (x" << vPF.size() << "), try to fix this?";
+    fsMsg << "Multiple player instances found (x" << int(vPF.size()) << "), try to fix this?";
     if(AlertConfirmFixMsg(fsMsg.CStr()))
       return BugWorkaroundDupPlayer();
     /**

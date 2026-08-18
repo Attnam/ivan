@@ -229,8 +229,41 @@ inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
   return SaveFile;
 }
 
+/* SAVE_COMPATIBILITY:
+ * make x86_64-w64-mingw32 saves compatible with Linux,
+ * by forcing the correct sizes.
+ * Note: This also lets us save 64-bit time_t values.
+ **/
+
+#if SAVE_COMPATIBILITY
+#include <stdint.h>
+RAW_SAVE_LOAD(int64_t)
+RAW_SAVE_LOAD(uint64_t)
+
+inline outputfile& operator<<(outputfile& SaveFile, long Value)
+{
+  int64_t Value2 = Value; return SaveFile << Value2;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, long& Value)
+{
+  int64_t Value2; SaveFile >> Value2; Value = Value2; return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
+{
+  uint64_t Value2 = Value; return SaveFile << Value2;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
+{
+  uint64_t Value2; SaveFile >> Value2; Value = Value2; return SaveFile;
+}
+
+#else
 RAW_SAVE_LOAD(long)
 RAW_SAVE_LOAD(ulong)
+#endif
 RAW_SAVE_LOAD(int)
 RAW_SAVE_LOAD(uint)
 RAW_SAVE_LOAD(double)

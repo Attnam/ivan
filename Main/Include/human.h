@@ -128,6 +128,7 @@ CHARACTER(humanoid, character)
   virtual void CalculateDodgeValue();
   virtual truth CheckZap();
   virtual truth IsHumanoid() const { return true; }
+  virtual humanoid *AsHumanoid() { return this; }
   virtual truth CheckTalk();
   virtual truth CheckIfEquipmentIsNotUsable(int) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;

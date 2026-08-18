@@ -47,6 +47,7 @@ class itemtrapbase
 {
  public:
   itemtrapbase() : Active(false) { }
+  virtual ~itemtrapbase() { }
   void Save(outputfile&) const;
   void Load(inputfile&);
   void SetIsActive(truth);

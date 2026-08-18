@@ -26,6 +26,7 @@
 #include "hiteffect.h" //TODO move to charsset.cpp?
 #include "lterras.h"
 #include "gods.h"
+#include "specialkeys.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -3035,7 +3036,7 @@ truth character::AutoPlayAIDropThings()
 
       if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
         static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
-        static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
+        static humanoid* h;h = AsHumanoid();DBGLN;
         DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
         if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
           dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
@@ -3079,7 +3080,7 @@ bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
 
 truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
-  static humanoid* h;h = dynamic_cast<humanoid*>(this);
+  static humanoid* h;h = AsHumanoid();
   if(h==NULL)return false;
 
   if(h->AutoPlayAIequip())
@@ -3704,7 +3705,55 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
     HasActed = commandsystem::ShowKeyLayout(this);
+    ValidKeyPressed = true;
+  }
+
+  if(Key == KEY_SPECIAL && specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)) {
+    specialkeys::ClearRequest();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    HasActed = commandsystem::ShowKeyLayout(this);
+    ValidKeyPressed = true;
+  }
+
+  if(Key == KEY_MOUSE_EVENT) {
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
+    auto mc = globalwindowhandler::GetLastMouseEvent();
+    if(mc.btn > 0) {
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto w = humanoid::GetSilhouetteWhere();
+      auto h = AsHumanoid();
+      if(h) {
+        cint Equipments = GetEquipments();
+        for(int c=0; c<Equipments; c++) if(globalwindowhandler::IsMouseAtRect(w + h->GetEquipmentPanelPos(c), TILE_V2, true, MPos)) {
+          HasActed = TryToChangeEquipment(GetStack(), NULL, c);
+          ValidKeyPressed = true;
+         }
+      }
+      if(!ValidKeyPressed && globalwindowhandler::IsMouseAtRect(w, SILHOUETTE_SIZE, true, MPos))
+      {
+        HasActed = commandsystem::ShowKeyLayout(this);
+        ValidKeyPressed = true;
+      }
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(game::PosCurrentlyOnScreen(TPos))
+      {
+        auto v = TPos - PLAYER->GetPos();
+        if(v.Is0()) {
+          commandsystem::NOP(this);
+          ValidKeyPressed = true;
+          HasActed = true;
+        }
+        else if(v.IsAdjacent(ZERO_V2)) MoveByVector(v);
+        else {
+          ValidKeyPressed = true;
+          HasActed = commandsystem::SpawnRoute(this, TPos);
+        }
+      }
     }
+  ValidKeyPressed = true;
+  }
 }
 
 void character::GetPlayerCommand()
@@ -4933,7 +4982,7 @@ void character::TeleportRandomly(truth Intentional)
     if(IsPlayer())
     {
       v2 Input = game::PositionQuestion(CONST_S("Where do you wish to teleport? "
-                                                "[direction keys move cursor, space accepts]"),
+                                                "[F1 - help]"),
                                         GetPos(), &game::TeleportHandler, 0, false);
 
       if(Input == ERROR_V2) // esc pressed
@@ -5073,7 +5122,7 @@ void character::DoDetecting()
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
     game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
-    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), GetPos(), 0, 0, false);
+    game::PositionQuestion(CONST_S("Detecting material [F1 - help]"), GetPos(), 0, 0, false);
     game::SetDrawMapOverlay(false);
     EditExperience(INTELLIGENCE, 30, 1 << 12);
   }

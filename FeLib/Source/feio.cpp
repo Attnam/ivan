@@ -22,13 +22,22 @@
 #include <cstring>
 #include <vector>
 
+#if defined(UNIX) || defined(USE_OPENDIR)
+#include <dirent.h>
+#else
+
 #ifdef WIN32
 #define stat _stat
 #include <io.h>
 #endif
 
+#ifdef __DJGPP__
+#include <dir.h>
+#endif
+
+#endif
+
 #ifdef UNIX
-#include <dirent.h>
 #include <stddef.h>
 #include <cstdio>
 #include <time.h>
@@ -37,9 +46,6 @@
 #include <sstream>
 #endif
 
-#ifdef __DJGPP__
-#include <dir.h>
-#endif
 
 #include "bitmap.h"
 #include "error.h"
@@ -220,7 +226,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
     }
 #endif
 
-    clock_t StartTime = clock();
+    auto StartTime = globalwindowhandler::GetClock();
     sCopyOfMS = Topic;
     int i;
 
@@ -298,7 +304,7 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
       Backup.LuminanceMaskedBlit(BlitData);
       Buffer.SimpleAlphaBlit(DOUBLE_BUFFER, c++ * 50, 0);
       graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
+      globalwindowhandler::WaitUntil(StartTime + 50);
       k = READ_KEY();
     }
     else
@@ -329,6 +335,22 @@ int iosystem::Menu(std::vector<bitmap*> vBackGround, v2 Pos,
      case KEY_CONTROLLER_A:
       bReady = true;
       break;
+
+     case KEY_MOUSE_EVENT: {
+        mouseclick mc = globalwindowhandler::GetLastMouseEvent();
+        if(mc.IsMotion)
+        {
+          v2 MPos = mc.pos / graphics::GetScale();
+          int yzero = Pos.Y - CountChars('\r', sMS) * 25;
+          if(MPos.Y > yzero && MPos.Y < yzero + 50 * CountChars('\r', sMS))
+            iSelected = (MPos.Y - yzero) / 50;
+        }
+        else if(mc.btn > 0)
+        {
+          bReady = true;
+        }
+      break;
+     }
 
      default:
       if(k > 0x30 && k < 0x31 + CountChars('\r', sMS)){
@@ -1044,7 +1066,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
 
   ////////////////////////// OS SPECIFIC!!! collect all files at save folder. //////////////////////////
-#ifdef UNIX
+#if defined(UNIX) || defined(USE_OPENDIR)
   {
     DIR* dp;
     struct dirent* ep;
@@ -1055,7 +1077,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       closedir(dp);
     }
   }
-#endif
+#else
 
 #ifdef WIN32
   struct _finddata_t Found;
@@ -1091,6 +1113,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       Check = findnext(&Found);
     }
   }
+#endif
 #endif
 
   if(vFiles.size()==0){

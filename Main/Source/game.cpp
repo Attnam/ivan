@@ -68,6 +68,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "specialkeys.h"
 
 #include "dbgmsgproj.h"
 
@@ -1628,7 +1629,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
-  if(ivanconfig::GetStartingDungeonGfxScale()==1){
+  if(ivanconfig::GetStartingDungeonGfxScale()==1 && false){
     ADD_MESSAGE(cHugeMap);
     bDrawMapOverlayEnabled=false;
     return;
@@ -2204,7 +2205,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
-  humanoid* h=dynamic_cast<humanoid*>(Player);
+  humanoid* h=Player->AsHumanoid();
   if(bOk && h==NULL)bOk=false; //TODO let it work with non humanoid forms
 //  if(bOk && Player->IsPolymorphed())bOk=false;
 
@@ -3799,6 +3800,25 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
     if(Key==keyChoseDefaultDir)
       return defaultDir;
 
+    if(Key == KEY_MOUSE_EVENT) {
+      auto mc = globalwindowhandler::GetLastMouseEvent();
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(mc.btn == 1 && game::PosCurrentlyOnScreen(TPos)) {
+        auto v = TPos - PLAYER->GetPos();
+        int mul = std::max(abs(v.X), abs(v.Y));
+        if(mc.btn == 1)
+        {
+          for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+            if(GetMoveVector(c) * mul == v)
+              return c;
+          ADD_MESSAGE("Only cardinal or diagonal directions allowed.");
+          continue;
+        }
+      }
+      if(mc.IsMotion) continue;
+    }
+
     if(!RequireAnswer)
       return DIR_ERROR;
   }
@@ -4260,6 +4280,25 @@ int game::AskForKeyPress(cfestring& Topic)
   return Key;
 }
 
+/* Key is '<' or '>' */
+std::vector<v2> game::ListFeaturesOnLevel(v2 CursorPos, int Key)
+{
+  auto Level = GetCurrentLevel();
+  if(!Level) return {};
+  std::vector<v2> Positions;
+  for(int y=0; y<GetCurrentArea()->GetYSize(); y++)
+  for(int x=0; x<GetCurrentArea()->GetXSize(); x++) {
+    v2 Pos(x, y);
+    lsquare* Square = GetCurrentLevel()->GetLSquare(Pos);
+    if(!Square->HasBeenSeen()) continue;
+    olterrain *olt = Square->GetOLTerrain();
+    if(!olt) continue;
+    if(!(Key == '<' ? olt->IsUpLink() : olt->IsDownLink())) continue;
+    Positions.push_back(Pos);
+  }
+  return Positions;
+}
+
 /* Handler is called when the key has been identified as a movement key
  * KeyHandler is called when the key has NOT been identified as a movement key
  * Both can be deactivated by passing 0 as parameter */
@@ -4271,18 +4310,12 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   SetDoZoom(Zoom);
   v2 Return;
   CursorData = RED_CURSOR;
+  auto OrigCursorPos = CursorPos;
 
   if(Handler)
     Handler(CursorPos);
 
   bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
-
-  /**
-   * using the min millis value grants mouse will be updated most often possible
-   * default key -1 just to be ignored
-   */
-  if(bMapNotesMode)
-    globalwindowhandler::SetKeyTimeout(100,-1);
 
   bPositionQuestionMode=true;
   v2 v2PreviousClick=v2(0,0);
@@ -4291,19 +4324,6 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
     if(bMapNotesMode){
-      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
-      if(lsqrMapNote){
-        mouseclick mc = globalwindowhandler::ConsumeMouseEvent();
-        if(mc.btn==1){
-          CursorPos = lsqrMapNote->GetPos();
-          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
-            Return =  CursorPos;
-            break;
-          }
-          v2PreviousClick = CursorPos;
-        }
-      }
-
       CheckAddAutoMapNote(Square);
     }
 
@@ -4313,6 +4333,49 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, BLACK);
     else
       GetCurrentArea()->GetSquare(CursorPos)->SendStrongNewDrawRequest();
+
+    if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+      bitmap BackGround(RES);
+      BackGround.ActivateFastFlag();
+      DOUBLE_BUFFER->FastBlit(&BackGround);
+      festring msg =
+        "Direction keys move cursor\n"
+        "space accepts\n"
+        "ESC cancels\n"
+        "< find upstairs\n"
+        "> find downstairs\n"
+        "mouse wheel scrolls when the mouse is on the map edge";
+      specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp, msg);
+      BackGround.FastBlit(DOUBLE_BUFFER);
+      continue;
+    }
+
+    if(Key == KEY_MOUSE_EVENT) {
+      auto mc = globalwindowhandler::GetLastMouseEvent();
+      v2 MPos = mc.pos / graphics::GetScale();
+      auto TPos = game::ScreenCoordinatesToPos(MPos);
+      if(game::PosCurrentlyOnScreen(TPos))
+      {
+        if(mc.IsMotion && TPos.X >= 0 && TPos.Y >= 0 && TPos.X < GetCurrentArea()->GetXSize() && TPos.Y < GetCurrentArea()->GetYSize())
+        {
+          CursorPos = TPos;
+          if(Handler) Handler(CursorPos);
+        }
+        if(mc.btn == 1) Key = KEY_CONTROLLER_A;
+        if(mc.btn == 2) Key = KEY_CONTROLLER_B;
+        if(mc.wheelY)
+        {
+           v2 Delta = v2(
+             TPos.X >= GetCamera().X + GetScreenXSize() - 3 ? 4 + TPos.X - GetCamera().X - GetScreenXSize() : TPos.X < GetCamera().X + 3 ? -(3 + GetCamera().X - TPos.X) : 0, 
+             TPos.Y >= GetCamera().Y + GetScreenYSize() - 3 ? 4 + TPos.Y - GetCamera().Y - GetScreenYSize() : TPos.Y < GetCamera().Y + 3 ? -(3 + GetCamera().Y - TPos.Y) : 0
+           );
+           Delta *= mc.wheelY;
+           Camera += Delta;
+
+           GetCurrentArea()->SendNewDrawRequest();
+        }
+      }
+    }
 
     if(Key == ' ' || Key == '.' || Key == KEY_CONTROLLER_A)
     {
@@ -4324,6 +4387,45 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     {
       Return = ERROR_V2;
       break;
+    }
+
+    if(Key == '<' || Key == '>') {
+      std::vector<v2> StairPositions = ListFeaturesOnLevel(CursorPos, Key);
+      if(StairPositions.empty()) {
+        ADD_MESSAGE("No stairway known in this direction.");
+      }
+      else {
+        std::sort(StairPositions.begin(), StairPositions.end(), [&] (v2 a, v2 b) {
+          return std::make_pair((a-OrigCursorPos).GetLengthSquare(), a) < std::make_pair((b-OrigCursorPos).GetLengthSquare(), b);
+        });
+        int s = StairPositions.size();
+        bool Found = false;
+        for(int i=0; i<s; i++) if(StairPositions[i] == CursorPos)
+        {
+          CursorPos = StairPositions[(i+1)%s];
+          Found = true;
+          break;
+        }
+        if(!Found) CursorPos = StairPositions[0];
+        if(Handler)
+          Handler(CursorPos);
+      }
+    }
+
+    if(Key == KEY_MOUSE_EVENT && bMapNotesMode)
+    {
+      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
+      if(lsqrMapNote){
+        mouseclick mc = globalwindowhandler::GetLastMouseEvent();
+        if(mc.btn==1){
+          CursorPos = lsqrMapNote->GetPos();
+          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
+            Return = CursorPos;
+            break;
+          }
+          v2PreviousClick = CursorPos;
+        }
+      }
     }
 
     v2 DirectionVector = GetDirectionVectorForKey(Key);
@@ -4351,11 +4453,14 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       }
     }
 
-    if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
-      UpdateCameraX(CursorPos.X);
+    if(Key != KEY_MOUSE_EVENT)
+    {
+      if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
+        UpdateCameraX(CursorPos.X);
 
-    if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
-      UpdateCameraY(CursorPos.Y);
+      if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
+        UpdateCameraY(CursorPos.Y);
+    }
 
     FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CStr());
     SetCursorPos(CursorPos);
@@ -4381,9 +4486,6 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       UpdateCameraY(ppos.Y);
     }
   }
-
-  if(bMapNotesMode)
-    globalwindowhandler::ResetKeyTimeout();
 
   return Return;
 }
@@ -4431,6 +4533,10 @@ void game::LookHandler(v2 CursorPos)
 
       if(LSquare->HasEngravings() && LSquare->IsTransparent())
       {
+        cchar* Text = LSquare->GetEngraved();
+
+        if(Text[0] == '#') ; // Prevent displaying map notes.
+        else
         if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
           LSquare->DisplayEngravedInfo(Msg);
         else
@@ -4523,7 +4629,7 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
         break;
       }
 
-    if(!Return && DefaultAnswer != REQUIRES_ANSWER)
+    if(!Return && DefaultAnswer != REQUIRES_ANSWER && k != KEY_MOUSE_EVENT)
       Return = DefaultAnswer;
   }
 
@@ -5304,6 +5410,9 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 festring game::GetDataDir()
 {
+#ifdef PORTABLE_BUILD
+  return "./";
+#else
 #ifdef UNIX
 #ifdef MAC_APP
   return "../Resources/data/";
@@ -5314,6 +5423,7 @@ festring game::GetDataDir()
 
 #if defined(WIN32) || defined(__DJGPP__)
   return GetUserDataDir();
+#endif
 #endif
 }
 
@@ -5613,8 +5723,6 @@ void game::AutoPlayModeApply(){
      */
     iTimeout/=2;
   }
-
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 
 void game::IncAutoPlayMode() {
@@ -7126,3 +7234,26 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
   if(Buffer == DOUBLE_BUFFER)
     graphics::BlitDBToScreen();
 }
+
+v2 game::ScreenCoordinatesToPos(v2 Pos)
+{
+  Pos.X >>= 4;
+  Pos.Y >>= 4;
+  Pos.X -= 1;
+  Pos.Y -= 2;
+  auto scale = ivanconfig::GetStartingDungeonGfxScale();
+  auto gdiv = [&] (int a, int b) { if(a >= 0) return a/b; else return (a-b-1)/b; };
+  Pos.X = gdiv(Pos.X, scale);
+  Pos.Y = gdiv(Pos.Y, scale);
+  return Pos + Camera;
+}
+
+truth game::PosCurrentlyOnScreen(v2 Pos)
+{
+  return
+     Pos.X >= game::GetCamera().X
+  && Pos.Y >= game::GetCamera().Y
+  && Pos.X < game::GetCamera().X + game::GetScreenXSize()
+  && Pos.Y < game::GetCamera().Y + game::GetScreenYSize();
+}
+
