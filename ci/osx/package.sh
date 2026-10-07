@@ -55,9 +55,9 @@ find_lib() {
   otool -D "$(pkg-config --variable libdir -- "$1")/${1}.dylib" | tail -n1
 }
 
-libpcre=$(find_lib libpcre)
-cp "${libpcre}" "${DATA_DIR}/Frameworks/libpcre.dylib"
-install_name_tool -change "${libpcre}" @loader_path/../Frameworks/libpcre.dylib "${BIN}"
+libpcre2=$(find_lib libpcre2-8)
+cp "${libpcre2}" "${DATA_DIR}/Frameworks/libpcre2-8.dylib"
+install_name_tool -change "${libpcre2}" @loader_path/../Frameworks/libpcre2-8.dylib "${BIN}"
 
 libpng=$(find_lib libpng)
 cp "${libpng}" "${DATA_DIR}/Frameworks/libpng.dylib"
