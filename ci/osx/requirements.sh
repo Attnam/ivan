@@ -66,7 +66,7 @@ if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
   #if [[ -n "${TRAVIS_TAG}" || "${TODO_BREW_UPDATE}" = ON ]]; then
   #  brew update  # for deployment
   #fi
-  brew_install pkg-config cmake
+  brew_install pkg-config cmake pcre2
   if [[ -n "${MACOSX_DEPLOYMENT_TARGET}" ]]; then
     # dyld: lazy symbol binding failed: Symbol not found: ____chkstk_darwin
     for formula in "${SCRIPT_DIR}"/{libpng}.rb; do
