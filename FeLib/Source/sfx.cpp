@@ -16,7 +16,8 @@
 
 #include <cstdarg>
 #include <cctype>
-#include <pcre.h>
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
 
 #include <ctype.h>
 
@@ -58,16 +59,16 @@ struct SoundFile
 struct SoundInfo
 {
   std::vector<int> sounds;
-  std::unique_ptr<pcre*> re = std::unique_ptr<pcre*>(new (pcre*)());
-  std::unique_ptr<pcre_extra*> extra = std::unique_ptr<pcre_extra*>(new (pcre_extra*)(NULL));
+  
+  std::unique_ptr<pcre2_code*> re = std::unique_ptr<pcre2_code*>(new (pcre2_code*)(NULL));
+  std::unique_ptr<pcre2_match_data*> match_data = std::unique_ptr<pcre2_match_data*>(new pcre2_match_data*(NULL));
 
   SoundInfo() = default;
   SoundInfo(SoundInfo&) = delete;
   SoundInfo(SoundInfo&&) = default;
   ~SoundInfo()
   {
-    if(re.get() && *re) free(*re);
-    if(extra.get() && *extra) pcre_free_study(*extra);
+    if(re.get() && *re) pcre2_code_free(*re);
   }
 };
 
@@ -91,8 +92,8 @@ festring getstr(FILE *f, truth word)
 FILE *debf = NULL;
 void soundeffects::initSound()
 {
-  const char *error;
-  int erroffset;
+  int errorCode;
+  PCRE2_SIZE erroffset;
 
   if(SoundState == 0)
   {
@@ -174,10 +175,15 @@ void soundeffects::initSound()
         }
 
         // configure the regex
-        *si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
-        if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
-        if(*si.re) *si.extra = pcre_study(*si.re, 0, &error);
-        if(error) *si.extra = NULL;
+        *si.re = pcre2_compile(reinterpret_cast<const unsigned char *>(Pattern.CStr()), Pattern.GetSize(), 0, &errorCode, &erroffset, NULL);
+        if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %ld: %d\n", erroffset, errorCode);
+
+        if (*si.match_data.get() && *si.match_data)
+        {
+          pcre2_match_data_free(*si.match_data);
+        }
+
+        *si.match_data = pcre2_match_data_create_from_pattern(*si.re, NULL);
 
         // configure the assigned files, now they are separated with ',' and the filename now accepts spaces.
         festring FileName;
@@ -257,7 +263,7 @@ SoundFile* soundeffects::findMatchingSound(festring Buffer)
   DBG1(Buffer.CStr());
   for(int i = patterns.size() - 1; i >= 0; i--){
     if(*patterns[i].re)
-      if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0){
+      if(pcre2_match(*patterns[i].re, reinterpret_cast<const unsigned char *>(Buffer.CStr()), Buffer.GetSize(), 0, 0, *patterns[i].match_data, 0) >= 0){
         SoundFile* p = &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
         DBG1(p->filename.CStr());
         return p;

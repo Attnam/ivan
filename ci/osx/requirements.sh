@@ -62,23 +62,23 @@ install_sdl2() {
 }
 
 if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
-  ## pcre and libpng are quiet stable, the CI servers can do better here
+  ## libpng is quiet stable, the CI servers can do better here
   #if [[ -n "${TRAVIS_TAG}" || "${TODO_BREW_UPDATE}" = ON ]]; then
   #  brew update  # for deployment
   #fi
-  brew_install pkg-config cmake
+  brew_install pkg-config cmake pcre2
   if [[ -n "${MACOSX_DEPLOYMENT_TARGET}" ]]; then
     # dyld: lazy symbol binding failed: Symbol not found: ____chkstk_darwin
-    for formula in "${SCRIPT_DIR}"/{pcre,libpng}.rb; do
+    for formula in "${SCRIPT_DIR}"/{libpng}.rb; do
       # brew will sanitize environment variables, therefore...
       sed -i.orig "s/X_MACOSX_DEPLOYMENT_TARGET/${MACOSX_DEPLOYMENT_TARGET}/g" "${formula}"
       brew reinstall --force --build-from-source --formula "${formula}"
       mv "${formula}"{.orig,}
     done
   else
-    brew_install pcre libpng
+    brew_install libpng
   fi
   install_sdl2
 else
-  brew_install pkg-config cmake pcre libpng sdl2 sdl2_mixer
+  brew_install pkg-config cmake pcre2 libpng sdl2 sdl2_mixer
 fi
