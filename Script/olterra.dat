@@ -48,6 +48,7 @@ olterrain
   RestMessage = "";
   ShowMaterial = true;
   IsUpLink = false;
+  IsDownLink = false;
   CreateDivineConfigurations = false;
   StorageVolume = 0;
   HPModifier = 100;
@@ -767,12 +768,14 @@ stairs /* olterrain-> */
   {
     PostFix = "downwards";
     BitmapPos = 0, 208;
+    IsDownLink = true;
   }
 
   Config SUMO_ARENA_ENTRY;
   {
     PostFix = "downwards";
     BitmapPos = 0, 208;
+    IsDownLink = true;
   }
 
   Config SUMO_ARENA_EXIT;
@@ -798,6 +801,7 @@ portal /* stairs -> */
   Config OREE_LAIR_EXIT; { }
   Config DARK_LEVEL; { }
 
+  IsDownLink = true;
   Config XINROCH_TOMB_ENTRANCE;
   {
     MaterialColorB = rgb16(0, 200, 0);

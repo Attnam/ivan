@@ -133,7 +133,7 @@ void scrolloffireballs::FinishReading(character* Reader)
 
   ADD_MESSAGE("This could be loud...");
 
-  v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [direction keys move cursor, space accepts]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
+  v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [F1 - help]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
 
   if(Input == ERROR_V2) // esc pressed
   {
@@ -3102,7 +3102,7 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
     game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
-    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"),
+    game::PositionQuestion(CONST_S("Detecting material [F1 - help]"),
                            Reader->GetPos(), 0, 0, false);
     game::SetDrawMapOverlay(false);
     Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);

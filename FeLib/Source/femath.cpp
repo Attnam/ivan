@@ -315,26 +315,22 @@ void ReadData(region& R, inputfile& SaveFile)
 
 outputfile& operator<<(outputfile& SaveFile, const interval& I)
 {
-  SaveFile.Write(reinterpret_cast<cchar*>(&I), sizeof(I));
-  return SaveFile;
+  return SaveFile << I.Min << I.Max;
 }
 
 inputfile& operator>>(inputfile& SaveFile, interval& I)
 {
-  SaveFile.Read(reinterpret_cast<char*>(&I), sizeof(I));
-  return SaveFile;
+  return SaveFile >> I.Min >> I.Max;
 }
 
 outputfile& operator<<(outputfile& SaveFile, const region& R)
 {
-  SaveFile.Write(reinterpret_cast<cchar*>(&R), sizeof(R));
-  return SaveFile;
+  return SaveFile << R.X << R.Y;
 }
 
 inputfile& operator>>(inputfile& SaveFile, region& R)
 {
-  SaveFile.Read(reinterpret_cast<char*>(&R), sizeof(R));
-  return SaveFile;
+  return SaveFile >> R.X >> R.Y;
 }
 
 long femath::SumArray(const fearray<long>& Vector)

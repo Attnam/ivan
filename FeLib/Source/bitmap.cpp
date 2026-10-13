@@ -22,6 +22,7 @@
 #include "femath.h"
 #include "rawbit.h"
 #include "libxbrzscale.h"
+#include "whandler.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -1178,7 +1179,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 
   for(int c = 0; c <= 5; ++c)
   {
-    clock_t StartTime = clock();
+    ulong StartTime = globalwindowhandler::GetClock();
     int Element = 127 - c * 25;
     B.Luminance = MakeRGB24(Element, Element, Element);
     Backup.LuminanceMaskedBlit(B);
@@ -1188,7 +1189,8 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 
     SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
     graphics::BlitDBToScreen();
-    while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
+
+    globalwindowhandler::WaitUntil(StartTime + 50);
   }
 
   DOUBLE_BUFFER->ClearToColor(0);

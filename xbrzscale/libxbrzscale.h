@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _XBRZSCALE_
+#define _XBRZSCALE_
+
 #ifndef XBRZLIB_RELATIVEPATHSDL
 #include <SDL_stdinc.h>
 #else
@@ -49,3 +52,4 @@ class libxbrzscale
   static bool bFreeInputSurfaceAfterScale;
   static bool bFreeOutputSurfaceAfterScale;
 };
+#endif

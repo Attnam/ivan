@@ -464,7 +464,7 @@ void recipecore::SetHumanoid(character* C){
   if(C==h)
     return;
 
-  humanoid* hNew = dynamic_cast<humanoid*>(C);
+  humanoid* hNew = C->AsHumanoid();
   if(hNew==NULL)
     ABORT("Only humanoids can craft C='%s' h='%s'",C->GetName(DEFINITE).CStr(),h==NULL?"NULL":h->GetName(DEFINITE).CStr());
 
@@ -1126,7 +1126,7 @@ struct recipe{
       if(CI.bOverridesQuestion)
         fsFullQ=fsQ;
       else{
-        fsFullQ = festring("What ingredient(s) will you use? (hit ESC for more options if available)");
+        fsFullQ = festring("What ingredient(s) will you use?");
         specialDesc = fsQ+" ["+reqVol+"cm3]";
       }
 
@@ -2092,10 +2092,10 @@ struct srpInspect : public recipe{
     material* matS = it0->GetSecondaryMaterial();
     festring fs;
     fs<<it0->GetName(DEFINITE)<<" is made of ";
-    if(matM)fs<<matM->GetName(UNARTICLED);
+    if(matM)fs<<matM->GetName(UNARTICLED) << " (" << matM->GetVolume() << "cm3)";
     if(matS){
       if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...
-      fs<<matS->GetName(UNARTICLED);
+      fs<<matS->GetName(UNARTICLED) << " (" << matS->GetVolume() << "cm3)";
     }
     fs<<".";
 
@@ -2432,7 +2432,7 @@ struct srpForgeItem : public recipe{
   virtual bool work(recipedata& rpd){DBGLN;
     // let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
-    item* itSpawn;
+    item* itSpawn = NULL;
 
     for(;;){
       festring Temp;
@@ -2519,6 +2519,55 @@ struct srpForgeItem : public recipe{
     bool bCanTailor = dynamic_cast<armor*>(itSpawn) &&
       !( dynamic_cast<helmet*>(itSpawn) ||
          dynamic_cast<shield*>(itSpawn)    );
+
+    festring help;
+    help << "You are now choosing ingredients for your " << itSpawn->GetNameSingular() << ".\n";
+
+    if(lVolS) help << "This item requires " << lVolM << " cm3 of your main material.\n It also requires " << lVolS << " cm3 of your secondary material.\n";
+    else help << "This item requires " << lVolM << " cm3 of your chosen material.\n";
+
+    if(bMustTailor)
+      help << "This item must be tailored.\n\n";
+
+    else if(bCanTailor)
+      help << "This item can be tailored, forged, carved, or crafted from wood or bones.\n\n";
+
+    else
+      help << "This item can be forged, carved, or crafted from wood or bones.\n\n";
+
+    if(bCanTailor || bMustTailor)
+      help << "To tailor, you need to be close to a tailoring bench, and select a lump of cloth.\n85% will be used, so you actually need " << (int)(lVolM / .85) << " cm3.\n\n";
+
+    if(lVolS && bMustTailor)
+      help << "The secondary material can be forged, carved, or crafted from wood or bones.\n100% is used.\n\n";
+
+    if(!bMustTailor || lVolS) {
+      help << "To forge, you need to be close to an anvil and see a forge.\n";
+      if(bMustTailor) help << "You need ingots.\n\n"; else help << "You need ingots. 100% will be used.\n\n";
+
+      if(bMustTailor)
+        help << "To carve, you need a stone.\n\n";
+      else
+        help << "To carve, you need a stone.\n75% of a stone will be used, so you actually need " << (int)(lVolM / .75) << " cm3.\n\n";
+
+      if(bIsItemContainer || bMustTailor)
+        help << "You can also craft from bones or sticks.\n\n";
+      else
+        help << "You can also craft from bones or sticks.\n50% will be used, so you actually need " << lVolM*2 << " cm3.\n\n";
+      }
+
+    if(lVolS && !bMustTailor)
+      help << "The secondary material also can be forged, carved, or crafted from wood or bones.\n100% is used.\n\n";
+
+    if(lVolS || !bMustTailor) {
+      help << "You will be asked about materials for the possible crafting methods in the order above.\n";
+      help << "If you want to use another crafting method, simply press ESC.\n";
+      }
+
+    game::TextScreen(help);
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverything();
+
     if(bMustTailor || bCanTailor){ // tailoring
       festring fsM("as MAIN material (cloth "); // only main can be cloth
       float fPerc = 0.85;
@@ -2527,12 +2576,6 @@ struct srpForgeItem : public recipe{
        * cloth will be cut and sewed
        */
       if(!bMainMatOk){
-        askForEqualLumps(rpd);
-        if(!rpd.ingredientsIDs.empty()){
-          joinLumpsEqualToFirst(rpd);
-          rpd.ingredientsIDs.clear();
-        }
-
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
         CI.bMustBeTailorable = true;
@@ -2645,7 +2688,8 @@ struct srpForgeItem : public recipe{
     if(bReqS && !bAllowS)
       ABORT("item reqs secondary mat but doesnt allow it??? %s",itSpawn->GetName(DEFINITE).CStr());
 
-    if(rpd.bTailoringMode){
+    /* this is disabled for now, until actual 'sewing material' is added */
+    if(rpd.bTailoringMode && false){
       long lVolSewing = lVolM/100;
       if(lVolSewing==0)lVolSewing=1;
       int iSCfg=-1;
@@ -3062,7 +3106,7 @@ void updateCraftDesc(){
 
   festring fsDesc=fsSkill;
   if(vSuspended.size()>0)
-    fsDesc<<" (Suspended Actions: "<<vSuspended.size()<<")";
+    fsDesc<<" (Suspended Actions: "<<int(vSuspended.size())<<")";
 
   craftRecipes.AddDescription(fsDesc,fSkill<10?RED:WHITE);
 }
@@ -3188,6 +3232,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     craftRecipes.AddFlags(SELECTABLE);
     craftRecipes.ClearFilter();
     updateCraftDesc();
+    craftRecipes.SetPageLength(11);
     sel = craftRecipes.Draw(); DBG1(sel);
 
     if(sel & FELIST_ERROR_BIT)

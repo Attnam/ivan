@@ -45,10 +45,12 @@ class wsquare : public square
   truth SignalSeen();
   void CalculateLuminance();
   wsquare* GetNeighbourWSquare(int I) const { return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, I); }
+  virtual truth IsDipDestination() const;
   int GetWalkability() const;
   virtual int GetSquareWalkability() const { return GetWalkability(); }
   virtual truth CanBeSeenByPlayer(truth = false) const;
   virtual truth CanBeSeenFrom(v2, long, truth = false) const;
+  truth DipInto(item*, character*);
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

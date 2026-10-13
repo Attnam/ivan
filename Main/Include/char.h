@@ -880,6 +880,7 @@ class character : public entity, public id
   virtual truth HandleCharacterBlockingTheWay(character*, v2, int) { return false; }
   virtual festring& ProcessMessage(festring&) const;
   virtual truth IsHumanoid() const { return false; }
+  virtual struct humanoid* AsHumanoid() { return NULL; }
   virtual truth IsHuman() const { return false; }
   truth IsOnGround() const;
   virtual truth CheckIfEquipmentIsNotUsable(int) const { return false; }

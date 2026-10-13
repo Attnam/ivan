@@ -884,7 +884,7 @@ long festring::GetCheckSum() const
 void festring::CreateNewData(sizetype N)
 {
   Reserved = N|FESTRING_PAGE;
-  Data = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
+  Data = sizeof(ulong) + new char[Reserved + sizeof(ulong) + 1];
   OwnsData = true;
   REFS(Data) = 0;
   Size = 0;

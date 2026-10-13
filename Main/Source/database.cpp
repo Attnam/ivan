@@ -670,6 +670,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(RestModifier);
   ADD_MEMBER(RestMessage);
   ADD_MEMBER(IsUpLink);
+  ADD_MEMBER(IsDownLink);
   ADD_MEMBER(StorageVolume);
   ADD_MEMBER(HPModifier);
   ADD_MEMBER(IsSafeToCreateDoor);

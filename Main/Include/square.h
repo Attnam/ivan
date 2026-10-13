@@ -39,7 +39,7 @@ class square
   area* GetArea() const { return AreaUnder; }
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
-  festring GetMemorizedDescription() { return MemorizedDescription; }
+  festring GetMemorizedDescription() const { return MemorizedDescription; }
   void SetMemorizedDescription(cfestring& What) { MemorizedDescription = What; }
   virtual truth CanBeSeenByPlayer(truth = false) const = 0;
   virtual truth CanBeSeenFrom(v2, long, truth = false) const = 0;
@@ -75,6 +75,8 @@ class square
   void RemoveFlags(ulong What) { Flags &= ~What; }
   virtual truth HasBeenSeen() const { return LastSeen; }
   virtual void SurviveEffect(character*);
+  virtual truth IsDipDestination() const { return false; }
+  virtual truth DipInto(item*, character*) = 0;
  protected:
   festring MemorizedDescription;
   area* AreaUnder;

@@ -1,3 +1,6 @@
+#include <materias.h>
+#include <confdef.h>
+
 /*
  *
  *  Iter Vehemens ad Necem (IVAN)
@@ -23,3 +26,11 @@ cchar* ocean::MonsterDeathVerb() const { return "drowns"; }
 cchar* ocean::ScoreEntry() const { return "drowned"; }
 
 int ocean::GetWalkability() const { return ANY_MOVE&~WALK; }
+
+truth ocean::DipInto(item* ToBeDipped, character* Who)
+{
+  auto brine = liquid::Spawn(BRINE);
+  ToBeDipped->DipInto(brine->SpawnMoreLiquid(ToBeDipped->GetDefaultSecondaryVolume()), Who);
+  delete brine;
+  return true;
+}

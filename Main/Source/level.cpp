@@ -1208,8 +1208,7 @@ int level::TriggerExplosions(int MinIndex)
   {
     graphics::BlitDBToScreen();
     game::GetCurrentArea()->SendNewDrawRequest();
-    clock_t StartTime = clock();
-    while(clock() - StartTime < 0.3 * CLOCKS_PER_SEC);
+    globalwindowhandler::WaitUntil(globalwindowhandler::GetClock() + 300);
   }
 
   for(c = MinIndex; c < LastExplosion; ++c)
@@ -1958,26 +1957,26 @@ void (level::*level::GetBeamEffectVisualizer(int I))(const fearray<lsquare*>&, c
 
 void level::ParticleVisualizer(const fearray<lsquare*>& Stack, col16 BeamColor) const
 {
-  clock_t StartTime = clock();
+  auto StartTime = globalwindowhandler::GetClock();
   game::DrawEverythingNoBlit();
 
   for(fearray<lsquare*>::sizetype c = 0; c < Stack.Size; ++c)
     Stack[c]->DrawParticles(BeamColor, false);
 
   graphics::BlitDBToScreen();
-  while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
+  globalwindowhandler::WaitUntil(StartTime + 50);
 }
 
 void level::LightningVisualizer(const fearray<lsquare*>& Stack, col16 BeamColor) const
 {
-  clock_t StartTime = clock();
+  auto StartTime = globalwindowhandler::GetClock();
   game::DrawEverythingNoBlit();
 
   for(fearray<lsquare*>::sizetype c = 0; c < Stack.Size; ++c)
     Stack[c]->DrawLightning(v2(8, 8), BeamColor, YOURSELF, false);
 
   graphics::BlitDBToScreen();
-  while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
+  globalwindowhandler::WaitUntil(StartTime + 50);
 }
 
 truth level::PreProcessForBone()

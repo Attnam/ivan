@@ -36,6 +36,9 @@ jobs:
           echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
           echo "HOMEBREW_NO_AUTO_UPDATE=1" >> $GITHUB_ENV
 
+      - name: Set PkgConfig Path
+        run: echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig" >> $GITHUB_ENV
+
       - name: Show git tag
         run: |
           echo $RELEASE_VERSION

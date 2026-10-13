@@ -197,7 +197,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
     }
     else
     {
-      clock_t StartTime = clock();
+      auto StartTime = globalwindowhandler::GetClock();
       Pos += DirVector;
       RemoveFromSlot();
       JustHit->GetStack()->AddItem(this, false);
@@ -220,8 +220,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
           break;
       }
 
-      if(Draw)
-        while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+      if(Draw) globalwindowhandler::WaitUntil(StartTime + fFlyDelay * 1000);
 
       if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){
         if(iRotateTimes==1){
@@ -230,14 +229,14 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
           for(int i=0;i<(iRotateTimes-1);i++){
             iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1;
             if(Draw){
-              StartTime = clock();
+              // auto StartTime = globalwindowhandler::GetClock();
               RemoveFromSlot();JustHit->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square to redraw...
               game::DrawEverything();
               if(bLowerRotationsPerSqr){
                 iRotateTimes--;
                 if(iRotateTimes<1)iRotateTimes=1;
               }
-              //while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+              // globalwindowhandler::WaitUntil(StartTime + fFlyDelay * 1000);
             }
           }
         }
@@ -648,6 +647,7 @@ cchar* item::GetItemCategoryName(long Category) // convert to array
    case TOOL: return "Tools";
    case VALUABLE: return "Valuables";
    case MISC: return "Miscellaneous items";
+   case RAW_MATERIAL: return "Raw materials";
   }
 
   return "Warezzz";
@@ -865,7 +865,7 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
 
   if(ShowSpecialInfo){
     Entry << " [" << GetWeight() * Amount << "g"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
-    if(ivanconfig::IsShowVolume()){
+    if(ivanconfig::IsShowVolume() || GetCategory() == RAW_MATERIAL){
       Entry << " " << GetVolume() * Amount << "cm3"; //the item can be seen therefore it's volume guessed already
       if(GetSecondaryMaterial()==NULL){ //simple items like ingots sticks etc
         static char density[20];
