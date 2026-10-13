@@ -1,15 +1,15 @@
 include(FindPkgConfig)
 if(PKG_CONFIG_FOUND)
-  pkg_check_modules(PCRE libpcre)
-  set(PCRE_LIBRARIES ${PCRE_LDFLAGS})
+  pkg_check_modules(PCRE2 libpcre2)
+  set(PCRE2_LIBRARIES ${PCRE2_LDFLAGS})
 endif()
 if(NOT PCRE_FOUND)
   if(MSVC)
-    find_path(PCRE_INCLUDE_DIR NAMES pcre.h)
-    find_library(PCRE_LIBRARY pcre)
+    find_path(PCRE2_INCLUDE_DIR NAMES pcre2.h)
+    find_library(PCRE2_LIBRARY pcre2)
   endif()
-  find_package(PCRE REQUIRED)
-  add_definitions(${PCRE_DEFINITIONS})
+  find_package(PCRE2 REQUIRED)
+  add_definitions(${PCRE2_DEFINITIONS})
 endif()
 
 find_package(SDL2 REQUIRED)
@@ -33,8 +33,8 @@ set_source_files_properties(
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
 add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
-target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ../FastNoise ${PCRE_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIR})
-target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname fastnoise ${PCRE_LIBRARIES} ${SDL2_mixer_LIBRARY})
+target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ../FastNoise ${PCRE2_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIR})
+target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname fastnoise ${PCRE2_LIBRARIES} ${SDL2_mixer_LIBRARY})
 
 if(MSVC AND _VCPKG_INSTALLED_DIR)
   # Gum solution. Manually copy pcre.dll to where ivan.exe will end up.

@@ -8,7 +8,7 @@ installed on your system:
 - CMake (https://cmake.org) version 2.8.12.2 or newer
 - SDL (https://www.libsdl.org) version 2.0 or newer
 - libpng (http://www.libpng.org/pub/png/libpng.html)
-- pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
+- pcre2
 
 --------------------------------------
 
@@ -64,12 +64,12 @@ PS C:\tools\vcpkg> ./bootstrap-vcpkg.sh
 PS C:\tools\vcpkg> .\vcpkg integrate install
 
 Install the following libraries:
-PS C:\tools\vcpkg> .\vcpkg install sdl2 sdl2-mixer libpng pcre
+PS C:\tools\vcpkg> .\vcpkg install sdl2 sdl2-mixer libpng pcre2
 
 Verify the libraries are installed with this command:
 PS C:\tools\vcpkg> .\vcpkg list
 libpng:x86-windows                                 1.6.37-1         libpng is a library implementing an interface fo...
-pcre:x86-windows                                   8.41-2           Perl Compatible Regular Expresions
+pcre2:x86-windows                                   10.47           Perl Compatible Regular Expresions
 sdl2-mixer:x86-windows                             2.0.4-2          Multi-channel audio mixer library for SDL.
 sdl2:x86-windows                                   2.0.9-3          Simple DirectMedia Layer is a cross-platform dev...
 zlib:x86-windows                                   1.2.11-5         A compression library
