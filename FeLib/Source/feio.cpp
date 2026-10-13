@@ -492,6 +492,10 @@ int iosystem::StringQuestion(festring& Input,
       && LastKey != KEY_LEFT 
       && LastKey != KEY_RIGHT
       && LastKey != KEY_UP
+      && LastKey != KEY_CONTROLLER_A
+      && LastKey != KEY_CONTROLLER_B
+      && LastKey != KEY_CONTROLLER_X
+      && LastKey != KEY_CONTROLLER_Y
     ){
       LastKey = GET_KEY(false);
 
@@ -505,13 +509,13 @@ int iosystem::StringQuestion(festring& Input,
     if(!LastKey)
       continue;
 
-    if(LastKey == KEY_ESC && AllowExit){
+    if((LastKey == KEY_ESC || LastKey == KEY_CONTROLLER_X) && AllowExit){
       bInUse=false;
       bAbort=true;
       break;
     }
 
-    if(LastKey == KEY_BACK_SPACE)
+    if(LastKey == KEY_BACK_SPACE || LastKey == KEY_CONTROLLER_B)
     {
       if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
@@ -527,7 +531,7 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
-    if(LastKey == KEY_ENTER)
+    if(LastKey == KEY_ENTER || LastKey == KEY_CONTROLLER_A)
     {
       if(Input.GetSize() >= MinLetters)
         break;
@@ -678,6 +682,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
           && LastKey != KEY_ENTER && LastKey != KEY_ESC
           && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
+          && LastKey != KEY_CONTROLLER_A && LastKey != KEY_CONTROLLER_B
           && (LastKey != '-' || !Input.IsEmpty()))
       LastKey = GET_KEY(false);
 
@@ -689,10 +694,10 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
       continue;
     }
 
-    if(LastKey == KEY_ENTER)
+    if(LastKey == KEY_ENTER || LastKey == KEY_CONTROLLER_A)
       break;
 
-    if(LastKey == KEY_ESC)
+    if(LastKey == KEY_ESC || LastKey == KEY_CONTROLLER_B)
     {
       if(ReturnZeroOnEsc){
         bInUse=false;
@@ -870,10 +875,12 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
           && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>'
           && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != RightKey && LastKey != LeftKey
+          && LastKey != KEY_CONTROLLER_A
+          && LastKey != KEY_CONTROLLER_B
           && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
       LastKey = GET_KEY(false);
 
-    if(LastKey == KEY_ESC)
+    if(LastKey == KEY_ESC || LastKey == KEY_CONTROLLER_B)
     {
       BarValue = AbortValue;
       break;
@@ -887,7 +894,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
       continue;
     }
 
-    if(LastKey == KEY_ENTER || LastKey == KEY_SPACE)
+    if(LastKey == KEY_ENTER || LastKey == KEY_SPACE || LastKey == KEY_CONTROLLER_A)
       break;
 
     if(LastKey == KEY_HOME)
