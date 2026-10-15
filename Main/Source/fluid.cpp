@@ -183,7 +183,7 @@ void fluid::Load(inputfile& SaveFile)
 
 void fluid::SimpleDraw(blitdata& BlitData) const
 {
-  Image.Picture->AlphaLuminanceBlit(BlitData);
+  igraph::Blit3(Image.Picture, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_FLOOR);
 }
 
 void fluid::Draw(blitdata& BlitData) const
@@ -198,10 +198,10 @@ void fluid::Draw(blitdata& BlitData) const
   {
     /* Priority Bug!!! */
     Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
-    igraph::GetFlagBuffer()->AlphaLuminanceBlit(BlitData);
+    igraph::Blit3(igraph::GetFlagBuffer(), BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_OBJECT);
   }
   else
-    Picture->AlphaPriorityBlit(BlitData);
+    igraph::Blit3(Picture, BlitData, MF_BLIT_ALPHA_PRIORITY | MF_OBJECT);
 
   if(MotherItem && BlitData.CustomData & ALLOW_ANIMATE)
     Image.Animate(BlitData, SpecialFlags);
@@ -425,10 +425,10 @@ void fluid::DrawGearPicture(blitdata& BlitData, int SpecialFlags) const
   if(SpecialFlags & 0x7)
   {
     Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
-    igraph::GetFlagBuffer()->AlphaPriorityBlit(BlitData);
+    igraph::Blit3(igraph::GetFlagBuffer(), BlitData, MF_BLIT_ALPHA_PRIORITY | MF_OBJECT);
   }
   else
-    GearImage->Picture->AlphaPriorityBlit(BlitData);
+    igraph::Blit3(GearImage->Picture, BlitData, MF_BLIT_ALPHA_PRIORITY | MF_OBJECT);
 
   if(BlitData.CustomData & ALLOW_ANIMATE)
     GearImage->Animate(BlitData, SpecialFlags);
@@ -446,7 +446,7 @@ void fluid::DrawBodyArmorPicture(blitdata& BlitData, int SpecialFlags) const
   if(Index >= BODY_ARMOR_PARTS)
     Index = 0;
 
-  GearImage[Index].Picture->AlphaPriorityBlit(BlitData);
+  igraph::Blit3(GearImage[Index].Picture, BlitData, MF_BLIT_ALPHA_PRIORITY | MF_OBJECT);
 
   if(BlitData.CustomData & ALLOW_ANIMATE)
     GearImage[Index].Animate(BlitData, 0);

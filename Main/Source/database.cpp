@@ -643,6 +643,7 @@ void databasecreator<type>::CreateLTerrainDataBaseMemberMap()
   ADD_MEMBER(MaterialConfigChances);
   ADD_MEMBER(IsAbstract);
   ADD_MEMBER(OKVisualEffects);
+  ADD_MEMBER(SpatialFlags);
   ADD_MEMBER(MaterialColorB);
   ADD_MEMBER(MaterialColorC);
   ADD_MEMBER(MaterialColorD);

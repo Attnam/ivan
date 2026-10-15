@@ -355,6 +355,8 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
         ConfigDataBase->PostFix << "with a window";
         ConfigDataBase->IsAlwaysTransparent = true;
         ConfigDataBase->BitmapPos = ConfigDataBase->WindowBitmapPos;
+        ConfigDataBase->SpatialFlags &= ~MF_WALL;
+        ConfigDataBase->SpatialFlags |= MF_WINDOW;
         TempConfig[Configs++] = ConfigDataBase;
       }
   }
@@ -401,6 +403,8 @@ v2 glterrain::GetBorderBitmapPos(v2 BasePos, int I) const
 
 void glterrain::Draw(blitdata& BlitData) const
 {
+  int flags = MF_BLIT_LUMINANCE_MASKED|GetSpatialFlags();
+  if(igraph::noCeiling) flags = MF_BLIT_LUMINANCE_MASKED|MF_FLOOR;
   if(UseBorderTiles())
   {
     cint TrueAF = GraphicData.AnimationFrames / 9;
@@ -409,13 +413,13 @@ void glterrain::Draw(blitdata& BlitData) const
     if(BlitData.CustomData & ALLOW_ANIMATE && TrueAF != 1)
       PictureIndex += GET_TICK() & (TrueAF - 1);
 
-    GraphicData.Picture[PictureIndex]->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(GraphicData.Picture[PictureIndex], BlitData, flags);
   }
   else
   {
     cint AF = GraphicData.AnimationFrames;
     cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-    GraphicData.Picture[F]->LuminanceBlit(BlitData);
+    igraph::Blit3(GraphicData.Picture[F], BlitData, flags);
   }
 }
 
@@ -455,19 +459,20 @@ void olterrain::Draw(blitdata& BlitData) const
 {
   if(UseBorderTiles())
   {
+    if((BlitData.CustomData & DO_BLIT3) && ((BlitData.CustomData & SQUARE_INDEX_MASK) != 0)) return;
     cint TrueAF = GraphicData.AnimationFrames / 9;
     int PictureIndex = (BlitData.CustomData & SQUARE_INDEX_MASK) * TrueAF;
 
     if(BlitData.CustomData & ALLOW_ANIMATE && TrueAF != 1)
       PictureIndex += GET_TICK() & (TrueAF - 1);
 
-    GraphicData.Picture[PictureIndex]->AlphaLuminanceBlit(BlitData);
+    igraph::Blit3(GraphicData.Picture[PictureIndex], BlitData, MF_BLIT_ALPHA_LUMINANCE ^ GetSpatialFlags());
   }
   else
   {
     cint AF = GraphicData.AnimationFrames;
     cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-    GraphicData.Picture[F]->AlphaLuminanceBlit(BlitData);
+    igraph::Blit3(GraphicData.Picture[F], BlitData, MF_BLIT_ALPHA_LUMINANCE ^ GetSpatialFlags());
   }
 }
 

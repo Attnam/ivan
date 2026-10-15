@@ -98,7 +98,7 @@ void smoke::Be()
 
 void smoke::Draw(blitdata& BlitData) const
 {
-  Picture[(GET_TICK() >> 1) & 3]->AlphaLuminanceBlit(BlitData);
+  igraph::Blit3(Picture[(GET_TICK() >> 1) & 3], BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_OBJECT);
 }
 
 void smoke::Save(outputfile& SaveFile) const

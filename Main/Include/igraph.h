@@ -24,6 +24,7 @@ class rawbitmap;
 class outputfile;
 class inputfile;
 class festring;
+struct blitdata;
 
 /* memcmp doesn't like alignment of structure members */
 
@@ -121,6 +122,13 @@ class igraph
   static void BlitBackGround(bitmap* bmpAt, v2 Pos, v2 Border);
   static void CreateBackGround(int);
   static bitmap* GenerateScarBitmap(int, int, int);
+
+  /* IVAN3D additions */
+  static int defx, defy;
+  static truth noCeiling;
+  static void fDrawRainPixel(v2 x, col16 c);
+  static void Blit3(const bitmap *b, blitdata &B, int mode);
+
   static cbitmap* GetSmileyGraphic() { return Graphic[GR_SMILEY]; }
   static void AddOutlinesIfNeeded();
  private:
@@ -147,5 +155,17 @@ class igraph
   static bitmap* BackGround;
   static int CurrentColorType;
 };
+
+#define MF_BLIT_FLAGS            15
+
+#define MF_BLIT_LUMINANCE        1
+#define MF_BLIT_PRIORITY         2
+#define MF_BLIT_ALPHA            4
+#define MF_BLIT_MASKED           8
+
+#define MF_BLIT_ALPHA_PRIORITY   MF_BLIT_ALPHA | MF_BLIT_PRIORITY
+#define MF_BLIT_ALPHA_LUMINANCE  MF_BLIT_ALPHA | MF_BLIT_LUMINANCE
+#define MF_BLIT_LUMINANCE_MASKED MF_BLIT_LUMINANCE | MF_BLIT_MASKED
+#define MF_BLIT_MASKED_PRIORITY  MF_BLIT_MASKED | MF_BLIT_PRIORITY
 
 #endif

@@ -1387,6 +1387,18 @@
 #define FORCE_THE 8
 #define SHOW_MATERIAL 16
 
+/* Spatial Flags */
+#define MF_OBJECT  256
+#define MF_FLOOR   512
+#define MF_CEIL    1024
+#define MF_WALL    2048
+#define MF_ONFLOOR 4096
+#define MF_LOWWALL 8192
+#define MF_TABLE   16384
+#define MF_WINDOW  128
+#define MF_LARGE   64
+#define MF_STAIR   32
+
 /***************************/
 /* Material DataBase flags */
 /***************************/

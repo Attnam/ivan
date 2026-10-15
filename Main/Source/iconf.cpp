@@ -383,6 +383,13 @@ truthoption ivanconfig::UseExtraMenuGraphics("UseExtraMenuGraphics",
                                           &UseExtraMenuGraphicsChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
+
+truthoption ivanconfig::Mode3("Mode3", "play in 3D", "Play in 3D.", false);
+truthoption ivanconfig::IsoMode("IsoMode", "Use isometric mode in 3D", "Use isometricmode in 3D.", false);
+truthoption ivanconfig::ShowAllInIso("ShowAllInIso", "Show hidden things in ISO mode", "Show hidden things in ISO mode.", false);
+truthoption ivanconfig::ShowMiniMap("ShowMiniMap", "Show mini-map in FPP mode", "Show mini-map in FPP mode.", false);
+numberoption ivanconfig::Anaglyph("Anaglyph", "Anaglyph depth of FPP mode", "Anaglyph depth of FPP mode.", 0);
+
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
                                           "Use sound effects",
                                           "Use sound effects for combat, explosions and more.",
@@ -1282,6 +1289,13 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMap);
   configsystem::AddOption(fsCategory,&TransparentMapLM);
   configsystem::AddOption(fsCategory,&UseExtraMenuGraphics);
+
+  fsCategory="IVAN3D";
+  configsystem::AddOption(fsCategory,&Mode3);
+  configsystem::AddOption(fsCategory,&IsoMode);
+  configsystem::AddOption(fsCategory,&ShowAllInIso);
+  configsystem::AddOption(fsCategory,&ShowMiniMap);
+  configsystem::AddOption(fsCategory,&Anaglyph);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

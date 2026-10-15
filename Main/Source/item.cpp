@@ -1513,10 +1513,20 @@ void item::Draw(blitdata& BlitData) const
   }
   cbitmap* P = bmp;
 
+  if(GetSquarePosition() != CENTER)
+  {
+    BlitData.CustomData |= 1 + GetSquarePosition();
+  }
+
   if(BlitData.CustomData & ALLOW_ALPHA)
-    P->AlphaLuminanceBlit(BlitData);
+    igraph::Blit3(P, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_ONFLOOR);
   else
-    P->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(P, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_ONFLOOR);
+
+  if(GetSquarePosition() != CENTER)
+  {
+    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+  }
 
   if(Fluid && ShowFluids())
     DrawFluids(BlitData);
@@ -1536,9 +1546,9 @@ void item::LargeDraw(blitdata& BlitData) const
   cbitmap* P = GraphicData.Picture[F];
 
   if(BlitData.CustomData & ALLOW_ALPHA)
-    P->AlphaLuminanceBlit(BlitData);
+    igraph::Blit3(P, BlitData, MF_BLIT_ALPHA_LUMINANCE | MF_LARGE);
   else
-    P->LuminanceMaskedBlit(BlitData);
+    igraph::Blit3(P, BlitData, MF_BLIT_LUMINANCE_MASKED | MF_LARGE);
 }
 
 void item::DonateIDTo(item* Item)
