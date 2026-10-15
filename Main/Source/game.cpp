@@ -1356,7 +1356,7 @@ void game::UpdateAutoPickUpMatching() //simple matching syntax
     if (!reAutoPickup){
       std::vector<festring> afsFullProblems;
       afsFullProblems.push_back(festring()+"error code:"+errCode);
-      afsFullProblems.push_back(festring()+"offset:"+iErrOffset);
+      afsFullProblems.push_back(festring()+"offset:"+int(iErrOffset));
       bool bDummy = iosystem::AlertConfirmMsg("regex validation failed, if ignored will just not work at all",afsFullProblems,false);
     }
     match_data = pcre2_match_data_create_from_pattern(reAutoPickup, NULL);
