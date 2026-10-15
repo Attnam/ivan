@@ -3773,6 +3773,8 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
           HasActed = true;
         }
         else if(v.IsAdjacent(ZERO_V2)) MoveByVector(v);
+        else if(game::IsInWilderness())
+          ADD_MESSAGE("Auto-routing cannot be used while in wilderness.");
         else {
           ValidKeyPressed = true;
           HasActed = commandsystem::SpawnRoute(this, TPos);

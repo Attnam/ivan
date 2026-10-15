@@ -1960,6 +1960,8 @@ truth commandsystem::SpawnRoute(character* Char, v2 Pos)
     }
   }
 
+  if(RouteGoOn.empty()) return false;
+
   go* Go = go::Spawn(Char);
   Go->SetRoute(RouteGoOn);
   Go->SetDirectionFromRoute();
