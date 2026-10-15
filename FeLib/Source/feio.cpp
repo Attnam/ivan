@@ -633,6 +633,13 @@ int iosystem::StringQuestion(festring& Input,
   return NORMAL_EXIT;
 }
 
+/* by how many do a subsequent up/down Presses increase the value in NumberQuestion */
+static int clickval(int a) {
+  int click_values[] = {0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 60, 80};
+  if(a < 14) return click_values[a];
+  return clickval(a-8) * 10;
+  }
+
 /* Ask a question defined by Topic. This function only accepts numbers.
    The question is drawn to coordinates given by Pos. All fonts are Color
    colored. If Fade is true the question is asked on a black background
@@ -642,6 +649,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                               truth Fade, truth ReturnZeroOnEsc)
 {
   bInUse=true;
+  int last_direction = 0, clicks = 0;
 
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
@@ -682,9 +690,12 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
           && LastKey != KEY_ENTER && LastKey != KEY_ESC
           && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
+          && LastKey != KEY_UP && LastKey != KEY_DOWN
           && LastKey != KEY_CONTROLLER_A && LastKey != KEY_CONTROLLER_B
-          && (LastKey != '-' || !Input.IsEmpty()))
+          && (LastKey != '-' || !Input.IsEmpty())) {
       LastKey = GET_KEY(false);
+      if(LastKey != KEY_UP && LastKey != KEY_DOWN) clicks = 0;
+      }
 
     if(LastKey == KEY_BACK_SPACE)
     {
@@ -726,6 +737,20 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
       if(CursorPos > 0)
         --CursorPos;
 
+      continue;
+    }
+
+    if(LastKey == KEY_UP || LastKey == KEY_DOWN)
+    {
+      if(last_direction != LastKey)
+      {
+        last_direction = LastKey;
+        clicks = 0;
+      }
+      int current = atoi(Input.CStr());
+      current += (LastKey == KEY_UP ? 1 : -1) * (clickval(clicks+1) - clickval(clicks));
+      clicks++;
+      Input = ""; Input << current;
       continue;
     }
 
