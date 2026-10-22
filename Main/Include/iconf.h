@@ -69,6 +69,16 @@ class ivanconfig
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth IsSetupCustomKeys() { return SetupCustomKeys.Value; }
   static truth GetBeNice() { return BeNice.Value; }
+  static truth GetMode3() { return Mode3.Value; }
+  static void SwitchMode3() { Mode3.Value = !Mode3.Value; }
+  static truth GetIsoMode() { return IsoMode.Value; }
+  static truth GetShowAllInIso() { return ShowAllInIso.Value; }
+  static truth GetAnaglyph() { return Anaglyph.Value; }
+  static truth GetShowMiniMap() { return ShowMiniMap.Value; }
+
+  static truth Mode3Iso() { return Mode3.Value && IsoMode.Value; }
+  static truth Mode3FPP() { return Mode3.Value && !IsoMode.Value; }
+
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
@@ -274,6 +284,11 @@ class ivanconfig
 #endif
 
   static col24 ContrastLuminance;
+  static truthoption Mode3;
+  static truthoption IsoMode;
+  static truthoption ShowAllInIso;
+  static numberoption Anaglyph;
+  static truthoption ShowMiniMap;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
 

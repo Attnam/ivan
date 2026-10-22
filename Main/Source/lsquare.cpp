@@ -228,9 +228,22 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
     if(StaticContentCache.Luminance != BlitData.Luminance)
       UpdateStaticContentCache(BlitData.Luminance);
 
-    StaticContentCache.Bitmap->FastBlit(BlitData.Bitmap, BlitData.Dest);
-    return;
+    if(!(BlitData.CustomData & DO_BLIT3)) {
+      StaticContentCache.Bitmap->FastBlit(BlitData.Bitmap, BlitData.Dest);
+      return;
+    }
   }
+
+  igraph::noCeiling =
+    GetLevel()->IsOnGround() &&
+    ((game::GetCurrentDungeonIndex() == NEW_ATTNAM) ||
+     (game::GetCurrentDungeonIndex() == ATTNAM) ||
+     (game::GetCurrentDungeonIndex() == ASLONA_CASTLE) ||
+     (game::GetCurrentDungeonIndex() == REBEL_CAMP) ||
+     (game::GetCurrentDungeonIndex() == MONDEDR) ||
+     (game::GetCurrentDungeonIndex() == DARK_FOREST) ||
+     (game::GetCurrentDungeonIndex() == IRINOX)
+    ) && !IsInside();
 
   if(!OLTerrain || OLTerrain->ShowThingsUnder())
     GLTerrain->Draw(BlitData);

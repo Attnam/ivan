@@ -50,6 +50,7 @@ struct lterraindatabase : public databasebase
   fearray<long> MaterialConfigChances;
   long MaterialConfigChanceSum;
   int OKVisualEffects;
+  int SpatialFlags;
   col16 MaterialColorB;
   col16 MaterialColorC;
   col16 MaterialColorD;
@@ -175,6 +176,7 @@ class glterrain : public lterrain, public gterrain
   virtual DATA_BASE_VALUE(const fearray<long>&, MaterialConfigChances);
   virtual DATA_BASE_VALUE(long, MaterialConfigChanceSum);
   DATA_BASE_VALUE(int, OKVisualEffects);
+  DATA_BASE_VALUE(int, SpatialFlags);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorB, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorC, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorD, int);
@@ -288,6 +290,7 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE(const fearray<long>&, MaterialConfigChances);
   virtual DATA_BASE_VALUE(long, MaterialConfigChanceSum);
   DATA_BASE_VALUE(int, OKVisualEffects);
+  DATA_BASE_VALUE(int, SpatialFlags);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorB, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorC, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorD, int);

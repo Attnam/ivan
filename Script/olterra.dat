@@ -38,6 +38,7 @@ olterrain
   /* Obligatory if multiple material configurations defined: MaterialConfigChances */
   IsAbstract = true; /* This is false by default and does not inherit! */
   OKVisualEffects = NONE;
+  SpatialFlags = MF_OBJECT;
   MaterialColorB = 0;
   MaterialColorC = 0;
   MaterialColorD = 0;
@@ -79,6 +80,7 @@ wall
   ShowThingsUnder = false;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
   IsWall = true;
+  SpatialFlags = MF_WALL;
 
   Config BRICK_FINE;
   {
@@ -244,6 +246,7 @@ decoration
     MainMaterialConfig == FABRIC;
     NameSingular = "carpet";
     BitmapPos = 0, 272;
+    SpatialFlags = MF_FLOOR;
   }
 
   Config COUCH;
@@ -377,6 +380,7 @@ decoration
     MainMaterialConfig == MARBLE;
     NameSingular = "";
     BitmapPos = 32, 320;
+    SpatialFlags = MF_FLOOR | MF_CEIL;
   }
 
   Config POOL_CORNER;
@@ -385,6 +389,7 @@ decoration
     MainMaterialConfig == MARBLE;
     NameSingular = "";
     BitmapPos = 48, 320;
+    SpatialFlags = MF_FLOOR | MF_CEIL;
   }
 
   Config SNOW_PINE;
@@ -726,6 +731,7 @@ door /* olterrain-> */
   CreateLockConfigurations = true;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   IsAlwaysTransparent = false;
+  SpatialFlags = MF_WALL;
 
   Config BARDOOR;
   {
@@ -759,6 +765,7 @@ stairs /* olterrain-> */
 
   Config STAIRS_UP;
   {
+    SpatialFlags = MF_CEIL | MF_STAIR;
     PostFix = "upwards";
     BitmapPos = 0, 192;
     IsUpLink = true;
@@ -769,6 +776,7 @@ stairs /* olterrain-> */
     PostFix = "downwards";
     BitmapPos = 0, 208;
     IsDownLink = true;
+    SpatialFlags = MF_FLOOR | MF_STAIR;
   }
 
   Config SUMO_ARENA_ENTRY;
@@ -776,6 +784,7 @@ stairs /* olterrain-> */
     PostFix = "downwards";
     BitmapPos = 0, 208;
     IsDownLink = true;
+    SpatialFlags = MF_FLOOR | MF_STAIR;
   }
 
   Config SUMO_ARENA_EXIT;
@@ -783,6 +792,7 @@ stairs /* olterrain-> */
     PostFix = "upwards";
     BitmapPos = 0, 192;
     IsUpLink = true;
+    SpatialFlags = MF_CEIL | MF_STAIR;
   }
 }
 
@@ -802,6 +812,8 @@ portal /* stairs -> */
   Config DARK_LEVEL; { }
 
   IsDownLink = true;
+  SpatialFlags = MF_OBJECT; /* to check */
+
   Config XINROCH_TOMB_ENTRANCE;
   {
     MaterialColorB = rgb16(0, 200, 0);
@@ -822,6 +834,7 @@ altar /* olterrain-> */
   BitmapPos = 0, 368;
   /* PostFix depends on Config */
   CreateDivineConfigurations = true;
+  SpatialFlags = MF_LOWWALL | MF_TABLE;
   IsAbstract = true;
 }
 
@@ -852,6 +865,7 @@ olterraincontainer /* olterrain->decoration-> */
     HPModifier = 20;
     AttachedGod = SOPHOS;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+    SpatialFlags = MF_WALL;
   }
 
   Config CHEST_OF_DRAWERS;
@@ -866,6 +880,7 @@ olterraincontainer /* olterrain->decoration-> */
     HPModifier = 40;
     AttachedGod = SOPHOS;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1000; } Times = 1:2; }
+    SpatialFlags = MF_ONFLOOR;
   }
 
   Config SHELF;
@@ -880,6 +895,7 @@ olterraincontainer /* olterrain->decoration-> */
     AttachedGod = ATAVUS;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
     MaterialColorB = rgb16(200,200,200);
+    SpatialFlags = MF_WALL;
   }
 }
 
@@ -934,6 +950,7 @@ boulder /* olterrain-> */
   IsAbstract = true;
   HPModifier = 50;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+  SpatialFlags = MF_ONFLOOR;
 
   Config 1;
   {
@@ -995,6 +1012,7 @@ earth
   ShowThingsUnder = false;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
   IsWall = true;
+  SpatialFlags = MF_WALL;
 }
 
 monsterportal

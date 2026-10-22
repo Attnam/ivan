@@ -92,7 +92,10 @@ void rain::Draw(blitdata& BlitData) const
         continue;
       }
 
-      BlitData.Bitmap->AlphaPutPixel(DropPos + BlitData.Dest, Color, BlitData.Luminance, 255);
+      if(BlitData.CustomData & DO_BLIT3)
+        igraph::fDrawRainPixel(DropPos, Color);
+      else
+        BlitData.Bitmap->AlphaPutPixel(DropPos + BlitData.Dest, Color, BlitData.Luminance, 255);
     }
 
   this->Drops = Drops;

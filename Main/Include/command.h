@@ -101,6 +101,7 @@ class commandsystem
   static truth AssignName(character*);
   static truth Search(character*);
   static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
+  static truth Mode3(character*);
   static truth ShowWorldSeed(character*);
 #ifdef WIZARD
   static truth WizardMode(character*);

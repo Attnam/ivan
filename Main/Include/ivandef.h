@@ -1028,6 +1028,18 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define FORCE_THE 8
 #define SHOW_MATERIAL 16 // only works for terrains
 
+/* IVAN3D Spatial Flags */
+#define MF_OBJECT  256
+#define MF_FLOOR   512
+#define MF_CEIL    1024
+#define MF_WALL    2048
+#define MF_ONFLOOR 4096
+#define MF_LOWWALL 8192
+#define MF_TABLE   16384
+#define MF_WINDOW  128
+#define MF_LARGE   64
+#define MF_STAIR   32
+
 /****************************/
 /* Character DataBase flags */
 /****************************/
@@ -1185,6 +1197,7 @@ cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 #define SQUARE_INDEX_MASK 0xFFFF
 #define ALLOW_ANIMATE 0x10000
 #define ALLOW_ALPHA 0x20000
+#define DO_BLIT3 0x40000
 
 #define TALENTS 5
 

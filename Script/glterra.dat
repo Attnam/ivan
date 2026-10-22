@@ -38,6 +38,7 @@ glterrain
   /* Obligatory if multiple material configurations defined: MaterialConfigChances */
   IsAbstract = true; /* This is false by default and does not inherit! */
   OKVisualEffects = NONE;
+  SpatialFlags = MF_FLOOR | MF_CEIL;
   MaterialColorB = 0;
   MaterialColorC = 0;
   MaterialColorD = 0;
@@ -134,6 +135,7 @@ liquidterrain /* glterrain-> */
   {
     NameSingular = "pool";
     SitMessage = "You sit on the pool surface. Oddly enough, you sink. You feel stupid.";
+    SpatialFlags = MF_FLOOR;
   }
 
   Config UNDERGROUND_LAKE;
@@ -144,6 +146,7 @@ liquidterrain /* glterrain-> */
     SitMessage = "You sit on the lake surface. Oddly enough, you sink. You feel stupid.";
     UseBorderTiles = true;
     BorderTilePriority = 10;
+    SpatialFlags = MF_FLOOR;
   }
 
   Config SEA;
@@ -152,5 +155,6 @@ liquidterrain /* glterrain-> */
     SitMessage = "You sit on the sea waves. Oddly enough, you sink. You feel stupid.";
     UseBorderTiles = true;
     BorderTilePriority = 10;
+    SpatialFlags = MF_FLOOR;
   }
 }
