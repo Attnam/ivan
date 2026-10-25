@@ -1428,6 +1428,9 @@ void lsquare::AddItem(item* Item)
 
 v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere)
 {
+  /* not yet implemented in 3D */
+  if(ivanconfig::Mode3FPP() || ivanconfig::Mode3Iso()) return StartPos;
+
   if(!game::PosCurrentlyOnScreen(GetPos()) || !CanBeSeenByPlayer(true))
     switch(Direction)
     {
