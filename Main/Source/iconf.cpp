@@ -206,7 +206,7 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
 truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
                                           "Enhanced message review mode after death",
                                           "",
-                                          false);
+                                          true);
 truthoption ivanconfig::DescriptiveHP(    "DescriptiveHP",
                                           "Use health level descriptions",
                                           "Display description of your relative health rather than numeric value of your hit points.",
