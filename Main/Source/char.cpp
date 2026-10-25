@@ -3673,7 +3673,7 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     };
 
   int c;
-  for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+  for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c)){
 
       if(ivanconfig::Mode3FPP() && !game::IsInWilderness())
@@ -3700,7 +3700,7 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     if(ivanconfig::GetMode3())
     {
       auto v = game::GetDirectionVectorForKey(Key);
-      for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+      for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
         if(game::GetMoveVector(c) == v)
           MoveByVector(game::GetMoveVector(game::AdjustForFacing(c)));
     }
