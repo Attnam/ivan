@@ -3040,10 +3040,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       if(globalwindowhandler::ControllerEnabled())
       {
         auto Pos1 = Pos + globalwindowhandler::GetControllerDirection();
-        if(OnScreen(Pos1))
+        if(OnScreen(Pos1) && GetCurrentArea()->GetSquare(Pos1))
         {
           v2 ScreenCoord1 = CalculateScreenCoordinates(Pos1);
           igraph::DrawCursor(ScreenCoord1, Player->GetCursorData());
+          GetCurrentArea()->GetSquare(Pos1)->SendStrongNewDrawRequest();
           if(!DoZoom())UpdatePosAroundForXBRZ(Pos1);
         }
       }
@@ -3064,10 +3065,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         if(globalwindowhandler::ControllerEnabled())
         {
           auto Pos1 = Pos + globalwindowhandler::GetControllerDirection();
-          if(OnScreen(Pos1))
+          if(OnScreen(Pos1) && GetCurrentArea()->GetSquare(Pos1))
           {
             v2 ScreenCoord1 = CalculateScreenCoordinates(Pos1);
             igraph::DrawCursor(ScreenCoord1, Player->GetCursorData()|CURSOR_BIG);
+            GetCurrentArea()->GetSquare(Pos1)->SendStrongNewDrawRequest();
             if(!DoZoom())UpdatePosAroundForXBRZ(Pos1);
           }
         }
