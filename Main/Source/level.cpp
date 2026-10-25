@@ -1386,7 +1386,7 @@ void level::Draw3(int x, int y, truth esp, blitdata& BlitData) const {
     v2 PicPos(0, 32);
     v2 SizeVect(16, 16);
 
-    blitdata BlitData = { 0,
+    blitdata BlitDataEx = { 0,
                           { PicPos.X, PicPos.Y },
                           { 0, 0 },
                           { SizeVect.X, SizeVect.Y },
@@ -1394,10 +1394,10 @@ void level::Draw3(int x, int y, truth esp, blitdata& BlitData) const {
                           TRANSPARENT_COLOR,
                           0 };
 
-    BlitData.Bitmap = DOUBLE_BUFFER;
-    BlitData.Luminance = ivanconfig::GetContrastLuminance();
-    BlitData.CustomData = DO_BLIT3;
-    igraph::Blit3(igraph::GetSymbolGraphic(), BlitData, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
+    BlitDataEx.Bitmap = DOUBLE_BUFFER;
+    BlitDataEx.Luminance = ivanconfig::GetContrastLuminance();
+    BlitDataEx.CustomData = DO_BLIT3;
+    igraph::Blit3(igraph::GetSymbolGraphic(), BlitDataEx, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 }
 

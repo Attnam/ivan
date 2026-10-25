@@ -3673,7 +3673,7 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     };
 
   int c;
-  for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+  for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c)){
 
       if(ivanconfig::Mode3FPP() && !game::IsInWilderness())
