@@ -486,13 +486,20 @@ void fluid::imagedata::Animate(blitdata& BlitData, int CurrentFlags) const
     Rotate(TrueDripPos, 16, CurrentFlags);
     TrueDripPos.Y -= DripTimer;
 
-    if(TrueDripPos.Y < 16)
-      BlitData.Bitmap->AlphaPutPixel(TrueDripPos + BlitData.Dest, DripColor, BlitData.Luminance, DripAlpha);
+    if(TrueDripPos.Y < 16) {
+      if(BlitData.CustomData & DO_BLIT3)
+        igraph::fDrawRainPixel(TrueDripPos, DripColor);
+      else
+        BlitData.Bitmap->AlphaPutPixel(TrueDripPos + BlitData.Dest, DripColor, BlitData.Luminance, DripAlpha);
+      }
 
     if(TrueDripPos.Y < 15)
     {
       ++TrueDripPos.Y;
-      BlitData.Bitmap->AlphaPutPixel(TrueDripPos + BlitData.Dest, DripColor, BlitData.Luminance, DripAlpha);
+      if(BlitData.CustomData & DO_BLIT3)
+        igraph::fDrawRainPixel(TrueDripPos, DripColor);
+      else
+        BlitData.Bitmap->AlphaPutPixel(TrueDripPos + BlitData.Dest, DripColor, BlitData.Luminance, DripAlpha);
     }
     else
       DripTimer = Min<long>(RAND() % (500000 / AlphaSum), 25000);

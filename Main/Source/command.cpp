@@ -1951,6 +1951,9 @@ truth commandsystem::SpawnRoute(character* Char, v2 Pos)
   std::set<v2> Illegal;
 
   node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), Pos, Illegal, 0, Char);
+
+  if(!Node) return false;
+
   if(Node){
     RouteGoOn.clear();
     while(Node->Last)

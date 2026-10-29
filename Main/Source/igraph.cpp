@@ -796,7 +796,9 @@ static inline float cross(fpoint a, fpoint b, int x, int y) {
 
 #include "char.h"
 
-int currEye, cc, currAY;
+/* currEye is 0 for non-anaglyph mode, 1 for left (red), 2 for right (cyan) */
+
+int currEyePosition, currEye, currAY;
 
 fpoint::fpoint(fpoint4 i) {
 
@@ -808,11 +810,11 @@ fpoint::fpoint(fpoint4 i) {
     if(y <= 0) {ok = false; return;}
     x = i.x - i.y;
     x = igraph::defx * (16+x);
-    if(cc == 1) x -= 2;
-    if(cc == 2) x += 2;
+    if(currEye == 1) x -= 2;
+    if(currEye == 2) x += 2;
     x = sx*8 + sy*2*x/y;
     y = sy*8 + sy*32/y;
-    x += sx * currEye / 10.0;
+    x += sx * currEyePosition / 10.0;
     ok = true;
     return;
   }
@@ -832,8 +834,8 @@ fpoint::fpoint(fpoint4 i) {
     x = tx * C - ty * S + i.ax;
     y = tx * S + ty * C + currAY;
 
-    if(cc == 1) x += 2;
-    if(cc == 2) x -= 2;
+    if(currEye == 1) x += 2;
+    if(currEye == 2) x -= 2;
 
     ok = y < -1e-6;
     if(!ok) return;
@@ -847,16 +849,16 @@ fpoint::fpoint(fpoint4 i) {
     eyelevel = i.z - eyelevel;
 
     if(PLAYER -> TemporaryStateIsActivated(CONFUSED)) {
-      float angle = GET_TICK() * M_PI / 64;
+      float spin_angle = GET_TICK() * M_PI / 64;
       tx = x; ty = eyelevel;
-      S = -sin(angle);
-      C = cos(angle);
+      S = -sin(spin_angle);
+      C = cos(spin_angle);
       x = C * tx + S * ty;
       eyelevel = -S * tx + C * ty;
       }
 
     x = sx * 8 - sy * 8 * x / y - 0.5;
-    x += sx * currEye / 10.0;
+    x += sx * currEyePosition / 10.0;
     y = sy * 8 + sy * 8 * eyelevel / y - 0.5;
   }
   else {
@@ -873,12 +875,12 @@ static inline col16 apply(col16 SrcCol, col16 DestCol, alpha Alpha) {
   int Green = (SrcCol & 0x7E0 ) + NewGreenLuminance;
   int Blue  = (SrcCol & 0x1F  ) + NewBlueLuminance;
 
-  if(cc == 2)
+  if(currEye == 2)
   {
     Green += (Red >> 14) << 5;
     Blue  += (Red >> 15);
   }
-  if(cc == 1)
+  if(currEye == 1)
     Red += ((Green >> 10) + (Blue >> 5)) << 11;
 
   if(Red   >= 0) {if(Red   > 0xF800) Red   = 0xF800;} else Red   = 0;
@@ -889,11 +891,11 @@ static inline col16 apply(col16 SrcCol, col16 DestCol, alpha Alpha) {
   int DestGreen = (DestCol & 0x7E0);
   int DestBlue = (DestCol & 0x1F);
 
-  if(cc != 2)
+  if(currEye != 2)
     Red = (((Red - DestRed) * Alpha >> 8) + DestRed) & 0xF800;
   else
     Red = DestRed;
-  if(cc != 1)
+  if(currEye != 1)
   {
     Green = (((Green - DestGreen) * Alpha >> 8) + DestGreen) & 0x7E0;
     Blue = ((Blue - DestBlue) * Alpha >> 8) + DestBlue;
@@ -963,13 +965,13 @@ void fDrawRect(fpoint a, fpoint b, fpoint c, fpoint d, col16 SrcCol, alpha Alpha
 void tileRect(const bitmap *b, blitdata &B, int mode,
   fpoint4 corner, fpoint4 dx, fpoint4 dy, bool mirror, int non) {
 
-  if(ivanconfig::GetAnaglyph() && (currEye == 0))
+  if(ivanconfig::GetAnaglyph() && (currEyePosition == 0))
   {
-    currEye = ivanconfig::GetAnaglyph(); cc = 1;
+    currEyePosition = ivanconfig::GetAnaglyph(); currEye = 1;
     tileRect(b,B,mode,corner,dx,dy,mirror,non);
-    currEye = -ivanconfig::GetAnaglyph(); cc = 2;
+    currEyePosition = -ivanconfig::GetAnaglyph(); currEye = 2;
     tileRect(b,B,mode,corner,dx,dy,mirror,non);
-    currEye = 0; cc = 0;
+    currEyePosition = 0; currEye = 0;
     return;
   }
   if(igraph::defy != -1) {
@@ -994,9 +996,9 @@ void tileRect(const bitmap *b, blitdata &B, int mode,
   if((!pt[0][0].ok) && (!pt[0][16].ok) && (!pt[16][0].ok) && (!pt[16][16].ok))
     return;
   if(pt[0][0].ok && pt[0][16].ok && pt[16][0].ok && pt[16][16].ok) {
-    fpoint p[4];
-    p[0] = pt[0][0]; p[1] = pt[0][16]; p[2] = pt[16][0]; p[3] = pt[16][16];
-    boundbox bb(p);
+    fpoint p1[4];
+    p1[0] = pt[0][0]; p1[1] = pt[0][16]; p1[2] = pt[16][0]; p1[3] = pt[16][16];
+    boundbox bb(p1);
     for(int x=bb.xmin; x<=bb.xmax; x++) for(int y=bb.ymin; y<=bb.ymax; y++) {
       int px, py;
       if(mirror) {
@@ -1222,7 +1224,7 @@ void igraph::Blit3(const bitmap *b, blitdata &B, int mode) {
     return;
   }
 
-  currEye = 0;
+  currEyePosition = 0;
 
   if(mode & MF_FLOOR)   tileFloor   (b, B, mode);
   if(mode & MF_CEIL)    tileCeil    (b, B, mode);

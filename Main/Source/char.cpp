@@ -3700,7 +3700,7 @@ void character::PerformPlayerCommand(int Key, bool& HasActed, bool& ValidKeyPres
     if(ivanconfig::GetMode3())
     {
       auto v = game::GetDirectionVectorForKey(Key);
-      for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+      for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
         if(game::GetMoveVector(c) == v)
           MoveByVector(game::GetMoveVector(game::AdjustForFacing(c)));
     }
@@ -9502,8 +9502,8 @@ void character::ShowAdventureInfoAlt() const
   game::GetCurrentArea()->SendNewDrawRequest();
   game::DrawEverything();
   while(true) {
-    felist List(CONST_S("What do you want to see?"));
-    List.AddEntry("n = nothing", LIGHT_GRAY, 0, NO_IMAGE, true);
+    felist List(CONST_S("Unfortunately you died. What do you want to see?"));
+    List.AddEntry("n = nothing (end the game)", LIGHT_GRAY, 0, NO_IMAGE, true);
     List.AddEntry("i = inventory", LIGHT_GRAY, 0, NO_IMAGE, true);
     List.AddEntry("m = message history", LIGHT_GRAY, 0, NO_IMAGE, true);
     List.AddEntry("k = kill list", LIGHT_GRAY, 0, NO_IMAGE, true);

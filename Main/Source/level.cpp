@@ -1080,8 +1080,29 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
   }
 }
 
+struct explosioncontroller
+{
+  static truth Handler(int x, int y)
+  {
+    lsquare* Square = Map[x][y];
+    Square->GetHitByExplosion(CurrentExplosion);
+    return Square->IsFlyable();
+  }
+  static lsquare*** Map;
+  static const explosion* CurrentExplosion;
+};
+
 truth level::DrawExplosion(const explosion* Explosion) const
 {
+
+  if(ivanconfig::Mode3FPP() || ivanconfig::Mode3Iso()) {
+    printf("DrawExplosion called, redirecting to the 3D mode\n");
+    explosioncontroller::CurrentExplosion = Explosion;
+    game::DrawEverything();
+    explosioncontroller::CurrentExplosion = nullptr;
+    return true;
+    }
+
   static v2 StrengthPicPos[7] =
   { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32), v2(0, 32) };
   v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4,
@@ -1157,20 +1178,8 @@ truth level::DrawExplosion(const explosion* Explosion) const
   return true;
 }
 
-struct explosioncontroller
-{
-  static truth Handler(int x, int y)
-  {
-    lsquare* Square = Map[x][y];
-    Square->GetHitByExplosion(CurrentExplosion);
-    return Square->IsFlyable();
-  }
-  static lsquare*** Map;
-  static explosion* CurrentExplosion;
-};
-
 lsquare*** explosioncontroller::Map;
-explosion* explosioncontroller::CurrentExplosion;
+const explosion* explosioncontroller::CurrentExplosion;
 
 int level::TriggerExplosions(int MinIndex)
 {
@@ -1238,6 +1247,8 @@ int level::TriggerExplosions(int MinIndex)
 
     if(GetLSquare(Explosion->Pos)->IsFlyable())
       GetLSquare(Explosion->Pos)->AddSmoke(gas::Spawn(SMOKE, 1000));
+
+    explosioncontroller::CurrentExplosion = nullptr;
   }
 
   for(c = MinIndex; c < LastExplosion; ++c)
@@ -1367,6 +1378,26 @@ void level::Draw3(int x, int y, truth esp, blitdata& BlitData) const {
       if(C && C->CanBeSeenByPlayer())
         Square->DrawMemorizedCharacter(BlitData);
     }
+  }
+
+  auto Exp = explosioncontroller::CurrentExplosion;
+  if(Exp && (Exp->Pos - v2(x, y)).GetLengthSquare() <= (6 - Exp->Size) * (6 - Exp->Size))
+  {
+    v2 PicPos(0, 32);
+    v2 SizeVect(16, 16);
+
+    blitdata BlitDataEx = { 0,
+                          { PicPos.X, PicPos.Y },
+                          { 0, 0 },
+                          { SizeVect.X, SizeVect.Y },
+                          { 0 },
+                          TRANSPARENT_COLOR,
+                          0 };
+
+    BlitDataEx.Bitmap = DOUBLE_BUFFER;
+    BlitDataEx.Luminance = ivanconfig::GetContrastLuminance();
+    BlitDataEx.CustomData = DO_BLIT3;
+    igraph::Blit3(igraph::GetSymbolGraphic(), BlitDataEx, MF_BLIT_LUMINANCE_MASKED | MF_OBJECT);
   }
 }
 
