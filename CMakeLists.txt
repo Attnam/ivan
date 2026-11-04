@@ -48,6 +48,7 @@ elseif(WIN32)
 
   if(MINGW)
     set(CMAKE_EXE_LINKER_FLAGS -mwindows)
+    set(CMAKE_CXX_FLAGS "-D_USE_MATH_DEFINES ${CMAKE_CXX_FLAGS}")
   endif(MINGW)
 
   # This is bad. To remove below defines, FeLib should switch to std::chrono and serialize time since common epoch.
