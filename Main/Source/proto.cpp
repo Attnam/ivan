@@ -530,7 +530,8 @@ static void EmptyContainer(item* Item)
 {
   if (materialcontainer* Container = dynamic_cast<materialcontainer*>(Item))
   {
-    delete Container->RemoveSecondaryMaterial();
+    /* Not virtual: otherwise the banana peels itself and goes to hell. */
+    delete Container->materialcontainer::RemoveSecondaryMaterial();
   }
   else if (itemcontainer* Container = dynamic_cast<itemcontainer*>(Item))
     Container->GetContained()->Clean();
