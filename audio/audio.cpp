@@ -103,7 +103,8 @@ void audio::Init(cfestring& musicDirectory)
    } catch (RtMidiError &error)
    {
       error.printMessage();
-      ABORT("MIDI Out Error");
+      // No MIDI backend (e.g. no /dev/snd/seq): run without music.
+      return;
    }
 
 
@@ -181,6 +182,9 @@ cfestring& audio::GetCurrentlyPlayedFile()
 /* Port0 is NULL, and disabled. */
 int audio::ChangeMIDIOutputDevice(int newPort)
 {
+   if( !midiout )
+      return 0;
+
    if( newPort != CurrentMIDIOutPort)
    {
       audio::SetPlaybackStatus(0x00);
@@ -209,6 +213,9 @@ int audio::ChangeMIDIOutputDevice(int newPort)
 
 int audio::GetMIDIOutputDevices(std::vector<std::string>& deviceNames)
 {
+   if( !midiout )
+      return 0;
+
    int nPorts = midiout->getPortCount();
    std::string portName;
 
