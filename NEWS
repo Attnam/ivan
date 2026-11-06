@@ -14,10 +14,28 @@ Changes:
 * xx
 
 Fixes:
+* xx
+
+Version 0.60, released 6th November 2026
+-----------------------------------------
+
+Changes:
+* IVAN3D !!!
+* Improved implementation of outlines
+* Portability
+* Easier input on some more modern devices
+* Controller buttons now do something in StringQuestion, NumberQuestion
+* 64-bit builds
+* libpcre2 
+
+Fixes:
 * Hide Gloomy Cave again.
 * Fix crash when missing user data.
 * Fix polymorph conflict for sirens. Now you should be able to poly into one.
 * Rebalance archangels.
+* Fix tailoring crash
+* Fix null deref when trying to remove trap
+* Fix crash in case recipe uses 3 ingredients
 * And many minor fixes.
 
 Version 0.59, released 23rd December 2021
