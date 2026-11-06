@@ -126,7 +126,8 @@ void globalerrorhandler::Abort(cchar* Format, ...)
   vsnprintf(Buffer, sizeof(Buffer), Format, AP);
   va_end(AP);
 
-  strcat(Buffer, BugMsg);
+  size_t Length = strlen(Buffer);
+  snprintf(Buffer + Length, sizeof(Buffer) - Length, "%s", BugMsg);
 
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
