@@ -31,9 +31,12 @@ void craftcore::AddSuspended(const recipedata& rpd)
   if(!rpd.rc.IsCanBeSuspended())
     ABORT("action can't be suspended %s",rpd.dbgInfo().CStr());
 
+  /* id() is not unique: identical crafts share it, so keep the newest. */
   for(int i=0;i<vSuspended.size();i++)
-    if(vSuspended[i].id()==rpd.id())
-      ABORT("this crafting was already suspended '%s'",vSuspended[i].id().CStr());
+    if(vSuspended[i].id()==rpd.id()){
+      vSuspended[i]=rpd;
+      return;
+    }
 
 //  rpd.rc.ClearRefs();
 
